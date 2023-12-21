@@ -1,0 +1,22 @@
+type Userinfo @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  name: String!
+  email: AWSEmail!
+  Schedules: [Schedule] @hasMany(indexName: "byUserinfo", fields: ["id"])
+  Tasks: [Task] @hasMany(indexName: "byUserinfo", fields: ["id"])
+}
+
+type Schedule @model @auth(rules: [{allow: private}]) {
+  time: AWSTime!
+  date: AWSDate!
+  description: String!
+  userinfoID: ID! @index(name: "byUserinfo")
+}
+
+type Task @model @auth(rules: [{allow: private}]) {
+  time: AWSTime!
+  date: AWSDate!
+  description: String!
+  userinfoID: ID! @index(name: "byUserinfo")
+}
+ 
