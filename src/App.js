@@ -3,6 +3,7 @@ import '@aws-amplify/ui-react/styles.css'
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import { signOut } from 'aws-amplify/auth';
 import { generateClient } from "aws-amplify/api";
+import * as mutations from './graphql/mutations';
 import * as queries from './graphql/queries';
 
 const client = generateClient()
@@ -14,18 +15,31 @@ async function handleSignOut() {
     console.log('error signing out: ', error);
   }
 }
-async function create_item() {
+async function get_item() {
 
   const allTodos = await client.graphql({ query: queries.listUserinfos });
   console.log(allTodos)
 
   const oneTodo = await client.graphql({
     query: queries.getUserinfo,
-    variables: { id: '9deba1aa-5e2b-4902-a984-b2b8de0c876d' }
+    variables: { id: '6f499207-1e98-401b-aab2-8472399a7644' }
   });
   console.log(oneTodo)
 }
 
+async function create_item(){
+  const todoDetails = {
+    name: 'Todo 2',
+    email: 'local@test.com',
+    
+  };
+  
+  const newTodo = await client.graphql({
+    query: mutations.createUserinfo,
+    variables: { input: todoDetails }
+  });
+  console.log(newTodo)
+}
 
 
 function App() {
@@ -35,7 +49,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h2>My app</h2>
-        <button onClick={create_item}>Create record</button>
+        <button onClick={get_item}>Get record</button>
+        <button onClick={create_item}>create record</button>
         <button onClick={handleSignOut}>Sign out</button>
       </header>
     </div>

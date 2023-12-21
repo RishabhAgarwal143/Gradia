@@ -18,5 +18,4 @@ type Task @model @auth(rules: [{allow: private}]) {
   date: AWSDate!
   description: String!
   userinfoID: ID! @index(name: "byUserinfo")
-}
- 
+} 
