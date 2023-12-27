@@ -22,20 +22,20 @@ export declare type ValidationResponse = {
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type TaskCreateFormInputValues = {
-    time?: string;
-    date?: string;
+    due_time?: string;
+    due_date?: string;
     description?: string;
 };
 export declare type TaskCreateFormValidationValues = {
-    time?: ValidationFunction<string>;
-    date?: ValidationFunction<string>;
+    due_time?: ValidationFunction<string>;
+    due_date?: ValidationFunction<string>;
     description?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TaskCreateFormOverridesProps = {
     TaskCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    time?: PrimitiveOverrideProps<TextFieldProps>;
-    date?: PrimitiveOverrideProps<TextFieldProps>;
+    due_time?: PrimitiveOverrideProps<TextFieldProps>;
+    due_date?: PrimitiveOverrideProps<TextFieldProps>;
     description?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type TaskCreateFormProps = React.PropsWithChildren<{

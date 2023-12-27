@@ -11,15 +11,39 @@ export const createUserinfo = /* GraphQL */ `
       name
       email
       Schedules {
+        items {
+          start_time
+          end_time
+          description
+          userinfoID
+          date
+          id
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
         nextToken
         __typename
       }
       Tasks {
+        items {
+          due_time
+          due_date
+          description
+          userinfoID
+          id
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
         nextToken
         __typename
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -34,15 +58,39 @@ export const updateUserinfo = /* GraphQL */ `
       name
       email
       Schedules {
+        items {
+          start_time
+          end_time
+          description
+          userinfoID
+          date
+          id
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
         nextToken
         __typename
       }
       Tasks {
+        items {
+          due_time
+          due_date
+          description
+          userinfoID
+          id
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
         nextToken
         __typename
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -57,15 +105,39 @@ export const deleteUserinfo = /* GraphQL */ `
       name
       email
       Schedules {
+        items {
+          start_time
+          end_time
+          description
+          userinfoID
+          date
+          id
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
         nextToken
         __typename
       }
       Tasks {
+        items {
+          due_time
+          due_date
+          description
+          userinfoID
+          id
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
         nextToken
         __typename
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -76,13 +148,15 @@ export const createSchedule = /* GraphQL */ `
     $condition: ModelScheduleConditionInput
   ) {
     createSchedule(input: $input, condition: $condition) {
-      time
-      date
+      start_time
+      end_time
       description
       userinfoID
+      date
       id
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -93,13 +167,15 @@ export const updateSchedule = /* GraphQL */ `
     $condition: ModelScheduleConditionInput
   ) {
     updateSchedule(input: $input, condition: $condition) {
-      time
-      date
+      start_time
+      end_time
       description
       userinfoID
+      date
       id
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -110,13 +186,15 @@ export const deleteSchedule = /* GraphQL */ `
     $condition: ModelScheduleConditionInput
   ) {
     deleteSchedule(input: $input, condition: $condition) {
-      time
-      date
+      start_time
+      end_time
       description
       userinfoID
+      date
       id
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -127,13 +205,14 @@ export const createTask = /* GraphQL */ `
     $condition: ModelTaskConditionInput
   ) {
     createTask(input: $input, condition: $condition) {
-      time
-      date
+      due_time
+      due_date
       description
       userinfoID
       id
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -144,13 +223,14 @@ export const updateTask = /* GraphQL */ `
     $condition: ModelTaskConditionInput
   ) {
     updateTask(input: $input, condition: $condition) {
-      time
-      date
+      due_time
+      due_date
       description
       userinfoID
       id
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -161,13 +241,14 @@ export const deleteTask = /* GraphQL */ `
     $condition: ModelTaskConditionInput
   ) {
     deleteTask(input: $input, condition: $condition) {
-      time
-      date
+      due_time
+      due_date
       description
       userinfoID
       id
       createdAt
       updatedAt
+      owner
       __typename
     }
   }

@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { AutocompleteProps, GridProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -24,16 +24,22 @@ export declare type ValidationFunction<T> = (value: T, validationResponse: Valid
 export declare type UserinfoUpdateFormInputValues = {
     name?: string;
     email?: string;
+    Schedules?: any[];
+    Tasks?: any[];
 };
 export declare type UserinfoUpdateFormValidationValues = {
     name?: ValidationFunction<string>;
     email?: ValidationFunction<string>;
+    Schedules?: ValidationFunction<any>;
+    Tasks?: ValidationFunction<any>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type UserinfoUpdateFormOverridesProps = {
     UserinfoUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     email?: PrimitiveOverrideProps<TextFieldProps>;
+    Schedules?: PrimitiveOverrideProps<AutocompleteProps>;
+    Tasks?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type UserinfoUpdateFormProps = React.PropsWithChildren<{
     overrides?: UserinfoUpdateFormOverridesProps | undefined | null;

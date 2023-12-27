@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { AutocompleteProps, GridProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -22,21 +22,24 @@ export declare type ValidationResponse = {
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type TaskUpdateFormInputValues = {
-    time?: string;
-    date?: string;
+    due_time?: string;
+    due_date?: string;
     description?: string;
+    userinfoID?: string;
 };
 export declare type TaskUpdateFormValidationValues = {
-    time?: ValidationFunction<string>;
-    date?: ValidationFunction<string>;
+    due_time?: ValidationFunction<string>;
+    due_date?: ValidationFunction<string>;
     description?: ValidationFunction<string>;
+    userinfoID?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TaskUpdateFormOverridesProps = {
     TaskUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    time?: PrimitiveOverrideProps<TextFieldProps>;
-    date?: PrimitiveOverrideProps<TextFieldProps>;
+    due_time?: PrimitiveOverrideProps<TextFieldProps>;
+    due_date?: PrimitiveOverrideProps<TextFieldProps>;
     description?: PrimitiveOverrideProps<TextFieldProps>;
+    userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type TaskUpdateFormProps = React.PropsWithChildren<{
     overrides?: TaskUpdateFormOverridesProps | undefined | null;

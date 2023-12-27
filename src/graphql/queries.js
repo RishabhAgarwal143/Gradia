@@ -8,15 +8,39 @@ export const getUserinfo = /* GraphQL */ `
       name
       email
       Schedules {
+        items {
+          start_time
+          end_time
+          description
+          userinfoID
+          date
+          id
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
         nextToken
         __typename
       }
       Tasks {
+        items {
+          due_time
+          due_date
+          description
+          userinfoID
+          id
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
         nextToken
         __typename
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -32,8 +56,40 @@ export const listUserinfos = /* GraphQL */ `
         id
         name
         email
+        Schedules {
+          items {
+            start_time
+            end_time
+            description
+            userinfoID
+            date
+            id
+            createdAt
+            updatedAt
+            owner
+            __typename
+          }
+          nextToken
+          __typename
+        }
+        Tasks {
+          items {
+            due_time
+            due_date
+            description
+            userinfoID
+            id
+            createdAt
+            updatedAt
+            owner
+            __typename
+          }
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken
@@ -44,13 +100,15 @@ export const listUserinfos = /* GraphQL */ `
 export const getSchedule = /* GraphQL */ `
   query GetSchedule($id: ID!) {
     getSchedule(id: $id) {
-      time
-      date
+      start_time
+      end_time
       description
       userinfoID
+      date
       id
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -63,13 +121,15 @@ export const listSchedules = /* GraphQL */ `
   ) {
     listSchedules(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
-        time
-        date
+        start_time
+        end_time
         description
         userinfoID
+        date
         id
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken
@@ -93,13 +153,15 @@ export const schedulesByUserinfoID = /* GraphQL */ `
       nextToken: $nextToken
     ) {
       items {
-        time
-        date
+        start_time
+        end_time
         description
         userinfoID
+        date
         id
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken
@@ -110,13 +172,14 @@ export const schedulesByUserinfoID = /* GraphQL */ `
 export const getTask = /* GraphQL */ `
   query GetTask($id: ID!) {
     getTask(id: $id) {
-      time
-      date
+      due_time
+      due_date
       description
       userinfoID
       id
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -129,13 +192,14 @@ export const listTasks = /* GraphQL */ `
   ) {
     listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
-        time
-        date
+        due_time
+        due_date
         description
         userinfoID
         id
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken
@@ -159,13 +223,14 @@ export const tasksByUserinfoID = /* GraphQL */ `
       nextToken: $nextToken
     ) {
       items {
-        time
-        date
+        due_time
+        due_date
         description
         userinfoID
         id
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken

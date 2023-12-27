@@ -2,9 +2,30 @@ import { signOut } from 'aws-amplify/auth';
 import { generateClient } from "aws-amplify/api";
 import * as mutations from '../graphql/mutations';
 import * as queries from '../graphql/queries';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { fetchAuthSession } from 'aws-amplify/auth';
+
+
+export var cognito_Id
+export async function currentAuthenticatedUser() {
+  try {
+    const { username, userId, signInDetails } = await getCurrentUser();
+    const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {};
+    
+    cognito_Id = userId;
+
+    console.log(`The username: ${username}`);
+    console.log(`The userId: ${cognito_Id}`);
+    console.log(`The accessToken: ${accessToken}`);
+    console.log(`The idToken: ${idToken}`);
+    console.log(`The signInDetails: ${signInDetails}`);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 
 const client = generateClient()
-export var globleuserid
 export async function handleSignOut() {
   try {
     await signOut();
@@ -16,39 +37,49 @@ export async function get_item() {
 
   const allTodos = await client.graphql({ query: queries.listUserinfos });
   console.log(allTodos)
+}
 
+export async function create_user() {
+  await currentAuthenticatedUser()
   const oneTodo = await client.graphql({
     query: queries.getUserinfo,
-    variables: { id: '6f499207-1e98-401b-aab2-8472399a7644' }
+    variables: { id: cognito_Id }
   });
-  console.log(oneTodo)
+  if (oneTodo.data.getUserinfo == null) 
+  {
+    console.log(`trying to create ${cognito_Id}`);
+    const todoDetails = {
+      name: 'Todo 2',
+      email: 'local@test.com',
+      id: cognito_Id
+    };
+
+    await client.graphql({
+      query: mutations.createUserinfo,
+      variables: { input: todoDetails }
+    });
+    console.log('item created')
+  }
 }
 
-export async function create_item(){
-  const todoDetails = {
-    name: 'Todo 2',
-    email: 'local@test.com',
-  };
+export async function create_schedule() {
   
-  const newTodo = await client.graphql({
-    query: mutations.createUserinfo,
-    variables: { input: todoDetails }
-  });
-  // const temp = JSON.parse(newTodo)
-  globleuserid = newTodo.data.createUserinfo.id
-  // create_schedule();
-  console.log(newTodo)
-}
-
-export async function create_schedule(userid){
   await client.graphql({
     query: mutations.createSchedule,
-    variables: {input :  {
-      time: '12:30',
-      date: '2023-12-21',
-      description: 'testing from local',
-      userinfoID: globleuserid
-    }}
+    variables: {
+      input: {
+        start_time: '12:30',
+        end_time: '14:30',
+        date: '2023-12-21',
+        description: 'testing from local',
+        userinfoID: cognito_Id
+      }
+    }
   })
+}
+
+export async function list_schedule_item() {
+  const allTodos = await client.graphql({ query: queries.listSchedules });
+  console.log(allTodos)
 }
 

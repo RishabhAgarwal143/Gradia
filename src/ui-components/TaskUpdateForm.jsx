@@ -6,12 +6,179 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import {
+  Autocomplete,
+  Badge,
+  Button,
+  Divider,
+  Flex,
+  Grid,
+  Icon,
+  ScrollView,
+  Text,
+  TextField,
+  useTheme,
+} from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getTask } from "../graphql/queries";
+import { getTask, getUserinfo, listUserinfos } from "../graphql/queries";
 import { updateTask } from "../graphql/mutations";
 const client = generateClient();
+function ArrayField({
+  items = [],
+  onChange,
+  label,
+  inputFieldRef,
+  children,
+  hasError,
+  setFieldValue,
+  currentFieldValue,
+  defaultFieldValue,
+  lengthLimit,
+  getBadgeText,
+  runValidationTasks,
+  errorMessage,
+}) {
+  const labelElement = <Text>{label}</Text>;
+  const {
+    tokens: {
+      components: {
+        fieldmessages: { error: errorStyles },
+      },
+    },
+  } = useTheme();
+  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
+  const [isEditing, setIsEditing] = React.useState();
+  React.useEffect(() => {
+    if (isEditing) {
+      inputFieldRef?.current?.focus();
+    }
+  }, [isEditing]);
+  const removeItem = async (removeIndex) => {
+    const newItems = items.filter((value, index) => index !== removeIndex);
+    await onChange(newItems);
+    setSelectedBadgeIndex(undefined);
+  };
+  const addItem = async () => {
+    const { hasError } = runValidationTasks();
+    if (
+      currentFieldValue !== undefined &&
+      currentFieldValue !== null &&
+      currentFieldValue !== "" &&
+      !hasError
+    ) {
+      const newItems = [...items];
+      if (selectedBadgeIndex !== undefined) {
+        newItems[selectedBadgeIndex] = currentFieldValue;
+        setSelectedBadgeIndex(undefined);
+      } else {
+        newItems.push(currentFieldValue);
+      }
+      await onChange(newItems);
+      setIsEditing(false);
+    }
+  };
+  const arraySection = (
+    <React.Fragment>
+      {!!items?.length && (
+        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
+          {items.map((value, index) => {
+            return (
+              <Badge
+                key={index}
+                style={{
+                  cursor: "pointer",
+                  alignItems: "center",
+                  marginRight: 3,
+                  marginTop: 3,
+                  backgroundColor:
+                    index === selectedBadgeIndex ? "#B8CEF9" : "",
+                }}
+                onClick={() => {
+                  setSelectedBadgeIndex(index);
+                  setFieldValue(items[index]);
+                  setIsEditing(true);
+                }}
+              >
+                {getBadgeText ? getBadgeText(value) : value.toString()}
+                <Icon
+                  style={{
+                    cursor: "pointer",
+                    paddingLeft: 3,
+                    width: 20,
+                    height: 20,
+                  }}
+                  viewBox={{ width: 20, height: 20 }}
+                  paths={[
+                    {
+                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
+                      stroke: "black",
+                    },
+                  ]}
+                  ariaLabel="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    removeItem(index);
+                  }}
+                />
+              </Badge>
+            );
+          })}
+        </ScrollView>
+      )}
+      <Divider orientation="horizontal" marginTop={5} />
+    </React.Fragment>
+  );
+  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
+    return (
+      <React.Fragment>
+        {labelElement}
+        {arraySection}
+      </React.Fragment>
+    );
+  }
+  return (
+    <React.Fragment>
+      {labelElement}
+      {isEditing && children}
+      {!isEditing ? (
+        <>
+          <Button
+            onClick={() => {
+              setIsEditing(true);
+            }}
+          >
+            Add item
+          </Button>
+          {errorMessage && hasError && (
+            <Text color={errorStyles.color} fontSize={errorStyles.fontSize}>
+              {errorMessage}
+            </Text>
+          )}
+        </>
+      ) : (
+        <Flex justifyContent="flex-end">
+          {(currentFieldValue || isEditing) && (
+            <Button
+              children="Cancel"
+              type="button"
+              size="small"
+              onClick={() => {
+                setFieldValue(defaultFieldValue);
+                setIsEditing(false);
+                setSelectedBadgeIndex(undefined);
+              }}
+            ></Button>
+          )}
+          <Button size="small" variation="link" onClick={addItem}>
+            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
+          </Button>
+        </Flex>
+      )}
+      {arraySection}
+    </React.Fragment>
+  );
+}
 export default function TaskUpdateForm(props) {
   const {
     id: idProp,
@@ -25,23 +192,33 @@ export default function TaskUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    time: "",
-    date: "",
+    due_time: "",
+    due_date: "",
     description: "",
+    userinfoID: undefined,
   };
-  const [time, setTime] = React.useState(initialValues.time);
-  const [date, setDate] = React.useState(initialValues.date);
+  const [due_time, setDue_time] = React.useState(initialValues.due_time);
+  const [due_date, setDue_date] = React.useState(initialValues.due_date);
   const [description, setDescription] = React.useState(
     initialValues.description
   );
+  const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
+  const [userinfoIDLoading, setUserinfoIDLoading] = React.useState(false);
+  const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
+  const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
+    React.useState([]);
+  const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = taskRecord
-      ? { ...initialValues, ...taskRecord }
+      ? { ...initialValues, ...taskRecord, userinfoID }
       : initialValues;
-    setTime(cleanValues.time);
-    setDate(cleanValues.date);
+    setDue_time(cleanValues.due_time);
+    setDue_date(cleanValues.due_date);
     setDescription(cleanValues.description);
+    setUserinfoID(cleanValues.userinfoID);
+    setCurrentUserinfoIDValue(undefined);
+    setCurrentUserinfoIDDisplayValue("");
     setErrors({});
   };
   const [taskRecord, setTaskRecord] = React.useState(taskModelProp);
@@ -55,15 +232,35 @@ export default function TaskUpdateForm(props) {
             })
           )?.data?.getTask
         : taskModelProp;
+      const userinfoIDRecord = record ? record.userinfoID : undefined;
+      const userinfoRecord = userinfoIDRecord
+        ? (
+            await client.graphql({
+              query: getUserinfo.replaceAll("__typename", ""),
+              variables: { id: userinfoIDRecord },
+            })
+          )?.data?.getUserinfo
+        : undefined;
+      setUserinfoID(userinfoIDRecord);
+      setSelectedUserinfoIDRecords([userinfoRecord]);
       setTaskRecord(record);
     };
     queryData();
   }, [idProp, taskModelProp]);
-  React.useEffect(resetStateValues, [taskRecord]);
+  React.useEffect(resetStateValues, [taskRecord, userinfoID]);
+  const [currentUserinfoIDDisplayValue, setCurrentUserinfoIDDisplayValue] =
+    React.useState("");
+  const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
+    React.useState(undefined);
+  const userinfoIDRef = React.createRef();
+  const getDisplayValue = {
+    userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
+  };
   const validations = {
-    time: [{ type: "Required" }],
-    date: [{ type: "Required" }],
+    due_time: [{ type: "Required" }],
+    due_date: [{ type: "Required" }],
     description: [{ type: "Required" }],
+    userinfoID: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -82,6 +279,36 @@ export default function TaskUpdateForm(props) {
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
   };
+  const fetchUserinfoIDRecords = async (value) => {
+    setUserinfoIDLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ name: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listUserinfos.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listUserinfos?.items;
+      var loaded = result.filter((item) => userinfoID !== item.id);
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
+    setUserinfoIDLoading(false);
+  };
+  React.useEffect(() => {
+    fetchUserinfoIDRecords("");
+  }, []);
   return (
     <Grid
       as="form"
@@ -91,9 +318,10 @@ export default function TaskUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          time,
-          date,
+          due_time,
+          due_date,
           description,
+          userinfoID,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -146,58 +374,60 @@ export default function TaskUpdateForm(props) {
       {...rest}
     >
       <TextField
-        label="Time"
+        label="Due time"
         isRequired={true}
         isReadOnly={false}
         type="time"
-        value={time}
+        value={due_time}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              time: value,
-              date,
+              due_time: value,
+              due_date,
               description,
+              userinfoID,
             };
             const result = onChange(modelFields);
-            value = result?.time ?? value;
+            value = result?.due_time ?? value;
           }
-          if (errors.time?.hasError) {
-            runValidationTasks("time", value);
+          if (errors.due_time?.hasError) {
+            runValidationTasks("due_time", value);
           }
-          setTime(value);
+          setDue_time(value);
         }}
-        onBlur={() => runValidationTasks("time", time)}
-        errorMessage={errors.time?.errorMessage}
-        hasError={errors.time?.hasError}
-        {...getOverrideProps(overrides, "time")}
+        onBlur={() => runValidationTasks("due_time", due_time)}
+        errorMessage={errors.due_time?.errorMessage}
+        hasError={errors.due_time?.hasError}
+        {...getOverrideProps(overrides, "due_time")}
       ></TextField>
       <TextField
-        label="Date"
+        label="Due date"
         isRequired={true}
         isReadOnly={false}
         type="date"
-        value={date}
+        value={due_date}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              time,
-              date: value,
+              due_time,
+              due_date: value,
               description,
+              userinfoID,
             };
             const result = onChange(modelFields);
-            value = result?.date ?? value;
+            value = result?.due_date ?? value;
           }
-          if (errors.date?.hasError) {
-            runValidationTasks("date", value);
+          if (errors.due_date?.hasError) {
+            runValidationTasks("due_date", value);
           }
-          setDate(value);
+          setDue_date(value);
         }}
-        onBlur={() => runValidationTasks("date", date)}
-        errorMessage={errors.date?.errorMessage}
-        hasError={errors.date?.hasError}
-        {...getOverrideProps(overrides, "date")}
+        onBlur={() => runValidationTasks("due_date", due_date)}
+        errorMessage={errors.due_date?.errorMessage}
+        hasError={errors.due_date?.hasError}
+        {...getOverrideProps(overrides, "due_date")}
       ></TextField>
       <TextField
         label="Description"
@@ -208,9 +438,10 @@ export default function TaskUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              time,
-              date,
+              due_time,
+              due_date,
               description: value,
+              userinfoID,
             };
             const result = onChange(modelFields);
             value = result?.description ?? value;
@@ -225,6 +456,101 @@ export default function TaskUpdateForm(props) {
         hasError={errors.description?.hasError}
         {...getOverrideProps(overrides, "description")}
       ></TextField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
+          if (onChange) {
+            const modelFields = {
+              due_time,
+              due_date,
+              description,
+              userinfoID: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.userinfoID ?? value;
+          }
+          setUserinfoID(value);
+          setCurrentUserinfoIDValue(undefined);
+        }}
+        currentFieldValue={currentUserinfoIDValue}
+        label={"Userinfo id"}
+        items={userinfoID ? [userinfoID] : []}
+        hasError={errors?.userinfoID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("userinfoID", currentUserinfoIDValue)
+        }
+        errorMessage={errors?.userinfoID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.userinfoID(
+                userinfoIDRecords.find((r) => r.id === value) ??
+                  selectedUserinfoIDRecords.find((r) => r.id === value)
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentUserinfoIDDisplayValue(
+            value
+              ? getDisplayValue.userinfoID(
+                  userinfoIDRecords.find((r) => r.id === value) ??
+                    selectedUserinfoIDRecords.find((r) => r.id === value)
+                )
+              : ""
+          );
+          setCurrentUserinfoIDValue(value);
+          const selectedRecord = userinfoIDRecords.find((r) => r.id === value);
+          if (selectedRecord) {
+            setSelectedUserinfoIDRecords([selectedRecord]);
+          }
+        }}
+        inputFieldRef={userinfoIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Userinfo id"
+          isRequired={true}
+          isReadOnly={false}
+          placeholder="Search Userinfo"
+          value={currentUserinfoIDDisplayValue}
+          options={userinfoIDRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.userinfoID?.(r),
+            }))}
+          isLoading={userinfoIDLoading}
+          onSelect={({ id, label }) => {
+            setCurrentUserinfoIDValue(id);
+            setCurrentUserinfoIDDisplayValue(label);
+            runValidationTasks("userinfoID", label);
+          }}
+          onClear={() => {
+            setCurrentUserinfoIDDisplayValue("");
+          }}
+          defaultValue={userinfoID}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchUserinfoIDRecords(value);
+            if (errors.userinfoID?.hasError) {
+              runValidationTasks("userinfoID", value);
+            }
+            setCurrentUserinfoIDDisplayValue(value);
+            setCurrentUserinfoIDValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("userinfoID", currentUserinfoIDValue)
+          }
+          errorMessage={errors.userinfoID?.errorMessage}
+          hasError={errors.userinfoID?.hasError}
+          ref={userinfoIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "userinfoID")}
+        ></Autocomplete>
+      </ArrayField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

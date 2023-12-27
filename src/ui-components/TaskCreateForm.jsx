@@ -23,25 +23,25 @@ export default function TaskCreateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    time: "",
-    date: "",
+    due_time: "",
+    due_date: "",
     description: "",
   };
-  const [time, setTime] = React.useState(initialValues.time);
-  const [date, setDate] = React.useState(initialValues.date);
+  const [due_time, setDue_time] = React.useState(initialValues.due_time);
+  const [due_date, setDue_date] = React.useState(initialValues.due_date);
   const [description, setDescription] = React.useState(
     initialValues.description
   );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    setTime(initialValues.time);
-    setDate(initialValues.date);
+    setDue_time(initialValues.due_time);
+    setDue_date(initialValues.due_date);
     setDescription(initialValues.description);
     setErrors({});
   };
   const validations = {
-    time: [{ type: "Required" }],
-    date: [{ type: "Required" }],
+    due_time: [{ type: "Required" }],
+    due_date: [{ type: "Required" }],
     description: [{ type: "Required" }],
   };
   const runValidationTasks = async (
@@ -70,8 +70,8 @@ export default function TaskCreateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          time,
-          date,
+          due_time,
+          due_date,
           description,
         };
         const validationResponses = await Promise.all(
@@ -127,58 +127,58 @@ export default function TaskCreateForm(props) {
       {...rest}
     >
       <TextField
-        label="Time"
+        label="Due time"
         isRequired={true}
         isReadOnly={false}
         type="time"
-        value={time}
+        value={due_time}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              time: value,
-              date,
+              due_time: value,
+              due_date,
               description,
             };
             const result = onChange(modelFields);
-            value = result?.time ?? value;
+            value = result?.due_time ?? value;
           }
-          if (errors.time?.hasError) {
-            runValidationTasks("time", value);
+          if (errors.due_time?.hasError) {
+            runValidationTasks("due_time", value);
           }
-          setTime(value);
+          setDue_time(value);
         }}
-        onBlur={() => runValidationTasks("time", time)}
-        errorMessage={errors.time?.errorMessage}
-        hasError={errors.time?.hasError}
-        {...getOverrideProps(overrides, "time")}
+        onBlur={() => runValidationTasks("due_time", due_time)}
+        errorMessage={errors.due_time?.errorMessage}
+        hasError={errors.due_time?.hasError}
+        {...getOverrideProps(overrides, "due_time")}
       ></TextField>
       <TextField
-        label="Date"
+        label="Due date"
         isRequired={true}
         isReadOnly={false}
         type="date"
-        value={date}
+        value={due_date}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              time,
-              date: value,
+              due_time,
+              due_date: value,
               description,
             };
             const result = onChange(modelFields);
-            value = result?.date ?? value;
+            value = result?.due_date ?? value;
           }
-          if (errors.date?.hasError) {
-            runValidationTasks("date", value);
+          if (errors.due_date?.hasError) {
+            runValidationTasks("due_date", value);
           }
-          setDate(value);
+          setDue_date(value);
         }}
-        onBlur={() => runValidationTasks("date", date)}
-        errorMessage={errors.date?.errorMessage}
-        hasError={errors.date?.hasError}
-        {...getOverrideProps(overrides, "date")}
+        onBlur={() => runValidationTasks("due_date", due_date)}
+        errorMessage={errors.due_date?.errorMessage}
+        hasError={errors.due_date?.hasError}
+        {...getOverrideProps(overrides, "due_date")}
       ></TextField>
       <TextField
         label="Description"
@@ -189,8 +189,8 @@ export default function TaskCreateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              time,
-              date,
+              due_time,
+              due_date,
               description: value,
             };
             const result = onChange(modelFields);

@@ -6,12 +6,183 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import {
+  Autocomplete,
+  Badge,
+  Button,
+  Divider,
+  Flex,
+  Grid,
+  Icon,
+  ScrollView,
+  Text,
+  TextField,
+  useTheme,
+} from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getUserinfo } from "../graphql/queries";
-import { updateUserinfo } from "../graphql/mutations";
+import { getUserinfo, listSchedules, listTasks } from "../graphql/queries";
+import {
+  updateSchedule,
+  updateTask,
+  updateUserinfo,
+} from "../graphql/mutations";
 const client = generateClient();
+function ArrayField({
+  items = [],
+  onChange,
+  label,
+  inputFieldRef,
+  children,
+  hasError,
+  setFieldValue,
+  currentFieldValue,
+  defaultFieldValue,
+  lengthLimit,
+  getBadgeText,
+  runValidationTasks,
+  errorMessage,
+}) {
+  const labelElement = <Text>{label}</Text>;
+  const {
+    tokens: {
+      components: {
+        fieldmessages: { error: errorStyles },
+      },
+    },
+  } = useTheme();
+  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
+  const [isEditing, setIsEditing] = React.useState();
+  React.useEffect(() => {
+    if (isEditing) {
+      inputFieldRef?.current?.focus();
+    }
+  }, [isEditing]);
+  const removeItem = async (removeIndex) => {
+    const newItems = items.filter((value, index) => index !== removeIndex);
+    await onChange(newItems);
+    setSelectedBadgeIndex(undefined);
+  };
+  const addItem = async () => {
+    const { hasError } = runValidationTasks();
+    if (
+      currentFieldValue !== undefined &&
+      currentFieldValue !== null &&
+      currentFieldValue !== "" &&
+      !hasError
+    ) {
+      const newItems = [...items];
+      if (selectedBadgeIndex !== undefined) {
+        newItems[selectedBadgeIndex] = currentFieldValue;
+        setSelectedBadgeIndex(undefined);
+      } else {
+        newItems.push(currentFieldValue);
+      }
+      await onChange(newItems);
+      setIsEditing(false);
+    }
+  };
+  const arraySection = (
+    <React.Fragment>
+      {!!items?.length && (
+        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
+          {items.map((value, index) => {
+            return (
+              <Badge
+                key={index}
+                style={{
+                  cursor: "pointer",
+                  alignItems: "center",
+                  marginRight: 3,
+                  marginTop: 3,
+                  backgroundColor:
+                    index === selectedBadgeIndex ? "#B8CEF9" : "",
+                }}
+                onClick={() => {
+                  setSelectedBadgeIndex(index);
+                  setFieldValue(items[index]);
+                  setIsEditing(true);
+                }}
+              >
+                {getBadgeText ? getBadgeText(value) : value.toString()}
+                <Icon
+                  style={{
+                    cursor: "pointer",
+                    paddingLeft: 3,
+                    width: 20,
+                    height: 20,
+                  }}
+                  viewBox={{ width: 20, height: 20 }}
+                  paths={[
+                    {
+                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
+                      stroke: "black",
+                    },
+                  ]}
+                  ariaLabel="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    removeItem(index);
+                  }}
+                />
+              </Badge>
+            );
+          })}
+        </ScrollView>
+      )}
+      <Divider orientation="horizontal" marginTop={5} />
+    </React.Fragment>
+  );
+  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
+    return (
+      <React.Fragment>
+        {labelElement}
+        {arraySection}
+      </React.Fragment>
+    );
+  }
+  return (
+    <React.Fragment>
+      {labelElement}
+      {isEditing && children}
+      {!isEditing ? (
+        <>
+          <Button
+            onClick={() => {
+              setIsEditing(true);
+            }}
+          >
+            Add item
+          </Button>
+          {errorMessage && hasError && (
+            <Text color={errorStyles.color} fontSize={errorStyles.fontSize}>
+              {errorMessage}
+            </Text>
+          )}
+        </>
+      ) : (
+        <Flex justifyContent="flex-end">
+          {(currentFieldValue || isEditing) && (
+            <Button
+              children="Cancel"
+              type="button"
+              size="small"
+              onClick={() => {
+                setFieldValue(defaultFieldValue);
+                setIsEditing(false);
+                setSelectedBadgeIndex(undefined);
+              }}
+            ></Button>
+          )}
+          <Button size="small" variation="link" onClick={addItem}>
+            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
+          </Button>
+        </Flex>
+      )}
+      {arraySection}
+    </React.Fragment>
+  );
+}
 export default function UserinfoUpdateForm(props) {
   const {
     id: idProp,
@@ -27,19 +198,43 @@ export default function UserinfoUpdateForm(props) {
   const initialValues = {
     name: "",
     email: "",
+    Schedules: [],
+    Tasks: [],
   };
   const [name, setName] = React.useState(initialValues.name);
   const [email, setEmail] = React.useState(initialValues.email);
+  const [Schedules, setSchedules] = React.useState(initialValues.Schedules);
+  const [SchedulesLoading, setSchedulesLoading] = React.useState(false);
+  const [schedulesRecords, setSchedulesRecords] = React.useState([]);
+  const [Tasks, setTasks] = React.useState(initialValues.Tasks);
+  const [TasksLoading, setTasksLoading] = React.useState(false);
+  const [tasksRecords, setTasksRecords] = React.useState([]);
+  const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = userinfoRecord
-      ? { ...initialValues, ...userinfoRecord }
+      ? {
+          ...initialValues,
+          ...userinfoRecord,
+          Schedules: linkedSchedules,
+          Tasks: linkedTasks,
+        }
       : initialValues;
     setName(cleanValues.name);
     setEmail(cleanValues.email);
+    setSchedules(cleanValues.Schedules ?? []);
+    setCurrentSchedulesValue(undefined);
+    setCurrentSchedulesDisplayValue("");
+    setTasks(cleanValues.Tasks ?? []);
+    setCurrentTasksValue(undefined);
+    setCurrentTasksDisplayValue("");
     setErrors({});
   };
   const [userinfoRecord, setUserinfoRecord] = React.useState(userinfoModelProp);
+  const [linkedSchedules, setLinkedSchedules] = React.useState([]);
+  const canUnlinkSchedules = false;
+  const [linkedTasks, setLinkedTasks] = React.useState([]);
+  const canUnlinkTasks = false;
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
@@ -50,14 +245,51 @@ export default function UserinfoUpdateForm(props) {
             })
           )?.data?.getUserinfo
         : userinfoModelProp;
+      const linkedSchedules = record?.Schedules?.items ?? [];
+      setLinkedSchedules(linkedSchedules);
+      const linkedTasks = record?.Tasks?.items ?? [];
+      setLinkedTasks(linkedTasks);
       setUserinfoRecord(record);
     };
     queryData();
   }, [idProp, userinfoModelProp]);
-  React.useEffect(resetStateValues, [userinfoRecord]);
+  React.useEffect(resetStateValues, [
+    userinfoRecord,
+    linkedSchedules,
+    linkedTasks,
+  ]);
+  const [currentSchedulesDisplayValue, setCurrentSchedulesDisplayValue] =
+    React.useState("");
+  const [currentSchedulesValue, setCurrentSchedulesValue] =
+    React.useState(undefined);
+  const SchedulesRef = React.createRef();
+  const [currentTasksDisplayValue, setCurrentTasksDisplayValue] =
+    React.useState("");
+  const [currentTasksValue, setCurrentTasksValue] = React.useState(undefined);
+  const TasksRef = React.createRef();
+  const getIDValue = {
+    Schedules: (r) => JSON.stringify({ id: r?.id }),
+    Tasks: (r) => JSON.stringify({ id: r?.id }),
+  };
+  const SchedulesIdSet = new Set(
+    Array.isArray(Schedules)
+      ? Schedules.map((r) => getIDValue.Schedules?.(r))
+      : getIDValue.Schedules?.(Schedules)
+  );
+  const TasksIdSet = new Set(
+    Array.isArray(Tasks)
+      ? Tasks.map((r) => getIDValue.Tasks?.(r))
+      : getIDValue.Tasks?.(Tasks)
+  );
+  const getDisplayValue = {
+    Schedules: (r) => `${r?.description ? r?.description + " - " : ""}${r?.id}`,
+    Tasks: (r) => `${r?.description ? r?.description + " - " : ""}${r?.id}`,
+  };
   const validations = {
     name: [{ type: "Required" }],
     email: [{ type: "Required" }, { type: "Email" }],
+    Schedules: [],
+    Tasks: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -76,6 +308,74 @@ export default function UserinfoUpdateForm(props) {
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
   };
+  const fetchSchedulesRecords = async (value) => {
+    setSchedulesLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { description: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listSchedules.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listSchedules?.items;
+      var loaded = result.filter(
+        (item) => !SchedulesIdSet.has(getIDValue.Schedules?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setSchedulesRecords(newOptions.slice(0, autocompleteLength));
+    setSchedulesLoading(false);
+  };
+  const fetchTasksRecords = async (value) => {
+    setTasksLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { description: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listTasks.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listTasks?.items;
+      var loaded = result.filter(
+        (item) => !TasksIdSet.has(getIDValue.Tasks?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setTasksRecords(newOptions.slice(0, autocompleteLength));
+    setTasksLoading(false);
+  };
+  React.useEffect(() => {
+    fetchSchedulesRecords("");
+    fetchTasksRecords("");
+  }, []);
   return (
     <Grid
       as="form"
@@ -87,19 +387,29 @@ export default function UserinfoUpdateForm(props) {
         let modelFields = {
           name,
           email,
+          Schedules: Schedules ?? null,
+          Tasks: Tasks ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
             if (Array.isArray(modelFields[fieldName])) {
               promises.push(
                 ...modelFields[fieldName].map((item) =>
-                  runValidationTasks(fieldName, item)
+                  runValidationTasks(
+                    fieldName,
+                    item,
+                    getDisplayValue[fieldName]
+                  )
                 )
               );
               return promises;
             }
             promises.push(
-              runValidationTasks(fieldName, modelFields[fieldName])
+              runValidationTasks(
+                fieldName,
+                modelFields[fieldName],
+                getDisplayValue[fieldName]
+              )
             );
             return promises;
           }, [])
@@ -116,15 +426,119 @@ export default function UserinfoUpdateForm(props) {
               modelFields[key] = null;
             }
           });
-          await client.graphql({
-            query: updateUserinfo.replaceAll("__typename", ""),
-            variables: {
-              input: {
-                id: userinfoRecord.id,
-                ...modelFields,
-              },
-            },
+          const promises = [];
+          const schedulesToLink = [];
+          const schedulesToUnLink = [];
+          const schedulesSet = new Set();
+          const linkedSchedulesSet = new Set();
+          Schedules.forEach((r) => schedulesSet.add(getIDValue.Schedules?.(r)));
+          linkedSchedules.forEach((r) =>
+            linkedSchedulesSet.add(getIDValue.Schedules?.(r))
+          );
+          linkedSchedules.forEach((r) => {
+            if (!schedulesSet.has(getIDValue.Schedules?.(r))) {
+              schedulesToUnLink.push(r);
+            }
           });
+          Schedules.forEach((r) => {
+            if (!linkedSchedulesSet.has(getIDValue.Schedules?.(r))) {
+              schedulesToLink.push(r);
+            }
+          });
+          schedulesToUnLink.forEach((original) => {
+            if (!canUnlinkSchedules) {
+              throw Error(
+                `Schedule ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
+              );
+            }
+            promises.push(
+              client.graphql({
+                query: updateSchedule.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    userinfoID: null,
+                  },
+                },
+              })
+            );
+          });
+          schedulesToLink.forEach((original) => {
+            promises.push(
+              client.graphql({
+                query: updateSchedule.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    userinfoID: userinfoRecord.id,
+                  },
+                },
+              })
+            );
+          });
+          const tasksToLink = [];
+          const tasksToUnLink = [];
+          const tasksSet = new Set();
+          const linkedTasksSet = new Set();
+          Tasks.forEach((r) => tasksSet.add(getIDValue.Tasks?.(r)));
+          linkedTasks.forEach((r) => linkedTasksSet.add(getIDValue.Tasks?.(r)));
+          linkedTasks.forEach((r) => {
+            if (!tasksSet.has(getIDValue.Tasks?.(r))) {
+              tasksToUnLink.push(r);
+            }
+          });
+          Tasks.forEach((r) => {
+            if (!linkedTasksSet.has(getIDValue.Tasks?.(r))) {
+              tasksToLink.push(r);
+            }
+          });
+          tasksToUnLink.forEach((original) => {
+            if (!canUnlinkTasks) {
+              throw Error(
+                `Task ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
+              );
+            }
+            promises.push(
+              client.graphql({
+                query: updateTask.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    userinfoID: null,
+                  },
+                },
+              })
+            );
+          });
+          tasksToLink.forEach((original) => {
+            promises.push(
+              client.graphql({
+                query: updateTask.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    userinfoID: userinfoRecord.id,
+                  },
+                },
+              })
+            );
+          });
+          const modelFieldsToSave = {
+            name: modelFields.name,
+            email: modelFields.email,
+          };
+          promises.push(
+            client.graphql({
+              query: updateUserinfo.replaceAll("__typename", ""),
+              variables: {
+                input: {
+                  id: userinfoRecord.id,
+                  ...modelFieldsToSave,
+                },
+              },
+            })
+          );
+          await Promise.all(promises);
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -149,6 +563,8 @@ export default function UserinfoUpdateForm(props) {
             const modelFields = {
               name: value,
               email,
+              Schedules,
+              Tasks,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -174,6 +590,8 @@ export default function UserinfoUpdateForm(props) {
             const modelFields = {
               name,
               email: value,
+              Schedules,
+              Tasks,
             };
             const result = onChange(modelFields);
             value = result?.email ?? value;
@@ -188,6 +606,166 @@ export default function UserinfoUpdateForm(props) {
         hasError={errors.email?.hasError}
         {...getOverrideProps(overrides, "email")}
       ></TextField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              Schedules: values,
+              Tasks,
+            };
+            const result = onChange(modelFields);
+            values = result?.Schedules ?? values;
+          }
+          setSchedules(values);
+          setCurrentSchedulesValue(undefined);
+          setCurrentSchedulesDisplayValue("");
+        }}
+        currentFieldValue={currentSchedulesValue}
+        label={"Schedules"}
+        items={Schedules}
+        hasError={errors?.Schedules?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("Schedules", currentSchedulesValue)
+        }
+        errorMessage={errors?.Schedules?.errorMessage}
+        getBadgeText={getDisplayValue.Schedules}
+        setFieldValue={(model) => {
+          setCurrentSchedulesDisplayValue(
+            model ? getDisplayValue.Schedules(model) : ""
+          );
+          setCurrentSchedulesValue(model);
+        }}
+        inputFieldRef={SchedulesRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Schedules"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search Schedule"
+          value={currentSchedulesDisplayValue}
+          options={schedulesRecords
+            .filter((r) => !SchedulesIdSet.has(getIDValue.Schedules?.(r)))
+            .map((r) => ({
+              id: getIDValue.Schedules?.(r),
+              label: getDisplayValue.Schedules?.(r),
+            }))}
+          isLoading={SchedulesLoading}
+          onSelect={({ id, label }) => {
+            setCurrentSchedulesValue(
+              schedulesRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentSchedulesDisplayValue(label);
+            runValidationTasks("Schedules", label);
+          }}
+          onClear={() => {
+            setCurrentSchedulesDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchSchedulesRecords(value);
+            if (errors.Schedules?.hasError) {
+              runValidationTasks("Schedules", value);
+            }
+            setCurrentSchedulesDisplayValue(value);
+            setCurrentSchedulesValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("Schedules", currentSchedulesDisplayValue)
+          }
+          errorMessage={errors.Schedules?.errorMessage}
+          hasError={errors.Schedules?.hasError}
+          ref={SchedulesRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "Schedules")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              Schedules,
+              Tasks: values,
+            };
+            const result = onChange(modelFields);
+            values = result?.Tasks ?? values;
+          }
+          setTasks(values);
+          setCurrentTasksValue(undefined);
+          setCurrentTasksDisplayValue("");
+        }}
+        currentFieldValue={currentTasksValue}
+        label={"Tasks"}
+        items={Tasks}
+        hasError={errors?.Tasks?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("Tasks", currentTasksValue)
+        }
+        errorMessage={errors?.Tasks?.errorMessage}
+        getBadgeText={getDisplayValue.Tasks}
+        setFieldValue={(model) => {
+          setCurrentTasksDisplayValue(
+            model ? getDisplayValue.Tasks(model) : ""
+          );
+          setCurrentTasksValue(model);
+        }}
+        inputFieldRef={TasksRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Tasks"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search Task"
+          value={currentTasksDisplayValue}
+          options={tasksRecords
+            .filter((r) => !TasksIdSet.has(getIDValue.Tasks?.(r)))
+            .map((r) => ({
+              id: getIDValue.Tasks?.(r),
+              label: getDisplayValue.Tasks?.(r),
+            }))}
+          isLoading={TasksLoading}
+          onSelect={({ id, label }) => {
+            setCurrentTasksValue(
+              tasksRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentTasksDisplayValue(label);
+            runValidationTasks("Tasks", label);
+          }}
+          onClear={() => {
+            setCurrentTasksDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchTasksRecords(value);
+            if (errors.Tasks?.hasError) {
+              runValidationTasks("Tasks", value);
+            }
+            setCurrentTasksDisplayValue(value);
+            setCurrentTasksValue(undefined);
+          }}
+          onBlur={() => runValidationTasks("Tasks", currentTasksDisplayValue)}
+          errorMessage={errors.Tasks?.errorMessage}
+          hasError={errors.Tasks?.hasError}
+          ref={TasksRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "Tasks")}
+        ></Autocomplete>
+      </ArrayField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

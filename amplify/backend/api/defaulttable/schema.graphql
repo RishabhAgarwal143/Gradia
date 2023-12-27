@@ -1,4 +1,4 @@
-type Userinfo @model @auth(rules: [{allow: private}]) {
+type Userinfo @model @auth(rules: [{allow: owner},{allow: groups, groups: ["Admins"]}]) {
   id: ID!
   name: String!
   email: AWSEmail!
@@ -6,16 +6,17 @@ type Userinfo @model @auth(rules: [{allow: private}]) {
   Tasks: [Task] @hasMany(indexName: "byUserinfo", fields: ["id"])
 }
 
-type Schedule @model @auth(rules: [{allow: private}]) {
-  time: AWSTime!
-  date: AWSDate!
+type Schedule @model @auth(rules: [{allow: owner},{allow: groups, groups: ["Admins"]}]) {
+  start_time: AWSTime!
+  end_time: AWSTime!
   description: String!
   userinfoID: ID! @index(name: "byUserinfo")
+  date: AWSDate!
 }
 
-type Task @model @auth(rules: [{allow: private}]) {
-  time: AWSTime!
-  date: AWSDate!
+type Task @model @auth(rules: [{allow: owner},{allow: groups, groups: ["Admins"]}]) {
+  due_time: AWSTime!
+  due_date: AWSDate!
   description: String!
   userinfoID: ID! @index(name: "byUserinfo")
 }
