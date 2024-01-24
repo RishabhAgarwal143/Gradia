@@ -38,23 +38,27 @@ export async function get_item() {
 
 export async function create_user() {
   await currentAuthenticatedUser();
-  const oneTodo = await client.graphql({
-    query: queries.getUserinfo,
-    variables: { id: cognito_Id },
-  });
-  if (oneTodo.data.getUserinfo == null) {
-    console.log(`trying to create ${cognito_Id}`);
-    const todoDetails = {
-      name: "Todo 2",
-      email: "local@test.com",
-      id: cognito_Id,
-    };
-
-    await client.graphql({
-      query: mutations.createUserinfo,
-      variables: { input: todoDetails },
+  try {
+    const oneTodo = await client.graphql({
+      query: queries.getUserinfo,
+      variables: { id: cognito_Id },
     });
-    console.log("item created");
+    if (oneTodo.data.getUserinfo == null) {
+      console.log(`trying to create ${cognito_Id}`);
+      const todoDetails = {
+        name: "Todo 2",
+        email: "local@test.com",
+        id: cognito_Id,
+      };
+
+      await client.graphql({
+        query: mutations.createUserinfo,
+        variables: { input: todoDetails },
+      });
+      console.log("item created");
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
 
