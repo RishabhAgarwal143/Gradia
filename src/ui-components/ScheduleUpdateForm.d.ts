@@ -22,27 +22,30 @@ export declare type ValidationResponse = {
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type ScheduleUpdateFormInputValues = {
-    start_time?: string;
-    end_time?: string;
-    description?: string;
+    SUMMARY?: string;
+    DTSTART?: string;
+    DTEND?: string;
+    DESCRIPTION?: string;
+    LOCATION?: string;
     userinfoID?: string;
-    date?: string;
 };
 export declare type ScheduleUpdateFormValidationValues = {
-    start_time?: ValidationFunction<string>;
-    end_time?: ValidationFunction<string>;
-    description?: ValidationFunction<string>;
+    SUMMARY?: ValidationFunction<string>;
+    DTSTART?: ValidationFunction<string>;
+    DTEND?: ValidationFunction<string>;
+    DESCRIPTION?: ValidationFunction<string>;
+    LOCATION?: ValidationFunction<string>;
     userinfoID?: ValidationFunction<string>;
-    date?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type ScheduleUpdateFormOverridesProps = {
     ScheduleUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    start_time?: PrimitiveOverrideProps<TextFieldProps>;
-    end_time?: PrimitiveOverrideProps<TextFieldProps>;
-    description?: PrimitiveOverrideProps<TextFieldProps>;
+    SUMMARY?: PrimitiveOverrideProps<TextFieldProps>;
+    DTSTART?: PrimitiveOverrideProps<TextFieldProps>;
+    DTEND?: PrimitiveOverrideProps<TextFieldProps>;
+    DESCRIPTION?: PrimitiveOverrideProps<TextFieldProps>;
+    LOCATION?: PrimitiveOverrideProps<TextFieldProps>;
     userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
-    date?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type ScheduleUpdateFormProps = React.PropsWithChildren<{
     overrides?: ScheduleUpdateFormOverridesProps | undefined | null;

@@ -12,12 +12,13 @@ export const createUserinfo = /* GraphQL */ `
       email
       Schedules {
         items {
-          start_time
-          end_time
-          description
-          userinfoID
-          date
           id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
           createdAt
           updatedAt
           owner
@@ -28,11 +29,11 @@ export const createUserinfo = /* GraphQL */ `
       }
       Tasks {
         items {
+          id
           due_time
           due_date
           description
           userinfoID
-          id
           createdAt
           updatedAt
           owner
@@ -59,12 +60,13 @@ export const updateUserinfo = /* GraphQL */ `
       email
       Schedules {
         items {
-          start_time
-          end_time
-          description
-          userinfoID
-          date
           id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
           createdAt
           updatedAt
           owner
@@ -75,11 +77,11 @@ export const updateUserinfo = /* GraphQL */ `
       }
       Tasks {
         items {
+          id
           due_time
           due_date
           description
           userinfoID
-          id
           createdAt
           updatedAt
           owner
@@ -106,12 +108,13 @@ export const deleteUserinfo = /* GraphQL */ `
       email
       Schedules {
         items {
-          start_time
-          end_time
-          description
-          userinfoID
-          date
           id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
           createdAt
           updatedAt
           owner
@@ -122,11 +125,11 @@ export const deleteUserinfo = /* GraphQL */ `
       }
       Tasks {
         items {
+          id
           due_time
           due_date
           description
           userinfoID
-          id
           createdAt
           updatedAt
           owner
@@ -148,12 +151,13 @@ export const createSchedule = /* GraphQL */ `
     $condition: ModelScheduleConditionInput
   ) {
     createSchedule(input: $input, condition: $condition) {
-      start_time
-      end_time
-      description
-      userinfoID
-      date
       id
+      SUMMARY
+      DTSTART
+      DTEND
+      DESCRIPTION
+      LOCATION
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -167,12 +171,13 @@ export const updateSchedule = /* GraphQL */ `
     $condition: ModelScheduleConditionInput
   ) {
     updateSchedule(input: $input, condition: $condition) {
-      start_time
-      end_time
-      description
-      userinfoID
-      date
       id
+      SUMMARY
+      DTSTART
+      DTEND
+      DESCRIPTION
+      LOCATION
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -186,12 +191,13 @@ export const deleteSchedule = /* GraphQL */ `
     $condition: ModelScheduleConditionInput
   ) {
     deleteSchedule(input: $input, condition: $condition) {
-      start_time
-      end_time
-      description
-      userinfoID
-      date
       id
+      SUMMARY
+      DTSTART
+      DTEND
+      DESCRIPTION
+      LOCATION
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -205,11 +211,11 @@ export const createTask = /* GraphQL */ `
     $condition: ModelTaskConditionInput
   ) {
     createTask(input: $input, condition: $condition) {
+      id
       due_time
       due_date
       description
       userinfoID
-      id
       createdAt
       updatedAt
       owner
@@ -223,11 +229,11 @@ export const updateTask = /* GraphQL */ `
     $condition: ModelTaskConditionInput
   ) {
     updateTask(input: $input, condition: $condition) {
+      id
       due_time
       due_date
       description
       userinfoID
-      id
       createdAt
       updatedAt
       owner
@@ -241,11 +247,11 @@ export const deleteTask = /* GraphQL */ `
     $condition: ModelTaskConditionInput
   ) {
     deleteTask(input: $input, condition: $condition) {
+      id
       due_time
       due_date
       description
       userinfoID
-      id
       createdAt
       updatedAt
       owner

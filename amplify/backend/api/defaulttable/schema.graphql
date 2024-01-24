@@ -1,4 +1,6 @@
-type Userinfo @model @auth(rules: [{allow: owner},{allow: groups, groups: ["Admins"]}]) {
+type Userinfo
+  @model
+  @auth(rules: [{ allow: owner }, { allow: groups, groups: ["Admins"] }]) {
   id: ID!
   name: String!
   email: AWSEmail!
@@ -6,15 +8,22 @@ type Userinfo @model @auth(rules: [{allow: owner},{allow: groups, groups: ["Admi
   Tasks: [Task] @hasMany(indexName: "byUserinfo", fields: ["id"])
 }
 
-type Schedule @model @auth(rules: [{allow: owner},{allow: groups, groups: ["Admins"]}]) {
-  start_time: AWSTime!
-  end_time: AWSTime!
-  description: String!
+type Schedule
+  @model
+  @auth(rules: [{ allow: owner }, { allow: groups, groups: ["Admins"] }]) {
+  id: ID!
+  SUMMARY: String!
+  DTSTART: AWSDateTime!
+  DTEND: AWSDateTime
+  DESCRIPTION: String!
+  LOCATION: String
   userinfoID: ID! @index(name: "byUserinfo")
-  date: AWSDate!
 }
 
-type Task @model @auth(rules: [{allow: owner},{allow: groups, groups: ["Admins"]}]) {
+type Task
+  @model
+  @auth(rules: [{ allow: owner }, { allow: groups, groups: ["Admins"] }]) {
+  id: ID!
   due_time: AWSTime!
   due_date: AWSDate!
   description: String!

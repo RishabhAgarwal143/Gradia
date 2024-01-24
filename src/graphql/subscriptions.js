@@ -12,12 +12,13 @@ export const onCreateUserinfo = /* GraphQL */ `
       email
       Schedules {
         items {
-          start_time
-          end_time
-          description
-          userinfoID
-          date
           id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
           createdAt
           updatedAt
           owner
@@ -28,11 +29,11 @@ export const onCreateUserinfo = /* GraphQL */ `
       }
       Tasks {
         items {
+          id
           due_time
           due_date
           description
           userinfoID
-          id
           createdAt
           updatedAt
           owner
@@ -59,12 +60,13 @@ export const onUpdateUserinfo = /* GraphQL */ `
       email
       Schedules {
         items {
-          start_time
-          end_time
-          description
-          userinfoID
-          date
           id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
           createdAt
           updatedAt
           owner
@@ -75,11 +77,11 @@ export const onUpdateUserinfo = /* GraphQL */ `
       }
       Tasks {
         items {
+          id
           due_time
           due_date
           description
           userinfoID
-          id
           createdAt
           updatedAt
           owner
@@ -106,12 +108,13 @@ export const onDeleteUserinfo = /* GraphQL */ `
       email
       Schedules {
         items {
-          start_time
-          end_time
-          description
-          userinfoID
-          date
           id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
           createdAt
           updatedAt
           owner
@@ -122,11 +125,11 @@ export const onDeleteUserinfo = /* GraphQL */ `
       }
       Tasks {
         items {
+          id
           due_time
           due_date
           description
           userinfoID
-          id
           createdAt
           updatedAt
           owner
@@ -148,12 +151,13 @@ export const onCreateSchedule = /* GraphQL */ `
     $owner: String
   ) {
     onCreateSchedule(filter: $filter, owner: $owner) {
-      start_time
-      end_time
-      description
-      userinfoID
-      date
       id
+      SUMMARY
+      DTSTART
+      DTEND
+      DESCRIPTION
+      LOCATION
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -167,12 +171,13 @@ export const onUpdateSchedule = /* GraphQL */ `
     $owner: String
   ) {
     onUpdateSchedule(filter: $filter, owner: $owner) {
-      start_time
-      end_time
-      description
-      userinfoID
-      date
       id
+      SUMMARY
+      DTSTART
+      DTEND
+      DESCRIPTION
+      LOCATION
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -186,12 +191,13 @@ export const onDeleteSchedule = /* GraphQL */ `
     $owner: String
   ) {
     onDeleteSchedule(filter: $filter, owner: $owner) {
-      start_time
-      end_time
-      description
-      userinfoID
-      date
       id
+      SUMMARY
+      DTSTART
+      DTEND
+      DESCRIPTION
+      LOCATION
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -205,11 +211,11 @@ export const onCreateTask = /* GraphQL */ `
     $owner: String
   ) {
     onCreateTask(filter: $filter, owner: $owner) {
+      id
       due_time
       due_date
       description
       userinfoID
-      id
       createdAt
       updatedAt
       owner
@@ -223,11 +229,11 @@ export const onUpdateTask = /* GraphQL */ `
     $owner: String
   ) {
     onUpdateTask(filter: $filter, owner: $owner) {
+      id
       due_time
       due_date
       description
       userinfoID
-      id
       createdAt
       updatedAt
       owner
@@ -241,11 +247,11 @@ export const onDeleteTask = /* GraphQL */ `
     $owner: String
   ) {
     onDeleteTask(filter: $filter, owner: $owner) {
+      id
       due_time
       due_date
       description
       userinfoID
-      id
       createdAt
       updatedAt
       owner

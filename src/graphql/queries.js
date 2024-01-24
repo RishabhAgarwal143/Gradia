@@ -9,12 +9,13 @@ export const getUserinfo = /* GraphQL */ `
       email
       Schedules {
         items {
-          start_time
-          end_time
-          description
-          userinfoID
-          date
           id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
           createdAt
           updatedAt
           owner
@@ -25,11 +26,11 @@ export const getUserinfo = /* GraphQL */ `
       }
       Tasks {
         items {
+          id
           due_time
           due_date
           description
           userinfoID
-          id
           createdAt
           updatedAt
           owner
@@ -58,12 +59,13 @@ export const listUserinfos = /* GraphQL */ `
         email
         Schedules {
           items {
-            start_time
-            end_time
-            description
-            userinfoID
-            date
             id
+            SUMMARY
+            DTSTART
+            DTEND
+            DESCRIPTION
+            LOCATION
+            userinfoID
             createdAt
             updatedAt
             owner
@@ -74,11 +76,11 @@ export const listUserinfos = /* GraphQL */ `
         }
         Tasks {
           items {
+            id
             due_time
             due_date
             description
             userinfoID
-            id
             createdAt
             updatedAt
             owner
@@ -100,12 +102,13 @@ export const listUserinfos = /* GraphQL */ `
 export const getSchedule = /* GraphQL */ `
   query GetSchedule($id: ID!) {
     getSchedule(id: $id) {
-      start_time
-      end_time
-      description
-      userinfoID
-      date
       id
+      SUMMARY
+      DTSTART
+      DTEND
+      DESCRIPTION
+      LOCATION
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -121,12 +124,13 @@ export const listSchedules = /* GraphQL */ `
   ) {
     listSchedules(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
-        start_time
-        end_time
-        description
-        userinfoID
-        date
         id
+        SUMMARY
+        DTSTART
+        DTEND
+        DESCRIPTION
+        LOCATION
+        userinfoID
         createdAt
         updatedAt
         owner
@@ -153,12 +157,13 @@ export const schedulesByUserinfoID = /* GraphQL */ `
       nextToken: $nextToken
     ) {
       items {
-        start_time
-        end_time
-        description
-        userinfoID
-        date
         id
+        SUMMARY
+        DTSTART
+        DTEND
+        DESCRIPTION
+        LOCATION
+        userinfoID
         createdAt
         updatedAt
         owner
@@ -172,11 +177,11 @@ export const schedulesByUserinfoID = /* GraphQL */ `
 export const getTask = /* GraphQL */ `
   query GetTask($id: ID!) {
     getTask(id: $id) {
+      id
       due_time
       due_date
       description
       userinfoID
-      id
       createdAt
       updatedAt
       owner
@@ -192,11 +197,11 @@ export const listTasks = /* GraphQL */ `
   ) {
     listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
+        id
         due_time
         due_date
         description
         userinfoID
-        id
         createdAt
         updatedAt
         owner
@@ -223,11 +228,11 @@ export const tasksByUserinfoID = /* GraphQL */ `
       nextToken: $nextToken
     ) {
       items {
+        id
         due_time
         due_date
         description
         userinfoID
-        id
         createdAt
         updatedAt
         owner

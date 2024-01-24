@@ -192,36 +192,39 @@ export default function ScheduleUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    start_time: "",
-    end_time: "",
-    description: "",
+    SUMMARY: "",
+    DTSTART: "",
+    DTEND: "",
+    DESCRIPTION: "",
+    LOCATION: "",
     userinfoID: undefined,
-    date: "",
   };
-  const [start_time, setStart_time] = React.useState(initialValues.start_time);
-  const [end_time, setEnd_time] = React.useState(initialValues.end_time);
-  const [description, setDescription] = React.useState(
-    initialValues.description
+  const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
+  const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
+  const [DTEND, setDTEND] = React.useState(initialValues.DTEND);
+  const [DESCRIPTION, setDESCRIPTION] = React.useState(
+    initialValues.DESCRIPTION
   );
+  const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
   const [userinfoIDLoading, setUserinfoIDLoading] = React.useState(false);
   const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
   const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
     React.useState([]);
-  const [date, setDate] = React.useState(initialValues.date);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = scheduleRecord
       ? { ...initialValues, ...scheduleRecord, userinfoID }
       : initialValues;
-    setStart_time(cleanValues.start_time);
-    setEnd_time(cleanValues.end_time);
-    setDescription(cleanValues.description);
+    setSUMMARY(cleanValues.SUMMARY);
+    setDTSTART(cleanValues.DTSTART);
+    setDTEND(cleanValues.DTEND);
+    setDESCRIPTION(cleanValues.DESCRIPTION);
+    setLOCATION(cleanValues.LOCATION);
     setUserinfoID(cleanValues.userinfoID);
     setCurrentUserinfoIDValue(undefined);
     setCurrentUserinfoIDDisplayValue("");
-    setDate(cleanValues.date);
     setErrors({});
   };
   const [scheduleRecord, setScheduleRecord] = React.useState(scheduleModelProp);
@@ -260,11 +263,12 @@ export default function ScheduleUpdateForm(props) {
     userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
   };
   const validations = {
-    start_time: [{ type: "Required" }],
-    end_time: [{ type: "Required" }],
-    description: [{ type: "Required" }],
+    SUMMARY: [{ type: "Required" }],
+    DTSTART: [{ type: "Required" }],
+    DTEND: [],
+    DESCRIPTION: [{ type: "Required" }],
+    LOCATION: [],
     userinfoID: [{ type: "Required" }],
-    date: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -282,6 +286,23 @@ export default function ScheduleUpdateForm(props) {
     }
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
+  };
+  const convertToLocal = (date) => {
+    const df = new Intl.DateTimeFormat("default", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      calendar: "iso8601",
+      numberingSystem: "latn",
+      hourCycle: "h23",
+    });
+    const parts = df.formatToParts(date).reduce((acc, part) => {
+      acc[part.type] = part.value;
+      return acc;
+    }, {});
+    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
   };
   const fetchUserinfoIDRecords = async (value) => {
     setUserinfoIDLoading(true);
@@ -322,11 +343,12 @@ export default function ScheduleUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          start_time,
-          end_time,
-          description,
+          SUMMARY,
+          DTSTART,
+          DTEND: DTEND ?? null,
+          DESCRIPTION,
+          LOCATION: LOCATION ?? null,
           userinfoID,
-          date,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -379,90 +401,153 @@ export default function ScheduleUpdateForm(props) {
       {...rest}
     >
       <TextField
-        label="Start time"
+        label="Summary"
         isRequired={true}
         isReadOnly={false}
-        type="time"
-        value={start_time}
+        value={SUMMARY}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              start_time: value,
-              end_time,
-              description,
+              SUMMARY: value,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
               userinfoID,
-              date,
             };
             const result = onChange(modelFields);
-            value = result?.start_time ?? value;
+            value = result?.SUMMARY ?? value;
           }
-          if (errors.start_time?.hasError) {
-            runValidationTasks("start_time", value);
+          if (errors.SUMMARY?.hasError) {
+            runValidationTasks("SUMMARY", value);
           }
-          setStart_time(value);
+          setSUMMARY(value);
         }}
-        onBlur={() => runValidationTasks("start_time", start_time)}
-        errorMessage={errors.start_time?.errorMessage}
-        hasError={errors.start_time?.hasError}
-        {...getOverrideProps(overrides, "start_time")}
+        onBlur={() => runValidationTasks("SUMMARY", SUMMARY)}
+        errorMessage={errors.SUMMARY?.errorMessage}
+        hasError={errors.SUMMARY?.hasError}
+        {...getOverrideProps(overrides, "SUMMARY")}
       ></TextField>
       <TextField
-        label="End time"
+        label="Dtstart"
         isRequired={true}
         isReadOnly={false}
-        type="time"
-        value={end_time}
+        type="datetime-local"
+        value={DTSTART && convertToLocal(new Date(DTSTART))}
         onChange={(e) => {
-          let { value } = e.target;
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
           if (onChange) {
             const modelFields = {
-              start_time,
-              end_time: value,
-              description,
+              SUMMARY,
+              DTSTART: value,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
               userinfoID,
-              date,
             };
             const result = onChange(modelFields);
-            value = result?.end_time ?? value;
+            value = result?.DTSTART ?? value;
           }
-          if (errors.end_time?.hasError) {
-            runValidationTasks("end_time", value);
+          if (errors.DTSTART?.hasError) {
+            runValidationTasks("DTSTART", value);
           }
-          setEnd_time(value);
+          setDTSTART(value);
         }}
-        onBlur={() => runValidationTasks("end_time", end_time)}
-        errorMessage={errors.end_time?.errorMessage}
-        hasError={errors.end_time?.hasError}
-        {...getOverrideProps(overrides, "end_time")}
+        onBlur={() => runValidationTasks("DTSTART", DTSTART)}
+        errorMessage={errors.DTSTART?.errorMessage}
+        hasError={errors.DTSTART?.hasError}
+        {...getOverrideProps(overrides, "DTSTART")}
+      ></TextField>
+      <TextField
+        label="Dtend"
+        isRequired={false}
+        isReadOnly={false}
+        type="datetime-local"
+        value={DTEND && convertToLocal(new Date(DTEND))}
+        onChange={(e) => {
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND: value,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+            };
+            const result = onChange(modelFields);
+            value = result?.DTEND ?? value;
+          }
+          if (errors.DTEND?.hasError) {
+            runValidationTasks("DTEND", value);
+          }
+          setDTEND(value);
+        }}
+        onBlur={() => runValidationTasks("DTEND", DTEND)}
+        errorMessage={errors.DTEND?.errorMessage}
+        hasError={errors.DTEND?.hasError}
+        {...getOverrideProps(overrides, "DTEND")}
       ></TextField>
       <TextField
         label="Description"
         isRequired={true}
         isReadOnly={false}
-        value={description}
+        value={DESCRIPTION}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              start_time,
-              end_time,
-              description: value,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION: value,
+              LOCATION,
               userinfoID,
-              date,
             };
             const result = onChange(modelFields);
-            value = result?.description ?? value;
+            value = result?.DESCRIPTION ?? value;
           }
-          if (errors.description?.hasError) {
-            runValidationTasks("description", value);
+          if (errors.DESCRIPTION?.hasError) {
+            runValidationTasks("DESCRIPTION", value);
           }
-          setDescription(value);
+          setDESCRIPTION(value);
         }}
-        onBlur={() => runValidationTasks("description", description)}
-        errorMessage={errors.description?.errorMessage}
-        hasError={errors.description?.hasError}
-        {...getOverrideProps(overrides, "description")}
+        onBlur={() => runValidationTasks("DESCRIPTION", DESCRIPTION)}
+        errorMessage={errors.DESCRIPTION?.errorMessage}
+        hasError={errors.DESCRIPTION?.hasError}
+        {...getOverrideProps(overrides, "DESCRIPTION")}
+      ></TextField>
+      <TextField
+        label="Location"
+        isRequired={false}
+        isReadOnly={false}
+        value={LOCATION}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION: value,
+              userinfoID,
+            };
+            const result = onChange(modelFields);
+            value = result?.LOCATION ?? value;
+          }
+          if (errors.LOCATION?.hasError) {
+            runValidationTasks("LOCATION", value);
+          }
+          setLOCATION(value);
+        }}
+        onBlur={() => runValidationTasks("LOCATION", LOCATION)}
+        errorMessage={errors.LOCATION?.errorMessage}
+        hasError={errors.LOCATION?.hasError}
+        {...getOverrideProps(overrides, "LOCATION")}
       ></TextField>
       <ArrayField
         lengthLimit={1}
@@ -470,11 +555,12 @@ export default function ScheduleUpdateForm(props) {
           let value = items[0];
           if (onChange) {
             const modelFields = {
-              start_time,
-              end_time,
-              description,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
               userinfoID: value,
-              date,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -560,35 +646,6 @@ export default function ScheduleUpdateForm(props) {
           {...getOverrideProps(overrides, "userinfoID")}
         ></Autocomplete>
       </ArrayField>
-      <TextField
-        label="Date"
-        isRequired={true}
-        isReadOnly={false}
-        type="date"
-        value={date}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              start_time,
-              end_time,
-              description,
-              userinfoID,
-              date: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.date ?? value;
-          }
-          if (errors.date?.hasError) {
-            runValidationTasks("date", value);
-          }
-          setDate(value);
-        }}
-        onBlur={() => runValidationTasks("date", date)}
-        errorMessage={errors.date?.errorMessage}
-        hasError={errors.date?.hasError}
-        {...getOverrideProps(overrides, "date")}
-      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

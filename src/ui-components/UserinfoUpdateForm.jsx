@@ -282,7 +282,7 @@ export default function UserinfoUpdateForm(props) {
       : getIDValue.Tasks?.(Tasks)
   );
   const getDisplayValue = {
-    Schedules: (r) => `${r?.description ? r?.description + " - " : ""}${r?.id}`,
+    Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
     Tasks: (r) => `${r?.description ? r?.description + " - " : ""}${r?.id}`,
   };
   const validations = {
@@ -316,10 +316,7 @@ export default function UserinfoUpdateForm(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [
-            { description: { contains: value } },
-            { id: { contains: value } },
-          ],
+          or: [{ SUMMARY: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
