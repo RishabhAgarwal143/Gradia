@@ -4,8 +4,10 @@ import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
 import { getCurrentUser } from "aws-amplify/auth";
 import { fetchAuthSession } from "aws-amplify/auth";
+import { fetchUserAttributes } from "aws-amplify/auth";
 
 export var cognito_Id;
+var CurrentUsersEmail;
 export async function currentAuthenticatedUser() {
   try {
     const { username, userId, signInDetails } = await getCurrentUser();
@@ -20,6 +22,16 @@ export async function currentAuthenticatedUser() {
     console.log(`The signInDetails: ${signInDetails}`);
   } catch (err) {
     console.log(err);
+  }
+}
+
+export async function handleFetchUserAttributes() {
+  try {
+    const userAttributes = await fetchUserAttributes();
+    console.log(userAttributes);
+    CurrentUsersEmail = userAttributes.email;
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -38,6 +50,7 @@ export async function get_item() {
 
 export async function create_user() {
   await currentAuthenticatedUser();
+  await handleFetchUserAttributes();
   try {
     const oneTodo = await client.graphql({
       query: queries.getUserinfo,
@@ -46,8 +59,8 @@ export async function create_user() {
     if (oneTodo.data.getUserinfo == null) {
       console.log(`trying to create ${cognito_Id}`);
       const todoDetails = {
-        name: "Todo 2",
-        email: "local@test.com",
+        name: "LocalMachine",
+        email: CurrentUsersEmail,
         id: cognito_Id,
       };
 

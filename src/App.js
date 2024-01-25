@@ -29,6 +29,7 @@ function App() {
           }}
         /> */}
         <button onClick={commands.create_user}>Create User</button>
+        <button onClick={commands.handleFetchUserAttributes}>Fetch User</button>
         <button onClick={commands.get_item}>Get record</button>
         <button onClick={printlog}>printing userid</button>
         {/* <button onClick={commands.create_schedule}>add Schedules</button> */}
