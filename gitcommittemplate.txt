@@ -1,0 +1,11 @@
+# Example commit message template
+#
+[] Feature
+[] Modification
+[] Bug Fix 
+
+# Summary:
+#
+# Details:
+#
+# References:
