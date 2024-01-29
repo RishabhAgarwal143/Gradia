@@ -4,6 +4,10 @@
  * Any changes to this file will be overwritten when running amplify pull. *
  **************************************************************************/
 
+export { default as Day } from "./Day";
+export { default as DayHeader } from "./DayHeader";
+export { default as Event } from "./Event";
+export { default as HourRow } from "./HourRow";
 export { default as ScheduleCreateForm } from "./ScheduleCreateForm";
 export { default as ScheduleUpdateForm } from "./ScheduleUpdateForm";
 export { default as TaskCreateForm } from "./TaskCreateForm";
