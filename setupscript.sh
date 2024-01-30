@@ -12,8 +12,8 @@ AWSCLOUDFORMATIONCONFIG="{\
 \"configLevel\":\"project\",\
 \"useProfile\":false,\
 \"profileName\":\"system\",\
-\"accessKeyId\":\"${{secret.ACCESSKEYID}}\",\
-\"secretAccessKey\":\"${{secret.SECRETACCESSKEY}}\",\
+\"accessKeyId\":\"${{secrets.ACCESSKEYID}}\",\
+\"secretAccessKey\":\"${{secrets.SECRETACCESSKEY}}\",\
 \"region\":\"us-east-2\"\
 }"
 AMPLIFY="{\
