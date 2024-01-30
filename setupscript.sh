@@ -12,7 +12,7 @@ AWSCLOUDFORMATIONCONFIG="{\
 \"configLevel\":\"project\",\
 \"useProfile\":false,\
 \"profileName\":\"system\",\
-\"accessKeyId\":\"${{secrets.ACCESSKEYID}}\",\
+\"accessKeyId\":\"${{ACCESSKEYID}}\",\
 \"secretAccessKey\":\"${{secrets.SECRETACCESSKEY}}\",\
 \"region\":\"us-east-2\"\
 }"
