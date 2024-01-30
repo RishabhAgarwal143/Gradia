@@ -1,0 +1,2645 @@
+BEGIN:VCALENDAR
+PRODID:-//D2L//NONSGML v1.0//EN
+VERSION:2.0
+METHOD:PUBLISH
+X-WR-CALNAME:All Courses - Purdue University System
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Online Meeting 
+LOCATION:Purdue University System
+CLASS:PUBLIC
+DTSTART;VALUE=DATE:20200206
+DTEND;VALUE=DATE:20200207
+UID:6606-21829@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20200214T180705Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Getting Started
+LOCATION:Purdue University System
+DESCRIPTION:Materials:\nGetting Started - https://purdue.brightspace.com/d2
+	l/le/content/6606/viewContent/906/View\n\n\nView event - https://purdue.bri
+	ghtspace.com/d2l/le/calendar/6606/event/21830/detailsview?ou=6606#21830
+CLASS:PUBLIC
+DTSTART;VALUE=DATE:20200206
+DTEND;VALUE=DATE:20200207
+UID:6606-21830@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20200214T180753Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Political Discourse Club Conversation
+LOCATION:https://purdue-edu.zoom.us/j/97699260432 (Purdue Civics Knowledge 
+	Test)
+DESCRIPTION:Wed\, Feb 3\, 2021 6:30 PM EST - Wed\, Feb 3\, 2021 7:30 PM EST
+	 at Online\n https://purdue-edu.zoom.us/j/97699260432\n\nA civil political 
+	conversation during polarized times. Sign up for moderated small group disc
+	ussions on Zoom with other students. Info can be found on our website purdu
+	epdc.org and in our GroupMe.
+CLASS:PUBLIC
+DTSTART:20210203T233000Z
+DTEND:20210204T003000Z
+UID:6606-1205997@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20210817T155435Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Political Discourse Club Conversation
+LOCATION:https://purdue-edu.zoom.us/j/97699260432 (Purdue Civics Knowledge 
+	Test)
+DESCRIPTION:\n\n\n\nPolitical Discourse Club ConversationFEB. 10 | 6:30-7:3
+	0PM EDT\n\n\n\n\nA civil political conversation during polarized times. Sig
+	n up for moderated small group discussions on Zoom with other students. Inf
+	o can be found on our website purduepdc.org and in our GroupMe.\nZoom link:
+	 https://purdue-edu.zoom.us/j/97699260432 \n\n\n\n\n
+CLASS:PUBLIC
+DTSTART:20210210T233000Z
+DTEND:20210211T003000Z
+UID:6606-1205998@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20210817T155435Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Political Discourse Club Conversation
+LOCATION:https://purdue-edu.zoom.us/j/97699260432 (Purdue Civics Knowledge 
+	Test)
+DESCRIPTION:\n\n\n\nPolitical Discourse Club ConversationFEB. 17 | 6:30-7:3
+	0PM EDT\n\n\n\n\nA civil political conversation during polarized times. Sig
+	n up for moderated small group discussions on Zoom with other students. Inf
+	o can be found on our website purduepdc.org and in our GroupMe.\nZoom link:
+	 https://purdue-edu.zoom.us/j/97699260432 \n\n\n\n\n
+CLASS:PUBLIC
+DTSTART:20210217T233000Z
+DTEND:20210218T003000Z
+UID:6606-1205999@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20210817T155435Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Political Discourse Club Conversation
+LOCATION:https://purdue-edu.zoom.us/j/97699260432 (Purdue Civics Knowledge 
+	Test)
+DESCRIPTION:\n\n\n\nPolitical Discourse Club ConversationFEB. 17 | 6:30-7:3
+	0PM EDT\n\n\n\n\nA civil political conversation during polarized times. Sig
+	n up for moderated small group discussions on Zoom with other students. Inf
+	o can be found on our website purduepdc.org and in our GroupMe.\nZoom link:
+	 https://purdue-edu.zoom.us/j/97699260432 \n\n\n\n\n
+CLASS:PUBLIC
+DTSTART:20210224T233000Z
+DTEND:20210225T003000Z
+UID:6606-1206000@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20210817T155435Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Let's Start Here: A Governmental Relations Speaker Panel
+LOCATION:https://purdue-edu.zoom.us/j/92062956215 (Purdue Civics Knowledge 
+	Test)
+DESCRIPTION:\n\n\n\nLet's Start Here: A Governmental Relations Speaker Pane
+	l FEB. 25 | 6:00 - 7:00PM EDT\n\n\n\n\nThe Governmental Relations Committee
+	 of PSG will host an entirely virtual event where speakers from both local 
+	and state government speak with college students on topics of governmental 
+	relations and government action. Topics that will be discussed include what
+	 exactly a job in government entails\, providing information on ways for co
+	llege students to become more involved in government action\, and more. Aft
+	er speakers touch on these topics\, the event will be opened up for an inte
+	ractive Q&A session between student attendees and our guest speakers. The v
+	irtual event will be operated via Zoom and last for the entirety of one hou
+	r.\n\n\n\n\n\n\nZoom link: https://purdue-edu.zoom.us/j/92062956215 \n\n\n\
+	n
+CLASS:PUBLIC
+DTSTART:20210225T230000Z
+DTEND:20210226T000000Z
+UID:6606-1206001@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20210817T155435Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PA3 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_reroot_int_spring2023.pdf.  The exam
+	ples are in pa3_examples.zip.\n\n\nAssignments:\nPA3 - https://purdue.brigh
+	tspace.com/d2l/lms/dropbox/dropbox.d2l?ou=949434&db=943277\n\n\nView event 
+	- https://purdue.brightspace.com/d2l/le/calendar/949434/event/2895161/detai
+	lsview?ou=949434#2895161
+CLASS:PUBLIC
+DTSTART:20230307T045959Z
+DTEND:20230307T045959Z
+UID:6606-2895161@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240109T183215Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PA4 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_avl_trees_spring2023.pdf.  The .h fi
+	le is hbt.h.  The examples are in pa4_examples.zip.\n\n\nAssignments:\nPA4 
+	- https://purdue.brightspace.com/d2l/lms/dropbox/dropbox.d2l?ou=949434&db=9
+	43278\n\n\nView event - https://purdue.brightspace.com/d2l/le/calendar/9494
+	34/event/2895164/detailsview?ou=949434#2895164
+CLASS:PUBLIC
+DTSTART:20230328T035959Z
+DTEND:20230328T035959Z
+UID:6606-2895164@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240109T183219Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PA5 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_river_spring2023.pdf.  The examples 
+	are in pa5_examples.zip.  Please note that the deadline is on a Friday\, wh
+	ich is different from the deadlines of the submissions of other programming
+	 assignments.\n\n\nAssignments:\nPA5 - https://purdue.brightspace.com/d2l/l
+	ms/dropbox/dropbox.d2l?ou=949434&db=943283\n\n\nView event - https://purdue
+	.brightspace.com/d2l/le/calendar/949434/event/2895170/detailsview?ou=949434
+	#2895170
+CLASS:PUBLIC
+DTSTART:20230422T035959Z
+DTEND:20230422T035959Z
+UID:6606-2895170@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240109T183248Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Re-PA1 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_shellsort_2p3q_spring2023.pdf.  The 
+	.h files are sequence.h\, shell_array.h\, and shell_list.h.  The examples a
+	re in pa1_examples.zip.\n\n\nAssignments:\nRe-PA1 - https://purdue.brightsp
+	ace.com/d2l/lms/dropbox/dropbox.d2l?ou=949434&db=943279\n\n\nView event - h
+	ttps://purdue.brightspace.com/d2l/le/calendar/949434/event/2895163/detailsv
+	iew?ou=949434#2895163
+CLASS:PUBLIC
+DTSTART:20230430T040100Z
+DTEND:20230430T040100Z
+UID:6606-2895163@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240109T183225Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Re-PA4 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_avl_trees_spring2023.pdf.  The .h fi
+	le is hbt.h.  The examples are in pa4_examples.zip.\n\n\nAssignments:\nRe-P
+	A4 - https://purdue.brightspace.com/d2l/lms/dropbox/dropbox.d2l?ou=949434&d
+	b=943282\n\n\nView event - https://purdue.brightspace.com/d2l/le/calendar/9
+	49434/event/2895168/detailsview?ou=949434#2895168
+CLASS:PUBLIC
+DTSTART:20230430T040100Z
+DTEND:20230430T040100Z
+UID:6606-2895168@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240109T183241Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Re-PA2 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_flr_pre_int_spring2023.pdf.  The exa
+	mples are in pa2_examples.zip.\n\n\nAssignments:\nRe-PA2 - https://purdue.b
+	rightspace.com/d2l/lms/dropbox/dropbox.d2l?ou=949434&db=943280\n\n\nView ev
+	ent - https://purdue.brightspace.com/d2l/le/calendar/949434/event/2895167/d
+	etailsview?ou=949434#2895167
+CLASS:PUBLIC
+DTSTART:20230430T040100Z
+DTEND:20230430T040100Z
+UID:6606-2895167@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240109T183231Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Re-PA3 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_reroot_int_spring2023.pdf.  The exam
+	ples are in pa3_examples.zip.\n\n\nAssignments:\nRe-PA3 - https://purdue.br
+	ightspace.com/d2l/lms/dropbox/dropbox.d2l?ou=949434&db=943281\n\n\nView eve
+	nt - https://purdue.brightspace.com/d2l/le/calendar/949434/event/2895169/de
+	tailsview?ou=949434#2895169
+CLASS:PUBLIC
+DTSTART:20230430T040100Z
+DTEND:20230430T040100Z
+UID:6606-2895169@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240109T183235Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Re-PA5 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_river_spring2023.pdf.  The examples 
+	are in pa5_examples.zip.  Please note that the deadline is on a Friday\, wh
+	ich is different from the deadlines of the submissions of other programming
+	 assignments.\n\n\nAssignments:\nRe-PA5 - https://purdue.brightspace.com/d2
+	l/lms/dropbox/dropbox.d2l?ou=949434&db=943284\n\n\nView event - https://pur
+	due.brightspace.com/d2l/le/calendar/949434/event/2895171/detailsview?ou=949
+	434#2895171
+CLASS:PUBLIC
+DTSTART:20230430T040100Z
+DTEND:20230430T040100Z
+UID:6606-2895171@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240109T183252Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Chapter 1: The Science of Psychology - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Chapter 1: The Science of Psychology\n\n\nMaterials:\nChapter 1
+	: The Science of Psychology - https://purdue.brightspace.com/d2l/le/content
+	/958519/viewContent/15627959/View\n\n\nView event - https://purdue.brightsp
+	ace.com/d2l/le/calendar/958519/event/2975654/detailsview?ou=958519#2975654
+CLASS:PUBLIC
+DTSTART:20240108T190100Z
+DTEND:20240108T190100Z
+UID:6606-2975654@purdue.brightspace.com
+SEQUENCE:10
+LAST-MODIFIED:20240109T042132Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Connect Orientation Videos - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Connect Orientation Videos\n\n\nMaterials:\nConnect Orientation
+	 Videos - https://purdue.brightspace.com/d2l/le/content/958519/viewContent/
+	15627957/View\n\n\nView event - https://purdue.brightspace.com/d2l/le/calen
+	dar/958519/event/2975652/detailsview?ou=958519#2975652
+CLASS:PUBLIC
+DTSTART:20240108T190200Z
+DTEND:20240108T190200Z
+UID:6606-2975652@purdue.brightspace.com
+SEQUENCE:13
+LAST-MODIFIED:20240108T190254Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:SmartBook 2.0 Student Overview - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:SmartBook 2.0 Student Overview\n\n\nMaterials:\nSmartBook 2.0 S
+	tudent Overview - https://purdue.brightspace.com/d2l/le/content/958519/view
+	Content/15627958/View\n\n\nView event - https://purdue.brightspace.com/d2l/
+	le/calendar/958519/event/2975653/detailsview?ou=958519#2975653
+CLASS:PUBLIC
+DTSTART:20240108T190300Z
+DTEND:20240108T190300Z
+UID:6606-2975653@purdue.brightspace.com
+SEQUENCE:10
+LAST-MODIFIED:20240108T190335Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 1: Personal balance sheet - Available
+LOCATION:Spring 2024 CSR 34200-001 LEC
+DESCRIPTION:Assignments:\nHomework 1: Personal balance sheet\n\n\nView even
+	t - https://purdue.brightspace.com/d2l/le/calendar/949135/event/2977214/det
+	ailsview?ou=949135#2977214
+CLASS:PUBLIC
+DTSTART:20240112T050100Z
+DTEND:20240112T050100Z
+UID:6606-2977214@purdue.brightspace.com
+SEQUENCE:15
+LAST-MODIFIED:20240109T210937Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 2: Personal cash flow statement - Available
+LOCATION:Spring 2024 CSR 34200-001 LEC
+DESCRIPTION:Assignments:\nHomework 2: Personal cash flow statement\n\n\nVie
+	w event - https://purdue.brightspace.com/d2l/le/calendar/949135/event/29772
+	27/detailsview?ou=949135#2977227
+CLASS:PUBLIC
+DTSTART:20240112T050100Z
+DTEND:20240112T050100Z
+UID:6606-2977227@purdue.brightspace.com
+SEQUENCE:15
+LAST-MODIFIED:20240109T210945Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 01 Video 3 PSY 120 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><strong><span style="color: rgb(205\, 32\, 38)\;">Suggested 
+	Viewing: Thursday\, length 9:24</span></strong></p>\n<p>Goes along with syl
+	labus sections Exams\, Makeups/drops/late work\, Final Grade computation\, 
+	extra credit.</p>\n\n\nMaterials:\nModule 01 Video 3 PSY 120\n\n\nView even
+	t - https://purdue.brightspace.com/d2l/le/calendar/958519/event/2975589/det
+	ailsview?ou=958519#2975589
+CLASS:PUBLIC
+DTSTART:20240113T045900Z
+DTEND:20240113T045900Z
+UID:6606-2975589@purdue.brightspace.com
+SEQUENCE:6
+LAST-MODIFIED:20240109T093748Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 01 Video 4 PSY 120 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	Viewing: Friday\, Length 4:54</strong></span></p>\n<p>Goes along with last 
+	syllabus section on misconduct. Just a blurb with some good guidelines for 
+	online learning in general (and this class in particular!)</p>\n\n\nMateria
+	ls:\nModule 01 Video 4 PSY 120\n\n\nView event - https://purdue.brightspace
+	.com/d2l/le/calendar/958519/event/2975591/detailsview?ou=958519#2975591
+CLASS:PUBLIC
+DTSTART:20240113T045900Z
+DTEND:20240113T045900Z
+UID:6606-2975591@purdue.brightspace.com
+SEQUENCE:6
+LAST-MODIFIED:20240109T093244Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 01 Video 1 PSY 120 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing: Tuesday\, length: 29:21</strong></span></p>\n<p>Before watching th
+	is video\, you need to:&nbsp\;</p>\n<p>1)Read the first 3 sections from the
+	 Table of Contents of the <a rel="noopener" href="/d2l/common/dialogs/quick
+	Link/quickLink.d2l?ou=958519&amp\;type=content&amp\;overview=1" target="_bl
+	ank">Syllabus</a>:&nbsp\; "What is this class about?"\, "Meet the Course St
+	aff"\, and "Purchase/Setup Course Material".&nbsp\; &nbsp\;&nbsp\;</p>\n<p>
+	2) As indicated in the syllabus margins from those sections\, thoroughly re
+	ad this Brightspace module: &nbsp\;<a rel="noopener" href="/d2l/common/dial
+	ogs/quickLink/quickLink.d2l?ou=958519&amp\;type=content&amp\;rcode=354644E0
+	-4CD8-419D-A32F-4E78D8778E5C-1064895" target="_blank">HOW TO CONNECT WITH C
+	OURSE STAFF</a>(important details on communication policies\, office hours\
+	, etc).&nbsp\;</p>\n<p>To get your points\, after you have viewed the whole
+	 clip and answered all the embedded quiz questions\, the button in the top 
+	righthand corner should turn blue and say "Exit Video".&nbsp\; You click on
+	 that to submit your score to the Brightspace gradebook.</p>\n\n\nMaterials
+	:\nModule 01 Video 1 PSY 120\n\n\nView event - https://purdue.brightspace.c
+	om/d2l/le/calendar/958519/event/2975594/detailsview?ou=958519#2975594
+CLASS:PUBLIC
+DTSTART:20240113T045900Z
+DTEND:20240113T045900Z
+UID:6606-2975594@purdue.brightspace.com
+SEQUENCE:11
+LAST-MODIFIED:20240109T071638Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 01 Video 2 PSY 120 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing: Wednesday\, length 23:54</strong></span></p>\n<p>Corresponds to th
+	e syllabus sections on weekly/semester schedule\, and how to complete each 
+	of your weekly tasks.</p>\n<p>Last two videos (videos 3 and 4) with suggest
+	ed Thurs/Fri viewing will be shorter.&nbsp\;</p>\n\n\nMaterials:\nModule 01
+	 Video 2 PSY 120\n\n\nView event - https://purdue.brightspace.com/d2l/le/ca
+	lendar/958519/event/2975600/detailsview?ou=958519#2975600
+CLASS:PUBLIC
+DTSTART:20240113T045900Z
+DTEND:20240113T045900Z
+UID:6606-2975600@purdue.brightspace.com
+SEQUENCE:7
+LAST-MODIFIED:20240109T085428Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:DEADLINE EXTENDED TO SUNDAY FOR THOSE ADDING COURSE LATE: Module 1 
+	Piazza Small Group Discussion Contributions - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:After completing Video 2 for this module which will be availabl
+	e on Wednesday morning\, you should be familiar with the instructions surro
+	unding accessing and using Piazza in this class and you are reading to comp
+	lete your module 1 posts.  Before doing so\, it's a good idea to also revie
+	w the two pinned posts on Piazza titled "HOW TO USE PIAZZA" and "SMALLGROUP
+	 POSTING GUIDELINES". \nRemember that normally piazza contributions are due
+	 by Friday\, but that you must make two contributions by Sunday for the fir
+	st module to give a little extra time to those adding the course late this 
+	week.  You will find the small group discussion happening this week in the 
+	thread labeled "Module 1 Required Small Group Discussion" .  Post something
+	 yourself and respond to someone else (participation credit is all or none\
+	, so make sure you both post and respond).  If you want your responses to c
+	ount\, make absolutely sure that you post them within the Module 1 Required
+	 Small Group Discussion thread that was started by an instructor or TA and 
+	is pinned to the top of the board.  This thread is only visible to your ass
+	igned small discussion group.  This activity is required for a grade\, but 
+	you will need to wait to have your smallgroup discussion grades uploaded ma
+	nually by a TA (they should be up by the following Friday after the discuss
+	ion closes)\, so sit tight for the grade to appear.  Go ahead and check off
+	 for yourself that you completed this activity right after you make your po
+	sts\, so you remember that you are done! \n\n\n\nAssignments:\nDEADLINE EXT
+	ENDED TO SUNDAY FOR THOSE ADDING COURSE LATE: Module 1 Piazza Small Group D
+	iscussion Contributions - https://purdue.brightspace.com/d2l/lms/dropbox/us
+	er/folder_submit_files.d2l?ou=958519&db=973994\n\n\nView event - https://pu
+	rdue.brightspace.com/d2l/le/calendar/958519/event/2975588/detailsview?ou=95
+	8519#2975588
+CLASS:PUBLIC
+DTSTART:20240115T045900Z
+DTEND:20240115T045900Z
+UID:6606-2975588@purdue.brightspace.com
+SEQUENCE:13
+LAST-MODIFIED:20240109T071654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 1 Assessment - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 1 Assessment\n\n\nMaterials:\nModule 1 Assessment\n\n\nV
+	iew event - https://purdue.brightspace.com/d2l/le/calendar/958519/event/297
+	5651/detailsview?ou=958519#2975651
+CLASS:PUBLIC
+DTSTART:20240115T045900Z
+DTEND:20240115T045900Z
+UID:6606-2975651@purdue.brightspace.com
+SEQUENCE:6
+LAST-MODIFIED:20240108T193806Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 2 (Science of Psychology) SB Assignment - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 2 (Science of Psychology) SB Assignment\n\n\nMaterials:\
+	nModule 2 (Science of Psychology) SB Assignment\n\n\nView event - https://p
+	urdue.brightspace.com/d2l/le/calendar/958519/event/2975655/detailsview?ou=9
+	58519#2975655
+CLASS:PUBLIC
+DTSTART:20240115T045900Z
+DTEND:20240115T045900Z
+UID:6606-2975655@purdue.brightspace.com
+SEQUENCE:14
+LAST-MODIFIED:20240109T042132Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Chapter 2: The Brain and Behavior - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Chapter 2: The Brain and Behavior\n\n\nMaterials:\nChapter 2: T
+	he Brain and Behavior - https://purdue.brightspace.com/d2l/le/content/95851
+	9/viewContent/15717178/View\n\n\nView event - https://purdue.brightspace.co
+	m/d2l/le/calendar/958519/event/3002317/detailsview?ou=958519#3002317
+CLASS:PUBLIC
+DTSTART:20240115T130000Z
+DTEND:20240115T130000Z
+UID:6606-3002317@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240115T075704Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Final Proposal - Due
+LOCATION:Spring 2024 ECE 49595-013 LEC
+DESCRIPTION:Make sure to include:1. Repository information (github\, gitlab
+	\, whatever)2. Context diagram3. System Diagram4. Requirements5. OSS (or no
+	t) libraries usedI recommend you take the proposal you used last semester a
+	nd add/refine it. For some of you this may be trivial as you already had so
+	mething very mature to begin with\n\n\nAssignments:\nFinal Proposal - https
+	://purdue.brightspace.com/d2l/lms/dropbox/user/folder_submit_files.d2l?ou=9
+	49495&db=977909\n\n\nView event - https://purdue.brightspace.com/d2l/le/cal
+	endar/949495/event/2987432/detailsview?ou=949495#2987432
+CLASS:PUBLIC
+DTSTART:20240116T045959Z
+DTEND:20240116T045959Z
+UID:6606-2987432@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240109T163555Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 1 (turn in here) - Due
+LOCATION:Spring 2024 ECE 30200-002 LEC
+DESCRIPTION:Assignments:\nHomework 1 (turn in here)\n\n\nView event - https
+	://purdue.brightspace.com/d2l/le/calendar/949475/event/2948326/detailsview?
+	ou=949475#2948326
+CLASS:PUBLIC
+DTSTART:20240119T045900Z
+DTEND:20240119T045900Z
+UID:6606-2948326@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240105T172618Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 02 Video 1 PSY 120 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing: Tuesday\, Length </strong><strong>19:17</strong></span></p>\n<p>Ta
+	ke 1 MINUTE PRESURVEY (LOCATED here: <a rel="noopener" href="/d2l/common/di
+	alogs/quickLink/quickLink.d2l?ou=958519&amp\;type=content&amp\;rcode=354644
+	E0-4CD8-419D-A32F-4E78D8778E5C-1174992" target="_blank">Pre-Survey for Modu
+	le 2 videos (category examples):</a>&nbsp\;before watching!!</p>\n<p>Helps 
+	with some study guide items from "Defining Psychology and Exploring Its Roo
+	ts"!</p>\n\n\nMaterials:\nModule 02 Video 1 PSY 120\n\n\nView event - https
+	://purdue.brightspace.com/d2l/le/calendar/958519/event/2975592/detailsview?
+	ou=958519#2975592
+CLASS:PUBLIC
+DTSTART:20240120T045900Z
+DTEND:20240120T045900Z
+UID:6606-2975592@purdue.brightspace.com
+SEQUENCE:7
+LAST-MODIFIED:20240115T073200Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 02 Video 2 PSY 120 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Wednesday\, Length 25:56</strong></span></p>\n<p>Contempora
+	ry approaches to psychology</p>\n\n\nMaterials:\nModule 02 Video 2 PSY 120\
+	n\n\nView event - https://purdue.brightspace.com/d2l/le/calendar/958519/eve
+	nt/2975598/detailsview?ou=958519#2975598
+CLASS:PUBLIC
+DTSTART:20240120T045900Z
+DTEND:20240120T045900Z
+UID:6606-2975598@purdue.brightspace.com
+SEQUENCE:7
+LAST-MODIFIED:20240115T073200Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 02 Video 3 PSY 120 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Thursday\, Length 29:45</strong></span></p>\n<p>Introductio
+	n to the scientific method\, and we walk through CORRELATIONAL APPROACHES t
+	hat allow people to *predict* behavior.&nbsp\; Watch carefully! Concepts of
+	ten confused\, even after your reading.&nbsp\; I hope this will help!</p>\n
+	\n\nMaterials:\nModule 02 Video 3 PSY 120\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/2975599/detailsview?ou=958519#
+	2975599
+CLASS:PUBLIC
+DTSTART:20240120T045900Z
+DTEND:20240120T045900Z
+UID:6606-2975599@purdue.brightspace.com
+SEQUENCE:7
+LAST-MODIFIED:20240115T073153Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:DUE FRIDAY: MODULE 2 PIAZZA CONTRIBUTIONS - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Find the "Module 2 Small Group Discussion" on the Piazza board.
+	  Post something yourself and respond to someone else (participation credit
+	 is all or none\, so make sure you both post and respond).  If you want you
+	r responses to count\, make absolutely sure that you post them within the M
+	odule 2 Small Group Discussion thread that was started by an instructor or 
+	TA and is pinned to the top of the board.  DO NOT CREATE A NEW POST.  Go do
+	wn to the bottom of the prompt and start a followup discussion. This thread
+	 is only visible to your assigned small discussion group.  Sign with the pi
+	cture you picked!\n\n\nAssignments:\nDUE FRIDAY: MODULE 2 PIAZZA CONTRIBUTI
+	ONS - https://purdue.brightspace.com/d2l/lms/dropbox/user/folder_submit_fil
+	es.d2l?ou=958519&db=973995\n\n\nView event - https://purdue.brightspace.com
+	/d2l/le/calendar/958519/event/2975620/detailsview?ou=958519#2975620
+CLASS:PUBLIC
+DTSTART:20240120T045900Z
+DTEND:20240120T045900Z
+UID:6606-2975620@purdue.brightspace.com
+SEQUENCE:5
+LAST-MODIFIED:20240109T085809Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:HW01 (Submit through Gradescope) - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:Materials:\nHW01 (Submit through Gradescope) - https://purdue.b
+	rightspace.com/d2l/le/content/949434/viewContent/15672542/View\n\n\nView ev
+	ent - https://purdue.brightspace.com/d2l/le/calendar/949434/event/2988088/d
+	etailsview?ou=949434#2988088
+CLASS:PUBLIC
+DTSTART:20240120T045900Z
+DTEND:20240120T045900Z
+UID:6606-2988088@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240115T230758Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 02 Video 4 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Friday\, Length 33:51</strong></span></p>\n<p>Experimental 
+	designs (concluding CAUSAL relationships!)&nbsp\; Then we cover quasi-exper
+	imental designs\, and the strengths and weaknesses of each design!</p>\n<p>
+	Also\, a final note on random sampling vs. random assignment.</p>\n\n\nMate
+	rials:\nModule 02 Video 4\n\n\nView event - https://purdue.brightspace.com/
+	d2l/le/calendar/958519/event/3008205/detailsview?ou=958519#3008205
+CLASS:PUBLIC
+DTSTART:20240120T045900Z
+DTEND:20240120T045900Z
+UID:6606-3008205@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240117T170208Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Tell me about yourself - Due
+LOCATION:Spring 2024 ECE 49595-013 LEC
+DESCRIPTION:Please upload a paragraph. Tell me a bit about:1. what brought 
+	you to my course2. what're your expectations for it3. What are your plans f
+	or the future (now that you're close to graduating!)\n\n\nAssignments:\nTel
+	l me about yourself - https://purdue.brightspace.com/d2l/lms/dropbox/user/f
+	older_submit_files.d2l?ou=949495&db=983101\n\n\nView event - https://purdue
+	.brightspace.com/d2l/le/calendar/949495/event/3004415/detailsview?ou=949495
+	#3004415
+CLASS:PUBLIC
+DTSTART:20240120T045959Z
+DTEND:20240120T045959Z
+UID:6606-3004415@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240116T004150Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 1 Survey - Due
+LOCATION:Spring 2024 IE 33500-001 LEC
+DESCRIPTION:Complete the class survey. Fill them out and you will receive 1
+	00% for your first homework. We will manually change your grade to 100% aft
+	er the submission is made.\n\n\nQuizzes:\nHomework 1 Survey - https://purdu
+	e.brightspace.com/d2l/lms/quizzing/quizzing.d2l?ou=954359&qi=935340\n\n\nVi
+	ew event - https://purdue.brightspace.com/d2l/le/calendar/954359/event/2996
+	329/detailsview?ou=954359#2996329
+CLASS:PUBLIC
+DTSTART:20240121T045959Z
+DTEND:20240121T045959Z
+UID:6606-2996329@purdue.brightspace.com
+SEQUENCE:11
+LAST-MODIFIED:20240124T142537Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 2 Assessment - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 2 Assessment\n\n\nMaterials:\nModule 2 Assessment\n\n\nV
+	iew event - https://purdue.brightspace.com/d2l/le/calendar/958519/event/297
+	5656/detailsview?ou=958519#2975656
+CLASS:PUBLIC
+DTSTART:20240122T045900Z
+DTEND:20240122T045900Z
+UID:6606-2975656@purdue.brightspace.com
+SEQUENCE:26
+LAST-MODIFIED:20240117T171021Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 1: Personal balance sheet - Due
+LOCATION:Spring 2024 CSR 34200-001 LEC
+DESCRIPTION:Assignments:\nHomework 1: Personal balance sheet\n\n\nView even
+	t - https://purdue.brightspace.com/d2l/le/calendar/949135/event/2977216/det
+	ailsview?ou=949135#2977216
+CLASS:PUBLIC
+DTSTART:20240122T045900Z
+DTEND:20240122T045900Z
+UID:6606-2977216@purdue.brightspace.com
+SEQUENCE:15
+LAST-MODIFIED:20240109T210938Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 2: Personal cash flow statement - Availability Ends
+LOCATION:Spring 2024 CSR 34200-001 LEC
+DESCRIPTION:Assignments:\nHomework 2: Personal cash flow statement\n\n\nVie
+	w event - https://purdue.brightspace.com/d2l/le/calendar/949135/event/29772
+	28/detailsview?ou=949135#2977228
+CLASS:PUBLIC
+DTSTART:20240122T045900Z
+DTEND:20240122T045900Z
+UID:6606-2977228@purdue.brightspace.com
+SEQUENCE:15
+LAST-MODIFIED:20240109T210945Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 2: Personal cash flow statement - Due
+LOCATION:Spring 2024 CSR 34200-001 LEC
+DESCRIPTION:Assignments:\nHomework 2: Personal cash flow statement\n\n\nVie
+	w event - https://purdue.brightspace.com/d2l/le/calendar/949135/event/29772
+	29/detailsview?ou=949135#2977229
+CLASS:PUBLIC
+DTSTART:20240122T045900Z
+DTEND:20240122T045900Z
+UID:6606-2977229@purdue.brightspace.com
+SEQUENCE:15
+LAST-MODIFIED:20240109T210945Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 1: Personal balance sheet - Availability Ends
+LOCATION:Spring 2024 CSR 34200-001 LEC
+DESCRIPTION:Assignments:\nHomework 1: Personal balance sheet\n\n\nView even
+	t - https://purdue.brightspace.com/d2l/le/calendar/949135/event/2977245/det
+	ailsview?ou=949135#2977245
+CLASS:PUBLIC
+DTSTART:20240122T045900Z
+DTEND:20240122T045900Z
+UID:6606-2977245@purdue.brightspace.com
+SEQUENCE:10
+LAST-MODIFIED:20240109T210938Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 3 Smartbook - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 3 Smartbook\n\n\nMaterials:\nModule 3 Smartbook\n\n\nVie
+	w event - https://purdue.brightspace.com/d2l/le/calendar/958519/event/30023
+	18/detailsview?ou=958519#3002318
+CLASS:PUBLIC
+DTSTART:20240122T045900Z
+DTEND:20240122T045900Z
+UID:6606-3002318@purdue.brightspace.com
+SEQUENCE:4
+LAST-MODIFIED:20240115T080054Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Chapter 3: Sensation and Perception - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Chapter 3: Sensation and Perception\n\n\nMaterials:\nChapter 3:
+	 Sensation and Perception - https://purdue.brightspace.com/d2l/le/content/9
+	58519/viewContent/15757353/View\n\n\nView event - https://purdue.brightspac
+	e.com/d2l/le/calendar/958519/event/3020812/detailsview?ou=958519#3020812
+CLASS:PUBLIC
+DTSTART:20240122T200000Z
+DTEND:20240122T200000Z
+UID:6606-3020812@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T195230Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240123T174500Z
+DTEND:20240123T193000Z
+UID:6606-3021096@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240125T174500Z
+DTEND:20240125T193000Z
+UID:6606-3021097@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240130T174500Z
+DTEND:20240130T193000Z
+UID:6606-3021098@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240201T174500Z
+DTEND:20240201T193000Z
+UID:6606-3021099@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240206T174500Z
+DTEND:20240206T193000Z
+UID:6606-3021100@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240208T174500Z
+DTEND:20240208T193000Z
+UID:6606-3021101@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240213T174500Z
+DTEND:20240213T193000Z
+UID:6606-3021102@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240215T174500Z
+DTEND:20240215T193000Z
+UID:6606-3021103@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240220T174500Z
+DTEND:20240220T193000Z
+UID:6606-3021104@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240222T174500Z
+DTEND:20240222T193000Z
+UID:6606-3021105@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240227T174500Z
+DTEND:20240227T193000Z
+UID:6606-3021106@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240305T174500Z
+DTEND:20240305T193000Z
+UID:6606-3021108@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240307T174500Z
+DTEND:20240307T193000Z
+UID:6606-3021109@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240319T164500Z
+DTEND:20240319T183000Z
+UID:6606-3021112@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240321T164500Z
+DTEND:20240321T183000Z
+UID:6606-3021113@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240326T164500Z
+DTEND:20240326T183000Z
+UID:6606-3021114@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240328T164500Z
+DTEND:20240328T183000Z
+UID:6606-3021115@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240402T164500Z
+DTEND:20240402T183000Z
+UID:6606-3021116@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240404T164500Z
+DTEND:20240404T183000Z
+UID:6606-3021117@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240409T164500Z
+DTEND:20240409T183000Z
+UID:6606-3021118@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240411T164500Z
+DTEND:20240411T183000Z
+UID:6606-3021119@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240416T164500Z
+DTEND:20240416T183000Z
+UID:6606-3021120@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240418T164500Z
+DTEND:20240418T183000Z
+UID:6606-3021121@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240423T164500Z
+DTEND:20240423T183000Z
+UID:6606-3021122@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:CHAT WITH DR. SPARKS ONE-ON-ONE (in person or virtually!)
+LOCATION:https://purdue.webex.com/meet/ward83 (Spring 2024 PSY 12000-005 DI
+	S)
+DESCRIPTION:Dr. Sparks loves meeting students (even in a large class!) and 
+	has carved out regular time to talk to you just to say hi\, chat psychology
+	\, advise on grad school\, progress in the course\, you name it!  Dropping 
+	in on her office hours is your best way to get in touch with her\, so sign 
+	up for a slot and get more info about where to go to meet her: Office Hours
+	 Signup/Location
+CLASS:PUBLIC
+DTSTART:20240425T164500Z
+DTEND:20240425T183000Z
+UID:6606-3021123@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T212654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Deliverable: Version control system - Due
+LOCATION:Spring 2024 ECE 49595-013 LEC
+DESCRIPTION:Note the deadline has been moved to Wednesday. For this deliver
+	able:\n1. Study/develop your repository architecture (i.e.\, how directorie
+	s and files are structured for your target software ecosystem). Lean on sta
+	ndards and documentation about how projects are to be structured. Extra poi
+	nts for mapping your component diagram to parts of the repository architect
+	ure where applicable.2. Develop your branching strategy (review the lecture
+	 from Jan 17th for it)3. Establish your review and merge policy (review the
+	 lecture Monday after)I'll be uploading a sample like last time.\n\n\nAssig
+	nments:\nDeliverable: Version control system - https://purdue.brightspace.c
+	om/d2l/lms/dropbox/user/folder_submit_files.d2l?ou=949495&db=985568&grpid=1
+	058368\n\n\nView event - https://purdue.brightspace.com/d2l/le/calendar/949
+	495/event/3013051/detailsview?ou=949495#3013051
+CLASS:PUBLIC
+DTSTART:20240125T045959Z
+DTEND:20240125T045959Z
+UID:6606-3013051@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240119T141503Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Quiz 1 - Available
+LOCATION:Spring 2024 CSR 34200-001 LEC
+DESCRIPTION:Materials:\nQuiz 1 - https://purdue.brightspace.com/d2l/le/cont
+	ent/949135/viewContent/15775196/View\n\n\nView event - https://purdue.brigh
+	tspace.com/d2l/le/calendar/949135/event/3034647/detailsview?ou=949135#30346
+	47
+CLASS:PUBLIC
+DTSTART:20240126T150000Z
+DTEND:20240126T150000Z
+UID:6606-3034647@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240129T211521Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 1 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><strong><span style="color: rgb(205\, 32\, 38)\;">Suggested 
+	viewing:&nbsp\; Monday\, Length 35:24</span></strong></p>\n<p>The nervous s
+	ystem\, neurons and neurotransmitters.&nbsp\;&nbsp\;</p>\n\n\nMaterials:\nM
+	odule 03 Video 1 - https://purdue.brightspace.com/d2l/le/content/958519/vie
+	wContent/15627917/View\n\n\nView event - https://purdue.brightspace.com/d2l
+	/le/calendar/958519/event/2975595/detailsview?ou=958519#2975595
+CLASS:PUBLIC
+DTSTART:20240127T045900Z
+DTEND:20240127T045900Z
+UID:6606-2975595@purdue.brightspace.com
+SEQUENCE:8
+LAST-MODIFIED:20240122T142012Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:DUE FRIDAY: MODULE 3 PIAZZA CONTRIBUTIONS - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Find the "Module 3 Small Group Discussion" on the Piazza board.
+	  Post something yourself and respond to someone else (participation credit
+	 is all or none\, so make sure you both post and respond).  If you want you
+	r responses to count\, make absolutely sure that you post them within the M
+	odule 3 Small Group Discussion thread that was started by an instructor or 
+	TA and is pinned to the top of the board.  DO NOT CREATE A NEW POST.  Go do
+	wn to the bottom of the prompt and start a followup discussion. This thread
+	 is only visible to your assigned small discussion group.  Sign with the pi
+	cture you picked!\n\n\nAssignments:\nDUE FRIDAY: MODULE 3 PIAZZA CONTRIBUTI
+	ONS - https://purdue.brightspace.com/d2l/lms/dropbox/user/folder_submit_fil
+	es.d2l?ou=958519&db=982435\n\n\nView event - https://purdue.brightspace.com
+	/d2l/le/calendar/958519/event/3002316/detailsview?ou=958519#3002316
+CLASS:PUBLIC
+DTSTART:20240127T045900Z
+DTEND:20240127T045900Z
+UID:6606-3002316@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240115T074615Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:HW02 (Submit through Gradescope) - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:Materials:\nHW02 (Submit through Gradescope) - https://purdue.b
+	rightspace.com/d2l/le/content/949434/viewContent/15721840/View\n\n\nView ev
+	ent - https://purdue.brightspace.com/d2l/le/calendar/949434/event/3005222/d
+	etailsview?ou=949434#3005222
+CLASS:PUBLIC
+DTSTART:20240127T045900Z
+DTEND:20240127T045900Z
+UID:6606-3005222@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240117T151544Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 2 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><strong><span style="color: rgb(205\, 32\, 38)\;">Suggested 
+	viewing:&nbsp\; Tuesday\, Length 13:19</span></strong></p>\n<p>Brain Struct
+	ures Part 1 (everything but the cerebral cortex and divided brain)</p>\n\n\
+	nMaterials:\nModule 03 Video 2 - https://purdue.brightspace.com/d2l/le/cont
+	ent/958519/viewContent/15754262/View\n\n\nView event - https://purdue.brigh
+	tspace.com/d2l/le/calendar/958519/event/3019345/detailsview?ou=958519#30193
+	45
+CLASS:PUBLIC
+DTSTART:20240127T045900Z
+DTEND:20240127T045900Z
+UID:6606-3019345@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240122T135851Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 3 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><strong><span style="color: rgb(205\, 32\, 38)\;">Suggested 
+	viewing:&nbsp\; Wednesday\, Length 15:05</span></strong></p>\n<p>Brain Stru
+	ctures Part 2 (cerebral cortex and divided brain)</p>\n\n\nMaterials:\nModu
+	le 03 Video 3 - https://purdue.brightspace.com/d2l/le/content/958519/viewCo
+	ntent/15754417/View\n\n\nView event - https://purdue.brightspace.com/d2l/le
+	/calendar/958519/event/3019423/detailsview?ou=958519#3019423
+CLASS:PUBLIC
+DTSTART:20240127T045900Z
+DTEND:20240127T045900Z
+UID:6606-3019423@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240122T144113Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 4 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><strong><span style="color: rgb(205\, 32\, 38)\;">Suggested 
+	viewing:&nbsp\; Thursday\, Length 19:37</span></strong></p>\n<p>GENES AND B
+	EHAVIOR</p>\n\n\nMaterials:\nModule 03 Video 4 - https://purdue.brightspace
+	.com/d2l/le/content/958519/viewContent/15754442/View\n\n\nView event - http
+	s://purdue.brightspace.com/d2l/le/calendar/958519/event/3019438/detailsview
+	?ou=958519#3019438
+CLASS:PUBLIC
+DTSTART:20240127T045900Z
+DTEND:20240127T045900Z
+UID:6606-3019438@purdue.brightspace.com
+SEQUENCE:4
+LAST-MODIFIED:20240122T161428Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 5 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Friday\, Length 21:57</strong></span></p>\n<p>Evolutionary 
+	Model of Human Behavior</p>\n<p>Complete the <a href="/d2l/common/dialogs/q
+	uickLink/quickLink.d2l?ou=958519&amp\;type=content&amp\;rcode=354644E0-4CD8
+	-419D-A32F-4E78D8778E5C-8076551" target="_blank" rel="noopener">Pre-Survey 
+	for Module 3 Videos</a> first\, if you are comfortable doing so.</p>\n\n\nM
+	aterials:\nModule 03 Video 5 - https://purdue.brightspace.com/d2l/le/conten
+	t/958519/viewContent/15755869/View\n\n\nView event - https://purdue.brights
+	pace.com/d2l/le/calendar/958519/event/3019901/detailsview?ou=958519#3019901
+CLASS:PUBLIC
+DTSTART:20240127T045900Z
+DTEND:20240127T045900Z
+UID:6606-3019901@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T163318Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Progress Report 1 - Due
+LOCATION:Spring 2024 ECE 49595-013 LEC
+DESCRIPTION:Please write a couple of paragraphs about your progress. Includ
+	e things such as:1. Things you worked on2. Things you are stuck with and wh
+	at have you tried3. If you would like help with tools/strategies/designs to
+	 get over with it4. (extra\, only if it comes to mind) topics for the latte
+	r labs to help you be a better developer (i.e.\, "how do I do x?")For 4\, a
+	bsent anything interesting\, I will probably demo https://containers.dev/\n
+	\n\nAssignments:\nProgress Report 1 - https://purdue.brightspace.com/d2l/lm
+	s/dropbox/user/folder_submit_files.d2l?ou=949495&db=985569\n\n\nView event 
+	- https://purdue.brightspace.com/d2l/le/calendar/949495/event/3013152/detai
+	lsview?ou=949495#3013152
+CLASS:PUBLIC
+DTSTART:20240127T045959Z
+DTEND:20240127T045959Z
+UID:6606-3013152@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240119T145654Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 02 Video 1 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 02 Video 1 - https://purdue.brightspace.com/
+	d2l/le/content/958519/viewContent/15773338/View\n\n\nView event - https://p
+	urdue.brightspace.com/d2l/le/calendar/958519/event/3026011/detailsview?ou=9
+	58519#3026011
+CLASS:PUBLIC
+DTSTART:20240127T050100Z
+DTEND:20240127T050100Z
+UID:6606-3026011@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240129T135505Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 02 Video 2 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 02 Video 2 - https://purdue.brightspace.com/
+	d2l/le/content/958519/viewContent/15773339/View\n\n\nView event - https://p
+	urdue.brightspace.com/d2l/le/calendar/958519/event/3026015/detailsview?ou=9
+	58519#3026015
+CLASS:PUBLIC
+DTSTART:20240127T050100Z
+DTEND:20240127T050100Z
+UID:6606-3026015@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240129T135522Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 02 Video 3 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 02 Video 3 - https://purdue.brightspace.com/
+	d2l/le/content/958519/viewContent/15773346/View\n\n\nView event - https://p
+	urdue.brightspace.com/d2l/le/calendar/958519/event/3026017/detailsview?ou=9
+	58519#3026017
+CLASS:PUBLIC
+DTSTART:20240127T050100Z
+DTEND:20240127T050100Z
+UID:6606-3026017@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240129T135522Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 02 Video 4 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 02 Video 4 - https://purdue.brightspace.com/
+	d2l/le/content/958519/viewContent/15773369/View\n\n\nView event - https://p
+	urdue.brightspace.com/d2l/le/calendar/958519/event/3026018/detailsview?ou=9
+	58519#3026018
+CLASS:PUBLIC
+DTSTART:20240127T050100Z
+DTEND:20240127T050100Z
+UID:6606-3026018@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240125T150935Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 3 Assessment - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 3 Assessment\n\n\nMaterials:\nModule 3 Assessment - http
+	s://purdue.brightspace.com/d2l/le/content/958519/viewContent/15756484/View\
+	n\n\nView event - https://purdue.brightspace.com/d2l/le/calendar/958519/eve
+	nt/3020274/detailsview?ou=958519#3020274
+CLASS:PUBLIC
+DTSTART:20240129T045900Z
+DTEND:20240129T045900Z
+UID:6606-3020274@purdue.brightspace.com
+SEQUENCE:7
+LAST-MODIFIED:20240122T180245Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 3 Cumulative Learning Ex Credit Questions - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 3 Cumulative Learning Ex Credit Questions\n\n\nMaterials
+	:\nModule 3 Cumulative Learning Ex Credit Questions - https://purdue.bright
+	space.com/d2l/le/content/958519/viewContent/15756487/View\n\n\nView event -
+	 https://purdue.brightspace.com/d2l/le/calendar/958519/event/3020275/detail
+	sview?ou=958519#3020275
+CLASS:PUBLIC
+DTSTART:20240129T045900Z
+DTEND:20240129T045900Z
+UID:6606-3020275@purdue.brightspace.com
+SEQUENCE:6
+LAST-MODIFIED:20240122T180258Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 4 Smartbook - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 4 Smartbook\n\n\nMaterials:\nModule 4 Smartbook - https:
+	//purdue.brightspace.com/d2l/le/content/958519/viewContent/15757364/View\n\
+	n\nView event - https://purdue.brightspace.com/d2l/le/calendar/958519/event
+	/3020814/detailsview?ou=958519#3020814
+CLASS:PUBLIC
+DTSTART:20240129T045900Z
+DTEND:20240129T045900Z
+UID:6606-3020814@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240122T195431Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Chapter 4: States of Consciousness - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Chapter 4: States of Consciousness\n\n\nMaterials:\nChapter 4: 
+	States of Consciousness - https://purdue.brightspace.com/d2l/le/content/958
+	519/viewContent/15786673/View\n\n\nView event - https://purdue.brightspace.
+	com/d2l/le/calendar/958519/event/3032927/detailsview?ou=958519#3032927
+CLASS:PUBLIC
+DTSTART:20240129T140300Z
+DTEND:20240129T140300Z
+UID:6606-3032927@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240129T140436Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Deliverable: Build System & Build Reproducibility - Due
+LOCATION:Spring 2024 ECE 49595-013 LEC
+DESCRIPTION:From the slides:\n\n\nYou will set up your build-system:\n\nMak
+	e sure builds are as reproducible as possible (show diffoscope output)\n\n\
+	nSet up a CI (use any tool of your choice)\n\nEnsure the CI isolates your e
+	nvironment\nHandles dependency tracking\nShow a public log for a build\n\n\
+	n\n\n\nAssignments:\nDeliverable: Build System & Build Reproducibility - ht
+	tps://purdue.brightspace.com/d2l/lms/dropbox/user/folder_submit_files.d2l?o
+	u=949495&db=990422&grpid=1058368\n\n\nView event - https://purdue.brightspa
+	ce.com/d2l/le/calendar/949495/event/3034434/detailsview?ou=949495#3034434
+CLASS:PUBLIC
+DTSTART:20240201T045959Z
+DTEND:20240201T045959Z
+UID:6606-3034434@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240129T194330Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 2 (turn in here) - Due
+LOCATION:Spring 2024 ECE 30200-002 LEC
+DESCRIPTION:Assignments:\nHomework 2 (turn in here) - https://purdue.bright
+	space.com/d2l/lms/dropbox/user/folder_submit_files.d2l?ou=949475&db=985474\
+	n\n\nView event - https://purdue.brightspace.com/d2l/le/calendar/949475/eve
+	nt/3012635/detailsview?ou=949475#3012635
+CLASS:PUBLIC
+DTSTART:20240202T045959Z
+DTEND:20240202T045959Z
+UID:6606-3012635@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240119T013322Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PSY 120 Module 04 Video 3 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Wednesday\, Length 28:01</strong></span></p>\n<p>Visual Per
+	ception PART 1!&nbsp\; Watch the great "IS IT TINY\, OR IS IT FAR AWAY??" d
+	ebate that Erin has with her 3-year-old.</p>\n\n\nMaterials:\nPSY 120 Modul
+	e 04 Video 3 - https://purdue.brightspace.com/d2l/le/content/958519/viewCon
+	tent/15756796/View\n\n\nView event - https://purdue.brightspace.com/d2l/le/
+	calendar/958519/event/3020393/detailsview?ou=958519#3020393
+CLASS:PUBLIC
+DTSTART:20240203T045900Z
+DTEND:20240203T045900Z
+UID:6606-3020393@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T122712Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PSY 120 Module 04 Video 4 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Thursday\, Length 24:38</strong></span></p>\n<p>Visual Perc
+	eption Part 2 (OPTICAL ILLUSIONS!)\, and the Hearing System</p>\n\n\nMateri
+	als:\nPSY 120 Module 04 Video 4 - https://purdue.brightspace.com/d2l/le/con
+	tent/958519/viewContent/15756797/View\n\n\nView event - https://purdue.brig
+	htspace.com/d2l/le/calendar/958519/event/3020394/detailsview?ou=958519#3020
+	394
+CLASS:PUBLIC
+DTSTART:20240203T045900Z
+DTEND:20240203T045900Z
+UID:6606-3020394@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T122717Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PSY 120 Module 04 Video 5 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Friday\, Length 24:00</strong></span></p>\n<p>The Skin Sens
+	es (touch\, temperature\, pain)\, and Chemical senses (smell\, taste).&nbsp
+	\; Hear about Dr. Sparks losing her tasting "cred".&nbsp\; &nbsp\;Also\, wr
+	ap up the module with a fun discussion of multi-modal experiences!&nbsp\;</
+	p>\n\n\nMaterials:\nPSY 120 Module 04 Video 5 - https://purdue.brightspace.
+	com/d2l/le/content/958519/viewContent/15756798/View\n\n\nView event - https
+	://purdue.brightspace.com/d2l/le/calendar/958519/event/3020395/detailsview?
+	ou=958519#3020395
+CLASS:PUBLIC
+DTSTART:20240203T045900Z
+DTEND:20240203T045900Z
+UID:6606-3020395@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T124335Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:DUE FRIDAY: MODULE 4 PIAZZA CONTRIBUTIONS - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Find the "Module 4 Small Group Discussion" on the Piazza board.
+	  Post something yourself and respond to someone else (participation credit
+	 is all or none\, so make sure you both post and respond).  If you want you
+	r responses to count\, make absolutely sure that you post them within the M
+	odule 4 Small Group Discussion thread that was started by an instructor or 
+	TA and is pinned to the top of the board.  DO NOT CREATE A NEW POST.  Go do
+	wn to the bottom of the prompt and start a followup discussion. This thread
+	 is only visible to your assigned small discussion group.  Sign with the pi
+	cture you picked!\n\n\nAssignments:\nDUE FRIDAY: MODULE 4 PIAZZA CONTRIBUTI
+	ONS - https://purdue.brightspace.com/d2l/lms/dropbox/user/folder_submit_fil
+	es.d2l?ou=958519&db=986921\n\n\nView event - https://purdue.brightspace.com
+	/d2l/le/calendar/958519/event/3020396/detailsview?ou=958519#3020396
+CLASS:PUBLIC
+DTSTART:20240203T045900Z
+DTEND:20240203T045900Z
+UID:6606-3020396@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T181946Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Psy 120 Module 04 Video 1 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Monday\, Length 25:57</strong></span></p>\n<p>Introduction 
+	to Sensation and Perception.&nbsp\; Before viewing\, take presurvey located
+	 right above this video link in the module!</p>\n<p></p>\n\n\nMaterials:\nP
+	sy 120 Module 04 Video 1 - https://purdue.brightspace.com/d2l/le/content/95
+	8519/viewContent/15756794/View\n\n\nView event - https://purdue.brightspace
+	.com/d2l/le/calendar/958519/event/3020397/detailsview?ou=958519#3020397
+CLASS:PUBLIC
+DTSTART:20240203T045900Z
+DTEND:20240203T045900Z
+UID:6606-3020397@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T122659Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PSY 120 Module 04 Video 2 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Tuesday\, Length 22:32</strong></span></p>\n<p>The Vision S
+	ystem</p>\n\n\nMaterials:\nPSY 120 Module 04 Video 2 - https://purdue.brigh
+	tspace.com/d2l/le/content/958519/viewContent/15756795/View\n\n\nView event 
+	- https://purdue.brightspace.com/d2l/le/calendar/958519/event/3020398/detai
+	lsview?ou=958519#3020398
+CLASS:PUBLIC
+DTSTART:20240203T045900Z
+DTEND:20240203T045900Z
+UID:6606-3020398@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T122708Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:HW03 (Submit through Gradescope) - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:Materials:\nHW03 (Submit through Gradescope) - https://purdue.b
+	rightspace.com/d2l/le/content/949434/viewContent/15761867/View\n\n\nView ev
+	ent - https://purdue.brightspace.com/d2l/le/calendar/949434/event/3022224/d
+	etailsview?ou=949434#3022224
+CLASS:PUBLIC
+DTSTART:20240203T045900Z
+DTEND:20240203T045900Z
+UID:6606-3022224@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240123T153609Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 1 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 03 Video 1\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3026025/detailsview?ou=958519#
+	3026025
+CLASS:PUBLIC
+DTSTART:20240203T050100Z
+DTEND:20240203T050100Z
+UID:6606-3026025@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240129T135533Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 2 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 03 Video 2\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3026035/detailsview?ou=958519#
+	3026035
+CLASS:PUBLIC
+DTSTART:20240203T050100Z
+DTEND:20240203T050100Z
+UID:6606-3026035@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240125T151738Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 3 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 03 Video 3\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3026036/detailsview?ou=958519#
+	3026036
+CLASS:PUBLIC
+DTSTART:20240203T050100Z
+DTEND:20240203T050100Z
+UID:6606-3026036@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240125T151755Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 4 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 03 Video 4\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3026037/detailsview?ou=958519#
+	3026037
+CLASS:PUBLIC
+DTSTART:20240203T050100Z
+DTEND:20240203T050100Z
+UID:6606-3026037@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240125T151807Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 03 Video 5 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 03 Video 5\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3026038/detailsview?ou=958519#
+	3026038
+CLASS:PUBLIC
+DTSTART:20240203T050100Z
+DTEND:20240203T050100Z
+UID:6606-3026038@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240125T151821Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 4 Assessment - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 4 Assessment\n\n\nMaterials:\nModule 4 Assessment - http
+	s://purdue.brightspace.com/d2l/le/content/958519/viewContent/15757409/View\
+	n\n\nView event - https://purdue.brightspace.com/d2l/le/calendar/958519/eve
+	nt/3020819/detailsview?ou=958519#3020819
+CLASS:PUBLIC
+DTSTART:20240205T045900Z
+DTEND:20240205T045900Z
+UID:6606-3020819@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240122T195442Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 4 Cumulative Learning Ex Credit Questions - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 4 Cumulative Learning Ex Credit Questions\n\n\nMaterials
+	:\nModule 4 Cumulative Learning Ex Credit Questions - https://purdue.bright
+	space.com/d2l/le/content/958519/viewContent/15757438/View\n\n\nView event -
+	 https://purdue.brightspace.com/d2l/le/calendar/958519/event/3020826/detail
+	sview?ou=958519#3020826
+CLASS:PUBLIC
+DTSTART:20240205T045900Z
+DTEND:20240205T045900Z
+UID:6606-3020826@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240122T195513Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 5 Smartbook - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 5 Smartbook\n\n\nMaterials:\nModule 5 Smartbook - https:
+	//purdue.brightspace.com/d2l/le/content/958519/viewContent/15786674/View\n\
+	n\nView event - https://purdue.brightspace.com/d2l/le/calendar/958519/event
+	/3032929/detailsview?ou=958519#3032929
+CLASS:PUBLIC
+DTSTART:20240205T045900Z
+DTEND:20240205T045900Z
+UID:6606-3032929@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T140456Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PA1 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_shellsort_2p3q_spring2024.pdf.  The 
+	.h files are sequence.h\, shell_array.h\, and shell_list.h.  The examples a
+	re in pa1_examples.zip.\n\n\nAssignments:\nPA1 - https://purdue.brightspace
+	.com/d2l/lms/dropbox/dropbox.d2l?ou=949434&db=943275\n\n\nView event - http
+	s://purdue.brightspace.com/d2l/le/calendar/949434/event/2895159/detailsview
+	?ou=949434#2895159
+CLASS:PUBLIC
+DTSTART:20240206T045959Z
+DTEND:20240206T045959Z
+UID:6606-2895159@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240111T195506Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Homework 2 - Due
+LOCATION:Spring 2024 IE 33500-001 LEC
+DESCRIPTION:Answer the questions from the Word document Homework 2 (posted 
+	in Class 6) \n\n\nQuizzes:\nHomework 2 - https://purdue.brightspace.com/d2l
+	/lms/quizzing/quizzing.d2l?ou=954359&qi=939111\n\n\nView event - https://pu
+	rdue.brightspace.com/d2l/le/calendar/954359/event/3027180/detailsview?ou=95
+	4359#3027180
+CLASS:PUBLIC
+DTSTART:20240207T045959Z
+DTEND:20240207T045959Z
+UID:6606-3027180@purdue.brightspace.com
+SEQUENCE:5
+LAST-MODIFIED:20240125T195105Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:DUE FRIDAY: MODULE 5 PIAZZA CONTRIBUTIONS - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Assignments:\nDUE FRIDAY: MODULE 5 PIAZZA CONTRIBUTIONS\n\n\nVi
+	ew event - https://purdue.brightspace.com/d2l/le/calendar/958519/event/3032
+	845/detailsview?ou=958519#3032845
+CLASS:PUBLIC
+DTSTART:20240210T045900Z
+DTEND:20240210T045900Z
+UID:6606-3032845@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240129T135251Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Psy 120 Module 05 Video 3 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing: Wednesday\, Length&nbsp\;23:19 </strong></span></p>\n<p>Sleep and 
+	Dreaming</p>\n<p></p>\n\n\nMaterials:\nPsy 120 Module 05 Video 3\n\n\nView 
+	event - https://purdue.brightspace.com/d2l/le/calendar/958519/event/3032847
+	/detailsview?ou=958519#3032847
+CLASS:PUBLIC
+DTSTART:20240210T045900Z
+DTEND:20240210T045900Z
+UID:6606-3032847@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T135959Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PSY 120 Module 05 Video 2 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Tuesday\, Length 27:38</strong></span></p>\n<p>More on leve
+	ls of consciousness.&nbsp\; Quite a few concepts here are not covered in yo
+	ur reading. For the highest level of consciousness\, some discussion of sel
+	ective attention and multi-tasking!&nbsp\; For the lower level of conscious
+	ness\, some discussion of automaticity and subliminal messages.</p>\n\n\nMa
+	terials:\nPSY 120 Module 05 Video 2\n\n\nView event - https://purdue.bright
+	space.com/d2l/le/calendar/958519/event/3032848/detailsview?ou=958519#303284
+	8
+CLASS:PUBLIC
+DTSTART:20240210T045900Z
+DTEND:20240210T045900Z
+UID:6606-3032848@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240129T135955Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PSY 120 Module 05 Video 4 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Thursday\, Length 13:20&nbsp\;</strong></span></p>\n<p>SLEE
+	P DISORDERS</p>\n\n\nMaterials:\nPSY 120 Module 05 Video 4\n\n\nView event 
+	- https://purdue.brightspace.com/d2l/le/calendar/958519/event/3032849/detai
+	lsview?ou=958519#3032849
+CLASS:PUBLIC
+DTSTART:20240210T045900Z
+DTEND:20240210T045900Z
+UID:6606-3032849@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T140005Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PSY 120 Module 05 Video 5 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing:&nbsp\; Friday\, 16:49 </strong></span></p>\n<p>Hypnosis and medita
+	tion.</p>\n<p></p>\n\n\nMaterials:\nPSY 120 Module 05 Video 5\n\n\nView eve
+	nt - https://purdue.brightspace.com/d2l/le/calendar/958519/event/3032850/de
+	tailsview?ou=958519#3032850
+CLASS:PUBLIC
+DTSTART:20240210T045900Z
+DTEND:20240210T045900Z
+UID:6606-3032850@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T140010Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PSY 120 Module 05 Video 1 - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:<p><span style="color: rgb(205\, 32\, 38)\;"><strong>Suggested 
+	viewing: Monday\, Length&nbsp\;25:39</strong></span></p>\n<p>Introduction t
+	o Consciousness:&nbsp\; Why is consciousness so important? Defining some te
+	rms\, a discussion of theory of mind\, and a brief intro to the levels of c
+	onsciousness.&nbsp\;</p>\n<p>Also\, at the end of the video (for your enter
+	tainment)\, I play you a video clip of me doing a false belief task with my
+	 son Benjamin when he was 3 years old.&nbsp\; &nbsp\;Does Benjamin have a t
+	heory of mind?&nbsp\; More importantly\, does Dr. Sparks understand how to 
+	properly handle Lego Jurassic World raptors?</p>\n\n\nMaterials:\nPSY 120 M
+	odule 05 Video 1\n\n\nView event - https://purdue.brightspace.com/d2l/le/ca
+	lendar/958519/event/3032851/detailsview?ou=958519#3032851
+CLASS:PUBLIC
+DTSTART:20240210T045900Z
+DTEND:20240210T045900Z
+UID:6606-3032851@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T135932Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:HW04 (Submit through Gradescope) - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:Materials:\nHW04 (Submit through Gradescope) - https://purdue.b
+	rightspace.com/d2l/le/content/949434/viewContent/15790183/View\n\n\nView ev
+	ent - https://purdue.brightspace.com/d2l/le/calendar/949434/event/3034548/d
+	etailsview?ou=949434#3034548
+CLASS:PUBLIC
+DTSTART:20240210T045900Z
+DTEND:20240210T045900Z
+UID:6606-3034548@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240129T201258Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:SUGGESTION - Try to have *FIVE* of your SONA credits done by the en
+	d of this week to stay on track! - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:You need to finish 15 credits by the end of the semester to rec
+	eive credit for PSY 120 (it's a department requirement - all sections of 12
+	0 have to do it!).  We suggest averaging one credit per week to finish on t
+	ime.  So\, you're on track if you have 5 done by the end of this week (avoi
+	d the end of semester rush where appointments might not be available!) PLEA
+	SE NOTE THAT trying to finish 5 of your credits by the end of week 5 isn't 
+	a hard due date for this course\, or anything that goes into our section's 
+	gradebook\, but I am placing this assignment here so it appears on your Bri
+	ghtspace calendar as a REMINDER to you to help you stay on track (in short:
+	 your grade isn't impacted by whether you check this off by the suggested w
+	eek 5 due date - but I find that dropping it as an assignment into the week
+	ly modules helps students make a plan to finish their 15 credits by the end
+	 of the semester!) If you don't want it to appear as "overdue" when it's no
+	t actually a hard deadline for this course\, you can feel free to check it 
+	off even if you aren't done  - checking this off or not doesn't impact your
+	 grades for the module - it's just to help you stay on track with the depar
+	tment research requirement.  Leave it as an "overdue" assignment if you wan
+	t the reminder that you are a bit behind!\nVisit the SONA system here to re
+	gister for research appointments.  You should have received your login via 
+	email:  http://purdue-psych.sona-systems.com/\nSend any questions about you
+	r research credits to: psychstudies@purdue.edu \nIf you need more instructi
+	ons or information related to the department research requirement\, such as
+	 how many you may do online or in person\, you may visit this module: Resea
+	rch Requirement Info and SONA Link\n\n\nAssignments:\nSUGGESTION - Try to h
+	ave *FIVE* of your SONA credits done by the end of this week to stay on tra
+	ck! - https://purdue.brightspace.com/d2l/lms/dropbox/user/folder_submit_fil
+	es.d2l?ou=958519&db=990114\n\n\nView event - https://purdue.brightspace.com
+	/d2l/le/calendar/958519/event/3032846/detailsview?ou=958519#3032846
+CLASS:PUBLIC
+DTSTART:20240210T045959Z
+DTEND:20240210T045959Z
+UID:6606-3032846@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240129T135250Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 04 Video 1 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 04 Video 1\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3032868/detailsview?ou=958519#
+	3032868
+CLASS:PUBLIC
+DTSTART:20240210T050100Z
+DTEND:20240210T050100Z
+UID:6606-3032868@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240129T135438Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 04 Video 2 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 04 Video 2\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3032871/detailsview?ou=958519#
+	3032871
+CLASS:PUBLIC
+DTSTART:20240210T050100Z
+DTEND:20240210T050100Z
+UID:6606-3032871@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240129T135613Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 04 Video 3 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 04 Video 3\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3032873/detailsview?ou=958519#
+	3032873
+CLASS:PUBLIC
+DTSTART:20240210T050100Z
+DTEND:20240210T050100Z
+UID:6606-3032873@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240129T135657Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 04 Video 4 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 04 Video 4\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3032874/detailsview?ou=958519#
+	3032874
+CLASS:PUBLIC
+DTSTART:20240210T050100Z
+DTEND:20240210T050100Z
+UID:6606-3032874@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240129T135737Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 04 Video 5 - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Materials:\nModule 04 Video 5\n\n\nView event - https://purdue.
+	brightspace.com/d2l/le/calendar/958519/event/3032875/detailsview?ou=958519#
+	3032875
+CLASS:PUBLIC
+DTSTART:20240210T050100Z
+DTEND:20240210T050100Z
+UID:6606-3032875@purdue.brightspace.com
+SEQUENCE:0
+LAST-MODIFIED:20240129T135816Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 5 Assessment - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 5 Assessment\n\n\nMaterials:\nModule 5 Assessment\n\n\nV
+	iew event - https://purdue.brightspace.com/d2l/le/calendar/958519/event/303
+	2932/detailsview?ou=958519#3032932
+CLASS:PUBLIC
+DTSTART:20240212T045900Z
+DTEND:20240212T045900Z
+UID:6606-3032932@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T140536Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:Module 5 Cumulative Learning Ex Credit Questions - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Module 5 Cumulative Learning Ex Credit Questions\n\n\nMaterials
+	:\nModule 5 Cumulative Learning Ex Credit Questions\n\n\nView event - https
+	://purdue.brightspace.com/d2l/le/calendar/958519/event/3032933/detailsview?
+	ou=958519#3032933
+CLASS:PUBLIC
+DTSTART:20240212T045900Z
+DTEND:20240212T045900Z
+UID:6606-3032933@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240129T140539Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:PA2 - Due
+LOCATION:Spring 2024 ECE 36800-001 LEC
+DESCRIPTION:The description is in proj_flr_pre_int_spring2024.pdf.  The exa
+	mples are in pa2_examples.zip.\n\n\nAssignments:\nPA2 - https://purdue.brig
+	htspace.com/d2l/lms/dropbox/dropbox.d2l?ou=949434&db=943276\n\n\nView event
+	 - https://purdue.brightspace.com/d2l/le/calendar/949434/event/2895166/deta
+	ilsview?ou=949434#2895166
+CLASS:PUBLIC
+DTSTART:20240220T045959Z
+DTEND:20240220T045959Z
+UID:6606-2895166@purdue.brightspace.com
+SEQUENCE:4
+LAST-MODIFIED:20240124T152732Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:EXAM 1 (MODULES 2-7) - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Here is your link to Exam 1. Exam 1 will be made available for 
+	a required submission period Thursday -Saturday (11:59 PM) for 72 hours\, F
+	eb 29 - March 2.  It will be deployed through the BRIGHTSPACE QUIZZING TOOL
+	\, which will be able to randomly select questions of comparable difficulty
+	 that cover certain concepts from a pool of several options. Thus\, no two 
+	exams will be the same. \nThis exam covers study guide items for modules 2-
+	7.  It is timed at 75 minutes and contains 50 multiple choice and true/fals
+	e questions very similar to your end of module assessments\, and you get on
+	e attempt.  The exam must be COMPLETED (SUBMITTED) by end of day Saturday (
+	so DO NOT START IT at 11:58 PM).  Also\, DO NOT CLICK TO START THE EXAM unt
+	il you have a reliable internet connection\, a distraction-free environment
+	\, and 75 minutes available to take the test.  Once you start the exam\, ev
+	en if you exit out\, the timer will continue to run in the background and y
+	ou will not be able to get back in to finish later if the time is up! It is
+	 *YOUR RESPONSIBILITY* to NOT open the test until you are ready to start (t
+	o ensure everyone has the same fair 75 minutes after opening the test and s
+	eeing the first question).  After you submit the exam\, immediately verify 
+	a grade registered successfully to the gradebook.  If you can't get an accu
+	rate grade registered successfully by 11:59 PM Saturday\, you MUST CONTACT 
+	a TA prior to 11:59 PM Saturday. Once the Saturday due date passes\, if you
+	 have not contacted anyone with concerns/explanations as to why you have no
+	t registered an accurate grade yet\, you will not be eligible for any addit
+	ional personal support/assistance. (If you did send us a note prior to the 
+	Saturday due date\, just sit tight and wait for a response).  \nPolicies fo
+	r your exam submission: The exam is open note and open book and no proctori
+	ng software will be used to lock down your computer.  You simply need to ha
+	ve received no information about the question content prior to opening it (
+	through any format)\, and then you must submit it ON YOUR OWN using the cou
+	rse materials (no collaboration with people before\, during\, or after rega
+	rding the specific questions).  You also may not help anyone else with the 
+	questions or exam content while they have their exam open\, or help by givi
+	ng them information (through any format) about question content beforehand.
+	 See the syllabus for more info. Feel free to chat on piazza before Thursda
+	y about any general study guide/content questions - just do not communicate
+	 about specific question content once the test is open. Of course\, ensurin
+	g everyone is seeing a different version of the test will help reduce the t
+	emptation to collaborate. :-) We allow a lot of collaboration on other thin
+	gs in this course\, and now is your chance to show us what you can do on yo
+	ur own.\nEveryone gets one fair shot at each test and is only permitted to 
+	open an exam once - once you open the exam\, you are not eligible for a mak
+	eup. Do not open it if you aren't ready to take it.\nMAKEUP POLICY:\nBecaus
+	e you have a full 3 day window to submit your test\, we expect people to be
+	 able to submit the exam during the required window. Please take the submis
+	sion window seriously and don't open the 75 minute test at the last minute 
+	on Saturday. Recall that the syllabus states that if you can't get an accur
+	ate grade registered by the Saturday due date\, you MUST contact a TA to te
+	ll them what is going on.  In particular\, we will need to know whether you
+	 think you might need more than an additional 24 hours to get it done or wh
+	ether you can have it in on Sunday (To avoid having to set individualized e
+	xtensions on tests\, we will already have programmed into Brightspace an ex
+	tra 24 hour no questions asked makeup/grace period for Sunday). But similar
+	 to the "no questions asked" makeup period for the weekly assessments\, jus
+	t because the exams will be available on brightspace for late submission fo
+	r an extra day\, do not just mentally adjust the due date in your mind and 
+	leave the exam until that day without contacting anyone. If you leave a tes
+	t until the makeup day without excuse/documentation on file and without con
+	tacting anyone before the Saturday required deadline to tell them what was 
+	going on\, you will not be entitled to additional makeup time if an unexpec
+	ted crisis arises at the last minute on Sunday and we haven't heard from yo
+	u until that point.  So please err on the side of caution and make contact 
+	with a teacher prior to 11:59 PM Saturday if you can't get a grade register
+	ed in time.\n\n\n\nQuizzes:\nEXAM 1 (MODULES 2-7) - https://purdue.brightsp
+	ace.com/d2l/lms/quizzing/quizzing.d2l?ou=958519&qi=938277\n\n\nView event -
+	 https://purdue.brightspace.com/d2l/le/calendar/958519/event/3020381/detail
+	sview?ou=958519#3020381
+CLASS:PUBLIC
+DTSTART:20240229T050100Z
+DTEND:20240229T050100Z
+UID:6606-3020381@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240122T182534Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:EXAM 1 (MODULES 2-7) - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Here is your link to Exam 1. Exam 1 will be made available for 
+	a required submission period Thursday -Saturday (11:59 PM) for 72 hours\, F
+	eb 29 - March 2.  It will be deployed through the BRIGHTSPACE QUIZZING TOOL
+	\, which will be able to randomly select questions of comparable difficulty
+	 that cover certain concepts from a pool of several options. Thus\, no two 
+	exams will be the same. \nThis exam covers study guide items for modules 2-
+	7.  It is timed at 75 minutes and contains 50 multiple choice and true/fals
+	e questions very similar to your end of module assessments\, and you get on
+	e attempt.  The exam must be COMPLETED (SUBMITTED) by end of day Saturday (
+	so DO NOT START IT at 11:58 PM).  Also\, DO NOT CLICK TO START THE EXAM unt
+	il you have a reliable internet connection\, a distraction-free environment
+	\, and 75 minutes available to take the test.  Once you start the exam\, ev
+	en if you exit out\, the timer will continue to run in the background and y
+	ou will not be able to get back in to finish later if the time is up! It is
+	 *YOUR RESPONSIBILITY* to NOT open the test until you are ready to start (t
+	o ensure everyone has the same fair 75 minutes after opening the test and s
+	eeing the first question).  After you submit the exam\, immediately verify 
+	a grade registered successfully to the gradebook.  If you can't get an accu
+	rate grade registered successfully by 11:59 PM Saturday\, you MUST CONTACT 
+	a TA prior to 11:59 PM Saturday. Once the Saturday due date passes\, if you
+	 have not contacted anyone with concerns/explanations as to why you have no
+	t registered an accurate grade yet\, you will not be eligible for any addit
+	ional personal support/assistance. (If you did send us a note prior to the 
+	Saturday due date\, just sit tight and wait for a response).  \nPolicies fo
+	r your exam submission: The exam is open note and open book and no proctori
+	ng software will be used to lock down your computer.  You simply need to ha
+	ve received no information about the question content prior to opening it (
+	through any format)\, and then you must submit it ON YOUR OWN using the cou
+	rse materials (no collaboration with people before\, during\, or after rega
+	rding the specific questions).  You also may not help anyone else with the 
+	questions or exam content while they have their exam open\, or help by givi
+	ng them information (through any format) about question content beforehand.
+	 See the syllabus for more info. Feel free to chat on piazza before Thursda
+	y about any general study guide/content questions - just do not communicate
+	 about specific question content once the test is open. Of course\, ensurin
+	g everyone is seeing a different version of the test will help reduce the t
+	emptation to collaborate. :-) We allow a lot of collaboration on other thin
+	gs in this course\, and now is your chance to show us what you can do on yo
+	ur own.\nEveryone gets one fair shot at each test and is only permitted to 
+	open an exam once - once you open the exam\, you are not eligible for a mak
+	eup. Do not open it if you aren't ready to take it.\nMAKEUP POLICY:\nBecaus
+	e you have a full 3 day window to submit your test\, we expect people to be
+	 able to submit the exam during the required window. Please take the submis
+	sion window seriously and don't open the 75 minute test at the last minute 
+	on Saturday. Recall that the syllabus states that if you can't get an accur
+	ate grade registered by the Saturday due date\, you MUST contact a TA to te
+	ll them what is going on.  In particular\, we will need to know whether you
+	 think you might need more than an additional 24 hours to get it done or wh
+	ether you can have it in on Sunday (To avoid having to set individualized e
+	xtensions on tests\, we will already have programmed into Brightspace an ex
+	tra 24 hour no questions asked makeup/grace period for Sunday). But similar
+	 to the "no questions asked" makeup period for the weekly assessments\, jus
+	t because the exams will be available on brightspace for late submission fo
+	r an extra day\, do not just mentally adjust the due date in your mind and 
+	leave the exam until that day without contacting anyone. If you leave a tes
+	t until the makeup day without excuse/documentation on file and without con
+	tacting anyone before the Saturday required deadline to tell them what was 
+	going on\, you will not be entitled to additional makeup time if an unexpec
+	ted crisis arises at the last minute on Sunday and we haven't heard from yo
+	u until that point.  So please err on the side of caution and make contact 
+	with a teacher prior to 11:59 PM Saturday if you can't get a grade register
+	ed in time.\n\n\n\nQuizzes:\nEXAM 1 (MODULES 2-7) - https://purdue.brightsp
+	ace.com/d2l/lms/quizzing/quizzing.d2l?ou=958519&qi=938277\n\n\nView event -
+	 https://purdue.brightspace.com/d2l/le/calendar/958519/event/3020380/detail
+	sview?ou=958519#3020380
+CLASS:PUBLIC
+DTSTART:20240303T045959Z
+DTEND:20240303T045959Z
+UID:6606-3020380@purdue.brightspace.com
+SEQUENCE:8
+LAST-MODIFIED:20240122T182546Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:EXAM 1 (MODULES 2-7) - Availability Ends
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Here is your link to Exam 1. Exam 1 will be made available for 
+	a required submission period Thursday -Saturday (11:59 PM) for 72 hours\, F
+	eb 29 - March 2.  It will be deployed through the BRIGHTSPACE QUIZZING TOOL
+	\, which will be able to randomly select questions of comparable difficulty
+	 that cover certain concepts from a pool of several options. Thus\, no two 
+	exams will be the same. \nThis exam covers study guide items for modules 2-
+	7.  It is timed at 75 minutes and contains 50 multiple choice and true/fals
+	e questions very similar to your end of module assessments\, and you get on
+	e attempt.  The exam must be COMPLETED (SUBMITTED) by end of day Saturday (
+	so DO NOT START IT at 11:58 PM).  Also\, DO NOT CLICK TO START THE EXAM unt
+	il you have a reliable internet connection\, a distraction-free environment
+	\, and 75 minutes available to take the test.  Once you start the exam\, ev
+	en if you exit out\, the timer will continue to run in the background and y
+	ou will not be able to get back in to finish later if the time is up! It is
+	 *YOUR RESPONSIBILITY* to NOT open the test until you are ready to start (t
+	o ensure everyone has the same fair 75 minutes after opening the test and s
+	eeing the first question).  After you submit the exam\, immediately verify 
+	a grade registered successfully to the gradebook.  If you can't get an accu
+	rate grade registered successfully by 11:59 PM Saturday\, you MUST CONTACT 
+	a TA prior to 11:59 PM Saturday. Once the Saturday due date passes\, if you
+	 have not contacted anyone with concerns/explanations as to why you have no
+	t registered an accurate grade yet\, you will not be eligible for any addit
+	ional personal support/assistance. (If you did send us a note prior to the 
+	Saturday due date\, just sit tight and wait for a response).  \nPolicies fo
+	r your exam submission: The exam is open note and open book and no proctori
+	ng software will be used to lock down your computer.  You simply need to ha
+	ve received no information about the question content prior to opening it (
+	through any format)\, and then you must submit it ON YOUR OWN using the cou
+	rse materials (no collaboration with people before\, during\, or after rega
+	rding the specific questions).  You also may not help anyone else with the 
+	questions or exam content while they have their exam open\, or help by givi
+	ng them information (through any format) about question content beforehand.
+	 See the syllabus for more info. Feel free to chat on piazza before Thursda
+	y about any general study guide/content questions - just do not communicate
+	 about specific question content once the test is open. Of course\, ensurin
+	g everyone is seeing a different version of the test will help reduce the t
+	emptation to collaborate. :-) We allow a lot of collaboration on other thin
+	gs in this course\, and now is your chance to show us what you can do on yo
+	ur own.\nEveryone gets one fair shot at each test and is only permitted to 
+	open an exam once - once you open the exam\, you are not eligible for a mak
+	eup. Do not open it if you aren't ready to take it.\nMAKEUP POLICY:\nBecaus
+	e you have a full 3 day window to submit your test\, we expect people to be
+	 able to submit the exam during the required window. Please take the submis
+	sion window seriously and don't open the 75 minute test at the last minute 
+	on Saturday. Recall that the syllabus states that if you can't get an accur
+	ate grade registered by the Saturday due date\, you MUST contact a TA to te
+	ll them what is going on.  In particular\, we will need to know whether you
+	 think you might need more than an additional 24 hours to get it done or wh
+	ether you can have it in on Sunday (To avoid having to set individualized e
+	xtensions on tests\, we will already have programmed into Brightspace an ex
+	tra 24 hour no questions asked makeup/grace period for Sunday). But similar
+	 to the "no questions asked" makeup period for the weekly assessments\, jus
+	t because the exams will be available on brightspace for late submission fo
+	r an extra day\, do not just mentally adjust the due date in your mind and 
+	leave the exam until that day without contacting anyone. If you leave a tes
+	t until the makeup day without excuse/documentation on file and without con
+	tacting anyone before the Saturday required deadline to tell them what was 
+	going on\, you will not be entitled to additional makeup time if an unexpec
+	ted crisis arises at the last minute on Sunday and we haven't heard from yo
+	u until that point.  So please err on the side of caution and make contact 
+	with a teacher prior to 11:59 PM Saturday if you can't get a grade register
+	ed in time.\n\n\n\nQuizzes:\nEXAM 1 (MODULES 2-7) - https://purdue.brightsp
+	ace.com/d2l/lms/quizzing/quizzing.d2l?ou=958519&qi=938277\n\n\nView event -
+	 https://purdue.brightspace.com/d2l/le/calendar/958519/event/3020382/detail
+	sview?ou=958519#3020382
+CLASS:PUBLIC
+DTSTART:20240304T045959Z
+DTEND:20240304T045959Z
+UID:6606-3020382@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240122T182534Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:15 SONA RESEARCH CREDITS DUE - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Your 15 SONA research credits must be completed by today.  Alte
+	rnate assignments must be emailed in by end of day the last day of classes.
+	 See the Research Requirement Info and SONA Link on Brightspace for further
+	 instructions.  You can check this assignment off yourself when you know yo
+	u have completed this department requirement within SONA!  This Brightspace
+	 link is just here so it will show up on your calendar as a reminder THAT I
+	T IS DUE! (this link is not actually tied in any way to the SONA system.  R
+	emember that Dr. Sparks does not have access to the SONA system and can not
+	 verify whether you have actually successfully earned 15 credits.  Email ps
+	ychstudies@purdue.edu with questions!)\n\n\nAssignments:\n15 SONA RESEARCH 
+	CREDITS DUE - https://purdue.brightspace.com/d2l/lms/dropbox/user/folder_su
+	bmit_files.d2l?ou=958519&db=975452\n\n\nView event - https://purdue.brights
+	pace.com/d2l/le/calendar/958519/event/2980277/detailsview?ou=958519#2980277
+CLASS:PUBLIC
+DTSTART:20240427T035959Z
+DTEND:20240427T035959Z
+UID:6606-2980277@purdue.brightspace.com
+SEQUENCE:3
+LAST-MODIFIED:20240108T185242Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:EXAM 2 (MODULES 8-13) - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Exam 2 opens Tuesday of finals week and is due Thursday of fina
+	ls week (11:59 PM).  It will be deployed through the BRIGHTSPACE QUIZZING T
+	OOL (link will be provided in this module) which will be able to randomly s
+	elect questions of comparable difficulty that cover certain concepts from a
+	 pool of several options. Thus\, no two exams will be the same. \nThe exam 
+	is timed at 75 minutes and contains 50 multiple choice and true/false quest
+	ions (4 pts each) over modules 8-13. A separate link to a separate set of c
+	umulative extra credit questions will also be posted covering material from
+	 the first half of the course. You get one attempt at each.  The exam must 
+	be COMPLETED (SUBMITTED) by end of day Thursday (so DO NOT START IT at 11:5
+	8 PM).  Also\, DO NOT CLICK TO START THE EXAM until you have a reliable int
+	ernet connection\, a distraction-free environment\, and 75 minutes availabl
+	e to take the test.  Once you start the exam\, even if you exit out\, the t
+	imer will continue to run in the background and you will not be able to get
+	 back in to finish later if the time is up! It is *YOUR RESPONSIBILITY* to 
+	NOT open the test until you are ready to start (to ensure everyone has the 
+	same fair 75 minutes after opening the test and seeing the first question).
+	  After you submit the exam\, immediately verify a grade registered success
+	fully to the gradebook.  If you can't get an accurate grade registered succ
+	essfully by 11:59 PM Thursday\, you MUST CONTACT a TA prior to 11:59 PM Thu
+	rsday. Once the Thursday due date passes\, if you have not contacted anyone
+	 with concerns/explanations as to why you have not registered an accurate g
+	rade yet\, you will not be eligible for any additional personal support/ass
+	istance. (If you did send us a note prior to the Thursday due date\, just s
+	it tight and wait for a response).  \nPolicies for your exam submission: Th
+	e exam is open note and open book\, and no proctoring software will be used
+	 to lock down your computer.  You simply need to have received no informati
+	on about the question content prior to opening it (through any format)\, an
+	d then you must submit it ON YOUR OWN using the course materials (no collab
+	oration with people before\, during\, or after regarding the specific quest
+	ions).  You also may not help anyone else with the questions or exam conten
+	t while they have their exam open\, or help by giving them information (thr
+	ough any format) about question content beforehand. See the syllabus for mo
+	re info. Feel free to chat on piazza before Tuesday about any general study
+	 guide/content questions - just do not communicate about specific question 
+	content once the test is open. Of course\, ensuring everyone is seeing a di
+	fferent version of the test will help reduce the temptation to collaborate.
+	 :-) We allow a lot of collaboration on other things in this course\, and n
+	ow is your chance to show us what you can do on your own.\nEveryone gets on
+	e fair shot at each test and is only permitted to open an exam once - once 
+	you open the exam\, you are not eligible for a makeup. Do not open it if yo
+	u aren't ready to take it.\nMAKEUP POLICY:\nBecause you have a full 3 day w
+	indow to submit your test  (and you don't have to be physically present in 
+	a classroom)\, we expect people to be able to submit the exam during the re
+	quired window. Please take the submission window seriously and don't open t
+	he 75 minute test at the last minute on Thursday. Recall that the syllabus 
+	states that if you can't get an accurate grade registered by the Thursday d
+	ue date\, you MUST contact a TA to tell them what is going on.  In particul
+	ar\, we will need to know whether you think you might need more than an add
+	itional 24 hours to get it done or whether you can have it in on Friday (To
+	 avoid having to set individualized extensions on tests\, we will already h
+	ave programmed into Brightspace an extra 24 hour no questions asked makeup/
+	grace period for Friday). But similar to the "no questions asked" makeup pe
+	riod for the weekly assessments\, just because the exams will be available 
+	on brightspace for late submission for an extra day\, do not just mentally 
+	adjust the due date in your mind and leave the exam until that day without 
+	contacting anyone. If you leave a test until the makeup day without excuse/
+	documentation on file and without contacting anyone before the Thursday req
+	uired deadline to tell them what was going on\, you will not be entitled to
+	 additional makeup time if an unexpected crisis arises at the last minute o
+	n Friday and we haven't heard from you until that point.  So please err on 
+	the side of caution and make contact with a teacher prior to 11:59 PM Thurs
+	day if you can't get a grade registered in time.\n\n\nQuizzes:\nEXAM 2 (MOD
+	ULES 8-13) - https://purdue.brightspace.com/d2l/lms/quizzing/quizzing.d2l?o
+	u=958519&qi=938278\n\n\nView event - https://purdue.brightspace.com/d2l/le/
+	calendar/958519/event/3020384/detailsview?ou=958519#3020384
+CLASS:PUBLIC
+DTSTART:20240430T040100Z
+DTEND:20240430T040100Z
+UID:6606-3020384@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240122T182745Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:EXAM 2 CUMULATIVE EXTRA CREDIT QUESTIONS - Available
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:20 QUESTIONS\, 20 MINUTES. 5 pts possible max.\n\n\nQuizzes:\nE
+	XAM 2 CUMULATIVE EXTRA CREDIT QUESTIONS - https://purdue.brightspace.com/d2
+	l/lms/quizzing/quizzing.d2l?ou=958519&qi=938279\n\n\nView event - https://p
+	urdue.brightspace.com/d2l/le/calendar/958519/event/3020387/detailsview?ou=9
+	58519#3020387
+CLASS:PUBLIC
+DTSTART:20240430T040100Z
+DTEND:20240430T040100Z
+UID:6606-3020387@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T181944Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:EXAM 2 (MODULES 8-13) - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Exam 2 opens Tuesday of finals week and is due Thursday of fina
+	ls week (11:59 PM).  It will be deployed through the BRIGHTSPACE QUIZZING T
+	OOL (link will be provided in this module) which will be able to randomly s
+	elect questions of comparable difficulty that cover certain concepts from a
+	 pool of several options. Thus\, no two exams will be the same. \nThe exam 
+	is timed at 75 minutes and contains 50 multiple choice and true/false quest
+	ions (4 pts each) over modules 8-13. A separate link to a separate set of c
+	umulative extra credit questions will also be posted covering material from
+	 the first half of the course. You get one attempt at each.  The exam must 
+	be COMPLETED (SUBMITTED) by end of day Thursday (so DO NOT START IT at 11:5
+	8 PM).  Also\, DO NOT CLICK TO START THE EXAM until you have a reliable int
+	ernet connection\, a distraction-free environment\, and 75 minutes availabl
+	e to take the test.  Once you start the exam\, even if you exit out\, the t
+	imer will continue to run in the background and you will not be able to get
+	 back in to finish later if the time is up! It is *YOUR RESPONSIBILITY* to 
+	NOT open the test until you are ready to start (to ensure everyone has the 
+	same fair 75 minutes after opening the test and seeing the first question).
+	  After you submit the exam\, immediately verify a grade registered success
+	fully to the gradebook.  If you can't get an accurate grade registered succ
+	essfully by 11:59 PM Thursday\, you MUST CONTACT a TA prior to 11:59 PM Thu
+	rsday. Once the Thursday due date passes\, if you have not contacted anyone
+	 with concerns/explanations as to why you have not registered an accurate g
+	rade yet\, you will not be eligible for any additional personal support/ass
+	istance. (If you did send us a note prior to the Thursday due date\, just s
+	it tight and wait for a response).  \nPolicies for your exam submission: Th
+	e exam is open note and open book\, and no proctoring software will be used
+	 to lock down your computer.  You simply need to have received no informati
+	on about the question content prior to opening it (through any format)\, an
+	d then you must submit it ON YOUR OWN using the course materials (no collab
+	oration with people before\, during\, or after regarding the specific quest
+	ions).  You also may not help anyone else with the questions or exam conten
+	t while they have their exam open\, or help by giving them information (thr
+	ough any format) about question content beforehand. See the syllabus for mo
+	re info. Feel free to chat on piazza before Tuesday about any general study
+	 guide/content questions - just do not communicate about specific question 
+	content once the test is open. Of course\, ensuring everyone is seeing a di
+	fferent version of the test will help reduce the temptation to collaborate.
+	 :-) We allow a lot of collaboration on other things in this course\, and n
+	ow is your chance to show us what you can do on your own.\nEveryone gets on
+	e fair shot at each test and is only permitted to open an exam once - once 
+	you open the exam\, you are not eligible for a makeup. Do not open it if yo
+	u aren't ready to take it.\nMAKEUP POLICY:\nBecause you have a full 3 day w
+	indow to submit your test  (and you don't have to be physically present in 
+	a classroom)\, we expect people to be able to submit the exam during the re
+	quired window. Please take the submission window seriously and don't open t
+	he 75 minute test at the last minute on Thursday. Recall that the syllabus 
+	states that if you can't get an accurate grade registered by the Thursday d
+	ue date\, you MUST contact a TA to tell them what is going on.  In particul
+	ar\, we will need to know whether you think you might need more than an add
+	itional 24 hours to get it done or whether you can have it in on Friday (To
+	 avoid having to set individualized extensions on tests\, we will already h
+	ave programmed into Brightspace an extra 24 hour no questions asked makeup/
+	grace period for Friday). But similar to the "no questions asked" makeup pe
+	riod for the weekly assessments\, just because the exams will be available 
+	on brightspace for late submission for an extra day\, do not just mentally 
+	adjust the due date in your mind and leave the exam until that day without 
+	contacting anyone. If you leave a test until the makeup day without excuse/
+	documentation on file and without contacting anyone before the Thursday req
+	uired deadline to tell them what was going on\, you will not be entitled to
+	 additional makeup time if an unexpected crisis arises at the last minute o
+	n Friday and we haven't heard from you until that point.  So please err on 
+	the side of caution and make contact with a teacher prior to 11:59 PM Thurs
+	day if you can't get a grade registered in time.\n\n\nQuizzes:\nEXAM 2 (MOD
+	ULES 8-13) - https://purdue.brightspace.com/d2l/lms/quizzing/quizzing.d2l?o
+	u=958519&qi=938278\n\n\nView event - https://purdue.brightspace.com/d2l/le/
+	calendar/958519/event/3020383/detailsview?ou=958519#3020383
+CLASS:PUBLIC
+DTSTART:20240503T035959Z
+DTEND:20240503T035959Z
+UID:6606-3020383@purdue.brightspace.com
+SEQUENCE:5
+LAST-MODIFIED:20240122T182747Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:EXAM 2 CUMULATIVE EXTRA CREDIT QUESTIONS - Due
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:20 QUESTIONS\, 20 MINUTES. 5 pts possible max.\n\n\nQuizzes:\nE
+	XAM 2 CUMULATIVE EXTRA CREDIT QUESTIONS - https://purdue.brightspace.com/d2
+	l/lms/quizzing/quizzing.d2l?ou=958519&qi=938279\n\n\nView event - https://p
+	urdue.brightspace.com/d2l/le/calendar/958519/event/3020386/detailsview?ou=9
+	58519#3020386
+CLASS:PUBLIC
+DTSTART:20240503T035959Z
+DTEND:20240503T035959Z
+UID:6606-3020386@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240122T181952Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:EXAM 2 (MODULES 8-13) - Availability Ends
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:Exam 2 opens Tuesday of finals week and is due Thursday of fina
+	ls week (11:59 PM).  It will be deployed through the BRIGHTSPACE QUIZZING T
+	OOL (link will be provided in this module) which will be able to randomly s
+	elect questions of comparable difficulty that cover certain concepts from a
+	 pool of several options. Thus\, no two exams will be the same. \nThe exam 
+	is timed at 75 minutes and contains 50 multiple choice and true/false quest
+	ions (4 pts each) over modules 8-13. A separate link to a separate set of c
+	umulative extra credit questions will also be posted covering material from
+	 the first half of the course. You get one attempt at each.  The exam must 
+	be COMPLETED (SUBMITTED) by end of day Thursday (so DO NOT START IT at 11:5
+	8 PM).  Also\, DO NOT CLICK TO START THE EXAM until you have a reliable int
+	ernet connection\, a distraction-free environment\, and 75 minutes availabl
+	e to take the test.  Once you start the exam\, even if you exit out\, the t
+	imer will continue to run in the background and you will not be able to get
+	 back in to finish later if the time is up! It is *YOUR RESPONSIBILITY* to 
+	NOT open the test until you are ready to start (to ensure everyone has the 
+	same fair 75 minutes after opening the test and seeing the first question).
+	  After you submit the exam\, immediately verify a grade registered success
+	fully to the gradebook.  If you can't get an accurate grade registered succ
+	essfully by 11:59 PM Thursday\, you MUST CONTACT a TA prior to 11:59 PM Thu
+	rsday. Once the Thursday due date passes\, if you have not contacted anyone
+	 with concerns/explanations as to why you have not registered an accurate g
+	rade yet\, you will not be eligible for any additional personal support/ass
+	istance. (If you did send us a note prior to the Thursday due date\, just s
+	it tight and wait for a response).  \nPolicies for your exam submission: Th
+	e exam is open note and open book\, and no proctoring software will be used
+	 to lock down your computer.  You simply need to have received no informati
+	on about the question content prior to opening it (through any format)\, an
+	d then you must submit it ON YOUR OWN using the course materials (no collab
+	oration with people before\, during\, or after regarding the specific quest
+	ions).  You also may not help anyone else with the questions or exam conten
+	t while they have their exam open\, or help by giving them information (thr
+	ough any format) about question content beforehand. See the syllabus for mo
+	re info. Feel free to chat on piazza before Tuesday about any general study
+	 guide/content questions - just do not communicate about specific question 
+	content once the test is open. Of course\, ensuring everyone is seeing a di
+	fferent version of the test will help reduce the temptation to collaborate.
+	 :-) We allow a lot of collaboration on other things in this course\, and n
+	ow is your chance to show us what you can do on your own.\nEveryone gets on
+	e fair shot at each test and is only permitted to open an exam once - once 
+	you open the exam\, you are not eligible for a makeup. Do not open it if yo
+	u aren't ready to take it.\nMAKEUP POLICY:\nBecause you have a full 3 day w
+	indow to submit your test  (and you don't have to be physically present in 
+	a classroom)\, we expect people to be able to submit the exam during the re
+	quired window. Please take the submission window seriously and don't open t
+	he 75 minute test at the last minute on Thursday. Recall that the syllabus 
+	states that if you can't get an accurate grade registered by the Thursday d
+	ue date\, you MUST contact a TA to tell them what is going on.  In particul
+	ar\, we will need to know whether you think you might need more than an add
+	itional 24 hours to get it done or whether you can have it in on Friday (To
+	 avoid having to set individualized extensions on tests\, we will already h
+	ave programmed into Brightspace an extra 24 hour no questions asked makeup/
+	grace period for Friday). But similar to the "no questions asked" makeup pe
+	riod for the weekly assessments\, just because the exams will be available 
+	on brightspace for late submission for an extra day\, do not just mentally 
+	adjust the due date in your mind and leave the exam until that day without 
+	contacting anyone. If you leave a test until the makeup day without excuse/
+	documentation on file and without contacting anyone before the Thursday req
+	uired deadline to tell them what was going on\, you will not be entitled to
+	 additional makeup time if an unexpected crisis arises at the last minute o
+	n Friday and we haven't heard from you until that point.  So please err on 
+	the side of caution and make contact with a teacher prior to 11:59 PM Thurs
+	day if you can't get a grade registered in time.\n\n\nQuizzes:\nEXAM 2 (MOD
+	ULES 8-13) - https://purdue.brightspace.com/d2l/lms/quizzing/quizzing.d2l?o
+	u=958519&qi=938278\n\n\nView event - https://purdue.brightspace.com/d2l/le/
+	calendar/958519/event/3020385/detailsview?ou=958519#3020385
+CLASS:PUBLIC
+DTSTART:20240504T035959Z
+DTEND:20240504T035959Z
+UID:6606-3020385@purdue.brightspace.com
+SEQUENCE:2
+LAST-MODIFIED:20240122T182745Z
+END:VEVENT
+BEGIN:VEVENT
+DTSTAMP:20240130T000743Z
+SUMMARY:EXAM 2 CUMULATIVE EXTRA CREDIT QUESTIONS - Availability Ends
+LOCATION:Spring 2024 PSY 12000-005 DIS
+DESCRIPTION:20 QUESTIONS\, 20 MINUTES. 5 pts possible max.\n\n\nQuizzes:\nE
+	XAM 2 CUMULATIVE EXTRA CREDIT QUESTIONS - https://purdue.brightspace.com/d2
+	l/lms/quizzing/quizzing.d2l?ou=958519&qi=938279\n\n\nView event - https://p
+	urdue.brightspace.com/d2l/le/calendar/958519/event/3020388/detailsview?ou=9
+	58519#3020388
+CLASS:PUBLIC
+DTSTART:20240504T035959Z
+DTEND:20240504T035959Z
+UID:6606-3020388@purdue.brightspace.com
+SEQUENCE:1
+LAST-MODIFIED:20240122T181944Z
+END:VEVENT
+END:VCALENDAR
