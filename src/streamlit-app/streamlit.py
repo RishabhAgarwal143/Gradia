@@ -5,12 +5,10 @@ import json
 import os
 import time
 import api_calls as ac
-# from api_calls import get_actual_time_and_date, add_event_to_calendar, modify_event_in_calendar, get_schedule
 from openai import OpenAI
 import logging
 
-
-openai.api_key = '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'
+openai.api_key = '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'
 # openai.api_key = "
 client = OpenAI(api_key=openai.api_key)
 assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
@@ -29,11 +27,11 @@ with st.sidebar:
     st.divider()
 
 functions = {
-    'add_event_to_calendar':ac.add_event_to_calendar,
-    'get_actual_time_and_date':ac.get_actual_time_and_date,
-    'modify_event_in_calendar':ac.modify_event_in_calendar,
-    'get_schedule':ac.get_schedule
- }
+    'add_event_to_calendar': ac.add_event_to_calendar,
+    'get_actual_time_and_date': ac.get_actual_time_and_date,
+    'modify_event_in_calendar': ac.modify_event_in_calendar,
+    'get_schedule': ac.get_schedule
+}
 
 
 # Function to call the assistant required functions and return their outputs as JSON strings
@@ -141,7 +139,7 @@ else:
             with st.chat_message('assistant', avatar="🤖"):
                 st.write(f'Executing Action ...')
 
-            # Get the tool outputs by executing the required functions
+                # Get the tool outputs by executing the required functions
                 tool_outputs = execute_required_functions(st.session_state.run.required_action)
 
             # Submit the tool outputs back to the Assistant
