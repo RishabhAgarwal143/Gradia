@@ -2,8 +2,6 @@
 set -e
 IFS='|'
 
-echo $ACCESSKEYID
-
 REACTCONFIG="{\
 \"SourceDir\":\"src\",\
 \"DistributionDir\":\"build\",\
@@ -13,7 +11,7 @@ REACTCONFIG="{\
 AWSCLOUDFORMATIONCONFIG="{\
 \"configLevel\":\"project\",\
 \"useProfile\":false,\
-\"profileName\":\"system\",\    
+\"profileName\":\"system\",\
 \"accessKeyId\":\"$ACCESSKEYID\",\
 \"secretAccessKey\":\"$SECRETACCESSKEY\",\
 \"region\":\"us-east-2\"\
