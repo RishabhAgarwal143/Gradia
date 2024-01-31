@@ -30,7 +30,7 @@ jobs:
       - name: Retrieve Secret and setup amplify
         env:
           ACCESSKEYID: ${{secrets.ACCESSKEYID}}
-          SECRETACCESSKEY: ${{secrets.SECRETACCESSKEY}}
+          SECRETACCESSKEY: ${{secrets.SECRETACESSKEY}}
         run: bash -xuv setupscript.sh
       - run: npm install
       - run: npm run build --if-present
