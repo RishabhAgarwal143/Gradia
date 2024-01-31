@@ -1,9 +1,13 @@
-Description(Topic)
+[Topic]: Short description
 
-Type of change (Select by placing an x)
+[Body]: Detailed explanation (if necessary)
 
-[] Feature
-[] Modification
-[] Bug Fix
+[Checklist]:
 
-Methods(What changes did you make):
+- [ ] Feature
+- [ ] Modification
+- [ ] Bug Fix
+
+[Issue #]: Reference to related issues or tasks
+
+[Method]:
