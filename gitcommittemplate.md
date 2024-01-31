@@ -1,9 +1,9 @@
-# Description(Topic)
+Description(Topic)
 
-# Type of change (Select by placing an x)
+Type of change (Select by placing an x)
 
 [] Feature
 [] Modification
 [] Bug Fix
 
-# Methods(What changes did you make):
+Methods(What changes did you make):
