@@ -197,11 +197,13 @@ export default function UserinfoCreateForm(props) {
   const initialValues = {
     name: "",
     email: "",
+    Timezone: "",
     Schedules: [],
     Tasks: [],
   };
   const [name, setName] = React.useState(initialValues.name);
   const [email, setEmail] = React.useState(initialValues.email);
+  const [Timezone, setTimezone] = React.useState(initialValues.Timezone);
   const [Schedules, setSchedules] = React.useState(initialValues.Schedules);
   const [SchedulesLoading, setSchedulesLoading] = React.useState(false);
   const [schedulesRecords, setSchedulesRecords] = React.useState([]);
@@ -213,6 +215,7 @@ export default function UserinfoCreateForm(props) {
   const resetStateValues = () => {
     setName(initialValues.name);
     setEmail(initialValues.email);
+    setTimezone(initialValues.Timezone);
     setSchedules(initialValues.Schedules);
     setCurrentSchedulesValue(undefined);
     setCurrentSchedulesDisplayValue("");
@@ -251,6 +254,7 @@ export default function UserinfoCreateForm(props) {
   const validations = {
     name: [{ type: "Required" }],
     email: [{ type: "Required" }, { type: "Email" }],
+    Timezone: [],
     Schedules: [],
     Tasks: [],
   };
@@ -347,6 +351,7 @@ export default function UserinfoCreateForm(props) {
         let modelFields = {
           name,
           email,
+          Timezone,
           Schedules,
           Tasks,
         };
@@ -389,6 +394,7 @@ export default function UserinfoCreateForm(props) {
           const modelFieldsToSave = {
             name: modelFields.name,
             email: modelFields.email,
+            Timezone: modelFields.Timezone,
           };
           const userinfo = (
             await client.graphql({
@@ -461,6 +467,7 @@ export default function UserinfoCreateForm(props) {
             const modelFields = {
               name: value,
               email,
+              Timezone,
               Schedules,
               Tasks,
             };
@@ -488,6 +495,7 @@ export default function UserinfoCreateForm(props) {
             const modelFields = {
               name,
               email: value,
+              Timezone,
               Schedules,
               Tasks,
             };
@@ -504,6 +512,42 @@ export default function UserinfoCreateForm(props) {
         hasError={errors.email?.hasError}
         {...getOverrideProps(overrides, "email")}
       ></TextField>
+      <TextField
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Timezone</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
+        isRequired={false}
+        isReadOnly={false}
+        value={Timezone}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              Timezone: value,
+              Schedules,
+              Tasks,
+            };
+            const result = onChange(modelFields);
+            value = result?.Timezone ?? value;
+          }
+          if (errors.Timezone?.hasError) {
+            runValidationTasks("Timezone", value);
+          }
+          setTimezone(value);
+        }}
+        onBlur={() => runValidationTasks("Timezone", Timezone)}
+        errorMessage={errors.Timezone?.errorMessage}
+        hasError={errors.Timezone?.hasError}
+        {...getOverrideProps(overrides, "Timezone")}
+      ></TextField>
       <ArrayField
         onChange={async (items) => {
           let values = items;
@@ -511,6 +555,7 @@ export default function UserinfoCreateForm(props) {
             const modelFields = {
               name,
               email,
+              Timezone,
               Schedules: values,
               Tasks,
             };
@@ -600,6 +645,7 @@ export default function UserinfoCreateForm(props) {
             const modelFields = {
               name,
               email,
+              Timezone,
               Schedules,
               Tasks: values,
             };

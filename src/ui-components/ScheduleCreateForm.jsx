@@ -253,8 +253,8 @@ export default function ScheduleCreateForm(props) {
     date: [],
     SUMMARY: [{ type: "Required" }],
     DTSTART: [{ type: "Required" }],
-    DTEND: [],
-    DESCRIPTION: [{ type: "Required" }],
+    DTEND: [{ type: "Required" }],
+    DESCRIPTION: [],
     LOCATION: [],
   };
   const runValidationTasks = async (
@@ -695,7 +695,7 @@ export default function ScheduleCreateForm(props) {
       ></TextField>
       <TextField
         label="Dtend"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         type="datetime-local"
         value={DTEND && convertToLocal(new Date(DTEND))}
@@ -730,7 +730,7 @@ export default function ScheduleCreateForm(props) {
       ></TextField>
       <TextField
         label="Description"
-        isRequired={true}
+        isRequired={false}
         isReadOnly={false}
         value={DESCRIPTION1}
         onChange={(e) => {
