@@ -1,6 +1,7 @@
 import icalendar
 import requests
 import json
+import datetime
 
 class Subscribing_to_Calendar:
 
@@ -22,16 +23,9 @@ class Subscribing_to_Calendar:
     def add_record_to_database(self) -> None:
         url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
         for event in self.calendar.walk('VEVENT'):
-            # summary_details = "Testing ID"
-            # dtstart = "2024-01-29T07:37:00.000Z"
-            # dtend = "2024-01-29T10:37:00.000Z"
-            # description = "Testing"
-            # userinfoId = "204bba8a-b2ca-4872-ae6b-1e519daef372"
-            # location = "ECE368OfficeHours"
-            
             summary_details = event.get('SUMMARY')
-            dtstart = "2024-01-29T07:37:00.000Z"
-            dtend = "2024-01-29T10:37:00.000Z"
+            dtstart = (event.get('DTSTART').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+            dtend = (event.get('DTEND').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
             description = "Description"
             userinfoId = "204bba8a-b2ca-4872-ae6b-1e519daef372"
             location = event.get('LOCATION')
@@ -48,7 +42,7 @@ class Subscribing_to_Calendar:
             
             headers = {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyMDRiYmE4YS1iMmNhLTQ4NzItYWU2Yi0xZTUxOWRhZWYzNzIiLCJjb2duaXRvOmdyb3VwcyI6WyJ1cy1lYXN0LTJfakJ2UFRaOFNyX0dvb2dsZSJdLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImNmM2JiYzJhLWFlN2EtNDIzNy1iMTRkLWNlNTU1MmQzYzg3NCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4gcGhvbmUgb3BlbmlkIHByb2ZpbGUgZW1haWwiLCJhdXRoX3RpbWUiOjE3MDYyMDg2NDIsImV4cCI6MTcwNjU5NDM1MiwiaWF0IjoxNzA2NTkwNzUyLCJqdGkiOiJkOWViY2QyMS0wN2JmLTRiNmItOGQyMS1hNDNhYmI3YjZmMjEiLCJ1c2VybmFtZSI6Imdvb2dsZV8xMDY3NzEyMTAwMjM1NjMzNzczMjMifQ.VpWmEf2923spl29z8qpiSA-_cFWy3EraeXJ92W51nC8QSMFIJiyfSR-ZdBskeC6wSJlPzMiEOkGucQ-x__Rsp_JTHxT9tWBVlzVWZNvqQ6qLilTq9RLDF52VhIrbmpo7YUMd4eDP_0T53K-LZGVXpzQZjbKM9CkgDN2IMm3dbN99COHvIkInEYxL73dOyJWm08H1gfXCXahx1YlRuPQO60ZLkwNWlAM1O7cP8ctvUNJEJNC07yC4XKY-N4k3yWv6u89xTYDnDJu1LQNpiZpG1xPt8mnOlswZYyrv23eK3n41yLjtZyoOGDAqVkVoiouL5xN8xMWafbepK7AiG107Kg'
+            'Authorization': 'Bearer eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyMDRiYmE4YS1iMmNhLTQ4NzItYWU2Yi0xZTUxOWRhZWYzNzIiLCJjb2duaXRvOmdyb3VwcyI6WyJ1cy1lYXN0LTJfakJ2UFRaOFNyX0dvb2dsZSJdLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImNmM2JiYzJhLWFlN2EtNDIzNy1iMTRkLWNlNTU1MmQzYzg3NCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4gcGhvbmUgb3BlbmlkIHByb2ZpbGUgZW1haWwiLCJhdXRoX3RpbWUiOjE3MDYyMDg2NDIsImV4cCI6MTcwNjgxMjg1MCwiaWF0IjoxNzA2ODA5MjUwLCJqdGkiOiIyMDlmYTljMC00NGY3LTQ1NWUtOWI5MC02MDBjMDczYWMyNTciLCJ1c2VybmFtZSI6Imdvb2dsZV8xMDY3NzEyMTAwMjM1NjMzNzczMjMifQ.pq0UjITi4puG4SOyNEnZlqf4oib0a-5ComHtdqckJc0eRjEtetFCLd950qU3smD7IXnDy4-3dswndne-5aQ0OgDrwK6kJC45qKbZvs1CnsaWbFbHJX6_98Ae0jAbsJOwISkoekf2y5dSocwLG3Q7ScHwf7KdAN6OW1l8B0Gq4BcMs5clngLSpn845mpW2HRQ59sCpCDxbBE4-8diNdwleOtyNXyHv2awjpyzbxj0OAMYnkOlpriC0bch2ON4-SzWxn5jRWY_sB5hwQinpWTMmiwkJb7SqboO8FIbyFIMCcJYV75cnURLPyACLyvvy2_IScrlx9fsm2EakNFzr-deiA'
             }
 
             response = requests.request("POST", url, headers=headers, data=payload)
