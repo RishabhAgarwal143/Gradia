@@ -198,11 +198,13 @@ export default function UserinfoUpdateForm(props) {
   const initialValues = {
     name: "",
     email: "",
+    Timezone: "",
     Schedules: [],
     Tasks: [],
   };
   const [name, setName] = React.useState(initialValues.name);
   const [email, setEmail] = React.useState(initialValues.email);
+  const [Timezone, setTimezone] = React.useState(initialValues.Timezone);
   const [Schedules, setSchedules] = React.useState(initialValues.Schedules);
   const [SchedulesLoading, setSchedulesLoading] = React.useState(false);
   const [schedulesRecords, setSchedulesRecords] = React.useState([]);
@@ -222,6 +224,7 @@ export default function UserinfoUpdateForm(props) {
       : initialValues;
     setName(cleanValues.name);
     setEmail(cleanValues.email);
+    setTimezone(cleanValues.Timezone);
     setSchedules(cleanValues.Schedules ?? []);
     setCurrentSchedulesValue(undefined);
     setCurrentSchedulesDisplayValue("");
@@ -288,6 +291,7 @@ export default function UserinfoUpdateForm(props) {
   const validations = {
     name: [{ type: "Required" }],
     email: [{ type: "Required" }, { type: "Email" }],
+    Timezone: [],
     Schedules: [],
     Tasks: [],
   };
@@ -384,6 +388,7 @@ export default function UserinfoUpdateForm(props) {
         let modelFields = {
           name,
           email,
+          Timezone: Timezone ?? null,
           Schedules: Schedules ?? null,
           Tasks: Tasks ?? null,
         };
@@ -523,6 +528,7 @@ export default function UserinfoUpdateForm(props) {
           const modelFieldsToSave = {
             name: modelFields.name,
             email: modelFields.email,
+            Timezone: modelFields.Timezone ?? null,
           };
           promises.push(
             client.graphql({
@@ -560,6 +566,7 @@ export default function UserinfoUpdateForm(props) {
             const modelFields = {
               name: value,
               email,
+              Timezone,
               Schedules,
               Tasks,
             };
@@ -587,6 +594,7 @@ export default function UserinfoUpdateForm(props) {
             const modelFields = {
               name,
               email: value,
+              Timezone,
               Schedules,
               Tasks,
             };
@@ -603,6 +611,34 @@ export default function UserinfoUpdateForm(props) {
         hasError={errors.email?.hasError}
         {...getOverrideProps(overrides, "email")}
       ></TextField>
+      <TextField
+        label="Timezone"
+        isRequired={false}
+        isReadOnly={false}
+        value={Timezone}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              Timezone: value,
+              Schedules,
+              Tasks,
+            };
+            const result = onChange(modelFields);
+            value = result?.Timezone ?? value;
+          }
+          if (errors.Timezone?.hasError) {
+            runValidationTasks("Timezone", value);
+          }
+          setTimezone(value);
+        }}
+        onBlur={() => runValidationTasks("Timezone", Timezone)}
+        errorMessage={errors.Timezone?.errorMessage}
+        hasError={errors.Timezone?.hasError}
+        {...getOverrideProps(overrides, "Timezone")}
+      ></TextField>
       <ArrayField
         onChange={async (items) => {
           let values = items;
@@ -610,6 +646,7 @@ export default function UserinfoUpdateForm(props) {
             const modelFields = {
               name,
               email,
+              Timezone,
               Schedules: values,
               Tasks,
             };
@@ -691,6 +728,7 @@ export default function UserinfoUpdateForm(props) {
             const modelFields = {
               name,
               email,
+              Timezone,
               Schedules,
               Tasks: values,
             };

@@ -7,6 +7,7 @@ export const getUserinfo = /* GraphQL */ `
       id
       name
       email
+      Timezone
       Schedules {
         items {
           id
@@ -57,6 +58,7 @@ export const listUserinfos = /* GraphQL */ `
         id
         name
         email
+        Timezone
         Schedules {
           items {
             id

@@ -265,8 +265,8 @@ export default function ScheduleUpdateForm(props) {
   const validations = {
     SUMMARY: [{ type: "Required" }],
     DTSTART: [{ type: "Required" }],
-    DTEND: [],
-    DESCRIPTION: [{ type: "Required" }],
+    DTEND: [{ type: "Required" }],
+    DESCRIPTION: [],
     LOCATION: [],
     userinfoID: [{ type: "Required" }],
   };
@@ -345,8 +345,8 @@ export default function ScheduleUpdateForm(props) {
         let modelFields = {
           SUMMARY,
           DTSTART,
-          DTEND: DTEND ?? null,
-          DESCRIPTION,
+          DTEND,
+          DESCRIPTION: DESCRIPTION ?? null,
           LOCATION: LOCATION ?? null,
           userinfoID,
         };
@@ -462,7 +462,7 @@ export default function ScheduleUpdateForm(props) {
       ></TextField>
       <TextField
         label="Dtend"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         type="datetime-local"
         value={DTEND && convertToLocal(new Date(DTEND))}
@@ -493,7 +493,7 @@ export default function ScheduleUpdateForm(props) {
       ></TextField>
       <TextField
         label="Description"
-        isRequired={true}
+        isRequired={false}
         isReadOnly={false}
         value={DESCRIPTION}
         onChange={(e) => {
