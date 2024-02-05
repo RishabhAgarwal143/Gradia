@@ -20,6 +20,15 @@ export const onCreateUserinfo = /* GraphQL */ `
           DESCRIPTION
           LOCATION
           userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -69,6 +78,15 @@ export const onUpdateUserinfo = /* GraphQL */ `
           DESCRIPTION
           LOCATION
           userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -118,6 +136,15 @@ export const onDeleteUserinfo = /* GraphQL */ `
           DESCRIPTION
           LOCATION
           userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -161,6 +188,15 @@ export const onCreateSchedule = /* GraphQL */ `
       DESCRIPTION
       LOCATION
       userinfoID
+      RRULE {
+        FREQ
+        INTERVALS
+        UNTIL
+        WKST
+        BYDAYS
+        BYMONTH
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -181,6 +217,15 @@ export const onUpdateSchedule = /* GraphQL */ `
       DESCRIPTION
       LOCATION
       userinfoID
+      RRULE {
+        FREQ
+        INTERVALS
+        UNTIL
+        WKST
+        BYDAYS
+        BYMONTH
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -201,6 +246,15 @@ export const onDeleteSchedule = /* GraphQL */ `
       DESCRIPTION
       LOCATION
       userinfoID
+      RRULE {
+        FREQ
+        INTERVALS
+        UNTIL
+        WKST
+        BYDAYS
+        BYMONTH
+        __typename
+      }
       createdAt
       updatedAt
       owner

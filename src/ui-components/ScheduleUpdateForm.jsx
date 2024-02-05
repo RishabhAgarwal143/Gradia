@@ -16,6 +16,7 @@ import {
   Icon,
   ScrollView,
   Text,
+  TextAreaField,
   TextField,
   useTheme,
 } from "@aws-amplify/ui-react";
@@ -198,6 +199,7 @@ export default function ScheduleUpdateForm(props) {
     DESCRIPTION: "",
     LOCATION: "",
     userinfoID: undefined,
+    RRULE: "",
   };
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
   const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
@@ -211,6 +213,7 @@ export default function ScheduleUpdateForm(props) {
   const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
   const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
     React.useState([]);
+  const [RRULE, setRRULE] = React.useState(initialValues.RRULE);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -225,6 +228,11 @@ export default function ScheduleUpdateForm(props) {
     setUserinfoID(cleanValues.userinfoID);
     setCurrentUserinfoIDValue(undefined);
     setCurrentUserinfoIDDisplayValue("");
+    setRRULE(
+      typeof cleanValues.RRULE === "string" || cleanValues.RRULE === null
+        ? cleanValues.RRULE
+        : JSON.stringify(cleanValues.RRULE)
+    );
     setErrors({});
   };
   const [scheduleRecord, setScheduleRecord] = React.useState(scheduleModelProp);
@@ -269,6 +277,7 @@ export default function ScheduleUpdateForm(props) {
     DESCRIPTION: [],
     LOCATION: [],
     userinfoID: [{ type: "Required" }],
+    RRULE: [{ type: "JSON" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -349,6 +358,7 @@ export default function ScheduleUpdateForm(props) {
           DESCRIPTION: DESCRIPTION ?? null,
           LOCATION: LOCATION ?? null,
           userinfoID,
+          RRULE: RRULE ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -378,12 +388,23 @@ export default function ScheduleUpdateForm(props) {
               modelFields[key] = null;
             }
           });
+          const modelFieldsToSave = {
+            SUMMARY: modelFields.SUMMARY,
+            DTSTART: modelFields.DTSTART,
+            DTEND: modelFields.DTEND,
+            DESCRIPTION: modelFields.DESCRIPTION ?? null,
+            LOCATION: modelFields.LOCATION ?? null,
+            userinfoID: modelFields.userinfoID,
+            RRULE: modelFields.RRULE
+              ? JSON.parse(modelFields.RRULE)
+              : modelFields.RRULE,
+          };
           await client.graphql({
             query: updateSchedule.replaceAll("__typename", ""),
             variables: {
               input: {
                 id: scheduleRecord.id,
-                ...modelFields,
+                ...modelFieldsToSave,
               },
             },
           });
@@ -415,6 +436,7 @@ export default function ScheduleUpdateForm(props) {
               DESCRIPTION,
               LOCATION,
               userinfoID,
+              RRULE,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -446,6 +468,7 @@ export default function ScheduleUpdateForm(props) {
               DESCRIPTION,
               LOCATION,
               userinfoID,
+              RRULE,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -477,6 +500,7 @@ export default function ScheduleUpdateForm(props) {
               DESCRIPTION,
               LOCATION,
               userinfoID,
+              RRULE,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -506,6 +530,7 @@ export default function ScheduleUpdateForm(props) {
               DESCRIPTION: value,
               LOCATION,
               userinfoID,
+              RRULE,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -535,6 +560,7 @@ export default function ScheduleUpdateForm(props) {
               DESCRIPTION,
               LOCATION: value,
               userinfoID,
+              RRULE,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -561,6 +587,7 @@ export default function ScheduleUpdateForm(props) {
               DESCRIPTION,
               LOCATION,
               userinfoID: value,
+              RRULE,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -646,6 +673,36 @@ export default function ScheduleUpdateForm(props) {
           {...getOverrideProps(overrides, "userinfoID")}
         ></Autocomplete>
       </ArrayField>
+      <TextAreaField
+        label="Rrule"
+        isRequired={false}
+        isReadOnly={false}
+        value={RRULE}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+              RRULE: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.RRULE ?? value;
+          }
+          if (errors.RRULE?.hasError) {
+            runValidationTasks("RRULE", value);
+          }
+          setRRULE(value);
+        }}
+        onBlur={() => runValidationTasks("RRULE", RRULE)}
+        errorMessage={errors.RRULE?.errorMessage}
+        hasError={errors.RRULE?.hasError}
+        {...getOverrideProps(overrides, "RRULE")}
+      ></TextAreaField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

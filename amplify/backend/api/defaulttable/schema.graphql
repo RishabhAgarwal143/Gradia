@@ -1,3 +1,19 @@
+enum Frequencytype {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+type Repeatdata {
+  FREQ: Frequencytype!
+  INTERVALS: Int!
+  UNTIL: AWSDateTime
+  WKST: String
+  BYDAYS: String
+  BYMONTH: String
+}
+
 type Userinfo
   @model
   @auth(rules: [{ allow: owner }, { allow: groups, groups: ["Admins"] }]) {
@@ -19,6 +35,7 @@ type Schedule
   DESCRIPTION: String
   LOCATION: String
   userinfoID: ID! @index(name: "byUserinfo")
+  RRULE: Repeatdata
 }
 
 type Task
