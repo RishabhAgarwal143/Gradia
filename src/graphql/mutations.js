@@ -10,6 +10,7 @@ export const createUserinfo = /* GraphQL */ `
       id
       name
       email
+      Timezone
       Schedules {
         items {
           id
@@ -19,6 +20,15 @@ export const createUserinfo = /* GraphQL */ `
           DESCRIPTION
           LOCATION
           userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -58,6 +68,7 @@ export const updateUserinfo = /* GraphQL */ `
       id
       name
       email
+      Timezone
       Schedules {
         items {
           id
@@ -67,6 +78,15 @@ export const updateUserinfo = /* GraphQL */ `
           DESCRIPTION
           LOCATION
           userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -106,6 +126,7 @@ export const deleteUserinfo = /* GraphQL */ `
       id
       name
       email
+      Timezone
       Schedules {
         items {
           id
@@ -115,6 +136,15 @@ export const deleteUserinfo = /* GraphQL */ `
           DESCRIPTION
           LOCATION
           userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -158,6 +188,15 @@ export const createSchedule = /* GraphQL */ `
       DESCRIPTION
       LOCATION
       userinfoID
+      RRULE {
+        FREQ
+        INTERVALS
+        UNTIL
+        WKST
+        BYDAYS
+        BYMONTH
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -178,6 +217,15 @@ export const updateSchedule = /* GraphQL */ `
       DESCRIPTION
       LOCATION
       userinfoID
+      RRULE {
+        FREQ
+        INTERVALS
+        UNTIL
+        WKST
+        BYDAYS
+        BYMONTH
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -198,6 +246,15 @@ export const deleteSchedule = /* GraphQL */ `
       DESCRIPTION
       LOCATION
       userinfoID
+      RRULE {
+        FREQ
+        INTERVALS
+        UNTIL
+        WKST
+        BYDAYS
+        BYMONTH
+        __typename
+      }
       createdAt
       updatedAt
       owner

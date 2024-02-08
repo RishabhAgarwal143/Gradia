@@ -1,31 +1,45 @@
-type Userinfo
-  @model
-  @auth(rules: [{ allow: owner }, { allow: groups, groups: ["Admins"] }]) {
+enum Frequencytype {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+type Repeatdata {
+  FREQ: Frequencytype!
+  INTERVALS: Int!
+  UNTIL: AWSDateTime
+  WKST: String
+  BYDAYS: String
+  BYMONTH: String
+  COUNT: Int
+}
+
+type Userinfo @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"], operations: [create, read, update, delete]}, {allow: public}]) {
   id: ID!
   name: String!
   email: AWSEmail!
-  Schedules: [Schedule] @hasMany(indexName: "byUserinfo", fields: ["id"])
+  Timezone: String
+  Schedules: [Task] @hasMany(indexName: "byUserinfo", fields: ["id"])
   Tasks: [Task] @hasMany(indexName: "byUserinfo", fields: ["id"])
 }
 
-type Schedule
-  @model
-  @auth(rules: [{ allow: owner }, { allow: groups, groups: ["Admins"] }]) {
+type Schedule @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"], operations: [create, read, update, delete]}, {allow: public}]) {
   id: ID!
   SUMMARY: String!
   DTSTART: AWSDateTime!
-  DTEND: AWSDateTime
-  DESCRIPTION: String!
+  DTEND: AWSDateTime!
+  DESCRIPTION: String
   LOCATION: String
   userinfoID: ID! @index(name: "byUserinfo")
+  RRULE: Repeatdata
 }
 
-type Task
-  @model
-  @auth(rules: [{ allow: owner }, { allow: groups, groups: ["Admins"] }]) {
+type Task @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"], operations: [create, read, update, delete]}, {allow: public}]) {
   id: ID!
   due_time: AWSTime!
   due_date: AWSDate!
   description: String!
   userinfoID: ID! @index(name: "byUserinfo")
 }
+ 

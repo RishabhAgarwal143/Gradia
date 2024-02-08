@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { AutocompleteProps, GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -28,6 +28,7 @@ export declare type ScheduleUpdateFormInputValues = {
     DESCRIPTION?: string;
     LOCATION?: string;
     userinfoID?: string;
+    RRULE?: string;
 };
 export declare type ScheduleUpdateFormValidationValues = {
     SUMMARY?: ValidationFunction<string>;
@@ -36,6 +37,7 @@ export declare type ScheduleUpdateFormValidationValues = {
     DESCRIPTION?: ValidationFunction<string>;
     LOCATION?: ValidationFunction<string>;
     userinfoID?: ValidationFunction<string>;
+    RRULE?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type ScheduleUpdateFormOverridesProps = {
@@ -45,7 +47,8 @@ export declare type ScheduleUpdateFormOverridesProps = {
     DTEND?: PrimitiveOverrideProps<TextFieldProps>;
     DESCRIPTION?: PrimitiveOverrideProps<TextFieldProps>;
     LOCATION?: PrimitiveOverrideProps<TextFieldProps>;
-    userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
+    userinfoID?: PrimitiveOverrideProps<TextFieldProps>;
+    RRULE?: PrimitiveOverrideProps<TextAreaFieldProps>;
 } & EscapeHatchProps;
 export declare type ScheduleUpdateFormProps = React.PropsWithChildren<{
     overrides?: ScheduleUpdateFormOverridesProps | undefined | null;

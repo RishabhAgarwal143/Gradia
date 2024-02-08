@@ -7,6 +7,7 @@ export const getUserinfo = /* GraphQL */ `
       id
       name
       email
+      Timezone
       Schedules {
         items {
           id
@@ -16,6 +17,15 @@ export const getUserinfo = /* GraphQL */ `
           DESCRIPTION
           LOCATION
           userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -57,6 +67,7 @@ export const listUserinfos = /* GraphQL */ `
         id
         name
         email
+        Timezone
         Schedules {
           items {
             id
@@ -109,6 +120,15 @@ export const getSchedule = /* GraphQL */ `
       DESCRIPTION
       LOCATION
       userinfoID
+      RRULE {
+        FREQ
+        INTERVALS
+        UNTIL
+        WKST
+        BYDAYS
+        BYMONTH
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -131,6 +151,15 @@ export const listSchedules = /* GraphQL */ `
         DESCRIPTION
         LOCATION
         userinfoID
+        RRULE {
+          FREQ
+          INTERVALS
+          UNTIL
+          WKST
+          BYDAYS
+          BYMONTH
+          __typename
+        }
         createdAt
         updatedAt
         owner
@@ -164,6 +193,15 @@ export const schedulesByUserinfoID = /* GraphQL */ `
         DESCRIPTION
         LOCATION
         userinfoID
+        RRULE {
+          FREQ
+          INTERVALS
+          UNTIL
+          WKST
+          BYDAYS
+          BYMONTH
+          __typename
+        }
         createdAt
         updatedAt
         owner

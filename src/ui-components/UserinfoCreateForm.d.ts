@@ -24,12 +24,14 @@ export declare type ValidationFunction<T> = (value: T, validationResponse: Valid
 export declare type UserinfoCreateFormInputValues = {
     name?: string;
     email?: string;
+    Timezone?: string;
     Schedules?: any[];
     Tasks?: any[];
 };
 export declare type UserinfoCreateFormValidationValues = {
     name?: ValidationFunction<string>;
     email?: ValidationFunction<string>;
+    Timezone?: ValidationFunction<string>;
     Schedules?: ValidationFunction<any>;
     Tasks?: ValidationFunction<any>;
 };
@@ -38,6 +40,7 @@ export declare type UserinfoCreateFormOverridesProps = {
     UserinfoCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     email?: PrimitiveOverrideProps<TextFieldProps>;
+    Timezone?: PrimitiveOverrideProps<TextFieldProps>;
     Schedules?: PrimitiveOverrideProps<AutocompleteProps>;
     Tasks?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
