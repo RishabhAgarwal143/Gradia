@@ -1,0 +1,20 @@
+/* Customize Week View Header */
+
+
+.rbc-allday-cell {
+    display: none;
+}
+
+/* Customize the header button */
+/* Style the element with role="columnheader" */
+[role="columnheader"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    text-wrap: wrap;
+}
+
+/* Add a line break and style the first part (05) */
