@@ -72,7 +72,7 @@ class Subscribing_to_Calendar:
                     "WKST: \\\"MO\\\"\\r\\n                "\
                     "INTERVALS: 1\\r\\n            "\
                     "}\\r\\n    ) {\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DTEND\\r\\n        DESCRIPTION\\r\\n        LOCATION\\r\\n        userinfoID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    }"\
-                    "\\r\\n}\\r\\n\",\"variables\":{}}" % (summary_details,dtstart,dtend,description,userinfoId,location,rrule["FREQ"],rrule)
+                    "\\r\\n}\\r\\n\",\"variables\":{}}" % (summary_details,dtstart,dtend,description,userinfoId,location)
             
             headers = {
             'Content-Type': 'application/json',
@@ -86,4 +86,4 @@ class Subscribing_to_Calendar:
 x = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\quantumcalendar-v1\src\support_local_files\\events.ics","sdafsdf")
 # x = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\quantumcalendar-v1\src\support_local_files\\feed.ics","sdafsdf")
 # x.print_calendar_details()
-# x.add_record_to_database()
+x.add_record_to_database()
