@@ -2,7 +2,7 @@ import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import * as commands from "./support_local_files/support_func.js";
-// import { TaskCreateForm } from "./ui-components";
+import { ScheduleCreateForm, TaskCreateForm } from "./ui-components";
 async function printlog() {
   const { DateTime } = require("luxon");
   const dt = DateTime.now();
@@ -14,22 +14,26 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h2>My app</h2>
-        {/* <TaskCreateForm
+        <ScheduleCreateForm
+          onError={(error) => {
+            console.log(`error`, error);
+          }}
           onSubmit={(fields) => {
             // Example function to trim all string inputs
-            const updatedFields = {}
-            Object.keys(fields).forEach(key => {
-              if (typeof fields[key] === 'string') {
-                updatedFields[key] = fields[key].trim()
-              } else {
-                updatedFields[key] = fields[key]
-              }
-            })
-            updatedFields['userinfoID'] = JSON.stringify(commands.cognito_Id)
-            console.log(updatedFields)
-            return updatedFields
+            const updatedFields = fields;
+            // Object.keys(fields).forEach((key) => {
+            //   updatedFields[key] = fields[key];
+            //   if (fields[key] == null) {
+            //     updatedFields[key] = null;
+            //   }
+            // });
+            // fields["userinfoID"] = commands.cognito_Id;
+            console.log(fields === updatedFields);
+            console.log(fields);
+            console.log(updatedFields);
+            return fields;
           }}
-        /> */}
+        />
         <button onClick={commands.create_user}>Create User</button>
         <button onClick={commands.handleFetchUserAttributes}>Fetch User</button>
         <button onClick={commands.get_item}>Get record</button>

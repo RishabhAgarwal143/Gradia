@@ -1,7 +1,6 @@
 import icalendar
 import requests
 import json
-import datetime
 
 class Subscribing_to_Calendar:
 
@@ -18,7 +17,8 @@ class Subscribing_to_Calendar:
         
     def print_calendar_details(self) -> None:
         for event in self.calendar.walk('VEVENT'):
-            print(str(event.get('DESCRIPTION')).replace("\\","\\\\"))
+            if(event.get('RRULE')):
+                print((event.get('RRULE').get('UNTIL')[0].strftime(("%Y-%m-%dT%H:%M:%S.000Z"))))
 
     def add_record_to_database(self) -> None:
         url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
@@ -27,8 +27,36 @@ class Subscribing_to_Calendar:
             dtstart = (event.get('DTSTART').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
             dtend = (event.get('DTEND').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
             description = "Description"
-            userinfoId = "204bba8a-b2ca-4872-ae6b-1e519daef372"
+            userinfoId = "82cf448d-fc16-409c-82e9-3304d937f840"
             location = event.get('LOCATION')
+            
+            if(event.get('RRULE')):
+                rrule = {}
+                frequency = event.get('RRULE').get('FREQ')[0]
+                if(event.get('RRULE').get('INTERNVAL')):
+                    interval = event.get('RRULE').get('INTERNVAL')
+                else:
+                    interval = 1
+                rrule["FREQ"] = frequency
+                rrule["INTERVAL"] = interval
+                if(event.get('RRULE').get('UNTIL')):
+                    rrule["UNTIL"] = event.get('RRULE').get('UNTIL')[0].strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                if(event.get('RRULE').get('BYDAY')):
+                    rrule["BYDAYS"] = ",".join(event.get('RRULE').get('BYDAY'))
+                if(event.get('RRULE').get('BYMONTH')):
+                    rrule["BYMONTH"] = ",".join(event.get('RRULE').get('BYMONTH'))
+                if(event.get('RRULE').get('WKST')):
+                    rrule["WKST"] = event.get('RRULE').get('WKST')[0]
+                if(event.get('RRULE').get('COUNT')):
+                    rrule["COUNT"] = event.get('RRULE').get('COUNT')
+
+                
+                
+                print(rrule)
+
+
+
+            payload = "{\"query\":\"mutation CreateSchedule {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            SUMMARY: \\\"testing\\\"\\r\\n            DTSTART: \\\"2024-01-27T04:59:00.000Z\\\"\\r\\n            DTEND: \\\"2024-01-27T04:59:00.000Z\\\"\\r\\n            DESCRIPTION: \\\"testing postman\\\"\\r\\n            LOCATION: \\\"postman\\\"\\r\\n            userinfoID: \\\"82cf448d-fc16-409c-82e9-3304d937f840\\\"\\r\\n            RRULE: {\\r\\n                FREQ: \\\"WEEKLY\\\"\\r\\n                UNTIL: \\\"2024-05-27T04:59:00.000Z\\\"\\r\\n                BYDAYS: [MO, TU, WE]\\r\\n                WKST: MO\\r\\n            }\\r\\n        }\\r\\n    ) {\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DTEND\\r\\n        DESCRIPTION\\r\\n        LOCATION\\r\\n        userinfoID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}"
 
             payload = "{\"query\":\"mutation CreateSchedule {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            "\
                     "SUMMARY: \\\"%s\\\"\\r\\n            "\
@@ -37,19 +65,25 @@ class Subscribing_to_Calendar:
                     "DESCRIPTION: \\\"%s\\\"\\r\\n            "\
                     "userinfoID: \\\"%s\\\"\\r\\n            "\
                     "LOCATION: \\\"%s\\\"\\r\\n        "\
+                    "RRULE: {\\r\\n                "\
+                    "FREQ: WEEKLY\\r\\n                "\
+                    "UNTIL: \\\"2024-05-27T04:59:00.000Z\\\"\\r\\n                "\
+                    "BYDAYS: \\\"[MO, TU, WE]\\\"\\r\\n                "\
+                    "WKST: \\\"MO\\\"\\r\\n                "\
+                    "INTERVALS: 1\\r\\n            "\
                     "}\\r\\n    ) {\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DTEND\\r\\n        DESCRIPTION\\r\\n        LOCATION\\r\\n        userinfoID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    }"\
-                    "\\r\\n}\\r\\n\",\"variables\":{}}" % (summary_details,dtstart,dtend,description,userinfoId,location)
+                    "\\r\\n}\\r\\n\",\"variables\":{}}" % (summary_details,dtstart,dtend,description,userinfoId,location,rrule["FREQ"],rrule)
             
             headers = {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyMDRiYmE4YS1iMmNhLTQ4NzItYWU2Yi0xZTUxOWRhZWYzNzIiLCJjb2duaXRvOmdyb3VwcyI6WyJ1cy1lYXN0LTJfakJ2UFRaOFNyX0dvb2dsZSJdLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImNmM2JiYzJhLWFlN2EtNDIzNy1iMTRkLWNlNTU1MmQzYzg3NCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4gcGhvbmUgb3BlbmlkIHByb2ZpbGUgZW1haWwiLCJhdXRoX3RpbWUiOjE3MDYyMDg2NDIsImV4cCI6MTcwNjgxMjg1MCwiaWF0IjoxNzA2ODA5MjUwLCJqdGkiOiIyMDlmYTljMC00NGY3LTQ1NWUtOWI5MC02MDBjMDczYWMyNTciLCJ1c2VybmFtZSI6Imdvb2dsZV8xMDY3NzEyMTAwMjM1NjMzNzczMjMifQ.pq0UjITi4puG4SOyNEnZlqf4oib0a-5ComHtdqckJc0eRjEtetFCLd950qU3smD7IXnDy4-3dswndne-5aQ0OgDrwK6kJC45qKbZvs1CnsaWbFbHJX6_98Ae0jAbsJOwISkoekf2y5dSocwLG3Q7ScHwf7KdAN6OW1l8B0Gq4BcMs5clngLSpn845mpW2HRQ59sCpCDxbBE4-8diNdwleOtyNXyHv2awjpyzbxj0OAMYnkOlpriC0bch2ON4-SzWxn5jRWY_sB5hwQinpWTMmiwkJb7SqboO8FIbyFIMCcJYV75cnURLPyACLyvvy2_IScrlx9fsm2EakNFzr-deiA'
+            'Authorization': 'Bearer eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjlkNGNiMjFlLWRlYzMtNDM3Yi1iZWU0LTE4MmQ3MzA0YWM5MyIsImV2ZW50X2lkIjoiMDA0NGQ5YzctOTM1OC00MjQ5LWIxNWMtNzZmNzVhZGVkOWY3IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwNzA4MDI0OSwiZXhwIjoxNzA3MDkzMDE1LCJpYXQiOjE3MDcwODk0MTUsImp0aSI6ImFkZWFmZjNhLWFkYmYtNDE3MC05MGQwLThiM2MwNmY0M2Y0YSIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.RryKnCfCFdTi-kd0nPXQbxAP6lwDmjTUePI4FILGoOwL1IKrp9W0ixBvdfoWWs3adxiIZKjzAzASkng2TBAh1C2pfCBPBariNek3ekXjNp8IUEGhwyky7xxos3gWvbKTZrB5ZuTse-sCjne35FxmBAwggemQs-nOS0h5v5k4tiUt0il60rBGyDTy8LWwfO5EctAakVhU56-_7L8mpy3fwbs2SHZatd_8KQBO1RXXxKgCGTKkvhWQWY_BaS755J7WQBdCd55FS_bbsx2Q_xAp1pqAOWKDD7Q5WfSYy45s310mvidxj6Z6jGnDo9KQvwllScQesFLPnR87JZy5Sd1Icg'
             }
 
-            response = requests.request("POST", url, headers=headers, data=payload)
+            # response = requests.request("POST", url, headers=headers, data=payload)
+            # print(response.text)
 
-            print(response.text)
 
-
-x = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\quantumcalendar-v1\src\support_local_files\\feed.ics","sdafsdf")
+x = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\quantumcalendar-v1\src\support_local_files\\events.ics","sdafsdf")
+# x = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\quantumcalendar-v1\src\support_local_files\\feed.ics","sdafsdf")
 # x.print_calendar_details()
-x.add_record_to_database()
+# x.add_record_to_database()

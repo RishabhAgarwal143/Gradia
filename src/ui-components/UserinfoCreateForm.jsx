@@ -21,12 +21,8 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listSchedules, listTasks } from "../graphql/queries";
-import {
-  createUserinfo,
-  updateSchedule,
-  updateTask,
-} from "../graphql/mutations";
+import { listTasks } from "../graphql/queries";
+import { createUserinfo, updateTask } from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
   items = [],
@@ -248,7 +244,7 @@ export default function UserinfoCreateForm(props) {
       : getIDValue.Tasks?.(Tasks)
   );
   const getDisplayValue = {
-    Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
+    Schedules: (r) => `${r?.description ? r?.description + " - " : ""}${r?.id}`,
     Tasks: (r) => `${r?.description ? r?.description + " - " : ""}${r?.id}`,
   };
   const validations = {
@@ -283,7 +279,10 @@ export default function UserinfoCreateForm(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [{ SUMMARY: { contains: value } }, { id: { contains: value } }],
+          or: [
+            { description: { contains: value } },
+            { id: { contains: value } },
+          ],
         },
       };
       if (newNext) {
@@ -291,10 +290,10 @@ export default function UserinfoCreateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listSchedules.replaceAll("__typename", ""),
+          query: listTasks.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listSchedules?.items;
+      )?.data?.listTasks?.items;
       var loaded = result.filter(
         (item) => !SchedulesIdSet.has(getIDValue.Schedules?.(item))
       );
@@ -411,7 +410,7 @@ export default function UserinfoCreateForm(props) {
             ...Schedules.reduce((promises, original) => {
               promises.push(
                 client.graphql({
-                  query: updateSchedule.replaceAll("__typename", ""),
+                  query: updateTask.replaceAll("__typename", ""),
                   variables: {
                     input: {
                       id: original.id,
@@ -596,7 +595,7 @@ export default function UserinfoCreateForm(props) {
           label="Schedules"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search Schedule"
+          placeholder="Search Task"
           value={currentSchedulesDisplayValue}
           options={schedulesRecords
             .filter((r) => !SchedulesIdSet.has(getIDValue.Schedules?.(r)))

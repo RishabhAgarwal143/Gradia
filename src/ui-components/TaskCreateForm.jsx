@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import { Button, Flex, Grid, TextField, useTheme } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
 import { createTask } from "../graphql/mutations";
@@ -22,6 +22,7 @@ export default function TaskCreateForm(props) {
     overrides,
     ...rest
   } = props;
+  const { tokens } = useTheme();
   const initialValues = {
     due_time: "",
     due_date: "",
@@ -66,7 +67,7 @@ export default function TaskCreateForm(props) {
       as="form"
       rowGap="15px"
       columnGap="15px"
-      padding="20px"
+      padding={tokens.space.large.value}
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {

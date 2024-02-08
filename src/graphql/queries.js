@@ -17,6 +17,15 @@ export const getUserinfo = /* GraphQL */ `
           DESCRIPTION
           LOCATION
           userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -111,6 +120,15 @@ export const getSchedule = /* GraphQL */ `
       DESCRIPTION
       LOCATION
       userinfoID
+      RRULE {
+        FREQ
+        INTERVALS
+        UNTIL
+        WKST
+        BYDAYS
+        BYMONTH
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -133,6 +151,15 @@ export const listSchedules = /* GraphQL */ `
         DESCRIPTION
         LOCATION
         userinfoID
+        RRULE {
+          FREQ
+          INTERVALS
+          UNTIL
+          WKST
+          BYDAYS
+          BYMONTH
+          __typename
+        }
         createdAt
         updatedAt
         owner
@@ -166,6 +193,15 @@ export const schedulesByUserinfoID = /* GraphQL */ `
         DESCRIPTION
         LOCATION
         userinfoID
+        RRULE {
+          FREQ
+          INTERVALS
+          UNTIL
+          WKST
+          BYDAYS
+          BYMONTH
+          __typename
+        }
         createdAt
         updatedAt
         owner
