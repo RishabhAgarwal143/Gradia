@@ -8,7 +8,7 @@ import unittest
 
 class Testing_DB(unittest.TestCase):
 
-    def Testcase_Write_Read_DB_(self) -> None:
+    def test_Write_Read_DB(self) -> None:
 
         url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
 
