@@ -1,7 +1,6 @@
 import icalendar
 import requests
 import json
-import datetime
 
 class Subscribing_to_Calendar:
 
@@ -87,4 +86,4 @@ class Subscribing_to_Calendar:
 x = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\quantumcalendar-v1\src\support_local_files\\events.ics","sdafsdf")
 # x = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\quantumcalendar-v1\src\support_local_files\\feed.ics","sdafsdf")
 # x.print_calendar_details()
-x.add_record_to_database()
+# x.add_record_to_database()
