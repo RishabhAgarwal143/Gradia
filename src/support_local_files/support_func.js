@@ -57,11 +57,15 @@ export async function create_user() {
       variables: { id: cognito_Id },
     });
     if (oneTodo.data.getUserinfo == null) {
-      console.log(`trying to create ${cognito_Id}`);
+      const { DateTime } = require("luxon");
+      const dt = DateTime.now();
+      console.log(dt.zoneName);
+      console.log(`trying to ${cognito_Id}`);
       const todoDetails = {
         name: "LocalMachine",
         email: CurrentUsersEmail,
         id: cognito_Id,
+        Timezone: dt.zoneName,
       };
 
       await client.graphql({

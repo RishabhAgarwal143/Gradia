@@ -4,7 +4,9 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import * as commands from "./support_local_files/support_func.js";
 // import { TaskCreateForm } from "./ui-components";
 async function printlog() {
-  console.log(commands.cognito_Id);
+  const { DateTime } = require("luxon");
+  const dt = DateTime.now();
+  console.log(dt.zoneName);
 }
 
 function App() {
