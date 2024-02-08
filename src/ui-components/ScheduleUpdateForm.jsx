@@ -7,179 +7,17 @@
 /* eslint-disable */
 import * as React from "react";
 import {
-  Autocomplete,
-  Badge,
   Button,
-  Divider,
   Flex,
   Grid,
-  Icon,
-  ScrollView,
-  Text,
   TextAreaField,
   TextField,
-  useTheme,
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getSchedule, getUserinfo, listUserinfos } from "../graphql/queries";
+import { getSchedule } from "../graphql/queries";
 import { updateSchedule } from "../graphql/mutations";
 const client = generateClient();
-function ArrayField({
-  items = [],
-  onChange,
-  label,
-  inputFieldRef,
-  children,
-  hasError,
-  setFieldValue,
-  currentFieldValue,
-  defaultFieldValue,
-  lengthLimit,
-  getBadgeText,
-  runValidationTasks,
-  errorMessage,
-}) {
-  const labelElement = <Text>{label}</Text>;
-  const {
-    tokens: {
-      components: {
-        fieldmessages: { error: errorStyles },
-      },
-    },
-  } = useTheme();
-  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
-  const [isEditing, setIsEditing] = React.useState();
-  React.useEffect(() => {
-    if (isEditing) {
-      inputFieldRef?.current?.focus();
-    }
-  }, [isEditing]);
-  const removeItem = async (removeIndex) => {
-    const newItems = items.filter((value, index) => index !== removeIndex);
-    await onChange(newItems);
-    setSelectedBadgeIndex(undefined);
-  };
-  const addItem = async () => {
-    const { hasError } = runValidationTasks();
-    if (
-      currentFieldValue !== undefined &&
-      currentFieldValue !== null &&
-      currentFieldValue !== "" &&
-      !hasError
-    ) {
-      const newItems = [...items];
-      if (selectedBadgeIndex !== undefined) {
-        newItems[selectedBadgeIndex] = currentFieldValue;
-        setSelectedBadgeIndex(undefined);
-      } else {
-        newItems.push(currentFieldValue);
-      }
-      await onChange(newItems);
-      setIsEditing(false);
-    }
-  };
-  const arraySection = (
-    <React.Fragment>
-      {!!items?.length && (
-        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
-          {items.map((value, index) => {
-            return (
-              <Badge
-                key={index}
-                style={{
-                  cursor: "pointer",
-                  alignItems: "center",
-                  marginRight: 3,
-                  marginTop: 3,
-                  backgroundColor:
-                    index === selectedBadgeIndex ? "#B8CEF9" : "",
-                }}
-                onClick={() => {
-                  setSelectedBadgeIndex(index);
-                  setFieldValue(items[index]);
-                  setIsEditing(true);
-                }}
-              >
-                {getBadgeText ? getBadgeText(value) : value.toString()}
-                <Icon
-                  style={{
-                    cursor: "pointer",
-                    paddingLeft: 3,
-                    width: 20,
-                    height: 20,
-                  }}
-                  viewBox={{ width: 20, height: 20 }}
-                  paths={[
-                    {
-                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
-                      stroke: "black",
-                    },
-                  ]}
-                  ariaLabel="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    removeItem(index);
-                  }}
-                />
-              </Badge>
-            );
-          })}
-        </ScrollView>
-      )}
-      <Divider orientation="horizontal" marginTop={5} />
-    </React.Fragment>
-  );
-  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
-    return (
-      <React.Fragment>
-        {labelElement}
-        {arraySection}
-      </React.Fragment>
-    );
-  }
-  return (
-    <React.Fragment>
-      {labelElement}
-      {isEditing && children}
-      {!isEditing ? (
-        <>
-          <Button
-            onClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            Add item
-          </Button>
-          {errorMessage && hasError && (
-            <Text color={errorStyles.color} fontSize={errorStyles.fontSize}>
-              {errorMessage}
-            </Text>
-          )}
-        </>
-      ) : (
-        <Flex justifyContent="flex-end">
-          {(currentFieldValue || isEditing) && (
-            <Button
-              children="Cancel"
-              type="button"
-              size="small"
-              onClick={() => {
-                setFieldValue(defaultFieldValue);
-                setIsEditing(false);
-                setSelectedBadgeIndex(undefined);
-              }}
-            ></Button>
-          )}
-          <Button size="small" variation="link" onClick={addItem}>
-            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
-          </Button>
-        </Flex>
-      )}
-      {arraySection}
-    </React.Fragment>
-  );
-}
 export default function ScheduleUpdateForm(props) {
   const {
     id: idProp,
@@ -198,7 +36,7 @@ export default function ScheduleUpdateForm(props) {
     DTEND: "",
     DESCRIPTION: "",
     LOCATION: "",
-    userinfoID: undefined,
+    userinfoID: "",
     RRULE: "",
   };
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
@@ -209,16 +47,11 @@ export default function ScheduleUpdateForm(props) {
   );
   const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
-  const [userinfoIDLoading, setUserinfoIDLoading] = React.useState(false);
-  const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
-  const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
-    React.useState([]);
   const [RRULE, setRRULE] = React.useState(initialValues.RRULE);
-  const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = scheduleRecord
-      ? { ...initialValues, ...scheduleRecord, userinfoID }
+      ? { ...initialValues, ...scheduleRecord }
       : initialValues;
     setSUMMARY(cleanValues.SUMMARY);
     setDTSTART(cleanValues.DTSTART);
@@ -226,8 +59,6 @@ export default function ScheduleUpdateForm(props) {
     setDESCRIPTION(cleanValues.DESCRIPTION);
     setLOCATION(cleanValues.LOCATION);
     setUserinfoID(cleanValues.userinfoID);
-    setCurrentUserinfoIDValue(undefined);
-    setCurrentUserinfoIDDisplayValue("");
     setRRULE(
       typeof cleanValues.RRULE === "string" || cleanValues.RRULE === null
         ? cleanValues.RRULE
@@ -246,30 +77,11 @@ export default function ScheduleUpdateForm(props) {
             })
           )?.data?.getSchedule
         : scheduleModelProp;
-      const userinfoIDRecord = record ? record.userinfoID : undefined;
-      const userinfoRecord = userinfoIDRecord
-        ? (
-            await client.graphql({
-              query: getUserinfo.replaceAll("__typename", ""),
-              variables: { id: userinfoIDRecord },
-            })
-          )?.data?.getUserinfo
-        : undefined;
-      setUserinfoID(userinfoIDRecord);
-      setSelectedUserinfoIDRecords([userinfoRecord]);
       setScheduleRecord(record);
     };
     queryData();
   }, [idProp, scheduleModelProp]);
-  React.useEffect(resetStateValues, [scheduleRecord, userinfoID]);
-  const [currentUserinfoIDDisplayValue, setCurrentUserinfoIDDisplayValue] =
-    React.useState("");
-  const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
-    React.useState(undefined);
-  const userinfoIDRef = React.createRef();
-  const getDisplayValue = {
-    userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
-  };
+  React.useEffect(resetStateValues, [scheduleRecord]);
   const validations = {
     SUMMARY: [{ type: "Required" }],
     DTSTART: [{ type: "Required" }],
@@ -313,36 +125,6 @@ export default function ScheduleUpdateForm(props) {
     }, {});
     return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
   };
-  const fetchUserinfoIDRecords = async (value) => {
-    setUserinfoIDLoading(true);
-    const newOptions = [];
-    let newNext = "";
-    while (newOptions.length < autocompleteLength && newNext != null) {
-      const variables = {
-        limit: autocompleteLength * 5,
-        filter: {
-          or: [{ name: { contains: value } }, { id: { contains: value } }],
-        },
-      };
-      if (newNext) {
-        variables["nextToken"] = newNext;
-      }
-      const result = (
-        await client.graphql({
-          query: listUserinfos.replaceAll("__typename", ""),
-          variables,
-        })
-      )?.data?.listUserinfos?.items;
-      var loaded = result.filter((item) => userinfoID !== item.id);
-      newOptions.push(...loaded);
-      newNext = result.nextToken;
-    }
-    setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
-    setUserinfoIDLoading(false);
-  };
-  React.useEffect(() => {
-    fetchUserinfoIDRecords("");
-  }, []);
   return (
     <Grid
       as="form"
@@ -575,10 +357,13 @@ export default function ScheduleUpdateForm(props) {
         hasError={errors.LOCATION?.hasError}
         {...getOverrideProps(overrides, "LOCATION")}
       ></TextField>
-      <ArrayField
-        lengthLimit={1}
-        onChange={async (items) => {
-          let value = items[0];
+      <TextField
+        label="Userinfo id"
+        isRequired={true}
+        isReadOnly={false}
+        value={userinfoID}
+        onChange={(e) => {
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
               SUMMARY,
@@ -592,87 +377,16 @@ export default function ScheduleUpdateForm(props) {
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
           }
+          if (errors.userinfoID?.hasError) {
+            runValidationTasks("userinfoID", value);
+          }
           setUserinfoID(value);
-          setCurrentUserinfoIDValue(undefined);
         }}
-        currentFieldValue={currentUserinfoIDValue}
-        label={"Userinfo id"}
-        items={userinfoID ? [userinfoID] : []}
-        hasError={errors?.userinfoID?.hasError}
-        runValidationTasks={async () =>
-          await runValidationTasks("userinfoID", currentUserinfoIDValue)
-        }
-        errorMessage={errors?.userinfoID?.errorMessage}
-        getBadgeText={(value) =>
-          value
-            ? getDisplayValue.userinfoID(
-                userinfoIDRecords.find((r) => r.id === value) ??
-                  selectedUserinfoIDRecords.find((r) => r.id === value)
-              )
-            : ""
-        }
-        setFieldValue={(value) => {
-          setCurrentUserinfoIDDisplayValue(
-            value
-              ? getDisplayValue.userinfoID(
-                  userinfoIDRecords.find((r) => r.id === value) ??
-                    selectedUserinfoIDRecords.find((r) => r.id === value)
-                )
-              : ""
-          );
-          setCurrentUserinfoIDValue(value);
-          const selectedRecord = userinfoIDRecords.find((r) => r.id === value);
-          if (selectedRecord) {
-            setSelectedUserinfoIDRecords([selectedRecord]);
-          }
-        }}
-        inputFieldRef={userinfoIDRef}
-        defaultFieldValue={""}
-      >
-        <Autocomplete
-          label="Userinfo id"
-          isRequired={true}
-          isReadOnly={false}
-          placeholder="Search Userinfo"
-          value={currentUserinfoIDDisplayValue}
-          options={userinfoIDRecords
-            .filter(
-              (r, i, arr) =>
-                arr.findIndex((member) => member?.id === r?.id) === i
-            )
-            .map((r) => ({
-              id: r?.id,
-              label: getDisplayValue.userinfoID?.(r),
-            }))}
-          isLoading={userinfoIDLoading}
-          onSelect={({ id, label }) => {
-            setCurrentUserinfoIDValue(id);
-            setCurrentUserinfoIDDisplayValue(label);
-            runValidationTasks("userinfoID", label);
-          }}
-          onClear={() => {
-            setCurrentUserinfoIDDisplayValue("");
-          }}
-          defaultValue={userinfoID}
-          onChange={(e) => {
-            let { value } = e.target;
-            fetchUserinfoIDRecords(value);
-            if (errors.userinfoID?.hasError) {
-              runValidationTasks("userinfoID", value);
-            }
-            setCurrentUserinfoIDDisplayValue(value);
-            setCurrentUserinfoIDValue(undefined);
-          }}
-          onBlur={() =>
-            runValidationTasks("userinfoID", currentUserinfoIDValue)
-          }
-          errorMessage={errors.userinfoID?.errorMessage}
-          hasError={errors.userinfoID?.hasError}
-          ref={userinfoIDRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, "userinfoID")}
-        ></Autocomplete>
-      </ArrayField>
+        onBlur={() => runValidationTasks("userinfoID", userinfoID)}
+        errorMessage={errors.userinfoID?.errorMessage}
+        hasError={errors.userinfoID?.hasError}
+        {...getOverrideProps(overrides, "userinfoID")}
+      ></TextField>
       <TextAreaField
         label="Rrule"
         isRequired={false}
