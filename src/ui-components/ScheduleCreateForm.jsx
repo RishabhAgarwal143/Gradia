@@ -7,16 +7,180 @@
 /* eslint-disable */
 import * as React from "react";
 import {
+  Autocomplete,
+  Badge,
   Button,
+  Divider,
   Flex,
   Grid,
+  Icon,
+  ScrollView,
+  SwitchField,
+  Text,
   TextAreaField,
   TextField,
+  useTheme,
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
+import { listUserinfos } from "../graphql/queries";
 import { createSchedule } from "../graphql/mutations";
 const client = generateClient();
+function ArrayField({
+  items = [],
+  onChange,
+  label,
+  inputFieldRef,
+  children,
+  hasError,
+  setFieldValue,
+  currentFieldValue,
+  defaultFieldValue,
+  lengthLimit,
+  getBadgeText,
+  runValidationTasks,
+  errorMessage,
+}) {
+  const labelElement = <Text>{label}</Text>;
+  const {
+    tokens: {
+      components: {
+        fieldmessages: { error: errorStyles },
+      },
+    },
+  } = useTheme();
+  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
+  const [isEditing, setIsEditing] = React.useState();
+  React.useEffect(() => {
+    if (isEditing) {
+      inputFieldRef?.current?.focus();
+    }
+  }, [isEditing]);
+  const removeItem = async (removeIndex) => {
+    const newItems = items.filter((value, index) => index !== removeIndex);
+    await onChange(newItems);
+    setSelectedBadgeIndex(undefined);
+  };
+  const addItem = async () => {
+    const { hasError } = runValidationTasks();
+    if (
+      currentFieldValue !== undefined &&
+      currentFieldValue !== null &&
+      currentFieldValue !== "" &&
+      !hasError
+    ) {
+      const newItems = [...items];
+      if (selectedBadgeIndex !== undefined) {
+        newItems[selectedBadgeIndex] = currentFieldValue;
+        setSelectedBadgeIndex(undefined);
+      } else {
+        newItems.push(currentFieldValue);
+      }
+      await onChange(newItems);
+      setIsEditing(false);
+    }
+  };
+  const arraySection = (
+    <React.Fragment>
+      {!!items?.length && (
+        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
+          {items.map((value, index) => {
+            return (
+              <Badge
+                key={index}
+                style={{
+                  cursor: "pointer",
+                  alignItems: "center",
+                  marginRight: 3,
+                  marginTop: 3,
+                  backgroundColor:
+                    index === selectedBadgeIndex ? "#B8CEF9" : "",
+                }}
+                onClick={() => {
+                  setSelectedBadgeIndex(index);
+                  setFieldValue(items[index]);
+                  setIsEditing(true);
+                }}
+              >
+                {getBadgeText ? getBadgeText(value) : value.toString()}
+                <Icon
+                  style={{
+                    cursor: "pointer",
+                    paddingLeft: 3,
+                    width: 20,
+                    height: 20,
+                  }}
+                  viewBox={{ width: 20, height: 20 }}
+                  paths={[
+                    {
+                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
+                      stroke: "black",
+                    },
+                  ]}
+                  ariaLabel="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    removeItem(index);
+                  }}
+                />
+              </Badge>
+            );
+          })}
+        </ScrollView>
+      )}
+      <Divider orientation="horizontal" marginTop={5} />
+    </React.Fragment>
+  );
+  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
+    return (
+      <React.Fragment>
+        {labelElement}
+        {arraySection}
+      </React.Fragment>
+    );
+  }
+  return (
+    <React.Fragment>
+      {labelElement}
+      {isEditing && children}
+      {!isEditing ? (
+        <>
+          <Button
+            onClick={() => {
+              setIsEditing(true);
+            }}
+          >
+            Add item
+          </Button>
+          {errorMessage && hasError && (
+            <Text color={errorStyles.color} fontSize={errorStyles.fontSize}>
+              {errorMessage}
+            </Text>
+          )}
+        </>
+      ) : (
+        <Flex justifyContent="flex-end">
+          {(currentFieldValue || isEditing) && (
+            <Button
+              children="Cancel"
+              type="button"
+              size="small"
+              onClick={() => {
+                setFieldValue(defaultFieldValue);
+                setIsEditing(false);
+                setSelectedBadgeIndex(undefined);
+              }}
+            ></Button>
+          )}
+          <Button size="small" variation="link" onClick={addItem}>
+            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
+          </Button>
+        </Flex>
+      )}
+      {arraySection}
+    </React.Fragment>
+  );
+}
 export default function ScheduleCreateForm(props) {
   const {
     clearOnSuccess = true,
@@ -29,15 +193,21 @@ export default function ScheduleCreateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    userinfoID: "",
+    userinfoID: undefined,
     SUMMARY: "",
     DTSTART: "",
     DTEND: "",
     DESCRIPTION: "",
     LOCATION: "",
     RRULE: "",
+    UID: "",
+    isTask: false,
   };
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
+  const [userinfoIDLoading, setUserinfoIDLoading] = React.useState(false);
+  const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
+  const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
+    React.useState([]);
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
   const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
   const [DTEND, setDTEND] = React.useState(initialValues.DTEND);
@@ -46,16 +216,31 @@ export default function ScheduleCreateForm(props) {
   );
   const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const [RRULE, setRRULE] = React.useState(initialValues.RRULE);
+  const [UID, setUID] = React.useState(initialValues.UID);
+  const [isTask, setIsTask] = React.useState(initialValues.isTask);
+  const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setUserinfoID(initialValues.userinfoID);
+    setCurrentUserinfoIDValue(undefined);
+    setCurrentUserinfoIDDisplayValue("");
     setSUMMARY(initialValues.SUMMARY);
     setDTSTART(initialValues.DTSTART);
     setDTEND(initialValues.DTEND);
     setDESCRIPTION(initialValues.DESCRIPTION);
     setLOCATION(initialValues.LOCATION);
     setRRULE(initialValues.RRULE);
+    setUID(initialValues.UID);
+    setIsTask(initialValues.isTask);
     setErrors({});
+  };
+  const [currentUserinfoIDDisplayValue, setCurrentUserinfoIDDisplayValue] =
+    React.useState("");
+  const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
+    React.useState(undefined);
+  const userinfoIDRef = React.createRef();
+  const getDisplayValue = {
+    userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
   };
   const validations = {
     userinfoID: [{ type: "Required" }],
@@ -65,6 +250,8 @@ export default function ScheduleCreateForm(props) {
     DESCRIPTION: [],
     LOCATION: [],
     RRULE: [{ type: "JSON" }],
+    UID: [],
+    isTask: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -100,6 +287,36 @@ export default function ScheduleCreateForm(props) {
     }, {});
     return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
   };
+  const fetchUserinfoIDRecords = async (value) => {
+    setUserinfoIDLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ name: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listUserinfos.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listUserinfos?.items;
+      var loaded = result.filter((item) => userinfoID !== item.id);
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
+    setUserinfoIDLoading(false);
+  };
+  React.useEffect(() => {
+    fetchUserinfoIDRecords("");
+  }, []);
   return (
     <Grid
       as="form"
@@ -116,6 +333,8 @@ export default function ScheduleCreateForm(props) {
           DESCRIPTION,
           LOCATION,
           RRULE,
+          UID,
+          isTask,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -152,6 +371,8 @@ export default function ScheduleCreateForm(props) {
             DTEND: modelFields.DTEND,
             DESCRIPTION: modelFields.DESCRIPTION,
             LOCATION: modelFields.LOCATION,
+            UID: modelFields.UID,
+            isTask: modelFields.isTask,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
@@ -180,18 +401,10 @@ export default function ScheduleCreateForm(props) {
       {...getOverrideProps(overrides, "ScheduleCreateForm")}
       {...rest}
     >
-      <TextField
-        label={
-          <span style={{ display: "inline-flex" }}>
-            <span>Userinfo id</span>
-            <span style={{ color: "red" }}>*</span>
-          </span>
-        }
-        isRequired={true}
-        isReadOnly={false}
-        value={userinfoID}
-        onChange={(e) => {
-          let { value } = e.target;
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
           if (onChange) {
             const modelFields = {
               userinfoID: value,
@@ -201,20 +414,102 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE,
+              UID,
+              isTask,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
           }
-          if (errors.userinfoID?.hasError) {
-            runValidationTasks("userinfoID", value);
-          }
           setUserinfoID(value);
+          setCurrentUserinfoIDValue(undefined);
         }}
-        onBlur={() => runValidationTasks("userinfoID", userinfoID)}
-        errorMessage={errors.userinfoID?.errorMessage}
-        hasError={errors.userinfoID?.hasError}
-        {...getOverrideProps(overrides, "userinfoID")}
-      ></TextField>
+        currentFieldValue={currentUserinfoIDValue}
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Userinfo id</span>
+            <span style={{ color: "red" }}>*</span>
+          </span>
+        }
+        items={userinfoID ? [userinfoID] : []}
+        hasError={errors?.userinfoID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("userinfoID", currentUserinfoIDValue)
+        }
+        errorMessage={errors?.userinfoID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.userinfoID(
+                userinfoIDRecords.find((r) => r.id === value) ??
+                  selectedUserinfoIDRecords.find((r) => r.id === value)
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentUserinfoIDDisplayValue(
+            value
+              ? getDisplayValue.userinfoID(
+                  userinfoIDRecords.find((r) => r.id === value) ??
+                    selectedUserinfoIDRecords.find((r) => r.id === value)
+                )
+              : ""
+          );
+          setCurrentUserinfoIDValue(value);
+          const selectedRecord = userinfoIDRecords.find((r) => r.id === value);
+          if (selectedRecord) {
+            setSelectedUserinfoIDRecords([selectedRecord]);
+          }
+        }}
+        inputFieldRef={userinfoIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label={
+            <span style={{ display: "inline-flex" }}>
+              <span>Userinfo id</span>
+              <span style={{ color: "red" }}>*</span>
+            </span>
+          }
+          isRequired={true}
+          isReadOnly={false}
+          placeholder="Search Userinfo"
+          value={currentUserinfoIDDisplayValue}
+          options={userinfoIDRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.userinfoID?.(r),
+            }))}
+          isLoading={userinfoIDLoading}
+          onSelect={({ id, label }) => {
+            setCurrentUserinfoIDValue(id);
+            setCurrentUserinfoIDDisplayValue(label);
+            runValidationTasks("userinfoID", label);
+          }}
+          onClear={() => {
+            setCurrentUserinfoIDDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchUserinfoIDRecords(value);
+            if (errors.userinfoID?.hasError) {
+              runValidationTasks("userinfoID", value);
+            }
+            setCurrentUserinfoIDDisplayValue(value);
+            setCurrentUserinfoIDValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("userinfoID", currentUserinfoIDValue)
+          }
+          errorMessage={errors.userinfoID?.errorMessage}
+          hasError={errors.userinfoID?.hasError}
+          ref={userinfoIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "userinfoID")}
+        ></Autocomplete>
+      </ArrayField>
       <TextField
         label={
           <span style={{ display: "inline-flex" }}>
@@ -236,6 +531,8 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE,
+              UID,
+              isTask,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -273,6 +570,8 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE,
+              UID,
+              isTask,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -310,6 +609,8 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE,
+              UID,
+              isTask,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -340,6 +641,8 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION: value,
               LOCATION,
               RRULE,
+              UID,
+              isTask,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -370,6 +673,8 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION: value,
               RRULE,
+              UID,
+              isTask,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -399,6 +704,8 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE: value,
+              UID,
+              isTask,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -413,6 +720,70 @@ export default function ScheduleCreateForm(props) {
         hasError={errors.RRULE?.hasError}
         {...getOverrideProps(overrides, "RRULE")}
       ></TextAreaField>
+      <TextField
+        label="Uid"
+        isRequired={false}
+        isReadOnly={false}
+        value={UID}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID: value,
+              isTask,
+            };
+            const result = onChange(modelFields);
+            value = result?.UID ?? value;
+          }
+          if (errors.UID?.hasError) {
+            runValidationTasks("UID", value);
+          }
+          setUID(value);
+        }}
+        onBlur={() => runValidationTasks("UID", UID)}
+        errorMessage={errors.UID?.errorMessage}
+        hasError={errors.UID?.hasError}
+        {...getOverrideProps(overrides, "UID")}
+      ></TextField>
+      <SwitchField
+        label="Is task"
+        defaultChecked={false}
+        isDisabled={false}
+        isChecked={isTask}
+        onChange={(e) => {
+          let value = e.target.checked;
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID,
+              isTask: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.isTask ?? value;
+          }
+          if (errors.isTask?.hasError) {
+            runValidationTasks("isTask", value);
+          }
+          setIsTask(value);
+        }}
+        onBlur={() => runValidationTasks("isTask", isTask)}
+        errorMessage={errors.isTask?.errorMessage}
+        hasError={errors.isTask?.hasError}
+        {...getOverrideProps(overrides, "isTask")}
+      ></SwitchField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

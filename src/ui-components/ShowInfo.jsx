@@ -181,13 +181,14 @@ function ArrayField({
     </React.Fragment>
   );
 }
-export default function ScheduleUpdateForm(props) {
+export default function ShowInfo(props) {
   const {
     id: idProp,
     schedule: scheduleModelProp,
     onSuccess,
     onError,
     onSubmit,
+    onCancel,
     onValidate,
     onChange,
     overrides,
@@ -431,7 +432,7 @@ export default function ScheduleUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "ScheduleUpdateForm")}
+      {...getOverrideProps(overrides, "ShowInfo")}
       {...rest}
     >
       <TextField
@@ -467,7 +468,7 @@ export default function ScheduleUpdateForm(props) {
         {...getOverrideProps(overrides, "SUMMARY")}
       ></TextField>
       <TextField
-        label="Dtstart"
+        label="StartDat"
         isRequired={true}
         isReadOnly={false}
         type="datetime-local"
@@ -535,7 +536,15 @@ export default function ScheduleUpdateForm(props) {
         {...getOverrideProps(overrides, "DTEND")}
       ></TextField>
       <TextField
-        label="Description"
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Description</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
         isRequired={false}
         isReadOnly={false}
         value={DESCRIPTION}
@@ -567,7 +576,15 @@ export default function ScheduleUpdateForm(props) {
         {...getOverrideProps(overrides, "DESCRIPTION")}
       ></TextField>
       <TextField
-        label="Location"
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Location</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
         isRequired={false}
         isReadOnly={false}
         value={LOCATION}
@@ -699,7 +716,15 @@ export default function ScheduleUpdateForm(props) {
         ></Autocomplete>
       </ArrayField>
       <TextAreaField
-        label="Rrule"
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Rrule</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
         isRequired={false}
         isReadOnly={false}
         value={RRULE}
@@ -731,7 +756,15 @@ export default function ScheduleUpdateForm(props) {
         {...getOverrideProps(overrides, "RRULE")}
       ></TextAreaField>
       <TextField
-        label="Uid"
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Uid</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
         isRequired={false}
         isReadOnly={false}
         value={UID}
@@ -763,7 +796,15 @@ export default function ScheduleUpdateForm(props) {
         {...getOverrideProps(overrides, "UID")}
       ></TextField>
       <SwitchField
-        label="Is task"
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Is task</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
         defaultChecked={false}
         isDisabled={false}
         isChecked={isTask}
@@ -812,6 +853,14 @@ export default function ScheduleUpdateForm(props) {
           gap="15px"
           {...getOverrideProps(overrides, "RightAlignCTASubFlex")}
         >
+          <Button
+            children="Cancel"
+            type="button"
+            onClick={() => {
+              onCancel && onCancel();
+            }}
+            {...getOverrideProps(overrides, "CancelButton")}
+          ></Button>
           <Button
             children="Submit"
             type="submit"

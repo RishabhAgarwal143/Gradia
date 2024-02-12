@@ -27,8 +27,11 @@ export const onCreateUserinfo = /* GraphQL */ `
             WKST
             BYDAYS
             BYMONTH
+            COUNT
             __typename
           }
+          UID
+          isTask
           createdAt
           updatedAt
           owner
@@ -85,8 +88,11 @@ export const onUpdateUserinfo = /* GraphQL */ `
             WKST
             BYDAYS
             BYMONTH
+            COUNT
             __typename
           }
+          UID
+          isTask
           createdAt
           updatedAt
           owner
@@ -143,8 +149,11 @@ export const onDeleteUserinfo = /* GraphQL */ `
             WKST
             BYDAYS
             BYMONTH
+            COUNT
             __typename
           }
+          UID
+          isTask
           createdAt
           updatedAt
           owner
@@ -195,8 +204,11 @@ export const onCreateSchedule = /* GraphQL */ `
         WKST
         BYDAYS
         BYMONTH
+        COUNT
         __typename
       }
+      UID
+      isTask
       createdAt
       updatedAt
       owner
@@ -224,8 +236,11 @@ export const onUpdateSchedule = /* GraphQL */ `
         WKST
         BYDAYS
         BYMONTH
+        COUNT
         __typename
       }
+      UID
+      isTask
       createdAt
       updatedAt
       owner
@@ -253,8 +268,11 @@ export const onDeleteSchedule = /* GraphQL */ `
         WKST
         BYDAYS
         BYMONTH
+        COUNT
         __typename
       }
+      UID
+      isTask
       createdAt
       updatedAt
       owner

@@ -21,7 +21,7 @@ export declare type ValidationResponse = {
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type ScheduleUpdateFormInputValues = {
+export declare type ShowInfoInputValues = {
     SUMMARY?: string;
     DTSTART?: string;
     DTEND?: string;
@@ -32,7 +32,7 @@ export declare type ScheduleUpdateFormInputValues = {
     UID?: string;
     isTask?: boolean;
 };
-export declare type ScheduleUpdateFormValidationValues = {
+export declare type ShowInfoValidationValues = {
     SUMMARY?: ValidationFunction<string>;
     DTSTART?: ValidationFunction<string>;
     DTEND?: ValidationFunction<string>;
@@ -44,8 +44,8 @@ export declare type ScheduleUpdateFormValidationValues = {
     isTask?: ValidationFunction<boolean>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type ScheduleUpdateFormOverridesProps = {
-    ScheduleUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
+export declare type ShowInfoOverridesProps = {
+    ShowInfoGrid?: PrimitiveOverrideProps<GridProps>;
     SUMMARY?: PrimitiveOverrideProps<TextFieldProps>;
     DTSTART?: PrimitiveOverrideProps<TextFieldProps>;
     DTEND?: PrimitiveOverrideProps<TextFieldProps>;
@@ -56,15 +56,16 @@ export declare type ScheduleUpdateFormOverridesProps = {
     UID?: PrimitiveOverrideProps<TextFieldProps>;
     isTask?: PrimitiveOverrideProps<SwitchFieldProps>;
 } & EscapeHatchProps;
-export declare type ScheduleUpdateFormProps = React.PropsWithChildren<{
-    overrides?: ScheduleUpdateFormOverridesProps | undefined | null;
+export declare type ShowInfoProps = React.PropsWithChildren<{
+    overrides?: ShowInfoOverridesProps | undefined | null;
 } & {
     id?: string;
     schedule?: any;
-    onSubmit?: (fields: ScheduleUpdateFormInputValues) => ScheduleUpdateFormInputValues;
-    onSuccess?: (fields: ScheduleUpdateFormInputValues) => void;
-    onError?: (fields: ScheduleUpdateFormInputValues, errorMessage: string) => void;
-    onChange?: (fields: ScheduleUpdateFormInputValues) => ScheduleUpdateFormInputValues;
-    onValidate?: ScheduleUpdateFormValidationValues;
+    onSubmit?: (fields: ShowInfoInputValues) => ShowInfoInputValues;
+    onSuccess?: (fields: ShowInfoInputValues) => void;
+    onError?: (fields: ShowInfoInputValues, errorMessage: string) => void;
+    onCancel?: () => void;
+    onChange?: (fields: ShowInfoInputValues) => ShowInfoInputValues;
+    onValidate?: ShowInfoValidationValues;
 } & React.CSSProperties>;
-export default function ScheduleUpdateForm(props: ScheduleUpdateFormProps): React.ReactElement;
+export default function ShowInfo(props: ShowInfoProps): React.ReactElement;

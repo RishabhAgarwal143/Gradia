@@ -9,7 +9,7 @@ import * as React from "react";
 import { getOverrideProps } from "./utils";
 import { Flex, Text, View } from "@aws-amplify/ui-react";
 export default function Event(props) {
-  const { task, AP = "AM", overrides, ...rest } = props;
+  const { task, AP, overrides, ...rest } = props;
   return (
     <Flex
       gap="0"

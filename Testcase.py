@@ -31,7 +31,7 @@ class Testing_DB(unittest.TestCase):
         "}\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" % (id)
         headers = {
         'Content-Type': 'application/json',
-        'x-api-key': 'da2-6xzoripdmfajdlx65xtbhsiofi'
+        'x-api-key': f'{os.environ["API_KEY"]}'
         }
 
         response2 = requests.request("POST", url, headers=headers, data=payload)

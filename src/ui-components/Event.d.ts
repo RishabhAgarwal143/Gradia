@@ -30,7 +30,7 @@ export declare type EventOverridesProps = {
 } & EscapeHatchProps;
 export declare type EventProps = React.PropsWithChildren<Partial<FlexProps> & {
     task?: any;
-    AP?: String;
+    AP?: any;
 } & {
     overrides?: EventOverridesProps | undefined | null;
 }>;

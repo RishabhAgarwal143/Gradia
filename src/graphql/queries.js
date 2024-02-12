@@ -24,8 +24,11 @@ export const getUserinfo = /* GraphQL */ `
             WKST
             BYDAYS
             BYMONTH
+            COUNT
             __typename
           }
+          UID
+          isTask
           createdAt
           updatedAt
           owner
@@ -77,6 +80,8 @@ export const listUserinfos = /* GraphQL */ `
             DESCRIPTION
             LOCATION
             userinfoID
+            UID
+            isTask
             createdAt
             updatedAt
             owner
@@ -127,8 +132,11 @@ export const getSchedule = /* GraphQL */ `
         WKST
         BYDAYS
         BYMONTH
+        COUNT
         __typename
       }
+      UID
+      isTask
       createdAt
       updatedAt
       owner
@@ -158,8 +166,11 @@ export const listSchedules = /* GraphQL */ `
           WKST
           BYDAYS
           BYMONTH
+          COUNT
           __typename
         }
+        UID
+        isTask
         createdAt
         updatedAt
         owner
@@ -200,8 +211,11 @@ export const schedulesByUserinfoID = /* GraphQL */ `
           WKST
           BYDAYS
           BYMONTH
+          COUNT
           __typename
         }
+        UID
+        isTask
         createdAt
         updatedAt
         owner

@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { AutocompleteProps, GridProps, SwitchFieldProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -29,6 +29,8 @@ export declare type ScheduleCreateFormInputValues = {
     DESCRIPTION?: string;
     LOCATION?: string;
     RRULE?: string;
+    UID?: string;
+    isTask?: boolean;
 };
 export declare type ScheduleCreateFormValidationValues = {
     userinfoID?: ValidationFunction<string>;
@@ -38,17 +40,21 @@ export declare type ScheduleCreateFormValidationValues = {
     DESCRIPTION?: ValidationFunction<string>;
     LOCATION?: ValidationFunction<string>;
     RRULE?: ValidationFunction<string>;
+    UID?: ValidationFunction<string>;
+    isTask?: ValidationFunction<boolean>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type ScheduleCreateFormOverridesProps = {
     ScheduleCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    userinfoID?: PrimitiveOverrideProps<TextFieldProps>;
+    userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
     SUMMARY?: PrimitiveOverrideProps<TextFieldProps>;
     DTSTART?: PrimitiveOverrideProps<TextFieldProps>;
     DTEND?: PrimitiveOverrideProps<TextFieldProps>;
     DESCRIPTION?: PrimitiveOverrideProps<TextFieldProps>;
     LOCATION?: PrimitiveOverrideProps<TextFieldProps>;
     RRULE?: PrimitiveOverrideProps<TextAreaFieldProps>;
+    UID?: PrimitiveOverrideProps<TextFieldProps>;
+    isTask?: PrimitiveOverrideProps<SwitchFieldProps>;
 } & EscapeHatchProps;
 export declare type ScheduleCreateFormProps = React.PropsWithChildren<{
     overrides?: ScheduleCreateFormOverridesProps | undefined | null;
