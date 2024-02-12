@@ -5,6 +5,7 @@
  **************************************************************************/
 
 export { default as CloseButton } from "./CloseButton";
+export { default as EventDesc } from "./EventDesc";
 export { default as Icondelete } from "./Icondelete";
 export { default as Iconeditalt } from "./Iconeditalt";
 export { default as InfoBox } from "./InfoBox";
