@@ -2,7 +2,7 @@ import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import * as commands from "./support_local_files/support_func.js";
-import { ScheduleCreateForm } from "./ui-components";
+// import { ScheduleCreateForm } from "./ui-components";
 async function printlog() {
   const { DateTime } = require("luxon");
   const dt = DateTime.now();
@@ -14,7 +14,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h2>My app</h2>
-        <ScheduleCreateForm
+        {/* <ScheduleCreateForm
           onError={(error) => {
             console.log(`error`, error);
           }}
@@ -33,7 +33,7 @@ function App() {
             console.log(updatedFields);
             return fields;
           }}
-        />
+        /> */}
         <button onClick={commands.create_user}>Create User</button>
         <button onClick={commands.handleFetchUserAttributes}>Fetch User</button>
         <button onClick={commands.get_item}>Get record</button>
