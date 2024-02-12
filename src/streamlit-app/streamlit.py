@@ -8,7 +8,7 @@ import api_calls as ac
 from openai import OpenAI
 import logging
 
-openai.api_key = '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'
+openai.api_key = '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'
 # openai.api_key = "
 client = OpenAI(api_key=openai.api_key)
 assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
@@ -27,10 +27,12 @@ with st.sidebar:
     st.divider()
 
 functions = {
-    'add_event_to_calendar': ac.add_event_to_calendar,
-    'get_actual_time_and_date': ac.get_actual_time_and_date,
-    'modify_event_in_calendar': ac.modify_event_in_calendar,
-    'get_schedule': ac.get_schedule
+    'initialize_payload_user': ac.initialize_payload_user,
+    'get_user_time': ac.get_user_time,
+    # 'schedule_new_event': ac.schedule_new_event,
+    # 'add_event_to_calendar': ac.add_event_to_calendar,
+    # 'modify_event_in_calendar': ac.modify_event_in_calendar,
+    # 'get_schedule': ac.get_schedule
 }
 
 
