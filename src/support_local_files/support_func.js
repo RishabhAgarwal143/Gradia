@@ -102,3 +102,32 @@ export async function list_schedule_item() {
     throw error; // Rethrow the error if needed
   }
 }
+export const deleteSchedule = async (eventId) => {
+  try {
+    // Make the GraphQL API call to delete the schedule
+    const deletedSchedule = await client.graphql({
+      query: mutations.deleteSchedule,
+      variables: {
+        input: {
+          id: eventId
+        }
+      }
+    });
+    return deletedSchedule; // Return the result
+  } catch (error) {
+    throw new Error('Error deleting schedule: ' + error.message); // Throw an error if deletion fails
+  }
+};
+
+// List all items
+export const listTasks = async () => {
+  try {
+    // Make the GraphQL API call to delete the schedule
+    const allTasks = await client.graphql({
+      query: queries.listTasks
+    });
+    return allTasks // Return the result
+  } catch (error) {
+    throw new Error('Error getting tasks: ' + error.message); // Throw an error if deletion fails
+  }
+};

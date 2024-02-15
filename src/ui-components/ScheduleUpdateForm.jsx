@@ -38,6 +38,9 @@ export default function ScheduleUpdateForm(props) {
     LOCATION: "",
     userinfoID: "",
     RRULE: "",
+    UID: "",
+    CATEGORIES: "",
+    DTSTAMP: "",
   };
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
   const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
@@ -48,6 +51,9 @@ export default function ScheduleUpdateForm(props) {
   const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
   const [RRULE, setRRULE] = React.useState(initialValues.RRULE);
+  const [UID, setUID] = React.useState(initialValues.UID);
+  const [CATEGORIES, setCATEGORIES] = React.useState(initialValues.CATEGORIES);
+  const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = scheduleRecord
@@ -64,6 +70,9 @@ export default function ScheduleUpdateForm(props) {
         ? cleanValues.RRULE
         : JSON.stringify(cleanValues.RRULE)
     );
+    setUID(cleanValues.UID);
+    setCATEGORIES(cleanValues.CATEGORIES);
+    setDTSTAMP(cleanValues.DTSTAMP);
     setErrors({});
   };
   const [scheduleRecord, setScheduleRecord] = React.useState(scheduleModelProp);
@@ -90,6 +99,9 @@ export default function ScheduleUpdateForm(props) {
     LOCATION: [],
     userinfoID: [{ type: "Required" }],
     RRULE: [{ type: "JSON" }],
+    UID: [],
+    CATEGORIES: [],
+    DTSTAMP: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -141,6 +153,9 @@ export default function ScheduleUpdateForm(props) {
           LOCATION: LOCATION ?? null,
           userinfoID,
           RRULE: RRULE ?? null,
+          UID: UID ?? null,
+          CATEGORIES: CATEGORIES ?? null,
+          DTSTAMP: DTSTAMP ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -177,6 +192,9 @@ export default function ScheduleUpdateForm(props) {
             DESCRIPTION: modelFields.DESCRIPTION ?? null,
             LOCATION: modelFields.LOCATION ?? null,
             userinfoID: modelFields.userinfoID,
+            UID: modelFields.UID ?? null,
+            CATEGORIES: modelFields.CATEGORIES ?? null,
+            DTSTAMP: modelFields.DTSTAMP ?? null,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
@@ -219,6 +237,9 @@ export default function ScheduleUpdateForm(props) {
               LOCATION,
               userinfoID,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -251,6 +272,9 @@ export default function ScheduleUpdateForm(props) {
               LOCATION,
               userinfoID,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -283,6 +307,9 @@ export default function ScheduleUpdateForm(props) {
               LOCATION,
               userinfoID,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -313,6 +340,9 @@ export default function ScheduleUpdateForm(props) {
               LOCATION,
               userinfoID,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -343,6 +373,9 @@ export default function ScheduleUpdateForm(props) {
               LOCATION: value,
               userinfoID,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -373,6 +406,9 @@ export default function ScheduleUpdateForm(props) {
               LOCATION,
               userinfoID: value,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -403,6 +439,9 @@ export default function ScheduleUpdateForm(props) {
               LOCATION,
               userinfoID,
               RRULE: value,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -417,6 +456,107 @@ export default function ScheduleUpdateForm(props) {
         hasError={errors.RRULE?.hasError}
         {...getOverrideProps(overrides, "RRULE")}
       ></TextAreaField>
+      <TextField
+        label="Uid"
+        isRequired={false}
+        isReadOnly={false}
+        value={UID}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+              RRULE,
+              UID: value,
+              CATEGORIES,
+              DTSTAMP,
+            };
+            const result = onChange(modelFields);
+            value = result?.UID ?? value;
+          }
+          if (errors.UID?.hasError) {
+            runValidationTasks("UID", value);
+          }
+          setUID(value);
+        }}
+        onBlur={() => runValidationTasks("UID", UID)}
+        errorMessage={errors.UID?.errorMessage}
+        hasError={errors.UID?.hasError}
+        {...getOverrideProps(overrides, "UID")}
+      ></TextField>
+      <TextField
+        label="Categories"
+        isRequired={false}
+        isReadOnly={false}
+        value={CATEGORIES}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+              RRULE,
+              UID,
+              CATEGORIES: value,
+              DTSTAMP,
+            };
+            const result = onChange(modelFields);
+            value = result?.CATEGORIES ?? value;
+          }
+          if (errors.CATEGORIES?.hasError) {
+            runValidationTasks("CATEGORIES", value);
+          }
+          setCATEGORIES(value);
+        }}
+        onBlur={() => runValidationTasks("CATEGORIES", CATEGORIES)}
+        errorMessage={errors.CATEGORIES?.errorMessage}
+        hasError={errors.CATEGORIES?.hasError}
+        {...getOverrideProps(overrides, "CATEGORIES")}
+      ></TextField>
+      <TextField
+        label="Dtstamp"
+        isRequired={false}
+        isReadOnly={false}
+        type="datetime-local"
+        value={DTSTAMP && convertToLocal(new Date(DTSTAMP))}
+        onChange={(e) => {
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+              RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.DTSTAMP ?? value;
+          }
+          if (errors.DTSTAMP?.hasError) {
+            runValidationTasks("DTSTAMP", value);
+          }
+          setDTSTAMP(value);
+        }}
+        onBlur={() => runValidationTasks("DTSTAMP", DTSTAMP)}
+        errorMessage={errors.DTSTAMP?.errorMessage}
+        hasError={errors.DTSTAMP?.hasError}
+        {...getOverrideProps(overrides, "DTSTAMP")}
+      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

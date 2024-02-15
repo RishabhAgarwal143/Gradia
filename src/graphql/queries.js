@@ -1,6 +1,76 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getSubscribedCalendar = /* GraphQL */ `
+  query GetSubscribedCalendar($id: ID!) {
+    getSubscribedCalendar(id: $id) {
+      id
+      Calendar_Name
+      Calendar_URL
+      userinfoID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const listSubscribedCalendars = /* GraphQL */ `
+  query ListSubscribedCalendars(
+    $filter: ModelSubscribedCalendarFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listSubscribedCalendars(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        Calendar_Name
+        Calendar_URL
+        userinfoID
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const subscribedCalendarsByUserinfoID = /* GraphQL */ `
+  query SubscribedCalendarsByUserinfoID(
+    $userinfoID: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelSubscribedCalendarFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    subscribedCalendarsByUserinfoID(
+      userinfoID: $userinfoID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        Calendar_Name
+        Calendar_URL
+        userinfoID
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getUserinfo = /* GraphQL */ `
   query GetUserinfo($id: ID!) {
     getUserinfo(id: $id) {
@@ -11,21 +81,9 @@ export const getUserinfo = /* GraphQL */ `
       Schedules {
         items {
           id
-          SUMMARY
-          DTSTART
-          DTEND
-          DESCRIPTION
-          LOCATION
+          Calendar_Name
+          Calendar_URL
           userinfoID
-          RRULE {
-            FREQ
-            INTERVALS
-            UNTIL
-            WKST
-            BYDAYS
-            BYMONTH
-            __typename
-          }
           createdAt
           updatedAt
           owner
@@ -37,9 +95,22 @@ export const getUserinfo = /* GraphQL */ `
       Tasks {
         items {
           id
-          due_time
-          due_date
-          description
+          Calendar_Name
+          Calendar_URL
+          userinfoID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      SubscribedCalendars {
+        items {
+          id
+          Calendar_Name
+          Calendar_URL
           userinfoID
           createdAt
           updatedAt
@@ -71,11 +142,8 @@ export const listUserinfos = /* GraphQL */ `
         Schedules {
           items {
             id
-            SUMMARY
-            DTSTART
-            DTEND
-            DESCRIPTION
-            LOCATION
+            Calendar_Name
+            Calendar_URL
             userinfoID
             createdAt
             updatedAt
@@ -88,9 +156,22 @@ export const listUserinfos = /* GraphQL */ `
         Tasks {
           items {
             id
-            due_time
-            due_date
-            description
+            Calendar_Name
+            Calendar_URL
+            userinfoID
+            createdAt
+            updatedAt
+            owner
+            __typename
+          }
+          nextToken
+          __typename
+        }
+        SubscribedCalendars {
+          items {
+            id
+            Calendar_Name
+            Calendar_URL
             userinfoID
             createdAt
             updatedAt
@@ -127,8 +208,12 @@ export const getSchedule = /* GraphQL */ `
         WKST
         BYDAYS
         BYMONTH
+        COUNT
         __typename
       }
+      UID
+      CATEGORIES
+      DTSTAMP
       createdAt
       updatedAt
       owner
@@ -158,8 +243,12 @@ export const listSchedules = /* GraphQL */ `
           WKST
           BYDAYS
           BYMONTH
+          COUNT
           __typename
         }
+        UID
+        CATEGORIES
+        DTSTAMP
         createdAt
         updatedAt
         owner
@@ -200,8 +289,12 @@ export const schedulesByUserinfoID = /* GraphQL */ `
           WKST
           BYDAYS
           BYMONTH
+          COUNT
           __typename
         }
+        UID
+        CATEGORIES
+        DTSTAMP
         createdAt
         updatedAt
         owner
@@ -216,10 +309,16 @@ export const getTask = /* GraphQL */ `
   query GetTask($id: ID!) {
     getTask(id: $id) {
       id
-      due_time
-      due_date
-      description
+      UID
+      DTSTART
+      DUE
+      SUMMARY
       userinfoID
+      COMPLETED
+      STATUS
+      CATEGORIES
+      PRIORITY
+      DTSTAMP
       createdAt
       updatedAt
       owner
@@ -236,10 +335,16 @@ export const listTasks = /* GraphQL */ `
     listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        due_time
-        due_date
-        description
+        UID
+        DTSTART
+        DUE
+        SUMMARY
         userinfoID
+        COMPLETED
+        STATUS
+        CATEGORIES
+        PRIORITY
+        DTSTAMP
         createdAt
         updatedAt
         owner
@@ -267,10 +372,16 @@ export const tasksByUserinfoID = /* GraphQL */ `
     ) {
       items {
         id
-        due_time
-        due_date
-        description
+        UID
+        DTSTART
+        DUE
+        SUMMARY
         userinfoID
+        COMPLETED
+        STATUS
+        CATEGORIES
+        PRIORITY
+        DTSTAMP
         createdAt
         updatedAt
         owner

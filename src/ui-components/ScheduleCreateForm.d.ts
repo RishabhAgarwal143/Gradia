@@ -29,6 +29,9 @@ export declare type ScheduleCreateFormInputValues = {
     DESCRIPTION?: string;
     LOCATION?: string;
     RRULE?: string;
+    UID?: string;
+    CATEGORIES?: string;
+    DTSTAMP?: string;
 };
 export declare type ScheduleCreateFormValidationValues = {
     userinfoID?: ValidationFunction<string>;
@@ -38,6 +41,9 @@ export declare type ScheduleCreateFormValidationValues = {
     DESCRIPTION?: ValidationFunction<string>;
     LOCATION?: ValidationFunction<string>;
     RRULE?: ValidationFunction<string>;
+    UID?: ValidationFunction<string>;
+    CATEGORIES?: ValidationFunction<string>;
+    DTSTAMP?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type ScheduleCreateFormOverridesProps = {
@@ -49,6 +55,9 @@ export declare type ScheduleCreateFormOverridesProps = {
     DESCRIPTION?: PrimitiveOverrideProps<TextFieldProps>;
     LOCATION?: PrimitiveOverrideProps<TextFieldProps>;
     RRULE?: PrimitiveOverrideProps<TextAreaFieldProps>;
+    UID?: PrimitiveOverrideProps<TextFieldProps>;
+    CATEGORIES?: PrimitiveOverrideProps<TextFieldProps>;
+    DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type ScheduleCreateFormProps = React.PropsWithChildren<{
     overrides?: ScheduleCreateFormOverridesProps | undefined | null;

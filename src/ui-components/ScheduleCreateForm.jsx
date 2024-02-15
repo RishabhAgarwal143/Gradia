@@ -36,6 +36,9 @@ export default function ScheduleCreateForm(props) {
     DESCRIPTION: "",
     LOCATION: "",
     RRULE: "",
+    UID: "",
+    CATEGORIES: "",
+    DTSTAMP: "",
   };
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
@@ -46,6 +49,9 @@ export default function ScheduleCreateForm(props) {
   );
   const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const [RRULE, setRRULE] = React.useState(initialValues.RRULE);
+  const [UID, setUID] = React.useState(initialValues.UID);
+  const [CATEGORIES, setCATEGORIES] = React.useState(initialValues.CATEGORIES);
+  const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setUserinfoID(initialValues.userinfoID);
@@ -55,6 +61,9 @@ export default function ScheduleCreateForm(props) {
     setDESCRIPTION(initialValues.DESCRIPTION);
     setLOCATION(initialValues.LOCATION);
     setRRULE(initialValues.RRULE);
+    setUID(initialValues.UID);
+    setCATEGORIES(initialValues.CATEGORIES);
+    setDTSTAMP(initialValues.DTSTAMP);
     setErrors({});
   };
   const validations = {
@@ -65,6 +74,9 @@ export default function ScheduleCreateForm(props) {
     DESCRIPTION: [],
     LOCATION: [],
     RRULE: [{ type: "JSON" }],
+    UID: [],
+    CATEGORIES: [],
+    DTSTAMP: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -116,6 +128,9 @@ export default function ScheduleCreateForm(props) {
           DESCRIPTION,
           LOCATION,
           RRULE,
+          UID,
+          CATEGORIES,
+          DTSTAMP,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -152,6 +167,9 @@ export default function ScheduleCreateForm(props) {
             DTEND: modelFields.DTEND,
             DESCRIPTION: modelFields.DESCRIPTION,
             LOCATION: modelFields.LOCATION,
+            UID: modelFields.UID,
+            CATEGORIES: modelFields.CATEGORIES,
+            DTSTAMP: modelFields.DTSTAMP,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
@@ -201,6 +219,9 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -236,6 +257,9 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -273,6 +297,9 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -310,6 +337,9 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -340,6 +370,9 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION: value,
               LOCATION,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -370,6 +403,9 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION: value,
               RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -399,6 +435,9 @@ export default function ScheduleCreateForm(props) {
               DESCRIPTION,
               LOCATION,
               RRULE: value,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -413,6 +452,107 @@ export default function ScheduleCreateForm(props) {
         hasError={errors.RRULE?.hasError}
         {...getOverrideProps(overrides, "RRULE")}
       ></TextAreaField>
+      <TextField
+        label="Uid"
+        isRequired={false}
+        isReadOnly={false}
+        value={UID}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID: value,
+              CATEGORIES,
+              DTSTAMP,
+            };
+            const result = onChange(modelFields);
+            value = result?.UID ?? value;
+          }
+          if (errors.UID?.hasError) {
+            runValidationTasks("UID", value);
+          }
+          setUID(value);
+        }}
+        onBlur={() => runValidationTasks("UID", UID)}
+        errorMessage={errors.UID?.errorMessage}
+        hasError={errors.UID?.hasError}
+        {...getOverrideProps(overrides, "UID")}
+      ></TextField>
+      <TextField
+        label="Categories"
+        isRequired={false}
+        isReadOnly={false}
+        value={CATEGORIES}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID,
+              CATEGORIES: value,
+              DTSTAMP,
+            };
+            const result = onChange(modelFields);
+            value = result?.CATEGORIES ?? value;
+          }
+          if (errors.CATEGORIES?.hasError) {
+            runValidationTasks("CATEGORIES", value);
+          }
+          setCATEGORIES(value);
+        }}
+        onBlur={() => runValidationTasks("CATEGORIES", CATEGORIES)}
+        errorMessage={errors.CATEGORIES?.errorMessage}
+        hasError={errors.CATEGORIES?.hasError}
+        {...getOverrideProps(overrides, "CATEGORIES")}
+      ></TextField>
+      <TextField
+        label="Dtstamp"
+        isRequired={false}
+        isReadOnly={false}
+        type="datetime-local"
+        value={DTSTAMP && convertToLocal(new Date(DTSTAMP))}
+        onChange={(e) => {
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.DTSTAMP ?? value;
+          }
+          if (errors.DTSTAMP?.hasError) {
+            runValidationTasks("DTSTAMP", value);
+          }
+          setDTSTAMP(value);
+        }}
+        onBlur={() => runValidationTasks("DTSTAMP", DTSTAMP)}
+        errorMessage={errors.DTSTAMP?.errorMessage}
+        hasError={errors.DTSTAMP?.hasError}
+        {...getOverrideProps(overrides, "DTSTAMP")}
+      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

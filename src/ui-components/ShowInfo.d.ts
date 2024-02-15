@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -21,53 +21,54 @@ export declare type ValidationResponse = {
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type TaskUpdateFormInputValues = {
-    UID?: string;
-    DTSTART?: string;
-    DUE?: string;
+export declare type ShowInfoInputValues = {
     SUMMARY?: string;
+    DTSTART?: string;
+    DTEND?: string;
+    DESCRIPTION?: string;
+    LOCATION?: string;
     userinfoID?: string;
-    COMPLETED?: string;
-    STATUS?: string;
+    RRULE?: string;
+    UID?: string;
     CATEGORIES?: string;
-    PRIORITY?: number;
     DTSTAMP?: string;
 };
-export declare type TaskUpdateFormValidationValues = {
-    UID?: ValidationFunction<string>;
-    DTSTART?: ValidationFunction<string>;
-    DUE?: ValidationFunction<string>;
+export declare type ShowInfoValidationValues = {
     SUMMARY?: ValidationFunction<string>;
+    DTSTART?: ValidationFunction<string>;
+    DTEND?: ValidationFunction<string>;
+    DESCRIPTION?: ValidationFunction<string>;
+    LOCATION?: ValidationFunction<string>;
     userinfoID?: ValidationFunction<string>;
-    COMPLETED?: ValidationFunction<string>;
-    STATUS?: ValidationFunction<string>;
+    RRULE?: ValidationFunction<string>;
+    UID?: ValidationFunction<string>;
     CATEGORIES?: ValidationFunction<string>;
-    PRIORITY?: ValidationFunction<number>;
     DTSTAMP?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type TaskUpdateFormOverridesProps = {
-    TaskUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    UID?: PrimitiveOverrideProps<TextFieldProps>;
-    DTSTART?: PrimitiveOverrideProps<TextFieldProps>;
-    DUE?: PrimitiveOverrideProps<TextFieldProps>;
+export declare type ShowInfoOverridesProps = {
+    ShowInfoGrid?: PrimitiveOverrideProps<GridProps>;
     SUMMARY?: PrimitiveOverrideProps<TextFieldProps>;
+    DTSTART?: PrimitiveOverrideProps<TextFieldProps>;
+    DTEND?: PrimitiveOverrideProps<TextFieldProps>;
+    DESCRIPTION?: PrimitiveOverrideProps<TextFieldProps>;
+    LOCATION?: PrimitiveOverrideProps<TextFieldProps>;
     userinfoID?: PrimitiveOverrideProps<TextFieldProps>;
-    COMPLETED?: PrimitiveOverrideProps<TextFieldProps>;
-    STATUS?: PrimitiveOverrideProps<TextFieldProps>;
+    RRULE?: PrimitiveOverrideProps<TextAreaFieldProps>;
+    UID?: PrimitiveOverrideProps<TextFieldProps>;
     CATEGORIES?: PrimitiveOverrideProps<TextFieldProps>;
-    PRIORITY?: PrimitiveOverrideProps<TextFieldProps>;
     DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type TaskUpdateFormProps = React.PropsWithChildren<{
-    overrides?: TaskUpdateFormOverridesProps | undefined | null;
+export declare type ShowInfoProps = React.PropsWithChildren<{
+    overrides?: ShowInfoOverridesProps | undefined | null;
 } & {
     id?: string;
-    task?: any;
-    onSubmit?: (fields: TaskUpdateFormInputValues) => TaskUpdateFormInputValues;
-    onSuccess?: (fields: TaskUpdateFormInputValues) => void;
-    onError?: (fields: TaskUpdateFormInputValues, errorMessage: string) => void;
-    onChange?: (fields: TaskUpdateFormInputValues) => TaskUpdateFormInputValues;
-    onValidate?: TaskUpdateFormValidationValues;
+    schedule?: any;
+    onSubmit?: (fields: ShowInfoInputValues) => ShowInfoInputValues;
+    onSuccess?: (fields: ShowInfoInputValues) => void;
+    onError?: (fields: ShowInfoInputValues, errorMessage: string) => void;
+    onCancel?: () => void;
+    onChange?: (fields: ShowInfoInputValues) => ShowInfoInputValues;
+    onValidate?: ShowInfoValidationValues;
 } & React.CSSProperties>;
-export default function TaskUpdateForm(props: TaskUpdateFormProps): React.ReactElement;
+export default function ShowInfo(props: ShowInfoProps): React.ReactElement;

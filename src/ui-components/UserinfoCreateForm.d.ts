@@ -27,6 +27,7 @@ export declare type UserinfoCreateFormInputValues = {
     Timezone?: string;
     Schedules?: any[];
     Tasks?: any[];
+    SubscribedCalendars?: any[];
 };
 export declare type UserinfoCreateFormValidationValues = {
     name?: ValidationFunction<string>;
@@ -34,6 +35,7 @@ export declare type UserinfoCreateFormValidationValues = {
     Timezone?: ValidationFunction<string>;
     Schedules?: ValidationFunction<any>;
     Tasks?: ValidationFunction<any>;
+    SubscribedCalendars?: ValidationFunction<any>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type UserinfoCreateFormOverridesProps = {
@@ -43,6 +45,7 @@ export declare type UserinfoCreateFormOverridesProps = {
     Timezone?: PrimitiveOverrideProps<TextFieldProps>;
     Schedules?: PrimitiveOverrideProps<AutocompleteProps>;
     Tasks?: PrimitiveOverrideProps<AutocompleteProps>;
+    SubscribedCalendars?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type UserinfoCreateFormProps = React.PropsWithChildren<{
     overrides?: UserinfoCreateFormOverridesProps | undefined | null;

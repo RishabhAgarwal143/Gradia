@@ -6,89 +6,102 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import {
+  Button,
+  Flex,
+  Grid,
+  TextAreaField,
+  TextField,
+} from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getTask } from "../graphql/queries";
-import { updateTask } from "../graphql/mutations";
+import { getSchedule } from "../graphql/queries";
+import { updateSchedule } from "../graphql/mutations";
 const client = generateClient();
-export default function TaskUpdateForm(props) {
+export default function ShowInfo(props) {
   const {
     id: idProp,
-    task: taskModelProp,
+    schedule: scheduleModelProp,
     onSuccess,
     onError,
     onSubmit,
+    onCancel,
     onValidate,
     onChange,
     overrides,
     ...rest
   } = props;
   const initialValues = {
-    UID: "",
-    DTSTART: "",
-    DUE: "",
     SUMMARY: "",
+    DTSTART: "",
+    DTEND: "",
+    DESCRIPTION: "",
+    LOCATION: "",
     userinfoID: "",
-    COMPLETED: "",
-    STATUS: "",
+    RRULE: "",
+    UID: "",
     CATEGORIES: "",
-    PRIORITY: "",
     DTSTAMP: "",
   };
-  const [UID, setUID] = React.useState(initialValues.UID);
-  const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
-  const [DUE, setDUE] = React.useState(initialValues.DUE);
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
+  const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
+  const [DTEND, setDTEND] = React.useState(initialValues.DTEND);
+  const [DESCRIPTION, setDESCRIPTION] = React.useState(
+    initialValues.DESCRIPTION
+  );
+  const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
-  const [COMPLETED, setCOMPLETED] = React.useState(initialValues.COMPLETED);
-  const [STATUS, setSTATUS] = React.useState(initialValues.STATUS);
+  const [RRULE, setRRULE] = React.useState(initialValues.RRULE);
+  const [UID, setUID] = React.useState(initialValues.UID);
   const [CATEGORIES, setCATEGORIES] = React.useState(initialValues.CATEGORIES);
-  const [PRIORITY, setPRIORITY] = React.useState(initialValues.PRIORITY);
   const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = taskRecord
-      ? { ...initialValues, ...taskRecord }
+    const cleanValues = scheduleRecord
+      ? { ...initialValues, ...scheduleRecord }
       : initialValues;
-    setUID(cleanValues.UID);
-    setDTSTART(cleanValues.DTSTART);
-    setDUE(cleanValues.DUE);
     setSUMMARY(cleanValues.SUMMARY);
+    setDTSTART(cleanValues.DTSTART);
+    setDTEND(cleanValues.DTEND);
+    setDESCRIPTION(cleanValues.DESCRIPTION);
+    setLOCATION(cleanValues.LOCATION);
     setUserinfoID(cleanValues.userinfoID);
-    setCOMPLETED(cleanValues.COMPLETED);
-    setSTATUS(cleanValues.STATUS);
+    setRRULE(
+      typeof cleanValues.RRULE === "string" || cleanValues.RRULE === null
+        ? cleanValues.RRULE
+        : JSON.stringify(cleanValues.RRULE)
+    );
+    setUID(cleanValues.UID);
     setCATEGORIES(cleanValues.CATEGORIES);
-    setPRIORITY(cleanValues.PRIORITY);
     setDTSTAMP(cleanValues.DTSTAMP);
     setErrors({});
   };
-  const [taskRecord, setTaskRecord] = React.useState(taskModelProp);
+  const [scheduleRecord, setScheduleRecord] = React.useState(scheduleModelProp);
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
         ? (
             await client.graphql({
-              query: getTask.replaceAll("__typename", ""),
+              query: getSchedule.replaceAll("__typename", ""),
               variables: { id: idProp },
             })
-          )?.data?.getTask
-        : taskModelProp;
-      setTaskRecord(record);
+          )?.data?.getSchedule
+        : scheduleModelProp;
+      setScheduleRecord(record);
     };
     queryData();
-  }, [idProp, taskModelProp]);
-  React.useEffect(resetStateValues, [taskRecord]);
+  }, [idProp, scheduleModelProp]);
+  React.useEffect(resetStateValues, [scheduleRecord]);
   const validations = {
-    UID: [],
-    DTSTART: [],
-    DUE: [{ type: "Required" }],
-    SUMMARY: [],
+    SUMMARY: [{ type: "Required" }],
+    DTSTART: [{ type: "Required" }],
+    DTEND: [{ type: "Required" }],
+    DESCRIPTION: [],
+    LOCATION: [],
     userinfoID: [{ type: "Required" }],
-    COMPLETED: [],
-    STATUS: [],
+    RRULE: [{ type: "JSON" }],
+    UID: [],
     CATEGORIES: [],
-    PRIORITY: [],
     DTSTAMP: [],
   };
   const runValidationTasks = async (
@@ -134,15 +147,15 @@ export default function TaskUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          UID: UID ?? null,
-          DTSTART: DTSTART ?? null,
-          DUE,
-          SUMMARY: SUMMARY ?? null,
+          SUMMARY,
+          DTSTART,
+          DTEND,
+          DESCRIPTION: DESCRIPTION ?? null,
+          LOCATION: LOCATION ?? null,
           userinfoID,
-          COMPLETED: COMPLETED ?? null,
-          STATUS: STATUS ?? null,
+          RRULE: RRULE ?? null,
+          UID: UID ?? null,
           CATEGORIES: CATEGORIES ?? null,
-          PRIORITY: PRIORITY ?? null,
           DTSTAMP: DTSTAMP ?? null,
         };
         const validationResponses = await Promise.all(
@@ -173,12 +186,26 @@ export default function TaskUpdateForm(props) {
               modelFields[key] = null;
             }
           });
+          const modelFieldsToSave = {
+            SUMMARY: modelFields.SUMMARY,
+            DTSTART: modelFields.DTSTART,
+            DTEND: modelFields.DTEND,
+            DESCRIPTION: modelFields.DESCRIPTION ?? null,
+            LOCATION: modelFields.LOCATION ?? null,
+            userinfoID: modelFields.userinfoID,
+            UID: modelFields.UID ?? null,
+            CATEGORIES: modelFields.CATEGORIES ?? null,
+            DTSTAMP: modelFields.DTSTAMP ?? null,
+            RRULE: modelFields.RRULE
+              ? JSON.parse(modelFields.RRULE)
+              : modelFields.RRULE,
+          };
           await client.graphql({
-            query: updateTask.replaceAll("__typename", ""),
+            query: updateSchedule.replaceAll("__typename", ""),
             variables: {
               input: {
-                id: taskRecord.id,
-                ...modelFields,
+                id: scheduleRecord.id,
+                ...modelFieldsToSave,
               },
             },
           });
@@ -192,130 +219,27 @@ export default function TaskUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "TaskUpdateForm")}
+      {...getOverrideProps(overrides, "ShowInfo")}
       {...rest}
     >
       <TextField
-        label="Uid"
-        isRequired={false}
-        isReadOnly={false}
-        value={UID}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              UID: value,
-              DTSTART,
-              DUE,
-              SUMMARY,
-              userinfoID,
-              COMPLETED,
-              STATUS,
-              CATEGORIES,
-              PRIORITY,
-              DTSTAMP,
-            };
-            const result = onChange(modelFields);
-            value = result?.UID ?? value;
-          }
-          if (errors.UID?.hasError) {
-            runValidationTasks("UID", value);
-          }
-          setUID(value);
-        }}
-        onBlur={() => runValidationTasks("UID", UID)}
-        errorMessage={errors.UID?.errorMessage}
-        hasError={errors.UID?.hasError}
-        {...getOverrideProps(overrides, "UID")}
-      ></TextField>
-      <TextField
-        label="Dtstart"
-        isRequired={false}
-        isReadOnly={false}
-        type="datetime-local"
-        value={DTSTART && convertToLocal(new Date(DTSTART))}
-        onChange={(e) => {
-          let value =
-            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
-          if (onChange) {
-            const modelFields = {
-              UID,
-              DTSTART: value,
-              DUE,
-              SUMMARY,
-              userinfoID,
-              COMPLETED,
-              STATUS,
-              CATEGORIES,
-              PRIORITY,
-              DTSTAMP,
-            };
-            const result = onChange(modelFields);
-            value = result?.DTSTART ?? value;
-          }
-          if (errors.DTSTART?.hasError) {
-            runValidationTasks("DTSTART", value);
-          }
-          setDTSTART(value);
-        }}
-        onBlur={() => runValidationTasks("DTSTART", DTSTART)}
-        errorMessage={errors.DTSTART?.errorMessage}
-        hasError={errors.DTSTART?.hasError}
-        {...getOverrideProps(overrides, "DTSTART")}
-      ></TextField>
-      <TextField
-        label="Due"
-        isRequired={true}
-        isReadOnly={false}
-        type="datetime-local"
-        value={DUE && convertToLocal(new Date(DUE))}
-        onChange={(e) => {
-          let value =
-            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
-          if (onChange) {
-            const modelFields = {
-              UID,
-              DTSTART,
-              DUE: value,
-              SUMMARY,
-              userinfoID,
-              COMPLETED,
-              STATUS,
-              CATEGORIES,
-              PRIORITY,
-              DTSTAMP,
-            };
-            const result = onChange(modelFields);
-            value = result?.DUE ?? value;
-          }
-          if (errors.DUE?.hasError) {
-            runValidationTasks("DUE", value);
-          }
-          setDUE(value);
-        }}
-        onBlur={() => runValidationTasks("DUE", DUE)}
-        errorMessage={errors.DUE?.errorMessage}
-        hasError={errors.DUE?.hasError}
-        {...getOverrideProps(overrides, "DUE")}
-      ></TextField>
-      <TextField
         label="Summary"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={SUMMARY}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              UID,
-              DTSTART,
-              DUE,
               SUMMARY: value,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
               userinfoID,
-              COMPLETED,
-              STATUS,
+              RRULE,
+              UID,
               CATEGORIES,
-              PRIORITY,
               DTSTAMP,
             };
             const result = onChange(modelFields);
@@ -332,6 +256,158 @@ export default function TaskUpdateForm(props) {
         {...getOverrideProps(overrides, "SUMMARY")}
       ></TextField>
       <TextField
+        label="StartDat"
+        isRequired={true}
+        isReadOnly={false}
+        type="datetime-local"
+        value={DTSTART && convertToLocal(new Date(DTSTART))}
+        onChange={(e) => {
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART: value,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+              RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
+            };
+            const result = onChange(modelFields);
+            value = result?.DTSTART ?? value;
+          }
+          if (errors.DTSTART?.hasError) {
+            runValidationTasks("DTSTART", value);
+          }
+          setDTSTART(value);
+        }}
+        onBlur={() => runValidationTasks("DTSTART", DTSTART)}
+        errorMessage={errors.DTSTART?.errorMessage}
+        hasError={errors.DTSTART?.hasError}
+        {...getOverrideProps(overrides, "DTSTART")}
+      ></TextField>
+      <TextField
+        label="Dtend"
+        isRequired={true}
+        isReadOnly={false}
+        type="datetime-local"
+        value={DTEND && convertToLocal(new Date(DTEND))}
+        onChange={(e) => {
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND: value,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+              RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
+            };
+            const result = onChange(modelFields);
+            value = result?.DTEND ?? value;
+          }
+          if (errors.DTEND?.hasError) {
+            runValidationTasks("DTEND", value);
+          }
+          setDTEND(value);
+        }}
+        onBlur={() => runValidationTasks("DTEND", DTEND)}
+        errorMessage={errors.DTEND?.errorMessage}
+        hasError={errors.DTEND?.hasError}
+        {...getOverrideProps(overrides, "DTEND")}
+      ></TextField>
+      <TextField
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Description</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
+        isRequired={false}
+        isReadOnly={false}
+        value={DESCRIPTION}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION: value,
+              LOCATION,
+              userinfoID,
+              RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
+            };
+            const result = onChange(modelFields);
+            value = result?.DESCRIPTION ?? value;
+          }
+          if (errors.DESCRIPTION?.hasError) {
+            runValidationTasks("DESCRIPTION", value);
+          }
+          setDESCRIPTION(value);
+        }}
+        onBlur={() => runValidationTasks("DESCRIPTION", DESCRIPTION)}
+        errorMessage={errors.DESCRIPTION?.errorMessage}
+        hasError={errors.DESCRIPTION?.hasError}
+        {...getOverrideProps(overrides, "DESCRIPTION")}
+      ></TextField>
+      <TextField
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Location</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
+        isRequired={false}
+        isReadOnly={false}
+        value={LOCATION}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION: value,
+              userinfoID,
+              RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
+            };
+            const result = onChange(modelFields);
+            value = result?.LOCATION ?? value;
+          }
+          if (errors.LOCATION?.hasError) {
+            runValidationTasks("LOCATION", value);
+          }
+          setLOCATION(value);
+        }}
+        onBlur={() => runValidationTasks("LOCATION", LOCATION)}
+        errorMessage={errors.LOCATION?.errorMessage}
+        hasError={errors.LOCATION?.hasError}
+        {...getOverrideProps(overrides, "LOCATION")}
+      ></TextField>
+      <TextField
         label="Userinfo id"
         isRequired={true}
         isReadOnly={false}
@@ -340,15 +416,15 @@ export default function TaskUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              UID,
-              DTSTART,
-              DUE,
               SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
               userinfoID: value,
-              COMPLETED,
-              STATUS,
+              RRULE,
+              UID,
               CATEGORIES,
-              PRIORITY,
               DTSTAMP,
             };
             const result = onChange(modelFields);
@@ -364,74 +440,98 @@ export default function TaskUpdateForm(props) {
         hasError={errors.userinfoID?.hasError}
         {...getOverrideProps(overrides, "userinfoID")}
       ></TextField>
-      <TextField
-        label="Completed"
+      <TextAreaField
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Rrule</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
         isRequired={false}
         isReadOnly={false}
-        value={COMPLETED}
+        value={RRULE}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              UID,
-              DTSTART,
-              DUE,
               SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
               userinfoID,
-              COMPLETED: value,
-              STATUS,
+              RRULE: value,
+              UID,
               CATEGORIES,
-              PRIORITY,
               DTSTAMP,
             };
             const result = onChange(modelFields);
-            value = result?.COMPLETED ?? value;
+            value = result?.RRULE ?? value;
           }
-          if (errors.COMPLETED?.hasError) {
-            runValidationTasks("COMPLETED", value);
+          if (errors.RRULE?.hasError) {
+            runValidationTasks("RRULE", value);
           }
-          setCOMPLETED(value);
+          setRRULE(value);
         }}
-        onBlur={() => runValidationTasks("COMPLETED", COMPLETED)}
-        errorMessage={errors.COMPLETED?.errorMessage}
-        hasError={errors.COMPLETED?.hasError}
-        {...getOverrideProps(overrides, "COMPLETED")}
-      ></TextField>
+        onBlur={() => runValidationTasks("RRULE", RRULE)}
+        errorMessage={errors.RRULE?.errorMessage}
+        hasError={errors.RRULE?.hasError}
+        {...getOverrideProps(overrides, "RRULE")}
+      ></TextAreaField>
       <TextField
-        label="Status"
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Uid</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
         isRequired={false}
         isReadOnly={false}
-        value={STATUS}
+        value={UID}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              UID,
-              DTSTART,
-              DUE,
               SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
               userinfoID,
-              COMPLETED,
-              STATUS: value,
+              RRULE,
+              UID: value,
               CATEGORIES,
-              PRIORITY,
               DTSTAMP,
             };
             const result = onChange(modelFields);
-            value = result?.STATUS ?? value;
+            value = result?.UID ?? value;
           }
-          if (errors.STATUS?.hasError) {
-            runValidationTasks("STATUS", value);
+          if (errors.UID?.hasError) {
+            runValidationTasks("UID", value);
           }
-          setSTATUS(value);
+          setUID(value);
         }}
-        onBlur={() => runValidationTasks("STATUS", STATUS)}
-        errorMessage={errors.STATUS?.errorMessage}
-        hasError={errors.STATUS?.hasError}
-        {...getOverrideProps(overrides, "STATUS")}
+        onBlur={() => runValidationTasks("UID", UID)}
+        errorMessage={errors.UID?.errorMessage}
+        hasError={errors.UID?.hasError}
+        {...getOverrideProps(overrides, "UID")}
       ></TextField>
       <TextField
-        label="Categories"
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Categories</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
         isRequired={false}
         isReadOnly={false}
         value={CATEGORIES}
@@ -439,15 +539,15 @@ export default function TaskUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              UID,
-              DTSTART,
-              DUE,
               SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
               userinfoID,
-              COMPLETED,
-              STATUS,
+              RRULE,
+              UID,
               CATEGORIES: value,
-              PRIORITY,
               DTSTAMP,
             };
             const result = onChange(modelFields);
@@ -464,44 +564,15 @@ export default function TaskUpdateForm(props) {
         {...getOverrideProps(overrides, "CATEGORIES")}
       ></TextField>
       <TextField
-        label="Priority"
-        isRequired={false}
-        isReadOnly={false}
-        type="number"
-        step="any"
-        value={PRIORITY}
-        onChange={(e) => {
-          let value = isNaN(parseInt(e.target.value))
-            ? e.target.value
-            : parseInt(e.target.value);
-          if (onChange) {
-            const modelFields = {
-              UID,
-              DTSTART,
-              DUE,
-              SUMMARY,
-              userinfoID,
-              COMPLETED,
-              STATUS,
-              CATEGORIES,
-              PRIORITY: value,
-              DTSTAMP,
-            };
-            const result = onChange(modelFields);
-            value = result?.PRIORITY ?? value;
-          }
-          if (errors.PRIORITY?.hasError) {
-            runValidationTasks("PRIORITY", value);
-          }
-          setPRIORITY(value);
-        }}
-        onBlur={() => runValidationTasks("PRIORITY", PRIORITY)}
-        errorMessage={errors.PRIORITY?.errorMessage}
-        hasError={errors.PRIORITY?.hasError}
-        {...getOverrideProps(overrides, "PRIORITY")}
-      ></TextField>
-      <TextField
-        label="Dtstamp"
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Dtstamp</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
         isRequired={false}
         isReadOnly={false}
         type="datetime-local"
@@ -511,15 +582,15 @@ export default function TaskUpdateForm(props) {
             e.target.value === "" ? "" : new Date(e.target.value).toISOString();
           if (onChange) {
             const modelFields = {
-              UID,
-              DTSTART,
-              DUE,
               SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
               userinfoID,
-              COMPLETED,
-              STATUS,
+              RRULE,
+              UID,
               CATEGORIES,
-              PRIORITY,
               DTSTAMP: value,
             };
             const result = onChange(modelFields);
@@ -546,7 +617,7 @@ export default function TaskUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || taskModelProp)}
+          isDisabled={!(idProp || scheduleModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -554,11 +625,19 @@ export default function TaskUpdateForm(props) {
           {...getOverrideProps(overrides, "RightAlignCTASubFlex")}
         >
           <Button
+            children="Cancel"
+            type="button"
+            onClick={() => {
+              onCancel && onCancel();
+            }}
+            {...getOverrideProps(overrides, "CancelButton")}
+          ></Button>
+          <Button
             children="Submit"
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || taskModelProp) ||
+              !(idProp || scheduleModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}

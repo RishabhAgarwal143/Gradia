@@ -1,6 +1,57 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateSubscribedCalendar = /* GraphQL */ `
+  subscription OnCreateSubscribedCalendar(
+    $filter: ModelSubscriptionSubscribedCalendarFilterInput
+    $owner: String
+  ) {
+    onCreateSubscribedCalendar(filter: $filter, owner: $owner) {
+      id
+      Calendar_Name
+      Calendar_URL
+      userinfoID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateSubscribedCalendar = /* GraphQL */ `
+  subscription OnUpdateSubscribedCalendar(
+    $filter: ModelSubscriptionSubscribedCalendarFilterInput
+    $owner: String
+  ) {
+    onUpdateSubscribedCalendar(filter: $filter, owner: $owner) {
+      id
+      Calendar_Name
+      Calendar_URL
+      userinfoID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteSubscribedCalendar = /* GraphQL */ `
+  subscription OnDeleteSubscribedCalendar(
+    $filter: ModelSubscriptionSubscribedCalendarFilterInput
+    $owner: String
+  ) {
+    onDeleteSubscribedCalendar(filter: $filter, owner: $owner) {
+      id
+      Calendar_Name
+      Calendar_URL
+      userinfoID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
 export const onCreateUserinfo = /* GraphQL */ `
   subscription OnCreateUserinfo(
     $filter: ModelSubscriptionUserinfoFilterInput
@@ -14,21 +65,9 @@ export const onCreateUserinfo = /* GraphQL */ `
       Schedules {
         items {
           id
-          SUMMARY
-          DTSTART
-          DTEND
-          DESCRIPTION
-          LOCATION
+          Calendar_Name
+          Calendar_URL
           userinfoID
-          RRULE {
-            FREQ
-            INTERVALS
-            UNTIL
-            WKST
-            BYDAYS
-            BYMONTH
-            __typename
-          }
           createdAt
           updatedAt
           owner
@@ -40,9 +79,22 @@ export const onCreateUserinfo = /* GraphQL */ `
       Tasks {
         items {
           id
-          due_time
-          due_date
-          description
+          Calendar_Name
+          Calendar_URL
+          userinfoID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      SubscribedCalendars {
+        items {
+          id
+          Calendar_Name
+          Calendar_URL
           userinfoID
           createdAt
           updatedAt
@@ -72,21 +124,9 @@ export const onUpdateUserinfo = /* GraphQL */ `
       Schedules {
         items {
           id
-          SUMMARY
-          DTSTART
-          DTEND
-          DESCRIPTION
-          LOCATION
+          Calendar_Name
+          Calendar_URL
           userinfoID
-          RRULE {
-            FREQ
-            INTERVALS
-            UNTIL
-            WKST
-            BYDAYS
-            BYMONTH
-            __typename
-          }
           createdAt
           updatedAt
           owner
@@ -98,9 +138,22 @@ export const onUpdateUserinfo = /* GraphQL */ `
       Tasks {
         items {
           id
-          due_time
-          due_date
-          description
+          Calendar_Name
+          Calendar_URL
+          userinfoID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      SubscribedCalendars {
+        items {
+          id
+          Calendar_Name
+          Calendar_URL
           userinfoID
           createdAt
           updatedAt
@@ -130,21 +183,9 @@ export const onDeleteUserinfo = /* GraphQL */ `
       Schedules {
         items {
           id
-          SUMMARY
-          DTSTART
-          DTEND
-          DESCRIPTION
-          LOCATION
+          Calendar_Name
+          Calendar_URL
           userinfoID
-          RRULE {
-            FREQ
-            INTERVALS
-            UNTIL
-            WKST
-            BYDAYS
-            BYMONTH
-            __typename
-          }
           createdAt
           updatedAt
           owner
@@ -156,9 +197,22 @@ export const onDeleteUserinfo = /* GraphQL */ `
       Tasks {
         items {
           id
-          due_time
-          due_date
-          description
+          Calendar_Name
+          Calendar_URL
+          userinfoID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      SubscribedCalendars {
+        items {
+          id
+          Calendar_Name
+          Calendar_URL
           userinfoID
           createdAt
           updatedAt
@@ -195,8 +249,12 @@ export const onCreateSchedule = /* GraphQL */ `
         WKST
         BYDAYS
         BYMONTH
+        COUNT
         __typename
       }
+      UID
+      CATEGORIES
+      DTSTAMP
       createdAt
       updatedAt
       owner
@@ -224,8 +282,12 @@ export const onUpdateSchedule = /* GraphQL */ `
         WKST
         BYDAYS
         BYMONTH
+        COUNT
         __typename
       }
+      UID
+      CATEGORIES
+      DTSTAMP
       createdAt
       updatedAt
       owner
@@ -253,8 +315,12 @@ export const onDeleteSchedule = /* GraphQL */ `
         WKST
         BYDAYS
         BYMONTH
+        COUNT
         __typename
       }
+      UID
+      CATEGORIES
+      DTSTAMP
       createdAt
       updatedAt
       owner
@@ -269,10 +335,16 @@ export const onCreateTask = /* GraphQL */ `
   ) {
     onCreateTask(filter: $filter, owner: $owner) {
       id
-      due_time
-      due_date
-      description
+      UID
+      DTSTART
+      DUE
+      SUMMARY
       userinfoID
+      COMPLETED
+      STATUS
+      CATEGORIES
+      PRIORITY
+      DTSTAMP
       createdAt
       updatedAt
       owner
@@ -287,10 +359,16 @@ export const onUpdateTask = /* GraphQL */ `
   ) {
     onUpdateTask(filter: $filter, owner: $owner) {
       id
-      due_time
-      due_date
-      description
+      UID
+      DTSTART
+      DUE
+      SUMMARY
       userinfoID
+      COMPLETED
+      STATUS
+      CATEGORIES
+      PRIORITY
+      DTSTAMP
       createdAt
       updatedAt
       owner
@@ -305,10 +383,16 @@ export const onDeleteTask = /* GraphQL */ `
   ) {
     onDeleteTask(filter: $filter, owner: $owner) {
       id
-      due_time
-      due_date
-      description
+      UID
+      DTSTART
+      DUE
+      SUMMARY
       userinfoID
+      COMPLETED
+      STATUS
+      CATEGORIES
+      PRIORITY
+      DTSTAMP
       createdAt
       updatedAt
       owner
