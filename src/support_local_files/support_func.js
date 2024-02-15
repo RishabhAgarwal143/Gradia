@@ -2,6 +2,7 @@ import { signOut } from "aws-amplify/auth";
 import { generateClient } from "aws-amplify/api";
 import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
+import * as subscriptions from "../graphql/subscriptions";
 import { getCurrentUser } from "aws-amplify/auth";
 import { fetchAuthSession } from "aws-amplify/auth";
 import { fetchUserAttributes } from "aws-amplify/auth";
@@ -79,20 +80,46 @@ export async function create_user() {
   }
 }
 
+export async function subscribeCreateScedule() {
+  const createSub = client
+    .graphql({ query: subscriptions.onCreateSchedule })
+    .subscribe({
+      next: ({ data }) => console.log(data),
+      error: (error) => console.warn(error),
+    });
+  console.log(createSub);
+
+  const UpdateSub = client
+    .graphql({ query: subscriptions.onUpdateSchedule })
+    .subscribe({
+      next: ({ data }) => console.log(data),
+      error: (error) => console.warn(error),
+    });
+  console.log(UpdateSub);
+
+  const DeleteSub = client
+    .graphql({ query: subscriptions.onDeleteSchedule })
+    .subscribe({
+      next: ({ data }) => console.log(data),
+      error: (error) => console.warn(error),
+    });
+  console.log(DeleteSub);
+}
+
 export async function create_schedule() {
   await client.graphql({
     query: mutations.createSchedule,
     variables: {
       input: {
-        "SUMMARY": "Lorem ipsum dolor sit amet",
-        "DTSTART": "1970-01-01T12:30:23.999Z",
-        "DTEND": "1970-01-01T12:30:23.999Z",
-        "DESCRIPTION": "Lorem ipsum dolor sit amet",
-        "LOCATION": "Lorem ipsum dolor sit amet",
-        "userinfoID": "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-        "RRULE": /* Provide a Repeatdata instance here */ ""
-      }
-    }
+        SUMMARY: "Lorem ipsum dolor sit amet",
+        DTSTART: "1970-01-01T12:30:23.999Z",
+        DTEND: "1970-01-01T12:30:23.999Z",
+        DESCRIPTION: "Lorem ipsum dolor sit amet",
+        LOCATION: "Lorem ipsum dolor sit amet",
+        userinfoID: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
+        RRULE: /* Provide a Repeatdata instance here */ "",
+      },
+    },
   });
 }
 
@@ -113,13 +140,13 @@ export const deleteSchedule = async (eventId) => {
       query: mutations.deleteSchedule,
       variables: {
         input: {
-          id: eventId
-        }
-      }
+          id: eventId,
+        },
+      },
     });
     return deletedSchedule; // Return the result
   } catch (error) {
-    throw new Error('Error deleting schedule: ' + error.message); // Throw an error if deletion fails
+    throw new Error("Error deleting schedule: " + error.message); // Throw an error if deletion fails
   }
 };
 
@@ -128,10 +155,10 @@ export const listTasks = async () => {
   try {
     // Make the GraphQL API call to delete the schedule
     const allTasks = await client.graphql({
-      query: queries.listTasks
+      query: queries.listTasks,
     });
-    return allTasks // Return the result
+    return allTasks; // Return the result
   } catch (error) {
-    throw new Error('Error getting tasks: ' + error.message); // Throw an error if deletion fails
+    throw new Error("Error getting tasks: " + error.message); // Throw an error if deletion fails
   }
 };
