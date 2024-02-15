@@ -25,11 +25,29 @@ export declare type TaskCreateFormInputValues = {
     due_time?: string;
     due_date?: string;
     description?: string;
+    UID?: string;
+    DTSTART?: string;
+    DUE?: string;
+    SUMMARY?: string;
+    COMPLETED?: string;
+    STATUS?: string;
+    CATEGORIES?: string;
+    PRIORITY?: number;
+    DTSTAMP?: string;
 };
 export declare type TaskCreateFormValidationValues = {
     due_time?: ValidationFunction<string>;
     due_date?: ValidationFunction<string>;
     description?: ValidationFunction<string>;
+    UID?: ValidationFunction<string>;
+    DTSTART?: ValidationFunction<string>;
+    DUE?: ValidationFunction<string>;
+    SUMMARY?: ValidationFunction<string>;
+    COMPLETED?: ValidationFunction<string>;
+    STATUS?: ValidationFunction<string>;
+    CATEGORIES?: ValidationFunction<string>;
+    PRIORITY?: ValidationFunction<number>;
+    DTSTAMP?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TaskCreateFormOverridesProps = {
@@ -37,6 +55,15 @@ export declare type TaskCreateFormOverridesProps = {
     due_time?: PrimitiveOverrideProps<TextFieldProps>;
     due_date?: PrimitiveOverrideProps<TextFieldProps>;
     description?: PrimitiveOverrideProps<TextFieldProps>;
+    UID?: PrimitiveOverrideProps<TextFieldProps>;
+    DTSTART?: PrimitiveOverrideProps<TextFieldProps>;
+    DUE?: PrimitiveOverrideProps<TextFieldProps>;
+    SUMMARY?: PrimitiveOverrideProps<TextFieldProps>;
+    COMPLETED?: PrimitiveOverrideProps<TextFieldProps>;
+    STATUS?: PrimitiveOverrideProps<TextFieldProps>;
+    CATEGORIES?: PrimitiveOverrideProps<TextFieldProps>;
+    PRIORITY?: PrimitiveOverrideProps<TextFieldProps>;
+    DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type TaskCreateFormProps = React.PropsWithChildren<{
     overrides?: TaskCreateFormOverridesProps | undefined | null;

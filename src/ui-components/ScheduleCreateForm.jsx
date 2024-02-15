@@ -7,180 +7,16 @@
 /* eslint-disable */
 import * as React from "react";
 import {
-  Autocomplete,
-  Badge,
   Button,
-  Divider,
   Flex,
   Grid,
-  Icon,
-  ScrollView,
-  SwitchField,
-  Text,
   TextAreaField,
   TextField,
-  useTheme,
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listUserinfos } from "../graphql/queries";
 import { createSchedule } from "../graphql/mutations";
 const client = generateClient();
-function ArrayField({
-  items = [],
-  onChange,
-  label,
-  inputFieldRef,
-  children,
-  hasError,
-  setFieldValue,
-  currentFieldValue,
-  defaultFieldValue,
-  lengthLimit,
-  getBadgeText,
-  runValidationTasks,
-  errorMessage,
-}) {
-  const labelElement = <Text>{label}</Text>;
-  const {
-    tokens: {
-      components: {
-        fieldmessages: { error: errorStyles },
-      },
-    },
-  } = useTheme();
-  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
-  const [isEditing, setIsEditing] = React.useState();
-  React.useEffect(() => {
-    if (isEditing) {
-      inputFieldRef?.current?.focus();
-    }
-  }, [isEditing]);
-  const removeItem = async (removeIndex) => {
-    const newItems = items.filter((value, index) => index !== removeIndex);
-    await onChange(newItems);
-    setSelectedBadgeIndex(undefined);
-  };
-  const addItem = async () => {
-    const { hasError } = runValidationTasks();
-    if (
-      currentFieldValue !== undefined &&
-      currentFieldValue !== null &&
-      currentFieldValue !== "" &&
-      !hasError
-    ) {
-      const newItems = [...items];
-      if (selectedBadgeIndex !== undefined) {
-        newItems[selectedBadgeIndex] = currentFieldValue;
-        setSelectedBadgeIndex(undefined);
-      } else {
-        newItems.push(currentFieldValue);
-      }
-      await onChange(newItems);
-      setIsEditing(false);
-    }
-  };
-  const arraySection = (
-    <React.Fragment>
-      {!!items?.length && (
-        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
-          {items.map((value, index) => {
-            return (
-              <Badge
-                key={index}
-                style={{
-                  cursor: "pointer",
-                  alignItems: "center",
-                  marginRight: 3,
-                  marginTop: 3,
-                  backgroundColor:
-                    index === selectedBadgeIndex ? "#B8CEF9" : "",
-                }}
-                onClick={() => {
-                  setSelectedBadgeIndex(index);
-                  setFieldValue(items[index]);
-                  setIsEditing(true);
-                }}
-              >
-                {getBadgeText ? getBadgeText(value) : value.toString()}
-                <Icon
-                  style={{
-                    cursor: "pointer",
-                    paddingLeft: 3,
-                    width: 20,
-                    height: 20,
-                  }}
-                  viewBox={{ width: 20, height: 20 }}
-                  paths={[
-                    {
-                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
-                      stroke: "black",
-                    },
-                  ]}
-                  ariaLabel="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    removeItem(index);
-                  }}
-                />
-              </Badge>
-            );
-          })}
-        </ScrollView>
-      )}
-      <Divider orientation="horizontal" marginTop={5} />
-    </React.Fragment>
-  );
-  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
-    return (
-      <React.Fragment>
-        {labelElement}
-        {arraySection}
-      </React.Fragment>
-    );
-  }
-  return (
-    <React.Fragment>
-      {labelElement}
-      {isEditing && children}
-      {!isEditing ? (
-        <>
-          <Button
-            onClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            Add item
-          </Button>
-          {errorMessage && hasError && (
-            <Text color={errorStyles.color} fontSize={errorStyles.fontSize}>
-              {errorMessage}
-            </Text>
-          )}
-        </>
-      ) : (
-        <Flex justifyContent="flex-end">
-          {(currentFieldValue || isEditing) && (
-            <Button
-              children="Cancel"
-              type="button"
-              size="small"
-              onClick={() => {
-                setFieldValue(defaultFieldValue);
-                setIsEditing(false);
-                setSelectedBadgeIndex(undefined);
-              }}
-            ></Button>
-          )}
-          <Button size="small" variation="link" onClick={addItem}>
-            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
-          </Button>
-        </Flex>
-      )}
-      {arraySection}
-    </React.Fragment>
-  );
-}
 export default function ScheduleCreateForm(props) {
   const {
     clearOnSuccess = true,
@@ -193,7 +29,7 @@ export default function ScheduleCreateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    userinfoID: undefined,
+    userinfoID: "",
     SUMMARY: "",
     DTSTART: "",
     DTEND: "",
@@ -201,13 +37,10 @@ export default function ScheduleCreateForm(props) {
     LOCATION: "",
     RRULE: "",
     UID: "",
-    isTask: false,
+    CATEGORIES: "",
+    DTSTAMP: "",
   };
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
-  const [userinfoIDLoading, setUserinfoIDLoading] = React.useState(false);
-  const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
-  const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
-    React.useState([]);
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
   const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
   const [DTEND, setDTEND] = React.useState(initialValues.DTEND);
@@ -217,13 +50,11 @@ export default function ScheduleCreateForm(props) {
   const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const [RRULE, setRRULE] = React.useState(initialValues.RRULE);
   const [UID, setUID] = React.useState(initialValues.UID);
-  const [isTask, setIsTask] = React.useState(initialValues.isTask);
-  const autocompleteLength = 10;
+  const [CATEGORIES, setCATEGORIES] = React.useState(initialValues.CATEGORIES);
+  const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setUserinfoID(initialValues.userinfoID);
-    setCurrentUserinfoIDValue(undefined);
-    setCurrentUserinfoIDDisplayValue("");
     setSUMMARY(initialValues.SUMMARY);
     setDTSTART(initialValues.DTSTART);
     setDTEND(initialValues.DTEND);
@@ -231,16 +62,9 @@ export default function ScheduleCreateForm(props) {
     setLOCATION(initialValues.LOCATION);
     setRRULE(initialValues.RRULE);
     setUID(initialValues.UID);
-    setIsTask(initialValues.isTask);
+    setCATEGORIES(initialValues.CATEGORIES);
+    setDTSTAMP(initialValues.DTSTAMP);
     setErrors({});
-  };
-  const [currentUserinfoIDDisplayValue, setCurrentUserinfoIDDisplayValue] =
-    React.useState("");
-  const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
-    React.useState(undefined);
-  const userinfoIDRef = React.createRef();
-  const getDisplayValue = {
-    userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
   };
   const validations = {
     userinfoID: [{ type: "Required" }],
@@ -251,7 +75,8 @@ export default function ScheduleCreateForm(props) {
     LOCATION: [],
     RRULE: [{ type: "JSON" }],
     UID: [],
-    isTask: [{ type: "Required" }],
+    CATEGORIES: [],
+    DTSTAMP: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -287,36 +112,6 @@ export default function ScheduleCreateForm(props) {
     }, {});
     return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
   };
-  const fetchUserinfoIDRecords = async (value) => {
-    setUserinfoIDLoading(true);
-    const newOptions = [];
-    let newNext = "";
-    while (newOptions.length < autocompleteLength && newNext != null) {
-      const variables = {
-        limit: autocompleteLength * 5,
-        filter: {
-          or: [{ name: { contains: value } }, { id: { contains: value } }],
-        },
-      };
-      if (newNext) {
-        variables["nextToken"] = newNext;
-      }
-      const result = (
-        await client.graphql({
-          query: listUserinfos.replaceAll("__typename", ""),
-          variables,
-        })
-      )?.data?.listUserinfos?.items;
-      var loaded = result.filter((item) => userinfoID !== item.id);
-      newOptions.push(...loaded);
-      newNext = result.nextToken;
-    }
-    setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
-    setUserinfoIDLoading(false);
-  };
-  React.useEffect(() => {
-    fetchUserinfoIDRecords("");
-  }, []);
   return (
     <Grid
       as="form"
@@ -334,7 +129,8 @@ export default function ScheduleCreateForm(props) {
           LOCATION,
           RRULE,
           UID,
-          isTask,
+          CATEGORIES,
+          DTSTAMP,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -372,7 +168,8 @@ export default function ScheduleCreateForm(props) {
             DESCRIPTION: modelFields.DESCRIPTION,
             LOCATION: modelFields.LOCATION,
             UID: modelFields.UID,
-            isTask: modelFields.isTask,
+            CATEGORIES: modelFields.CATEGORIES,
+            DTSTAMP: modelFields.DTSTAMP,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
@@ -401,10 +198,18 @@ export default function ScheduleCreateForm(props) {
       {...getOverrideProps(overrides, "ScheduleCreateForm")}
       {...rest}
     >
-      <ArrayField
-        lengthLimit={1}
-        onChange={async (items) => {
-          let value = items[0];
+      <TextField
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Userinfo id</span>
+            <span style={{ color: "red" }}>*</span>
+          </span>
+        }
+        isRequired={true}
+        isReadOnly={false}
+        value={userinfoID}
+        onChange={(e) => {
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
               userinfoID: value,
@@ -415,101 +220,22 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              isTask,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
           }
+          if (errors.userinfoID?.hasError) {
+            runValidationTasks("userinfoID", value);
+          }
           setUserinfoID(value);
-          setCurrentUserinfoIDValue(undefined);
         }}
-        currentFieldValue={currentUserinfoIDValue}
-        label={
-          <span style={{ display: "inline-flex" }}>
-            <span>Userinfo id</span>
-            <span style={{ color: "red" }}>*</span>
-          </span>
-        }
-        items={userinfoID ? [userinfoID] : []}
-        hasError={errors?.userinfoID?.hasError}
-        runValidationTasks={async () =>
-          await runValidationTasks("userinfoID", currentUserinfoIDValue)
-        }
-        errorMessage={errors?.userinfoID?.errorMessage}
-        getBadgeText={(value) =>
-          value
-            ? getDisplayValue.userinfoID(
-                userinfoIDRecords.find((r) => r.id === value) ??
-                  selectedUserinfoIDRecords.find((r) => r.id === value)
-              )
-            : ""
-        }
-        setFieldValue={(value) => {
-          setCurrentUserinfoIDDisplayValue(
-            value
-              ? getDisplayValue.userinfoID(
-                  userinfoIDRecords.find((r) => r.id === value) ??
-                    selectedUserinfoIDRecords.find((r) => r.id === value)
-                )
-              : ""
-          );
-          setCurrentUserinfoIDValue(value);
-          const selectedRecord = userinfoIDRecords.find((r) => r.id === value);
-          if (selectedRecord) {
-            setSelectedUserinfoIDRecords([selectedRecord]);
-          }
-        }}
-        inputFieldRef={userinfoIDRef}
-        defaultFieldValue={""}
-      >
-        <Autocomplete
-          label={
-            <span style={{ display: "inline-flex" }}>
-              <span>Userinfo id</span>
-              <span style={{ color: "red" }}>*</span>
-            </span>
-          }
-          isRequired={true}
-          isReadOnly={false}
-          placeholder="Search Userinfo"
-          value={currentUserinfoIDDisplayValue}
-          options={userinfoIDRecords
-            .filter(
-              (r, i, arr) =>
-                arr.findIndex((member) => member?.id === r?.id) === i
-            )
-            .map((r) => ({
-              id: r?.id,
-              label: getDisplayValue.userinfoID?.(r),
-            }))}
-          isLoading={userinfoIDLoading}
-          onSelect={({ id, label }) => {
-            setCurrentUserinfoIDValue(id);
-            setCurrentUserinfoIDDisplayValue(label);
-            runValidationTasks("userinfoID", label);
-          }}
-          onClear={() => {
-            setCurrentUserinfoIDDisplayValue("");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            fetchUserinfoIDRecords(value);
-            if (errors.userinfoID?.hasError) {
-              runValidationTasks("userinfoID", value);
-            }
-            setCurrentUserinfoIDDisplayValue(value);
-            setCurrentUserinfoIDValue(undefined);
-          }}
-          onBlur={() =>
-            runValidationTasks("userinfoID", currentUserinfoIDValue)
-          }
-          errorMessage={errors.userinfoID?.errorMessage}
-          hasError={errors.userinfoID?.hasError}
-          ref={userinfoIDRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, "userinfoID")}
-        ></Autocomplete>
-      </ArrayField>
+        onBlur={() => runValidationTasks("userinfoID", userinfoID)}
+        errorMessage={errors.userinfoID?.errorMessage}
+        hasError={errors.userinfoID?.hasError}
+        {...getOverrideProps(overrides, "userinfoID")}
+      ></TextField>
       <TextField
         label={
           <span style={{ display: "inline-flex" }}>
@@ -532,7 +258,8 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              isTask,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -571,7 +298,8 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              isTask,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -610,7 +338,8 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              isTask,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -642,7 +371,8 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              isTask,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -674,7 +404,8 @@ export default function ScheduleCreateForm(props) {
               LOCATION: value,
               RRULE,
               UID,
-              isTask,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -705,7 +436,8 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE: value,
               UID,
-              isTask,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -737,7 +469,8 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID: value,
-              isTask,
+              CATEGORIES,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
             value = result?.UID ?? value;
@@ -752,13 +485,13 @@ export default function ScheduleCreateForm(props) {
         hasError={errors.UID?.hasError}
         {...getOverrideProps(overrides, "UID")}
       ></TextField>
-      <SwitchField
-        label="Is task"
-        defaultChecked={false}
-        isDisabled={false}
-        isChecked={isTask}
+      <TextField
+        label="Categories"
+        isRequired={false}
+        isReadOnly={false}
+        value={CATEGORIES}
         onChange={(e) => {
-          let value = e.target.checked;
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
               userinfoID,
@@ -769,21 +502,57 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              isTask: value,
+              CATEGORIES: value,
+              DTSTAMP,
             };
             const result = onChange(modelFields);
-            value = result?.isTask ?? value;
+            value = result?.CATEGORIES ?? value;
           }
-          if (errors.isTask?.hasError) {
-            runValidationTasks("isTask", value);
+          if (errors.CATEGORIES?.hasError) {
+            runValidationTasks("CATEGORIES", value);
           }
-          setIsTask(value);
+          setCATEGORIES(value);
         }}
-        onBlur={() => runValidationTasks("isTask", isTask)}
-        errorMessage={errors.isTask?.errorMessage}
-        hasError={errors.isTask?.hasError}
-        {...getOverrideProps(overrides, "isTask")}
-      ></SwitchField>
+        onBlur={() => runValidationTasks("CATEGORIES", CATEGORIES)}
+        errorMessage={errors.CATEGORIES?.errorMessage}
+        hasError={errors.CATEGORIES?.hasError}
+        {...getOverrideProps(overrides, "CATEGORIES")}
+      ></TextField>
+      <TextField
+        label="Dtstamp"
+        isRequired={false}
+        isReadOnly={false}
+        type="datetime-local"
+        value={DTSTAMP && convertToLocal(new Date(DTSTAMP))}
+        onChange={(e) => {
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.DTSTAMP ?? value;
+          }
+          if (errors.DTSTAMP?.hasError) {
+            runValidationTasks("DTSTAMP", value);
+          }
+          setDTSTAMP(value);
+        }}
+        onBlur={() => runValidationTasks("DTSTAMP", DTSTAMP)}
+        errorMessage={errors.DTSTAMP?.errorMessage}
+        hasError={errors.DTSTAMP?.hasError}
+        {...getOverrideProps(overrides, "DTSTAMP")}
+      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

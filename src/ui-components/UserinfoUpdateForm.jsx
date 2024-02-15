@@ -21,12 +21,8 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getUserinfo, listSchedules, listTasks } from "../graphql/queries";
-import {
-  updateSchedule,
-  updateTask,
-  updateUserinfo,
-} from "../graphql/mutations";
+import { getUserinfo, listSubscribedCalendars } from "../graphql/queries";
+import { updateSubscribedCalendar, updateUserinfo } from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
   items = [],
@@ -201,6 +197,7 @@ export default function UserinfoUpdateForm(props) {
     Timezone: "",
     Schedules: [],
     Tasks: [],
+    SubscribedCalendars: [],
   };
   const [name, setName] = React.useState(initialValues.name);
   const [email, setEmail] = React.useState(initialValues.email);
@@ -211,6 +208,13 @@ export default function UserinfoUpdateForm(props) {
   const [Tasks, setTasks] = React.useState(initialValues.Tasks);
   const [TasksLoading, setTasksLoading] = React.useState(false);
   const [tasksRecords, setTasksRecords] = React.useState([]);
+  const [SubscribedCalendars, setSubscribedCalendars] = React.useState(
+    initialValues.SubscribedCalendars
+  );
+  const [SubscribedCalendarsLoading, setSubscribedCalendarsLoading] =
+    React.useState(false);
+  const [subscribedCalendarsRecords, setSubscribedCalendarsRecords] =
+    React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -220,6 +224,7 @@ export default function UserinfoUpdateForm(props) {
           ...userinfoRecord,
           Schedules: linkedSchedules,
           Tasks: linkedTasks,
+          SubscribedCalendars: linkedSubscribedCalendars,
         }
       : initialValues;
     setName(cleanValues.name);
@@ -231,6 +236,9 @@ export default function UserinfoUpdateForm(props) {
     setTasks(cleanValues.Tasks ?? []);
     setCurrentTasksValue(undefined);
     setCurrentTasksDisplayValue("");
+    setSubscribedCalendars(cleanValues.SubscribedCalendars ?? []);
+    setCurrentSubscribedCalendarsValue(undefined);
+    setCurrentSubscribedCalendarsDisplayValue("");
     setErrors({});
   };
   const [userinfoRecord, setUserinfoRecord] = React.useState(userinfoModelProp);
@@ -238,6 +246,9 @@ export default function UserinfoUpdateForm(props) {
   const canUnlinkSchedules = false;
   const [linkedTasks, setLinkedTasks] = React.useState([]);
   const canUnlinkTasks = false;
+  const [linkedSubscribedCalendars, setLinkedSubscribedCalendars] =
+    React.useState([]);
+  const canUnlinkSubscribedCalendars = false;
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
@@ -252,6 +263,9 @@ export default function UserinfoUpdateForm(props) {
       setLinkedSchedules(linkedSchedules);
       const linkedTasks = record?.Tasks?.items ?? [];
       setLinkedTasks(linkedTasks);
+      const linkedSubscribedCalendars =
+        record?.SubscribedCalendars?.items ?? [];
+      setLinkedSubscribedCalendars(linkedSubscribedCalendars);
       setUserinfoRecord(record);
     };
     queryData();
@@ -260,6 +274,7 @@ export default function UserinfoUpdateForm(props) {
     userinfoRecord,
     linkedSchedules,
     linkedTasks,
+    linkedSubscribedCalendars,
   ]);
   const [currentSchedulesDisplayValue, setCurrentSchedulesDisplayValue] =
     React.useState("");
@@ -270,9 +285,17 @@ export default function UserinfoUpdateForm(props) {
     React.useState("");
   const [currentTasksValue, setCurrentTasksValue] = React.useState(undefined);
   const TasksRef = React.createRef();
+  const [
+    currentSubscribedCalendarsDisplayValue,
+    setCurrentSubscribedCalendarsDisplayValue,
+  ] = React.useState("");
+  const [currentSubscribedCalendarsValue, setCurrentSubscribedCalendarsValue] =
+    React.useState(undefined);
+  const SubscribedCalendarsRef = React.createRef();
   const getIDValue = {
     Schedules: (r) => JSON.stringify({ id: r?.id }),
     Tasks: (r) => JSON.stringify({ id: r?.id }),
+    SubscribedCalendars: (r) => JSON.stringify({ id: r?.id }),
   };
   const SchedulesIdSet = new Set(
     Array.isArray(Schedules)
@@ -284,9 +307,17 @@ export default function UserinfoUpdateForm(props) {
       ? Tasks.map((r) => getIDValue.Tasks?.(r))
       : getIDValue.Tasks?.(Tasks)
   );
+  const SubscribedCalendarsIdSet = new Set(
+    Array.isArray(SubscribedCalendars)
+      ? SubscribedCalendars.map((r) => getIDValue.SubscribedCalendars?.(r))
+      : getIDValue.SubscribedCalendars?.(SubscribedCalendars)
+  );
   const getDisplayValue = {
-    Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
-    Tasks: (r) => `${r?.description ? r?.description + " - " : ""}${r?.id}`,
+    Schedules: (r) =>
+      `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
+    Tasks: (r) => `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
+    SubscribedCalendars: (r) =>
+      `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
   };
   const validations = {
     name: [{ type: "Required" }],
@@ -294,6 +325,7 @@ export default function UserinfoUpdateForm(props) {
     Timezone: [],
     Schedules: [],
     Tasks: [],
+    SubscribedCalendars: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -320,7 +352,10 @@ export default function UserinfoUpdateForm(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [{ SUMMARY: { contains: value } }, { id: { contains: value } }],
+          or: [
+            { Calendar_Name: { contains: value } },
+            { id: { contains: value } },
+          ],
         },
       };
       if (newNext) {
@@ -328,10 +363,10 @@ export default function UserinfoUpdateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listSchedules.replaceAll("__typename", ""),
+          query: listSubscribedCalendars.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listSchedules?.items;
+      )?.data?.listSubscribedCalendars?.items;
       var loaded = result.filter(
         (item) => !SchedulesIdSet.has(getIDValue.Schedules?.(item))
       );
@@ -350,7 +385,7 @@ export default function UserinfoUpdateForm(props) {
         limit: autocompleteLength * 5,
         filter: {
           or: [
-            { description: { contains: value } },
+            { Calendar_Name: { contains: value } },
             { id: { contains: value } },
           ],
         },
@@ -360,10 +395,10 @@ export default function UserinfoUpdateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listTasks.replaceAll("__typename", ""),
+          query: listSubscribedCalendars.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listTasks?.items;
+      )?.data?.listSubscribedCalendars?.items;
       var loaded = result.filter(
         (item) => !TasksIdSet.has(getIDValue.Tasks?.(item))
       );
@@ -373,9 +408,43 @@ export default function UserinfoUpdateForm(props) {
     setTasksRecords(newOptions.slice(0, autocompleteLength));
     setTasksLoading(false);
   };
+  const fetchSubscribedCalendarsRecords = async (value) => {
+    setSubscribedCalendarsLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { Calendar_Name: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listSubscribedCalendars.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listSubscribedCalendars?.items;
+      var loaded = result.filter(
+        (item) =>
+          !SubscribedCalendarsIdSet.has(getIDValue.SubscribedCalendars?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setSubscribedCalendarsRecords(newOptions.slice(0, autocompleteLength));
+    setSubscribedCalendarsLoading(false);
+  };
   React.useEffect(() => {
     fetchSchedulesRecords("");
     fetchTasksRecords("");
+    fetchSubscribedCalendarsRecords("");
   }, []);
   return (
     <Grid
@@ -391,6 +460,7 @@ export default function UserinfoUpdateForm(props) {
           Timezone: Timezone ?? null,
           Schedules: Schedules ?? null,
           Tasks: Tasks ?? null,
+          SubscribedCalendars: SubscribedCalendars ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -450,12 +520,12 @@ export default function UserinfoUpdateForm(props) {
           schedulesToUnLink.forEach((original) => {
             if (!canUnlinkSchedules) {
               throw Error(
-                `Schedule ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
+                `SubscribedCalendar ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
               );
             }
             promises.push(
               client.graphql({
-                query: updateSchedule.replaceAll("__typename", ""),
+                query: updateSubscribedCalendar.replaceAll("__typename", ""),
                 variables: {
                   input: {
                     id: original.id,
@@ -468,7 +538,7 @@ export default function UserinfoUpdateForm(props) {
           schedulesToLink.forEach((original) => {
             promises.push(
               client.graphql({
-                query: updateSchedule.replaceAll("__typename", ""),
+                query: updateSubscribedCalendar.replaceAll("__typename", ""),
                 variables: {
                   input: {
                     id: original.id,
@@ -497,12 +567,12 @@ export default function UserinfoUpdateForm(props) {
           tasksToUnLink.forEach((original) => {
             if (!canUnlinkTasks) {
               throw Error(
-                `Task ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
+                `SubscribedCalendar ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
               );
             }
             promises.push(
               client.graphql({
-                query: updateTask.replaceAll("__typename", ""),
+                query: updateSubscribedCalendar.replaceAll("__typename", ""),
                 variables: {
                   input: {
                     id: original.id,
@@ -515,7 +585,66 @@ export default function UserinfoUpdateForm(props) {
           tasksToLink.forEach((original) => {
             promises.push(
               client.graphql({
-                query: updateTask.replaceAll("__typename", ""),
+                query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    userinfoID: userinfoRecord.id,
+                  },
+                },
+              })
+            );
+          });
+          const subscribedCalendarsToLink = [];
+          const subscribedCalendarsToUnLink = [];
+          const subscribedCalendarsSet = new Set();
+          const linkedSubscribedCalendarsSet = new Set();
+          SubscribedCalendars.forEach((r) =>
+            subscribedCalendarsSet.add(getIDValue.SubscribedCalendars?.(r))
+          );
+          linkedSubscribedCalendars.forEach((r) =>
+            linkedSubscribedCalendarsSet.add(
+              getIDValue.SubscribedCalendars?.(r)
+            )
+          );
+          linkedSubscribedCalendars.forEach((r) => {
+            if (
+              !subscribedCalendarsSet.has(getIDValue.SubscribedCalendars?.(r))
+            ) {
+              subscribedCalendarsToUnLink.push(r);
+            }
+          });
+          SubscribedCalendars.forEach((r) => {
+            if (
+              !linkedSubscribedCalendarsSet.has(
+                getIDValue.SubscribedCalendars?.(r)
+              )
+            ) {
+              subscribedCalendarsToLink.push(r);
+            }
+          });
+          subscribedCalendarsToUnLink.forEach((original) => {
+            if (!canUnlinkSubscribedCalendars) {
+              throw Error(
+                `SubscribedCalendar ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
+              );
+            }
+            promises.push(
+              client.graphql({
+                query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    userinfoID: null,
+                  },
+                },
+              })
+            );
+          });
+          subscribedCalendarsToLink.forEach((original) => {
+            promises.push(
+              client.graphql({
+                query: updateSubscribedCalendar.replaceAll("__typename", ""),
                 variables: {
                   input: {
                     id: original.id,
@@ -569,6 +698,7 @@ export default function UserinfoUpdateForm(props) {
               Timezone,
               Schedules,
               Tasks,
+              SubscribedCalendars,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -597,6 +727,7 @@ export default function UserinfoUpdateForm(props) {
               Timezone,
               Schedules,
               Tasks,
+              SubscribedCalendars,
             };
             const result = onChange(modelFields);
             value = result?.email ?? value;
@@ -625,6 +756,7 @@ export default function UserinfoUpdateForm(props) {
               Timezone: value,
               Schedules,
               Tasks,
+              SubscribedCalendars,
             };
             const result = onChange(modelFields);
             value = result?.Timezone ?? value;
@@ -649,6 +781,7 @@ export default function UserinfoUpdateForm(props) {
               Timezone,
               Schedules: values,
               Tasks,
+              SubscribedCalendars,
             };
             const result = onChange(modelFields);
             values = result?.Schedules ?? values;
@@ -679,7 +812,7 @@ export default function UserinfoUpdateForm(props) {
           label="Schedules"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search Schedule"
+          placeholder="Search SubscribedCalendar"
           value={currentSchedulesDisplayValue}
           options={schedulesRecords
             .filter((r) => !SchedulesIdSet.has(getIDValue.Schedules?.(r)))
@@ -731,6 +864,7 @@ export default function UserinfoUpdateForm(props) {
               Timezone,
               Schedules,
               Tasks: values,
+              SubscribedCalendars,
             };
             const result = onChange(modelFields);
             values = result?.Tasks ?? values;
@@ -761,7 +895,7 @@ export default function UserinfoUpdateForm(props) {
           label="Tasks"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search Task"
+          placeholder="Search SubscribedCalendar"
           value={currentTasksDisplayValue}
           options={tasksRecords
             .filter((r) => !TasksIdSet.has(getIDValue.Tasks?.(r)))
@@ -799,6 +933,100 @@ export default function UserinfoUpdateForm(props) {
           ref={TasksRef}
           labelHidden={true}
           {...getOverrideProps(overrides, "Tasks")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              Timezone,
+              Schedules,
+              Tasks,
+              SubscribedCalendars: values,
+            };
+            const result = onChange(modelFields);
+            values = result?.SubscribedCalendars ?? values;
+          }
+          setSubscribedCalendars(values);
+          setCurrentSubscribedCalendarsValue(undefined);
+          setCurrentSubscribedCalendarsDisplayValue("");
+        }}
+        currentFieldValue={currentSubscribedCalendarsValue}
+        label={"Subscribed calendars"}
+        items={SubscribedCalendars}
+        hasError={errors?.SubscribedCalendars?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks(
+            "SubscribedCalendars",
+            currentSubscribedCalendarsValue
+          )
+        }
+        errorMessage={errors?.SubscribedCalendars?.errorMessage}
+        getBadgeText={getDisplayValue.SubscribedCalendars}
+        setFieldValue={(model) => {
+          setCurrentSubscribedCalendarsDisplayValue(
+            model ? getDisplayValue.SubscribedCalendars(model) : ""
+          );
+          setCurrentSubscribedCalendarsValue(model);
+        }}
+        inputFieldRef={SubscribedCalendarsRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Subscribed calendars"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search SubscribedCalendar"
+          value={currentSubscribedCalendarsDisplayValue}
+          options={subscribedCalendarsRecords
+            .filter(
+              (r) =>
+                !SubscribedCalendarsIdSet.has(
+                  getIDValue.SubscribedCalendars?.(r)
+                )
+            )
+            .map((r) => ({
+              id: getIDValue.SubscribedCalendars?.(r),
+              label: getDisplayValue.SubscribedCalendars?.(r),
+            }))}
+          isLoading={SubscribedCalendarsLoading}
+          onSelect={({ id, label }) => {
+            setCurrentSubscribedCalendarsValue(
+              subscribedCalendarsRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentSubscribedCalendarsDisplayValue(label);
+            runValidationTasks("SubscribedCalendars", label);
+          }}
+          onClear={() => {
+            setCurrentSubscribedCalendarsDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchSubscribedCalendarsRecords(value);
+            if (errors.SubscribedCalendars?.hasError) {
+              runValidationTasks("SubscribedCalendars", value);
+            }
+            setCurrentSubscribedCalendarsDisplayValue(value);
+            setCurrentSubscribedCalendarsValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks(
+              "SubscribedCalendars",
+              currentSubscribedCalendarsDisplayValue
+            )
+          }
+          errorMessage={errors.SubscribedCalendars?.errorMessage}
+          hasError={errors.SubscribedCalendars?.hasError}
+          ref={SubscribedCalendarsRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "SubscribedCalendars")}
         ></Autocomplete>
       </ArrayField>
       <Flex

@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { AutocompleteProps, GridProps, SwitchFieldProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -30,7 +30,8 @@ export declare type ShowInfoInputValues = {
     userinfoID?: string;
     RRULE?: string;
     UID?: string;
-    isTask?: boolean;
+    CATEGORIES?: string;
+    DTSTAMP?: string;
 };
 export declare type ShowInfoValidationValues = {
     SUMMARY?: ValidationFunction<string>;
@@ -41,7 +42,8 @@ export declare type ShowInfoValidationValues = {
     userinfoID?: ValidationFunction<string>;
     RRULE?: ValidationFunction<string>;
     UID?: ValidationFunction<string>;
-    isTask?: ValidationFunction<boolean>;
+    CATEGORIES?: ValidationFunction<string>;
+    DTSTAMP?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type ShowInfoOverridesProps = {
@@ -51,10 +53,11 @@ export declare type ShowInfoOverridesProps = {
     DTEND?: PrimitiveOverrideProps<TextFieldProps>;
     DESCRIPTION?: PrimitiveOverrideProps<TextFieldProps>;
     LOCATION?: PrimitiveOverrideProps<TextFieldProps>;
-    userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
+    userinfoID?: PrimitiveOverrideProps<TextFieldProps>;
     RRULE?: PrimitiveOverrideProps<TextAreaFieldProps>;
     UID?: PrimitiveOverrideProps<TextFieldProps>;
-    isTask?: PrimitiveOverrideProps<SwitchFieldProps>;
+    CATEGORIES?: PrimitiveOverrideProps<TextFieldProps>;
+    DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type ShowInfoProps = React.PropsWithChildren<{
     overrides?: ShowInfoOverridesProps | undefined | null;

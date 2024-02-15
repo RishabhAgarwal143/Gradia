@@ -7,7 +7,7 @@
 /* eslint-disable */
 import * as React from "react";
 import { generateClient } from "aws-amplify/api";
-import { updateSchedule } from "../graphql/mutations";
+import { deleteSchedule, updateSchedule } from "../graphql/mutations";
 import { getOverrideProps } from "./utils";
 import { Icon, Text, View } from "@aws-amplify/ui-react";
 const client = generateClient();
@@ -16,6 +16,22 @@ export default function EventDesc(props) {
   const editOnClick = async () => {
     await client.graphql({
       query: updateSchedule.replaceAll("__typename", ""),
+      variables: {
+        input: {
+          SUMMARY: "Summary",
+          DTSTART: "Start Date",
+          DTEND: "End Time",
+          isTask: "Is task",
+          UID: "UID",
+          userinfoID: "UserInfoID",
+          id: schedule?.id,
+        },
+      },
+    });
+  };
+  const deleteOnClick = async () => {
+    await client.graphql({
+      query: deleteSchedule.replaceAll("__typename", ""),
       variables: {
         input: {
           id: schedule?.id,
@@ -292,6 +308,9 @@ export default function EventDesc(props) {
           padding="0px 0px 0px 0px"
           whiteSpace="pre-wrap"
           children="Delete"
+          onClick={() => {
+            deleteOnClick();
+          }}
           {...getOverrideProps(overrides, "Delete")}
         ></Text>
         <Icon

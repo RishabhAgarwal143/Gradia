@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { AutocompleteProps, GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -22,24 +22,42 @@ export declare type ValidationResponse = {
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type TaskUpdateFormInputValues = {
-    due_time?: string;
-    due_date?: string;
-    description?: string;
+    UID?: string;
+    DTSTART?: string;
+    DUE?: string;
+    SUMMARY?: string;
     userinfoID?: string;
+    COMPLETED?: string;
+    STATUS?: string;
+    CATEGORIES?: string;
+    PRIORITY?: number;
+    DTSTAMP?: string;
 };
 export declare type TaskUpdateFormValidationValues = {
-    due_time?: ValidationFunction<string>;
-    due_date?: ValidationFunction<string>;
-    description?: ValidationFunction<string>;
+    UID?: ValidationFunction<string>;
+    DTSTART?: ValidationFunction<string>;
+    DUE?: ValidationFunction<string>;
+    SUMMARY?: ValidationFunction<string>;
     userinfoID?: ValidationFunction<string>;
+    COMPLETED?: ValidationFunction<string>;
+    STATUS?: ValidationFunction<string>;
+    CATEGORIES?: ValidationFunction<string>;
+    PRIORITY?: ValidationFunction<number>;
+    DTSTAMP?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TaskUpdateFormOverridesProps = {
     TaskUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    due_time?: PrimitiveOverrideProps<TextFieldProps>;
-    due_date?: PrimitiveOverrideProps<TextFieldProps>;
-    description?: PrimitiveOverrideProps<TextFieldProps>;
-    userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
+    UID?: PrimitiveOverrideProps<TextFieldProps>;
+    DTSTART?: PrimitiveOverrideProps<TextFieldProps>;
+    DUE?: PrimitiveOverrideProps<TextFieldProps>;
+    SUMMARY?: PrimitiveOverrideProps<TextFieldProps>;
+    userinfoID?: PrimitiveOverrideProps<TextFieldProps>;
+    COMPLETED?: PrimitiveOverrideProps<TextFieldProps>;
+    STATUS?: PrimitiveOverrideProps<TextFieldProps>;
+    CATEGORIES?: PrimitiveOverrideProps<TextFieldProps>;
+    PRIORITY?: PrimitiveOverrideProps<TextFieldProps>;
+    DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type TaskUpdateFormProps = React.PropsWithChildren<{
     overrides?: TaskUpdateFormOverridesProps | undefined | null;

@@ -34,6 +34,7 @@ function App() {
             return fields;
           }}
         /> */}
+
         <button onClick={commands.create_user}>Create User</button>
         <button onClick={commands.handleFetchUserAttributes}>Fetch User</button>
         <button onClick={commands.get_item}>Get record</button>
