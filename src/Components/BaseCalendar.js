@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -12,6 +13,7 @@ import addIcon from "../icons/add.svg";
 import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
+import { subscribedScedule } from "../support_local_files/support_func";
 const localizer = momentLocalizer(moment);
 
 const MyCalendar = () => {
@@ -19,36 +21,105 @@ const MyCalendar = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
-  const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                let todos;
+                const localData = localStorage.getItem('todos');
+                if (localData) {
+                    console.log("localData");
+                    const parsedData = JSON.parse(localData);
+                    // const allEventsData = processEvents(parsedData);
+                    setAllEvents(parsedData);
+                    // console.log("parsedData", parsedData);
+                } else {
+                    todos = await fetchData_local();
+                    const allEventsData = processEvents(todos.data.listSchedules.items);
+                    setAllEvents(allEventsData);
+                    localStorage.setItem('todos', JSON.stringify(todos.data.listSchedules.items));
+                    console.log("todos", todos.data.listSchedules.items);
+                }
+                await subscribeToChanges(); // Call function to subscribe to database changes
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-  async function fetchData_local() {
-    try {
-      const todos = await list_schedule_item();
-      console.log("todos", todos.data.listSchedules.items.length);
-      const allEvents = processEvents(todos.data.listSchedules.items);
-      console.log("HERE in fetch", todos.data.listSchedules.items);
-      setAllEvents(allEvents);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }
+        fetchData(); // Call fetchData when the component mounts
+        async function fetchData_local() {
+            try {
+                const todos = await list_schedule_item();
+                // Inside fetchData_local
+                localStorage.setItem('todos', JSON.stringify(todos.data.listSchedules.items));
 
-  useEffect(() => {
-    fetchData_local();
-  }, []);
+                const allEvents = processEvents(todos.data.listSchedules.items);
+                // console.log("HERE in fetch", todos.data.listSchedules.items);
+                setAllEvents(allEvents);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        async function subscribeToChanges() {
+            try {
+                // 
+                const [createSub, updateSub, deleteSub] = await subscribedScedule();
+                if (createSub || updateSub || deleteSub) {
+                    const todos = await list_schedule_item();
+                    const allEvents = processEvents(todos.data.listSchedules.items);
+                    updateLocalStorage(allEvents);
+                }
+            } catch (error) {
+                console.error('Error subscribing to changes:', error);
+            }
+        }
+        const processEvents = (fetchedEvents) => {
+            const processedEvents = [];
+            fetchedEvents.forEach((event) => {
+                if (event.RRULE) {
+                    const occurrences = generateOccurrences(event);
+                    processedEvents.push(...occurrences);
+                } else {
+                    processedEvents.push(event);
+                }
+            });
+            return processedEvents;
+        };
+        async function updateLocalStorage(data) {
+            try {
+                localStorage.setItem('todos', JSON.stringify(data));
+                setAllEvents(data);
+            } catch (error) {
+                console.error('Error updating local storage:', error);
+            }
+        }
+    }, []); // Include fetchData_local as a dependency
 
-  const processEvents = (fetchedEvents) => {
-    const processedEvents = [];
-    fetchedEvents.forEach((event) => {
-      if (event.RRULE) {
-        const occurrences = generateOccurrences(event);
-        processedEvents.push(...occurrences);
-      } else {
-        processedEvents.push(event);
-      }
-    });
-    return processedEvents;
-  };
+
+
+    // const fetchData_local = useCallback(async () => {
+    //     try {
+    //         const todos = await list_schedule_item();
+    //         const allEvents = processEvents(todos.data.listSchedules.items);
+    //         setAllEvents(allEvents);
+    //     } catch (error) {
+    //         console.error("Error fetching data:", error);
+    //     }
+    // }, [list_schedule_item]); // Empty dependency array since fetchData_local has no dependencies
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             await fetchData_local(); // Call your data fetching function
+    //         } catch (error) {
+    //             console.error('Error fetching data:', error);
+    //         }
+    //     };
+
+    //     fetchData(); // Call fetchData when the component mounts
+    // }, [fetchData_local]); // Include fetchData_local as a dependency
+
+
 
   const generateOccurrences = (event) => {
     const { BYDAYS, FREQ, INTERVALS, UNTIL, WKST } = event.RRULE;
@@ -72,7 +143,7 @@ const MyCalendar = () => {
     // Generate occurrences based on the rule
     const occurrences = rule.all();
 
-    console.log("occurrences", occurrences);
+      // console.log("occurrences", occurrences);
     return occurrences.map((occurrence) => ({
       ...event,
       DTSTART: occurrence,

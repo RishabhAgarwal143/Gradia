@@ -80,7 +80,7 @@ export async function create_user() {
   }
 }
 
-export async function subscribeCreateScedule() {
+export async function subscribedScedule() {
   const createSub = client
     .graphql({ query: subscriptions.onCreateSchedule })
     .subscribe({
@@ -104,6 +104,7 @@ export async function subscribeCreateScedule() {
       error: (error) => console.warn(error),
     });
   console.log(DeleteSub);
+  return [createSub, UpdateSub, DeleteSub];
 }
 
 export async function create_schedule() {
@@ -125,6 +126,7 @@ export async function create_schedule() {
 
 export async function list_schedule_item() {
   try {
+    console.log("here");
     const allTodos = await client.graphql({ query: queries.listSchedules });
     console.log(allTodos);
     return allTodos;

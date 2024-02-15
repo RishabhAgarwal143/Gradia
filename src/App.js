@@ -36,7 +36,7 @@ function App() {
         <button onClick={commands.get_item}>Get record</button>
       <button onClick={printlog}>printing userid</button>
       <button onClick={commands.create_schedule}>add Schedules</button> */}
-      <button onClick={commands.subscribeCreateScedule}>Print Schedules</button>
+      <button onClick={commands.subscribedScedule}>Print Schedules</button>
       <button onClick={commands.handleSignOut}>Sign out</button>
       {/* </header> */}
     </div>
