@@ -48,5 +48,5 @@ class Testing_DB(unittest.TestCase):
         self.assertTrue(returneditems["userinfoID"] == "82cf448d-fc16-409c-82e9-3304d937f840")
 
 if(__name__ == "__main__"):
-    load_dotenv()
+    # load_dotenv()
     unittest.main()
