@@ -5,17 +5,17 @@ import os
 
 class Subscribing_to_Calendar:
 
-    def __init__(self,file_name,accesstoken,userid, categories_name) -> None:
-        self.file = file_name
+    def __init__(self,calendar_URL,accesstoken,userid, categories_name) -> None:
+        self.calendar_URL = calendar_URL
         self.token = accesstoken
         self.userinfoid = userid
         self.category = categories_name
         # self.reading_file(file_name)
-        self.create_file(file_name)
+        self.create_file()
         # self.print_calendar_details()
 
-    def create_file(self,calendar_url):
-        url = calendar_url
+    def create_file(self):
+        url = self.calendar_URL
         response = requests.request("GET", url, headers={}, data={})
         self.calendar = icalendar.Calendar.from_ical(response.text)
         url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
@@ -28,12 +28,17 @@ class Subscribing_to_Calendar:
         # print(response.text)
         returneditems =(json.loads(response.text))
         listofurl = (returneditems["data"]["listSubscribedCalendars"]["items"])
+        add_to_database = True
         for i in listofurl:
-            if(calendar_url not in i['Calendar_URL']):
-                payload = "{\"query\":\"mutation CreateSubscribedCalendar {\\r\\n    createSubscribedCalendar(\\r\\n        input: { Calendar_URL: \\\"%s\\\", Calendar_Name: \\\"%s\\\", userinfoID: \\\"%s\\\" }\\r\\n    ) {\\r\\n        id\\r\\n        Calendar_Name\\r\\n        Calendar_URL\\r\\n        userinfoID\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" % (calendar_url,self.category,self.userinfoid)
-                response = requests.request("POST", url, headers=headers, data=payload)
-                print(response.text)
+            if(self.calendar_URL in i['Calendar_URL']):
+                add_to_database = False
         
+        if(add_to_database):
+            # print("asd\n")
+            payload = "{\"query\":\"mutation CreateSubscribedCalendar {\\r\\n    createSubscribedCalendar(\\r\\n        input: { Calendar_URL: \\\"%s\\\", Calendar_Name: \\\"%s\\\", userinfoID: \\\"%s\\\" }\\r\\n    ) {\\r\\n        id\\r\\n        Calendar_Name\\r\\n        Calendar_URL\\r\\n        userinfoID\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" % (self.calendar_URL,self.category,self.userinfoid)
+            response = requests.request("POST", url, headers=headers, data=payload)
+            print(response.text)
+
     def print_calendar_details(self) -> None:
         # print(self.calendar.walk('VCALENDAR'))
         for event in self.calendar.walk('VTIMEZONE'):
@@ -108,7 +113,7 @@ class Subscribing_to_Calendar:
         for event in self.calendar.walk('VEVENT'):
 
             if(str(event.get('UID')) in listofuid):
-                if(listofstamps[listofuid.index(event.get('UID'))] and event.get('LAST-MODIFIED').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z") == listofstamps[listofuid.index(event.get('UID'))]):
+                if(listofstamps[listofuid.index(event.get('UID'))] and event.get('LAST-MODIFIED') and event.get('LAST-MODIFIED').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z") == listofstamps[listofuid.index(event.get('UID'))]):
                     continue
                 else:
                     if(listofuid.index(event.get('UID')) < task_separator):
@@ -266,10 +271,11 @@ class Subscribing_to_Calendar:
             }
             response = requests.request("POST", url, headers=headers, data=payload)
             print("line 263" +response.text)
-Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjBkMTVhMmExLTBhNmUtNDIyYy05ZmEyLTI3Nzc5MjgzMGRhZiIsImV2ZW50X2lkIjoiZTExYmVkN2MtOWQxMi00YjMxLWI1ZmEtZGYzYjYwYmJmNTIxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwNzQxOTQ2NSwiZXhwIjoxNzA3OTY1MTE4LCJpYXQiOjE3MDc5NjE1MTgsImp0aSI6IjAyMjcxNTMwLTNlNmUtNDcwOC1hNzc3LWM5ODMzZTk3YjMwNCIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.bWhFQE-AIXehmA-DWzPPXqtwhEZw61wuLMdrgo34j4CgelP7Maj8AnhYX3J0Vpma51mrMz-LxoZOMaH3pHSMZW3HfrfpRraXWV0h-wbo217S4KaD1d1qtBIGecn7oGUQUn3_E0MQVRa5xuueIyYbl6_gwypa4cT0DI_wHO0sUuoCUbEa6ASCjCnxRdsqo9X4n98nSr1_rNlOvTMBLHMZV1lMx6yR2JlRZEFuWMSSVwDiQGIXV6iPZ2LxlXIFKbGF7luiY23SXYJsN-WLex_Whs_Wb5CKRn-upCl9T7qnqTg4JI-1bDDcVsuTFAHo_uxiNc8D4L-VYipDKiOqXA0jFA'
-# y = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\quantumcalendar-v1\src\support_local_files\\events.ics",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
+Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjJmN2IzNzJkLThlOTMtNDdhZS05MDg5LWQ1ZDk5MjhkOTg2YiIsImV2ZW50X2lkIjoiYzgwNjMzOGItM2NhYi00YWEzLTg0YzUtYzk3MjM3YWQ4MDUzIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODAyNDczNiwiZXhwIjoxNzA4MDI4MzM2LCJpYXQiOjE3MDgwMjQ3MzYsImp0aSI6ImI2ODVjZmY4LWZhMGEtNGE4ZS05MzkzLTk5NDgxYjhmODE5MiIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.BJ9gpTLL0e8wwmRO3Pv1CjIDcbxrzyCrys4l9kvhuoVsnOSCdKWArqw7YyyeZA5JQGf1aec6xmYaGzXtlsAJU_7bCxJol5t_mELLPYBREIsZ7_LR43tByDRrzdRfuXTt52shY_0J7ghL7FK49s4df0P7e0Rbmam87hBHL2jFuWVqqA7wQ8HjsXYrM57EOhbYCQW2XmP0C4l__CoFx_-xgyJfaity16kxf1R91Cw0Dzz8SJQIVGt7A20ykXR6y-V22DMKRoLHGhXeoQji5kSPlHtli-fU5gUctalZZ8iMGc1Il6rjTr8N8BjQxNDW0Vi801KBIvDL6vFETEvqqH1OHw'
+y = Subscribing_to_Calendar("https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
 x = Subscribing_to_Calendar("https://purdue.brightspace.com/d2l/le/calendar/feed/user/feed.ics?token=abm22pjnrmcaxnps38b1d",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Assignments List")
-x.add_record_to_database()
+# x.add_record_to_database()
+# y.add_record_to_database()
 # x.create_file("adsfasdf")
 # y.add_record_to_database()
 # x.get_current_schedules()
