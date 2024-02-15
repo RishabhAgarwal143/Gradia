@@ -79,22 +79,59 @@ export async function create_user() {
   }
 }
 
-// export async function create_schedule() {
-//   await client.graphql({
-//     query: mutations.createSchedule,
-//     variables: {
-//       input: {
-//         start_time: "12:30",
-//         end_time: "14:30",
-//         date: "2023-12-21",
-//         description: "testing from local",
-//         userinfoID: cognito_Id,
-//       },
-//     },
-//   });
-// }
+export async function create_schedule() {
+  await client.graphql({
+    query: mutations.createSchedule,
+    variables: {
+      input: {
+        "SUMMARY": "Lorem ipsum dolor sit amet",
+        "DTSTART": "1970-01-01T12:30:23.999Z",
+        "DTEND": "1970-01-01T12:30:23.999Z",
+        "DESCRIPTION": "Lorem ipsum dolor sit amet",
+        "LOCATION": "Lorem ipsum dolor sit amet",
+        "userinfoID": "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
+        "RRULE": /* Provide a Repeatdata instance here */ ""
+      }
+    }
+  });
+}
 
 export async function list_schedule_item() {
-  const allTodos = await client.graphql({ query: queries.listSchedules });
-  console.log(allTodos);
+  try {
+    const allTodos = await client.graphql({ query: queries.listSchedules });
+    console.log(allTodos);
+    return allTodos;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error; // Rethrow the error if needed
+  }
 }
+export const deleteSchedule = async (eventId) => {
+  try {
+    // Make the GraphQL API call to delete the schedule
+    const deletedSchedule = await client.graphql({
+      query: mutations.deleteSchedule,
+      variables: {
+        input: {
+          id: eventId
+        }
+      }
+    });
+    return deletedSchedule; // Return the result
+  } catch (error) {
+    throw new Error('Error deleting schedule: ' + error.message); // Throw an error if deletion fails
+  }
+};
+
+// List all items
+export const listTasks = async () => {
+  try {
+    // Make the GraphQL API call to delete the schedule
+    const allTasks = await client.graphql({
+      query: queries.listTasks
+    });
+    return allTasks // Return the result
+  } catch (error) {
+    throw new Error('Error getting tasks: ' + error.message); // Throw an error if deletion fails
+  }
+};

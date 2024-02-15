@@ -81,7 +81,7 @@ export default function TaskbarCollection(props) {
     <div>
       <Collection
         type="list"
-        isSearchable={true}
+        isSearchable="true"
         searchPlaceholder="Search..."
         direction="column"
         justifyContent="left"

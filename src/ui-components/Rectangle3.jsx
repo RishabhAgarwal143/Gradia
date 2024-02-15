@@ -12,8 +12,8 @@ export default function Rectangle3(props) {
   const { task, overrides, ...rest } = props;
   return (
     <View
-      width="360px"
-      height="93px"
+      width="322px"
+      height="45px"
       display="block"
       gap="unset"
       alignItems="unset"
@@ -25,23 +25,23 @@ export default function Rectangle3(props) {
     >
       <Text
         fontFamily="Inter"
-        fontSize="20px"
+        fontSize="14px"
         fontWeight="700"
         color="rgba(0,0,0,1)"
-        lineHeight="24.204544067382812px"
+        lineHeight="16.94318199157715px"
         textAlign="center"
         display="block"
         direction="column"
         justifyContent="unset"
-        width="360px"
-        height="93px"
+        width="322px"
+        height="44px"
         gap="unset"
         alignItems="unset"
         position="absolute"
         top="0%"
-        bottom="0%"
-        left="-3.89%"
-        right="3.89%"
+        bottom="2.22%"
+        left="0%"
+        right="0%"
         padding="0px 0px 0px 0px"
         whiteSpace="pre-wrap"
         children={task?.SUMMARY}
