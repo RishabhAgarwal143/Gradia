@@ -4,10 +4,10 @@ import json
 import icalendar
 import os
 import unittest
-
+from dotenv import load_dotenv
 
 class Testing_DB(unittest.TestCase):
-
+    
     def test_Write_Read_DB(self) -> None:
 
         url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
@@ -48,4 +48,5 @@ class Testing_DB(unittest.TestCase):
         self.assertTrue(returneditems["userinfoID"] == "82cf448d-fc16-409c-82e9-3304d937f840")
 
 if(__name__ == "__main__"):
+    load_dotenv()
     unittest.main()
