@@ -1,20 +1,140 @@
 /* Customize Week View Header */
 
+@import 'react-big-calendar/lib/sass/styles';
+@import 'react-big-calendar/lib/addons/dragAndDrop/styles';
 
-.rbc-allday-cell {
-    display: none;
+/* Add this CSS to your stylesheet */
+
+/* Override default styles */
+.rbc-calendar {
+    border: 1px solid black;
+    background-color: #1f1f1f;
 }
 
-/* Customize the header button */
-/* Style the element with role="columnheader" */
-[role="columnheader"] {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.rbc-event {
+    background-color: #5475e2fb;
+    /* Background color */
+    border: none;
+    /* Remove border */
+    color: #fff;
+    /* Text color */
+    /* padding: 4px 8px; */
+    /* Adjust padding */
+    border-radius: 0.5rem;
+    /* Add border radius for rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Add a subtle box shadow */
+    overflow: hidden;
+    /* Ensure content doesn't overflow */
+    text-overflow: ellipsis;
+    /* Add ellipsis for overflow text */
+
+    /* Prevent text wrapping */
+    width: 10rem;
+    right: 0%;
+    font-family: 'source-sans-pro', sans-serif;
+    /* Make the event occupy the entire width of the day slot */
+}
+    
+        .rbc-events-container {
+            overflow: hidden;
+            width: 100%;
+            /* Ensure content doesn't overflow */
+            text-overflow: ellipsis;
+            /* Add ellipsis for overflow text */
+            /* white-space: nowrap; */
+            /* Prevent text wrapping */
+            /* Make the event occupy the entire width of the day slot */
+        }
+    
+        .rbc-event:hover {
+            background-color: gray;
+            /* Change background color on hover */
+        }
+    
+        .rbc-time-content>*+*>* {
+            border-left: 1px solid #323232;
+            border-top: #323232;
+            /* background-color: #1e1e1e; */
+        }
+    
+        .rbc-time-slot {
+            border-color: #323232;
+        }
+    
+        .rbc-timeslot-group {
+            border-bottom: #323232;
+            min-height: 5rem;
+        }
+    
+        .rbc-time-view {
+            /* background-color: rgb(120, 104, 84); */
+            border: white;
+            /* Remove border */
+        }
+    
+        .rbc-day-slot .rbc-time-slot {
+            border-top: 1px solid #323232;
+}
+
+.rbc-time-content>.rbc-day-slot {
+    width: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+    background: #292929;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+    font-family: cursive;
+    color: #8c8e8efb !important;
+    justify-items: center;
+}
+
+/* .rbc-time-content {
+                                                            border-left: none !important;
+                                                        } */
+.rbc-header {
+    overflow: hidden;
+    flex: 1 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 7px 3px;
     text-align: center;
-    font-size: large;
+    vertical-align: middle;
     font-weight: bold;
-    text-wrap: wrap;
+    font-size: 110%;
+        min-height: 0;
+        border-bottom: 1px solid #1e1e1e;
+        border-left: #1e1e1e;
+    }
+    
+    .rbc-day-bg+.rbc-day-bg {
+        border-left: 1px solid #8c8e8efb;
+    }
+    
+    .rbc-header+.rbc-header {
+        border-left: 1px solid #8c8e8efb;
+    }
+    
+    .rbc-today {
+        background-color: #1e1e1e;
 }
 
-/* Add a line break and style the first part (05) */
+.rbc-label {
+    padding: 0 5px;
+    font-family: cursive;
+    color: #8c8e8efb;
+}
+
+.rbc-toolbar .rbc-toolbar-label {
+    flex-grow: 1;
+    padding: 0 10px;
+    text-align: center;
+    font-size: larger;
+    font-family: cursive;
+    color: #8c8e8efb;
+}

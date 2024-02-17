@@ -127,7 +127,7 @@ export async function create_schedule() {
 export async function list_schedule_item() {
   try {
     console.log("here");
-    const allTodos = await client.graphql({ query: queries.listSchedules });
+    const allTodos = await client.graphql({ query: queries.listSchedules, variables: { limit: 100 } });
     console.log(allTodos);
     return allTodos;
   } catch (error) {

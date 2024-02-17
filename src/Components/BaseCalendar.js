@@ -181,48 +181,94 @@ const MyCalendar = () => {
     (item) => item.id === selectedEvent?.id
   );
   console.log("originalSelectedEvent", originalSelectedEvent);
-  return (
-    <div className="flex flex-col">
-      <div className="flex-1 relative">
-        <div className="h-screen bg-gray-200 flex items-center justify-center relative">
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 flex items-center justify-center"
-          >
-            <img src={addIcon} alt="Add Event" className="w-6 h-6" />
-          </button>
-          <AddEventModal
-            isOpen={isAddModalOpen}
-            onRequestClose={() => setIsAddModalOpen(false)}
-            onAddEvent={handleAddEvent}
-          />
-          <EventDescModal
-            event={originalSelectedEvent}
-            isOpen={isEventModalOpen}
-            onClose={() => setIsEventModalOpen(false)}
-          />
-          <div></div>
-          <Calendar
-            localizer={localizer}
-            events={transformedEvents}
-            startAccessor="start"
-            endAccessor="end"
-            onDoubleClickEvent={handleDoubleClickEvent}
-            defaultView="week"
-            views={["month", "week", "day", "agenda"]}
-            className="w-3/4 left-0 top-0 absolute bg-white p-4 rounded-lg shadow-lg"
-          />
+    //   return (
+    //     <div className="flex flex-col">
+    //       <div className="flex-1 relative">
+    //         <div className="h-screen bg-gray-200 flex items-center justify-center relative">
+    //           <button
+    //             onClick={() => setIsAddModalOpen(true)}
+    //             className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 flex items-center justify-center"
+    //           >
+    //             <img src={addIcon} alt="Add Event" className="w-6 h-6" />
+    //           </button>
+    //           <AddEventModal
+    //             isOpen={isAddModalOpen}
+    //             onRequestClose={() => setIsAddModalOpen(false)}
+    //             onAddEvent={handleAddEvent}
+    //           />
+    //           <EventDescModal
+    //             event={originalSelectedEvent}
+    //             isOpen={isEventModalOpen}
+    //             onClose={() => setIsEventModalOpen(false)}
+    //           />
+    //           <div></div>
+    //           <Calendar
+    //             localizer={localizer}
+    //             events={transformedEvents}
+    //             startAccessor="start"
+    //             endAccessor="end"
+    //             onDoubleClickEvent={handleDoubleClickEvent}
+    //             defaultView="week"
+    //             views={["month", "week", "day", "agenda"]}
+    //             className="w-3/4 left-0 top-0 absolute bg-white p-4 rounded-lg shadow-lg"
+    //           />
+    //         </div>
+    //       </div>
+    //       <div></div>
+    //       <div className="flex">
+    //         {/* <h1 className="text-black text-xl font-bold mt-8 mb-4">Tasks</h1> */}
+    //               <div class="fixed top-1/2 transform -translate-y-1/2 right-0 h-3/4 w-1/4 flex flex-col items-center justify-center overflow-y-auto">
+    //                   <Sidebar />
+    //               </div>
+
+    //       </div>
+    //     </div>
+    //   );
+    return (
+        <div className="flex flex-col">
+            <div className="flex-1 relative">
+                <div className="h-screen bg-gray-200 flex items-center justify-center relative">
+                    <button
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 flex items-center justify-center"
+                    >
+                        <img src={addIcon} alt="Add Event" className="w-6 h-6" />
+                    </button>
+                    <AddEventModal
+                        isOpen={isAddModalOpen}
+                        onRequestClose={() => setIsAddModalOpen(false)}
+                        onAddEvent={handleAddEvent}
+                    />
+                    <EventDescModal
+                        event={originalSelectedEvent}
+                        isOpen={isEventModalOpen}
+                        onClose={() => setIsEventModalOpen(false)}
+                    />
+                    <div></div>
+                    <Calendar
+                        localizer={localizer}
+                        events={transformedEvents}
+                        startAccessor="start"
+                        endAccessor="end"
+                        onDoubleClickEvent={handleDoubleClickEvent}
+                        defaultView="week"
+                        views={["month", "week", "day", "agenda"]}
+                        className="w-full left-0 top-0 absolute bg-white p-4 rounded-lg shadow-lg"
+
+                    />
+                </div>
+            </div>
+            <div></div>
+            {/* <div className="flex"> */}
+            {/* Search bar */}
+            {/* <div class="fixed top-1/2 transform -translate-y-1/2 right-0 h-3/4 w-1/4  flex-col items-center justify-center overflow-y-auto">
+                    <h1 className="text-black text-xl font-bold mt-8 mb-4">Tasks</h1>
+                    <Sidebar />
+                </div> */}
+            {/* </div> */}
         </div>
-      </div>
-      <div></div>
-      <div className="flex">
-        {/* <h1 className="text-black text-xl font-bold mt-8 mb-4">Tasks</h1> */}
-        <div className="fixed top-1/2 transform -translate-y-1/2 right-0 h-3/4 w-1/4 flex flex-col items-center justify-center overflow-y-auto">
-          <Sidebar />
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
+
 
 export default MyCalendar;
