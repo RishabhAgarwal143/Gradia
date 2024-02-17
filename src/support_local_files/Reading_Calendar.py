@@ -10,7 +10,7 @@ class Subscribing_to_Calendar:
         self.token = accesstoken
         self.userinfoid = userid
         self.category = categories_name
-        # self.reading_file(file_name)
+        # self.reading_file(calendar_URL)
         self.create_file()
         # self.print_calendar_details()
 
@@ -38,6 +38,11 @@ class Subscribing_to_Calendar:
             payload = "{\"query\":\"mutation CreateSubscribedCalendar {\\r\\n    createSubscribedCalendar(\\r\\n        input: { Calendar_URL: \\\"%s\\\", Calendar_Name: \\\"%s\\\", userinfoID: \\\"%s\\\" }\\r\\n    ) {\\r\\n        id\\r\\n        Calendar_Name\\r\\n        Calendar_URL\\r\\n        userinfoID\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" % (self.calendar_URL,self.category,self.userinfoid)
             response = requests.request("POST", url, headers=headers, data=payload)
             print(response.text)
+
+    def reading_file(self,file):
+        path_to_ics_file = file
+        with open(path_to_ics_file) as f:
+            self.calendar = icalendar.Calendar.from_ical(f.read())
 
     def print_calendar_details(self) -> None:
         # print(self.calendar.walk('VCALENDAR'))
@@ -176,7 +181,7 @@ class Subscribing_to_Calendar:
                     rrule["BYDAYS"] = r"\"%s\"" % (",".join(event.get('RRULE').get('BYDAY')))
                 rrule["BYMONTH"] = "null"
                 if(event.get('RRULE').get('BYMONTH')):
-                    rrule["BYMONTH"] = ",".join(event.get('RRULE').get('BYMONTH'))
+                    rrule["BYMONTH"] = r"\"%s\"" % ((event.get('RRULE').get('BYMONTH')))
                 rrule["WKST"] = "null"
                 if(event.get('RRULE').get('WKST')):
                     rrule["WKST"] = r"\"%s\"" % event.get('RRULE').get('WKST')[0]
@@ -202,6 +207,20 @@ class Subscribing_to_Calendar:
                     "UID: \\\"%s\\\"\\r\\n        }\\r\\n    ) "\
                     "{\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DUE\\r\\n        COMPLETED\\r\\n        STATUS\\r\\n        userinfoID\\r\\n        UID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    "\
                     "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,dtend,categories,"null",userinfoId,location,5,dtstamp,uid)
+                elif(dtend == "null"):
+                    payload = "{\"query\":\"mutation CreateTask {\\r\\n    createTask(\\r\\n        input: {\\r\\n            "\
+                    "SUMMARY: %s\\r\\n            "\
+                    "DTSTART: %s\\r\\n            "\
+                    "DUE: %s\\r\\n            "\
+                    "COMPLETED: %s\\r\\n            "\
+                    "STATUS: %s\\r\\n            "\
+                    "userinfoID: \\\"%s\\\"\\r\\n            "\
+                    "CATEGORIES: %s\\r\\n            "\
+                    "PRIORITY: %d\\r\\n            "\
+                    "DTSTAMP: %s\\r\\n            "\
+                    "UID: \\\"%s\\\"\\r\\n        }\\r\\n    ) "\
+                    "{\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DUE\\r\\n        COMPLETED\\r\\n        STATUS\\r\\n        userinfoID\\r\\n        UID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    "\
+                    "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,"null",dtstart,categories,"null",userinfoId,location,5,dtstamp,uid)
                 else:
                     payload = "{\"query\":\"mutation CreateSchedule {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            "\
                     "SUMMARY: %s\\r\\n            "\
@@ -271,11 +290,13 @@ class Subscribing_to_Calendar:
             }
             response = requests.request("POST", url, headers=headers, data=payload)
             print("line 263" +response.text)
-Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjJmN2IzNzJkLThlOTMtNDdhZS05MDg5LWQ1ZDk5MjhkOTg2YiIsImV2ZW50X2lkIjoiYzgwNjMzOGItM2NhYi00YWEzLTg0YzUtYzk3MjM3YWQ4MDUzIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODAyNDczNiwiZXhwIjoxNzA4MDI4MzM2LCJpYXQiOjE3MDgwMjQ3MzYsImp0aSI6ImI2ODVjZmY4LWZhMGEtNGE4ZS05MzkzLTk5NDgxYjhmODE5MiIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.BJ9gpTLL0e8wwmRO3Pv1CjIDcbxrzyCrys4l9kvhuoVsnOSCdKWArqw7YyyeZA5JQGf1aec6xmYaGzXtlsAJU_7bCxJol5t_mELLPYBREIsZ7_LR43tByDRrzdRfuXTt52shY_0J7ghL7FK49s4df0P7e0Rbmam87hBHL2jFuWVqqA7wQ8HjsXYrM57EOhbYCQW2XmP0C4l__CoFx_-xgyJfaity16kxf1R91Cw0Dzz8SJQIVGt7A20ykXR6y-V22DMKRoLHGhXeoQji5kSPlHtli-fU5gUctalZZ8iMGc1Il6rjTr8N8BjQxNDW0Vi801KBIvDL6vFETEvqqH1OHw'
+Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImMzZmNiNjA5LTJkYzQtNGRkYi1hMzkwLWIxOWI4ZmQ5NDRlYiIsImV2ZW50X2lkIjoiYjhkZDIxNTItNDRiZC00Y2Y3LWFjMjYtYTY5OTYwNWIzYzdiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODIwNDA5MiwiZXhwIjoxNzA4MjA3NjkyLCJpYXQiOjE3MDgyMDQwOTIsImp0aSI6IjQxYzE0ZmZhLWM5NTktNGI0YS1hOTJlLThkZTY2NWY3Nzc3ZCIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.m79-5HFm1vqJE6caMdDAZCLYCICElTVoWLZLdwNtLF2mKlbElV7YOEcofeHqvbREJyRzKbzxeohVBsxudrekUzW4vA37wfqXFEBvB1RQre9sXM2uQeyBkF_IpOy_AyC0kEchG92RUR63IE5DwclKpUWSeUUcL_vdsNMJ-caCTM6iHHe0UcEsrg8t7axe_HypUs0NFI9M1uXfhfN7lfIccohFjgYVjl_7j2CLz7qYOTTyNxDW50uZYy8981Lw4AC3h4Cx_yJvMWO9mM711pnX8UjkVrWbnZ_QamTdFhV08t-6bthPse808G0MjRgCUbNaezumevTQNmBa5QNwg4DEOw'
 y = Subscribing_to_Calendar("https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
 x = Subscribing_to_Calendar("https://purdue.brightspace.com/d2l/le/calendar/feed/user/feed.ics?token=abm22pjnrmcaxnps38b1d",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Assignments List")
-# x.add_record_to_database()
-# y.add_record_to_database()
+# pulkit = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\\quantumcalendar-v1\\src\\support_local_files\\AIFevents.ics",Token,"8019ecdb-3d9e-4659-8ce4-46e2663633a8","AIF Event Calendar")
+# pulkit.add_record_to_database()
+x.add_record_to_database()
+y.add_record_to_database()
 # x.create_file("adsfasdf")
 # y.add_record_to_database()
 # x.get_current_schedules()
