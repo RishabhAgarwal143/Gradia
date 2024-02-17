@@ -84,7 +84,7 @@ export default function TaskbarCollection(props) {
         isSearchable="true"
         searchPlaceholder="Search..."
         direction="column"
-        justifyContent="left"
+        justifyContent="center"
         itemsPerPage={pageSize}
         isPaginated={!isApiPagination && isPaginated}
         items={itemsProp || (loading ? new Array(pageSize).fill({}) : items)}

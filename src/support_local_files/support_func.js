@@ -126,10 +126,13 @@ export async function create_schedule() {
 
 export async function list_schedule_item() {
   try {
-    console.log("here");
-    const allTodos = await client.graphql({ query: queries.listSchedules });
-    console.log(allTodos);
-    return allTodos;
+    // List all items
+    const allSchedules = await client.graphql({
+      query: queries.listSchedules,
+      variables: { limit: 1000 },
+    });
+    console.log(allSchedules);
+    return allSchedules;
   } catch (error) {
     console.error("Error fetching data:", error);
     throw error; // Rethrow the error if needed
