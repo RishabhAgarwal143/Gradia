@@ -5,7 +5,7 @@ import openai
 import api_calls as ac
 import time
 
-openai.api_key = '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'
+openai.api_key = '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'
 client = OpenAI(api_key=openai.api_key)
 assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
 
