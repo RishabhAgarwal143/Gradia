@@ -10,7 +10,7 @@ import AddEventModal from "./AddEventModal";
 import addIcon from "../icons/add.svg";
 // import { InfoBox } from '../ui-components';
 // import ConfirmationModal from './ConfirmationModal'; // Import the new component
-// import Sidebar from "./Sidebar";
+import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 import { subscribedScedule } from "../support_local_files/support_func";
@@ -100,7 +100,6 @@ const MyCalendar = () => {
       }
     }
   }, []); // Include fetchData_local as a dependency
-
   // const fetchData_local = useCallback(async () => {
   //     try {
   //         const todos = await list_schedule_item();
@@ -183,6 +182,7 @@ const MyCalendar = () => {
     (item) => item.id === selectedEvent?.id
   );
   console.log("originalSelectedEvent", originalSelectedEvent);
+  // console.log("selectedEvent",);
   //   return (
   //     <div className="flex flex-col">
   //       <div className="flex-1 relative">
@@ -226,8 +226,9 @@ const MyCalendar = () => {
   //       </div>
   //     </div>
   //   );
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-black">
       <div className="flex-1 relative">
         <div className="h-screen bg-gray-200 flex items-center justify-center relative">
           <button
@@ -255,19 +256,25 @@ const MyCalendar = () => {
             onDoubleClickEvent={handleDoubleClickEvent}
             defaultView="week"
             views={["month", "week", "day", "agenda"]}
-            className="w-full left-0 top-0 absolute bg-white p-4 rounded-lg shadow-lg"
+            className="w-3/4 left-0 top-0 absolute bg-white p-4  shadow-lg"
           />
+          {/* <Sidebar /> */}
         </div>
       </div>
       <div></div>
       {/* <div className="flex"> */}
       {/* Search bar */}
-      {/* <div class="fixed top-1/2 transform -translate-y-1/2 right-0 h-3/4 w-1/4  flex-col items-center justify-center overflow-y-auto">
-                    <h1 className="text-black text-xl font-bold mt-8 mb-4">Tasks</h1>
-                    <Sidebar />
-                </div> */}
-      {/* </div> */}
+      <div className="fixed top-0 right-0 h-full w-1/4 flex flex-col items-center justify-center overflow-y-auto" style={{
+        background: '#1f1f1f',
+        fontFamily: 'cursive',
+        color: 'white'
+      }}>
+        <h1 className="text-white text-xl font-bold mt-8 mb-4">Tasks</h1>
+        <Sidebar />
+      </div>
+
     </div>
+
   );
 };
 

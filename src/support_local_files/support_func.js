@@ -167,3 +167,17 @@ export const listTasks = async () => {
     throw new Error("Error getting tasks: " + error.message); // Throw an error if deletion fails
   }
 };
+export async function list_tasks_item() {
+  try {
+    // List all items
+    const allTasks = await client.graphql({
+      query: queries.listTasks,
+      variables: { limit: 1000 },
+    });
+    console.log(allTasks);
+    return allTasks;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error; // Rethrow the error if needed
+  }
+}
