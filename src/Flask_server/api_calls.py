@@ -19,19 +19,17 @@ global time_converter
 
 
 def initialize_payload_user(n):
-    TOKEN = "eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwODM4NDU1ZS04MDI1LTQ0NGEtOWM0ZS1kOTJlYmQ0MjYzZWIiLCJjb2duaXRvOmdyb3VwcyI6WyJ1cy1lYXN0LTJfakJ2UFRaOFNyX0dvb2dsZSJdLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjMwMDZmYTliLTc5MmUtNDk5OC1iMTAxLTRlMTI2OTU2YmJkYiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4gcGhvbmUgb3BlbmlkIHByb2ZpbGUgZW1haWwiLCJhdXRoX3RpbWUiOjE3MDYyMTI1NDIsImV4cCI6MTcwNzc4MDY0NSwiaWF0IjoxNzA3Nzc3MDQ1LCJqdGkiOiJhMzQ2NWEyMS0zYzEzLTQ0MDAtOGZhOC0yNTA1NDc4NGY1ZWYiLCJ1c2VybmFtZSI6Imdvb2dsZV8xMTAzMzgyNDE4NTEzMjIzMzM0NTQifQ.q55p9OcfX3tnBwdhIGb9sjVdEtNlHfkk5kyyyXWhVK46CPygfp_FeLOFYhpObgxefO2KjZ4obt2FSLLC-_N0s3cYotlyPBUdBk7uEQ3nM_a0ypSdSI4JDn3DJYwRYBhtVAYg3kHgMZ_gZw7khTuiKaelFbMUTcxbI0Ox24_nXON-zvQtSj7cPdpYkGe6zhz4Gp06NoKu28GOniTTIx3EU4x5_ZDqV3b2MtmyefdPjwLGAxp1DV2Zsx32JpaGC57lQ6YR1yq8dxkNSdzP3fPrzNiwcYh2JU8jGYYfsgCt_hqnF6_cYbGShxZYxg4PraFHrJgjZAIYamJ5H1x5bzHNXg"
+    TOKEN = "eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImMzZmNiNjA5LTJkYzQtNGRkYi1hMzkwLWIxOWI4ZmQ5NDRlYiIsImV2ZW50X2lkIjoiYjhkZDIxNTItNDRiZC00Y2Y3LWFjMjYtYTY5OTYwNWIzYzdiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODIwNDA5MiwiZXhwIjoxNzA4Mzc2NzE5LCJpYXQiOjE3MDgzNzMxMTksImp0aSI6ImUwOWVlZmYxLWE1YTktNDNiNy1hNTExLWU2MWI5ODI5M2FmNyIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.szankMiKTvkRSY6tz4kHZRvwds8CmUcAPnw9CXiHJ_XseLIur6nHjBaRVKjL-ZV4axJXYruORER4OPezUGOnwpFjTqT-YDU0uFcqdHyCiFVaN6l4nfbQ1FgP0fPZJql57UNYJylUuTLtMf_p-r99WKILE9qPOcB6abGlyzvvI2YHK0sc5PWiYSL4fNTtoOmPKZH3d3FOJD4i-qXTlEqIzeuokMz8OKCWOZDG1SO9M33IihVC79vWoDm-GbU_rIjDN7gMW-WbXtKjMeeQ-FZP84ok3zFCttw_M2ml0JifbpsYJE-7-3Bbs4V9D6PP27kvdexEwnOSJDYH1pya23vWQg"
+    user_id = "82cf448d-fc16-409c-82e9-3304d937f840"
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {TOKEN}'
     }
-    user_id = "0838455e-8025-444a-9c4e-d92ebd4263eb"
     url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
     init_payload = "{\"query\":\"query ListSchedules {\\r\\n    getUserinfo(id: \\\"%s\\\") {\\r\\n        id\\r\\n        name\\r\\n        email\\r\\n        Timezone\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %user_id
 
-
     response = requests.request("POST", url, headers=headers, data=init_payload)
     json_response = response.json()
-
 
     user_timezone = json_response['data']['getUserinfo']['Timezone']
     user_id = json_response['data']['getUserinfo']['id']
