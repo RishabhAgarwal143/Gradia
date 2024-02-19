@@ -51,8 +51,7 @@ class Subscribing_to_Calendar:
 
     def get_current_schedules(self) -> set:
         url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
-
-        payload = "{\"query\":\"query ListSchedules {\\r\\n    listSchedules {\\r\\n        nextToken\\r\\n        items {\\r\\n            id\\r\\n            UID\\r\\n            DTSTAMP\\r\\n        }\\r\\n    }\\r\\n}\\r\\n\\r\\n\",\"variables\":{}}"
+        payload = "{\"query\":\"query ListSchedules {\\r\\n    listSchedules(limit: 1000) {\\r\\n        nextToken\\r\\n        items {\\r\\n            id\\r\\n            UID\\r\\n            DTSTAMP\\r\\n        }\\r\\n    }\\r\\n}\\r\\n\\r\\n\",\"variables\":{}}"
         headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer %s' % self.token
@@ -61,8 +60,8 @@ class Subscribing_to_Calendar:
         response2 = requests.request("POST", url, headers=headers, data=payload)
         # print(response2.text)
         returneditems =(json.loads(response2.text))
-        nextToken = returneditems["data"]["listSchedules"]["nextToken"]
         returneditems = returneditems["data"]["listSchedules"]["items"]
+        print(len(returneditems))
         uid_list = []
         dtstamp_list = []
         id_list = []
@@ -71,19 +70,8 @@ class Subscribing_to_Calendar:
             id_list.append(i["id"])
             dtstamp_list.append(i["DTSTAMP"])
 
-        while(nextToken):
-            payload = "{\"query\":\"query ListSchedules {\\r\\n    listSchedules(nextToken: \\\"%s\\\") {\\r\\n        nextToken\\r\\n        items {\\r\\n            id\\r\\n            UID\\r\\n            DTSTAMP\\r\\n        }\\r\\n    }\\r\\n}\\r\\n\\r\\n\",\"variables\":{}}"% (nextToken)
-            response2 = requests.request("POST", url, headers=headers, data=payload)
-            returneditems =(json.loads(response2.text))
-            nextToken = returneditems["data"]["listSchedules"]["nextToken"]
-            returneditems = returneditems["data"]["listSchedules"]["items"]
-            for i in returneditems:
-                uid_list.append(i["UID"])
-                id_list.append(i["id"])
-                dtstamp_list.append(i["DTSTAMP"])
-
         counter = len(uid_list)
-        payload = "{\"query\":\"query ListTasks {\\r\\n    listTasks {\\r\\n        nextToken\\r\\n        items {\\r\\n            id\\r\\n            UID\\r\\n            DTSTAMP\\r\\n        }\\r\\n    }\\r\\n}\\r\\n\\r\\n\",\"variables\":{}}"
+        payload = "{\"query\":\"query ListTasks {\\r\\n    listTasks(limit: 1000) {\\r\\n        nextToken\\r\\n        items {\\r\\n            id\\r\\n            UID\\r\\n            DTSTAMP\\r\\n        }\\r\\n    }\\r\\n}\\r\\n\\r\\n\",\"variables\":{}}"
         headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer %s' % self.token
@@ -91,22 +79,13 @@ class Subscribing_to_Calendar:
         response2 = requests.request("POST", url, headers=headers, data=payload)
         # print(response2.text)
         returneditems =(json.loads(response2.text))
-        nextToken = returneditems["data"]["listTasks"]["nextToken"]
         returneditems = returneditems["data"]["listTasks"]["items"]
+
+        print(len(returneditems))
         for i in returneditems:
             uid_list.append(i["UID"])
             id_list.append(i["id"])
             dtstamp_list.append(i["DTSTAMP"])
-        while(nextToken):
-            payload = "{\"query\":\"query ListTasks {\\r\\n    listTasks(nextToken: \\\"%s\\\") {\\r\\n        nextToken\\r\\n        items {\\r\\n            id\\r\\n            UID\\r\\n            DTSTAMP\\r\\n        }\\r\\n    }\\r\\n}\\r\\n\\r\\n\",\"variables\":{}}"% (nextToken)
-            response2 = requests.request("POST", url, headers=headers, data=payload)
-            returneditems =(json.loads(response2.text))
-            nextToken = returneditems["data"]["listTasks"]["nextToken"]
-            returneditems = returneditems["data"]["listTasks"]["items"]
-            for i in returneditems:
-                uid_list.append(i["UID"])
-                id_list.append(i["id"])
-                dtstamp_list.append(i["DTSTAMP"])
 
         return uid_list,dtstamp_list,id_list,counter
 
@@ -290,16 +269,16 @@ class Subscribing_to_Calendar:
             }
             response = requests.request("POST", url, headers=headers, data=payload)
             print("line 263" +response.text)
-Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImMzZmNiNjA5LTJkYzQtNGRkYi1hMzkwLWIxOWI4ZmQ5NDRlYiIsImV2ZW50X2lkIjoiYjhkZDIxNTItNDRiZC00Y2Y3LWFjMjYtYTY5OTYwNWIzYzdiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODIwNDA5MiwiZXhwIjoxNzA4MjA3NjkyLCJpYXQiOjE3MDgyMDQwOTIsImp0aSI6IjQxYzE0ZmZhLWM5NTktNGI0YS1hOTJlLThkZTY2NWY3Nzc3ZCIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.m79-5HFm1vqJE6caMdDAZCLYCICElTVoWLZLdwNtLF2mKlbElV7YOEcofeHqvbREJyRzKbzxeohVBsxudrekUzW4vA37wfqXFEBvB1RQre9sXM2uQeyBkF_IpOy_AyC0kEchG92RUR63IE5DwclKpUWSeUUcL_vdsNMJ-caCTM6iHHe0UcEsrg8t7axe_HypUs0NFI9M1uXfhfN7lfIccohFjgYVjl_7j2CLz7qYOTTyNxDW50uZYy8981Lw4AC3h4Cx_yJvMWO9mM711pnX8UjkVrWbnZ_QamTdFhV08t-6bthPse808G0MjRgCUbNaezumevTQNmBa5QNwg4DEOw'
+Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImMzZmNiNjA5LTJkYzQtNGRkYi1hMzkwLWIxOWI4ZmQ5NDRlYiIsImV2ZW50X2lkIjoiYjhkZDIxNTItNDRiZC00Y2Y3LWFjMjYtYTY5OTYwNWIzYzdiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODIwNDA5MiwiZXhwIjoxNzA4MjExMzQ5LCJpYXQiOjE3MDgyMDc3NDksImp0aSI6IjZlZDlkNzVjLTRlOTgtNDQwMS1iOTMxLTliMTMwOWU2YTAxMSIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.ZrOqOF-MHb1X-BGEsxGcJjz11N4emayAofwL54gSWKhwuA7_iJ3Sxo6I1BsN0sQpClE7TyHWCzbB5oq-Lr2cTxINv8NUXZFm5j1T01F8GVrld1tEemxaN-LJLiPPIWofYRcnSss4iWTzWH7vdKezFwgCOA9l06VXZQ-0pjQ0ZY2ToXFWtbsgcBcFrDFw3oDh9XCyjW_Fn5ZFNfkmdi_uM4YLivSVxkvZWYMGR9Csiv4WHZnQx-p-KU4azCnzGyGMANZuz2CmOwHyTWfYktypLXHAVdYCXDKNs0uUKJXavXLniwlWYx4PGN_3IOXYwwNyWp14Eurzvij1RTEVSe7YFw'
 y = Subscribing_to_Calendar("https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
 x = Subscribing_to_Calendar("https://purdue.brightspace.com/d2l/le/calendar/feed/user/feed.ics?token=abm22pjnrmcaxnps38b1d",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Assignments List")
 # pulkit = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\\quantumcalendar-v1\\src\\support_local_files\\AIFevents.ics",Token,"8019ecdb-3d9e-4659-8ce4-46e2663633a8","AIF Event Calendar")
 # pulkit.add_record_to_database()
-x.add_record_to_database()
-y.add_record_to_database()
+# x.add_record_to_database()
+# y.add_record_to_database()
 # x.create_file("adsfasdf")
 # y.add_record_to_database()
-# x.get_current_schedules()
+x.get_current_schedules()
 # y.print_calendar_details()
 # x.print_calendar_details()
 

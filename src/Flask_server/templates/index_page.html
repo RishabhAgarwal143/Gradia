@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #212121;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+      }
+      .chat-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #333333;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        overflow: hidden; /* Ensure child elements don't overflow */
+      }
+      .chat-messages {
+        height: 300px;
+        padding: 20px;
+        overflow-y: auto; /* Enable vertical scrolling if messages overflow */
+        max-height: 300px; /* Limit max height to avoid excessive scrolling */
+      }
+      .chat-message {
+        /* background-color: #444444; */
+        padding: 10px;
+        margin-bottom: 10px;
+        overflow: hidden;
+      }
+      .user-message {
+        color: #fff;
+        text-align: right;
+      }
+      .bot-message {
+        color: #fff;
+        text-align: left;
+      }
+      .chat-input-container {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-top: 1px solid #555555;
+      }
+      input[type="text"] {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 0;
+        background-color: transparent;
+        color: #fff;
+      }
+      button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 0;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container" id="chat-container">
+      <div class="chat-messages" id="chat-messages">
+        HI! How are you?
+        <!-- Chat messages will be displayed here -->
+      </div>
+      <div class="chat-input-container">
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <script>
+      function sendMessage() {
+        var userInput = document.getElementById("user-input").value;
+
+        // Display user message
+        var userMessageDiv = document.createElement("div");
+        userMessageDiv.className = "chat-message user-message";
+        userMessageDiv.innerHTML = userInput;
+        document.getElementById("chat-messages").appendChild(userMessageDiv);
+
+        // Clear input field
+        document.getElementById("user-input").value = "";
+
+        // Make POST request to Flask server
+        fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: "user_message=" + encodeURIComponent(userInput),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Display bot response
+            var botMessageDiv = document.createElement("div");
+            botMessageDiv.className = "chat-message bot-message";
+            botMessageDiv.innerHTML = data.bot_response;
+            document.getElementById("chat-messages").appendChild(botMessageDiv);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
