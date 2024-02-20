@@ -4,8 +4,9 @@ import uuid
 import openai
 import api_calls as ac
 import time
+import os
 
-openai.api_key = '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'
+openai.api_key = f'{os.environ["OPENAI_API_KEY"]}'
 client = OpenAI(api_key=openai.api_key)
 assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
 
