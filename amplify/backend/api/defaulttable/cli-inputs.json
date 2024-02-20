@@ -13,8 +13,8 @@
       },
       {
         "mode": "API_KEY",
-        "expirationTime": 30,
-        "keyDescription": "api key description"
+        "keyDescription": "api key description",
+        "expirationTime": 30
       }
     ],
     "conflictResolution": {}

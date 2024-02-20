@@ -5,13 +5,14 @@ from api_calls import initialize_payload_user
 from Reading_Calendar import Subscribing_to_Calendar
 import jwt
 
+
 app = Flask(__name__,template_folder="templates")
 CORS(app)
 class user_information():
     def __init__(self):
         self.Token = ""
         self.userID = ""
-        
+        self.chats = None
 
 @app.route('/api/data', methods=['POST'])
 def receive_data():
@@ -20,6 +21,7 @@ def receive_data():
     info.userID = data["userId"]
     info.Token = data["Token"]
     initialize_payload_user(info.Token,info.userID)
+    info.chats = openai_manager()
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/')
@@ -29,7 +31,7 @@ def index():
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.form['user_message']
-    response = chats.sendcall(user_message)
+    response = info.chats.sendcall(user_message)
     return jsonify({'bot_response': response})
 
 @app.route('/Subscribe',methods=['POST'])
@@ -45,7 +47,7 @@ def subscribe_cal():
 
 if __name__ == '__main__':
     info = user_information()
-    chats = openai_manager()
+    
     app.run(debug=True)
 
 

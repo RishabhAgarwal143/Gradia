@@ -14,6 +14,8 @@ import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 import { subscribedScedule } from "../support_local_files/support_func";
+import MyComponent from "./Chatbot";
+
 const localizer = momentLocalizer(moment);
 
 const MyCalendar = () => {
@@ -228,52 +230,76 @@ const MyCalendar = () => {
   //   );
 
   return (
-    <div className="flex flex-col bg-black">
-      <div className="flex-1 relative">
-        <div className="h-screen bg-gray-200 flex items-center justify-center relative">
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 flex items-center justify-center"
-          >
-            <img src={addIcon} alt="Add Event" className="w-6 h-6" />
-          </button>
-          <AddEventModal
-            isOpen={isAddModalOpen}
-            onRequestClose={() => setIsAddModalOpen(false)}
-            onAddEvent={handleAddEvent}
-          />
-          <EventDescModal
-            event={originalSelectedEvent}
-            isOpen={isEventModalOpen}
-            onClose={() => setIsEventModalOpen(false)}
-          />
-          <div></div>
-          <Calendar
-            localizer={localizer}
-            events={transformedEvents}
-            startAccessor="start"
-            endAccessor="end"
-            onDoubleClickEvent={handleDoubleClickEvent}
-            defaultView="week"
-            views={["month", "week", "day", "agenda"]}
-            className="w-3/4 left-0 top-0 absolute bg-white p-4  shadow-lg"
-          />
-          {/* <Sidebar /> */}
-        </div>
-      </div>
-      <div></div>
-      {/* <div className="flex"> */}
-      {/* Search bar */}
-      <div
-        className="fixed top-0 right-0 h-full w-1/4 flex flex-col items-center justify-center overflow-y-auto"
+    <div>
+      {/* <div
+        className="fixed top-0 left-0 h-full w-1/4 flex flex-col items-center justify-center overflow-y-auto"
         style={{
           background: "#1f1f1f",
           fontFamily: "cursive",
           color: "white",
         }}
       >
-        <h1 className="text-white text-xl font-bold mt-8 mb-4">Tasks</h1>
-        <Sidebar />
+        <h1 className="text-white text-xl font-bold mt-8 mb-4">Chatbot</h1>
+        <MyComponent />
+      </div> */}
+      <div className="flex flex-row bg-black">
+        <div className="flex-1 relative">
+          <div className="h-screen bg-gray-200 flex items-center justify-center">
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 flex items-center justify-center"
+            >
+              <img src={addIcon} alt="Add Event" className="w-6 h-6" />
+            </button>
+            <AddEventModal
+              isOpen={isAddModalOpen}
+              onRequestClose={() => setIsAddModalOpen(false)}
+              onAddEvent={handleAddEvent}
+            />
+            <EventDescModal
+              event={originalSelectedEvent}
+              isOpen={isEventModalOpen}
+              onClose={() => setIsEventModalOpen(false)}
+            />
+            <div></div>
+            <Calendar
+              localizer={localizer}
+              events={transformedEvents}
+              startAccessor="start"
+              endAccessor="end"
+              onDoubleClickEvent={handleDoubleClickEvent}
+              defaultView="week"
+              views={["month", "week", "day", "agenda"]}
+              className="w-3/4 left-0 top-0 absolute bg-white p-4  shadow-lg"
+            />
+            {/* <Sidebar /> */}
+          </div>
+        </div>
+        <div></div>
+        {/* <div className="flex"> */}
+        {/* Search bar */}
+        <div
+          className="fixed top-0 right-0 h-1/2 w-1/4 flex flex-col items-center justify-center overflow-y-auto"
+          style={{
+            background: "#1f1f1f",
+            fontFamily: "cursive",
+            color: "white",
+          }}
+        >
+          <h1 className="text-white text-xl font-bold mt-8 mb-4">Tasks</h1>
+          <Sidebar />
+        </div>
+
+        <div
+          className="fixed bottom-0 right-0 h-1/2 w-1/4 flex flex-col items-center justify-center overflow-y-auto"
+          style={{
+            background: "#1f1f1f",
+            fontFamily: "cursive",
+            color: "white",
+          }}
+        >
+          <MyComponent />
+        </div>
       </div>
     </div>
   );
