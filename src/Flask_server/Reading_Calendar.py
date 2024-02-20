@@ -269,16 +269,19 @@ class Subscribing_to_Calendar:
             }
             response = requests.request("POST", url, headers=headers, data=payload)
             print("line 263" +response.text)
-Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImMzZmNiNjA5LTJkYzQtNGRkYi1hMzkwLWIxOWI4ZmQ5NDRlYiIsImV2ZW50X2lkIjoiYjhkZDIxNTItNDRiZC00Y2Y3LWFjMjYtYTY5OTYwNWIzYzdiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODIwNDA5MiwiZXhwIjoxNzA4MjExMzQ5LCJpYXQiOjE3MDgyMDc3NDksImp0aSI6IjZlZDlkNzVjLTRlOTgtNDQwMS1iOTMxLTliMTMwOWU2YTAxMSIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.ZrOqOF-MHb1X-BGEsxGcJjz11N4emayAofwL54gSWKhwuA7_iJ3Sxo6I1BsN0sQpClE7TyHWCzbB5oq-Lr2cTxINv8NUXZFm5j1T01F8GVrld1tEemxaN-LJLiPPIWofYRcnSss4iWTzWH7vdKezFwgCOA9l06VXZQ-0pjQ0ZY2ToXFWtbsgcBcFrDFw3oDh9XCyjW_Fn5ZFNfkmdi_uM4YLivSVxkvZWYMGR9Csiv4WHZnQx-p-KU4azCnzGyGMANZuz2CmOwHyTWfYktypLXHAVdYCXDKNs0uUKJXavXLniwlWYx4PGN_3IOXYwwNyWp14Eurzvij1RTEVSe7YFw'
-y = Subscribing_to_Calendar("https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
-x = Subscribing_to_Calendar("https://purdue.brightspace.com/d2l/le/calendar/feed/user/feed.ics?token=abm22pjnrmcaxnps38b1d",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Assignments List")
-# pulkit = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\\quantumcalendar-v1\\src\\support_local_files\\AIFevents.ics",Token,"8019ecdb-3d9e-4659-8ce4-46e2663633a8","AIF Event Calendar")
-# pulkit.add_record_to_database()
-# x.add_record_to_database()
-# y.add_record_to_database()
-# x.create_file("adsfasdf")
-# y.add_record_to_database()
-x.get_current_schedules()
-# y.print_calendar_details()
-# x.print_calendar_details()
+
+# if __name__ == '__main__':
+
+#     Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImMzZmNiNjA5LTJkYzQtNGRkYi1hMzkwLWIxOWI4ZmQ5NDRlYiIsImV2ZW50X2lkIjoiYjhkZDIxNTItNDRiZC00Y2Y3LWFjMjYtYTY5OTYwNWIzYzdiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODIwNDA5MiwiZXhwIjoxNzA4MjExMzQ5LCJpYXQiOjE3MDgyMDc3NDksImp0aSI6IjZlZDlkNzVjLTRlOTgtNDQwMS1iOTMxLTliMTMwOWU2YTAxMSIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.ZrOqOF-MHb1X-BGEsxGcJjz11N4emayAofwL54gSWKhwuA7_iJ3Sxo6I1BsN0sQpClE7TyHWCzbB5oq-Lr2cTxINv8NUXZFm5j1T01F8GVrld1tEemxaN-LJLiPPIWofYRcnSss4iWTzWH7vdKezFwgCOA9l06VXZQ-0pjQ0ZY2ToXFWtbsgcBcFrDFw3oDh9XCyjW_Fn5ZFNfkmdi_uM4YLivSVxkvZWYMGR9Csiv4WHZnQx-p-KU4azCnzGyGMANZuz2CmOwHyTWfYktypLXHAVdYCXDKNs0uUKJXavXLniwlWYx4PGN_3IOXYwwNyWp14Eurzvij1RTEVSe7YFw'
+#     y = Subscribing_to_Calendar("https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
+#     x = Subscribing_to_Calendar("https://purdue.brightspace.com/d2l/le/calendar/feed/user/feed.ics?token=abm22pjnrmcaxnps38b1d",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Assignments List")
+#     # pulkit = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\\quantumcalendar-v1\\src\\support_local_files\\AIFevents.ics",Token,"8019ecdb-3d9e-4659-8ce4-46e2663633a8","AIF Event Calendar")
+#     # pulkit.add_record_to_database()
+#     # x.add_record_to_database()
+#     # y.add_record_to_database()
+#     # x.create_file("adsfasdf")
+#     # y.add_record_to_database()
+#     x.get_current_schedules()
+#     # y.print_calendar_details()
+#     # x.print_calendar_details()
 

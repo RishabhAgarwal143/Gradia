@@ -6,6 +6,7 @@ import * as subscriptions from "../graphql/subscriptions";
 import { getCurrentUser } from "aws-amplify/auth";
 import { fetchAuthSession } from "aws-amplify/auth";
 import { fetchUserAttributes } from "aws-amplify/auth";
+import axios from "axios";
 
 export var cognito_Id;
 var CurrentUsersEmail;
@@ -21,6 +22,19 @@ export async function currentAuthenticatedUser() {
     console.log(`The accessToken: ${accessToken}`);
     console.log(`The idToken: ${idToken}`);
     console.log(`The signInDetails: ${signInDetails}`);
+
+    const dataToSend = {
+      userId: cognito_Id,
+      Token: `${accessToken}`,
+    }; // Replace with your data
+    axios
+      .post("http://127.0.0.1:5000/api/data", dataToSend)
+      .then((response) => {
+        console.log("Data sent successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
   } catch (err) {
     console.log(err);
   }

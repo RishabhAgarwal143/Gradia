@@ -264,17 +264,18 @@ const MyCalendar = () => {
       <div></div>
       {/* <div className="flex"> */}
       {/* Search bar */}
-      <div className="fixed top-0 right-0 h-full w-1/4 flex flex-col items-center justify-center overflow-y-auto" style={{
-        background: '#1f1f1f',
-        fontFamily: 'cursive',
-        color: 'white'
-      }}>
+      <div
+        className="fixed top-0 right-0 h-full w-1/4 flex flex-col items-center justify-center overflow-y-auto"
+        style={{
+          background: "#1f1f1f",
+          fontFamily: "cursive",
+          color: "white",
+        }}
+      >
         <h1 className="text-white text-xl font-bold mt-8 mb-4">Tasks</h1>
         <Sidebar />
       </div>
-
     </div>
-
   );
 };
 

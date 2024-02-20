@@ -5,7 +5,7 @@ import openai
 import api_calls as ac
 import time
 
-openai.api_key = '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'
+openai.api_key = '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'
 client = OpenAI(api_key=openai.api_key)
 assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
 
@@ -87,7 +87,7 @@ class openai_manager():
             elif(run.status == "failed"):
                 return "FAILED: The OpenAI API is currently processing too many requests. Please try again later ......"
             else:
-                time.sleep(1)
+                time.sleep(0.5)
                 run = client.beta.threads.runs.retrieve(
                         thread_id= self.thread_info.id,
                         run_id=run.id
