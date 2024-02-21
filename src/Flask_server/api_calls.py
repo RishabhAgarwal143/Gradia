@@ -30,6 +30,7 @@ def initialize_payload_user(token,user_infoId):
     init_payload = "{\"query\":\"query ListSchedules {\\r\\n    getUserinfo(id: \\\"%s\\\") {\\r\\n        id\\r\\n        name\\r\\n        email\\r\\n        Timezone\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %user_id
 
     response = requests.request("POST", url, headers=headers, data=init_payload)
+    print(response.text)
     json_response = response.json()
 
     user_timezone = json_response['data']['getUserinfo']['Timezone']
@@ -53,6 +54,26 @@ def get_user_time(n):
 
     return user_time
 
+
 def get_sys_time():
     return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+
+def get_schedule(n):
+    global payload
+    global user_info
+
+    schedule_json = payload.get_schedule_pd()
+    # print(schedule_json)
+    return schedule_json
+
+
+def schedule_new_event(start_time, end_time, event_name, event_description=None, event_location=None):
+    global payload
+    global user_info
+    start_time_utc = time_converter.convert_to_utc(start_time)
+    end_time_utc = time_converter.convert_to_utc(end_time)
+    payload.schedule_new_event(start_time_utc, end_time_utc, event_name, event_description, event_location)
+
+
 

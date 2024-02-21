@@ -7,7 +7,7 @@ from datetime import datetime
 from datetime import timedelta
 import sys
 
-TOKEN = "eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwODM4NDU1ZS04MDI1LTQ0NGEtOWM0ZS1kOTJlYmQ0MjYzZWIiLCJjb2duaXRvOmdyb3VwcyI6WyJ1cy1lYXN0LTJfakJ2UFRaOFNyX0dvb2dsZSJdLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjMwMDZmYTliLTc5MmUtNDk5OC1iMTAxLTRlMTI2OTU2YmJkYiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4gcGhvbmUgb3BlbmlkIHByb2ZpbGUgZW1haWwiLCJhdXRoX3RpbWUiOjE3MDYyMTI1NDIsImV4cCI6MTcwNjgxNjQ5MiwiaWF0IjoxNzA2ODEyODkyLCJqdGkiOiI3MDIyY2UzOS05NTM2LTQ4NTctYWViYS1hMTI1YTkwZjQ1ZTUiLCJ1c2VybmFtZSI6Imdvb2dsZV8xMTAzMzgyNDE4NTEzMjIzMzM0NTQifQ.CVts7FYiSZeWpF2lHNK7rUNiULq-HIgxKtNK_jDBEGNGknR6UtBoz6l6fEsNLoLcg37mvp79arlXbARlnekAduT6P7JoNXYAXAzY2LlJn4PsBRwmHUNtzCNymrjUO56iTTLpHS-zjUp_uc7plXC5QDG-qU-7RO1bJYUpePQw03xEEL30CROZeHH_XxYCKYw6LmI-nemuc8tua4ac8gUmyerXk127u9fRAkudN_x9qj94axpsDE79ca0sSz1dWjODJDTDuVgZjiSdiqsGjyHSAb9gPqr-AuzN_hPXTpRMatqt3u4YemlE0gmctOTNryIrU4dCCStve2V_YDU_ZtkWTA"
+TOKEN ="eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImRjY2U2ZDE4LTdhZDktNDMzYy1hZDM1LTQ5ZjQyMjZmZjUyZiIsImV2ZW50X2lkIjoiZWMxMzNkNjQtZjQzNi00M2RkLTlmOTgtNDUyNjNiNDJjOWQxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODAyMzQ2MywiZXhwIjoxNzA4MDI3MDYzLCJpYXQiOjE3MDgwMjM0NjMsImp0aSI6IjU4OTQxNzI5LTMxYzYtNDkzMS05NDg1LTlhYTc3MGNjMzI4ZSIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.ajhR9fZ3-mF5BdUZg_76OYYiDz1SQZrJBioG-vggadRmdBAgneV98JGsNbDvLJfCB_BaXjRp8NL5nwf0gZAR96GRLS74um812UKFoCKJArgtc-Bb8SM43pn1ilx3l6_-DRG_4kjF2N2XBuyafj9DyON5WWCE-9zAZ0a7lP70mXOEYc7i5qorxsCZQZ_GqKKb8rthfDkUIiuP0SzORY-NpuXe6WLSc3eGTP9JgNoEHXI6pKC-7rPi0qDfIfVkrVyTA-liGQY6xmiF5kVbn8kNlVZdS7ZPQJFrDEyndisgTM7ZLwr5ylJzw0gif--pi397GfJ20jJS1lFCpmRxj7p2IA"
 headers = {
     'Content-Type': 'application/json',
     'Authorization': f'Bearer {TOKEN}'
@@ -60,10 +60,41 @@ class Payload:
         self.userInfoID = "267028fa-daf1-44db-898f-69412aa5cf25"
         self.timezone = timezone
 
-    def get_schedule(self):
-        payload = "{\"query\":\"query MyQuery {\\r\\n  listTasks {\\r\\n    items {\\r\\n      createdAt\\r\\n      due_date\\r\\n      description\\r\\n      due_time\\r\\n      id\\r\\n      owner\\r\\n      updatedAt\\r\\n      userinfoID\\r\\n    }\\r\\n  }\\r\\n}\",\"variables\":{}}"
+    def get_schedule_pd(self):
+        payload = "{\"query\":\"query ListSchedules {\\r\\n    listSchedules {\\r\\n        nextToken\\r\\n        " \
+                  "items {\\r\\n            id\\r\\n            SUMMARY\\r\\n            DTSTART\\r\\n            " \
+                  "DTEND\\r\\n            DESCRIPTION\\r\\n            LOCATION\\r\\n            userinfoID\\r\\n    " \
+                  "        UID\\r\\n            CATEGORIES\\r\\n            DTSTAMP\\r\\n            createdAt\\r\\n   " \
+                  "         updatedAt\\r\\n            owner\\r\\n            RRULE {\\r\\n                FREQ\\r\\n" \
+                  "                INTERVALS\\r\\n                UNTIL\\r\\n                WKST\\r\\n                " \
+                  "BYDAYS\\r\\n                BYMONTH\\r\\n                COUNT\\r\\n            }\\r\\n        " \
+                  "}\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}"
+
         response = requests.request("POST", self.url, headers=self.headers, data=payload)
-        return response.json()
+        itemsDict =(json.loads(response.text))
+        nextToken = itemsDict["data"]["listSchedules"]["nextToken"]
+
+        while (nextToken):
+            nextPayload = "{\"query\":\"query ListSchedules {\\r\\n    listSchedules(nextToken: \\\"%s\\\")" \
+                           " {\\r\\n        nextToken\\r\\n        items {\\r\\n            id\\r\\n          " \
+                           "  SUMMARY\\r\\n            DTSTART\\r\\n            DTEND\\r\\n            " \
+                           "DESCRIPTION\\r\\n            LOCATION\\r\\n            userinfoID\\r\\n       " \
+                           "     UID\\r\\n            CATEGORIES\\r\\n            DTSTAMP\\r\\n            " \
+                           "createdAt\\r\\n            updatedAt\\r\\n            owner\\r\\n            RRULE {\\r\\n " \
+                           "               FREQ\\r\\n                INTERVALS\\r\\n                UNTIL\\r\\n    " \
+                           "            WKST\\r\\n                BYDAYS\\r\\n                BYMONTH\\r\\n         " \
+                           "       COUNT\\r\\n            }\\r\\n        }\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" \
+                           % nextToken
+
+            nextResponse = requests.request("POST", self.url, headers=self.headers, data=nextPayload)
+            nextToken = (json.loads(nextResponse.text))["data"]["listSchedules"]["nextToken"]
+            itemsDict2 = (json.loads(nextResponse.text))
+            itemsDict["data"]["listSchedules"]["items"] += itemsDict2["data"]["listSchedules"]["items"]
+
+        # print(itemsDict)
+        print("TOTAL ITEMS RETRIEVED: ", len(itemsDict))
+        return itemsDict
+        # return response.json()
 
     def schedule_new_event_pd(self, start_time_utc, end_time_utc, event_name_utc, location=None, description=None):
         summary_details = event_name_utc
@@ -86,4 +117,4 @@ class Payload:
 
         response = requests.request("POST", self.url, headers=self.headers, data=payload)
         print(response.text)
-        return response
+        return response.json()
