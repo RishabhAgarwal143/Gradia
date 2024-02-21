@@ -23,10 +23,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start && python src/Flask_server/flask_view.py",
     "build": "react-scripts build",
     "test": "react-scripts test nyc mocha",
     "eject": "react-scripts eject",
+    "flask_server": "python src/Flask_server/flask_view.py",
     "coverage": "nyc mocha --coverage -watchall"
   },
   "eslintConfig": {

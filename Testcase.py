@@ -24,7 +24,7 @@ class Testing_DB(unittest.TestCase):
         createitems =(json.loads(response.text))
         id = createitems["data"]["createSchedule"]["id"]
 
-        time.sleep(1)
+        time.sleep(3)
 
         payload = "{\"query\":\"query ListSchedules {\\r\\n    listSchedules(\\r\\n        filter: {\\r\\n            userinfoID: { eq: \\\"82cf448d-fc16-409c-82e9-3304d937f840\\\" }\\r\\n            "\
         "id: { eq: \\\"%s\\\" }\\r\\n        }\\r\\n    ) {\\r\\n        items {\\r\\n            id\\r\\n            SUMMARY\\r\\n            DTSTART\\r\\n            DTEND\\r\\n            DESCRIPTION\\r\\n            LOCATION\\r\\n            userinfoID\\r\\n        "\
