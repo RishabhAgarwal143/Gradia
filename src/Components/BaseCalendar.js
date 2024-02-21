@@ -282,7 +282,7 @@ const MyCalendar = () => {
           className="fixed top-0 right-0 h-1/2 w-1/4 flex flex-col items-center justify-center overflow-y-auto"
           style={{
             background: "#1f1f1f",
-            fontFamily: "cursive",
+            fontFamily: "proxima-nova",
             color: "white",
           }}
         >

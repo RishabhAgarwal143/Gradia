@@ -49,16 +49,3 @@ if __name__ == '__main__':
     info = user_information()
     
     app.run(debug=True)
-
-
-
-# from flask import Flask, request, render_template,redirect
-
-# app = Flask(__name__,template_folder="templates")
-
-# @app.route('/',methods=['GET'])
-# def index():
-#     return render_template('index_page.html')
-
-# if __name__ == '__main__':
-#     app.run(debug=True)

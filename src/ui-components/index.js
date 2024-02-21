@@ -8,6 +8,8 @@ export { default as CloseButton } from "./CloseButton";
 export { default as EventDesc } from "./EventDesc";
 export { default as Icondelete } from "./Icondelete";
 export { default as Iconeditalt } from "./Iconeditalt";
+export { default as ImportanceCreateForm } from "./ImportanceCreateForm";
+export { default as ImportanceUpdateForm } from "./ImportanceUpdateForm";
 export { default as InfoBox } from "./InfoBox";
 export { default as Rectangle3 } from "./Rectangle3";
 export { default as ScheduleCreateForm } from "./ScheduleCreateForm";

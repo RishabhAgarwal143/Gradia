@@ -13,8 +13,8 @@ assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
 functions = {
     'initialize_payload_user': ac.initialize_payload_user,
     'get_user_time': ac.get_user_time,
-    # 'schedule_new_event': ac.schedule_new_event,
-    # 'add_event_to_calendar': ac.add_event_to_calendar,
+    'schedule_new_event': ac.schedule_new_event,
+    'add_event_to_calendar': ac.add_event_to_calendar,
     # 'modify_event_in_calendar': ac.modify_event_in_calendar,
     # 'get_schedule': ac.get_schedule
 }

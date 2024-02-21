@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { AutocompleteProps, GridProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -34,6 +34,7 @@ export declare type TaskCreateFormInputValues = {
     CATEGORIES?: string;
     PRIORITY?: number;
     DTSTAMP?: string;
+    Importance?: any;
 };
 export declare type TaskCreateFormValidationValues = {
     due_time?: ValidationFunction<string>;
@@ -48,6 +49,7 @@ export declare type TaskCreateFormValidationValues = {
     CATEGORIES?: ValidationFunction<string>;
     PRIORITY?: ValidationFunction<number>;
     DTSTAMP?: ValidationFunction<string>;
+    Importance?: ValidationFunction<any>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TaskCreateFormOverridesProps = {
@@ -64,6 +66,7 @@ export declare type TaskCreateFormOverridesProps = {
     CATEGORIES?: PrimitiveOverrideProps<TextFieldProps>;
     PRIORITY?: PrimitiveOverrideProps<TextFieldProps>;
     DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
+    Importance?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type TaskCreateFormProps = React.PropsWithChildren<{
     overrides?: TaskCreateFormOverridesProps | undefined | null;

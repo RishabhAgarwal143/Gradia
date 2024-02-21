@@ -7,17 +7,180 @@
 /* eslint-disable */
 import * as React from "react";
 import {
+  Autocomplete,
+  Badge,
   Button,
+  Divider,
   Flex,
   Grid,
+  Icon,
+  ScrollView,
+  SwitchField,
+  Text,
   TextAreaField,
   TextField,
+  useTheme,
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getSchedule } from "../graphql/queries";
+import { getSchedule, listImportances } from "../graphql/queries";
 import { updateSchedule } from "../graphql/mutations";
 const client = generateClient();
+function ArrayField({
+  items = [],
+  onChange,
+  label,
+  inputFieldRef,
+  children,
+  hasError,
+  setFieldValue,
+  currentFieldValue,
+  defaultFieldValue,
+  lengthLimit,
+  getBadgeText,
+  runValidationTasks,
+  errorMessage,
+}) {
+  const labelElement = <Text>{label}</Text>;
+  const {
+    tokens: {
+      components: {
+        fieldmessages: { error: errorStyles },
+      },
+    },
+  } = useTheme();
+  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
+  const [isEditing, setIsEditing] = React.useState();
+  React.useEffect(() => {
+    if (isEditing) {
+      inputFieldRef?.current?.focus();
+    }
+  }, [isEditing]);
+  const removeItem = async (removeIndex) => {
+    const newItems = items.filter((value, index) => index !== removeIndex);
+    await onChange(newItems);
+    setSelectedBadgeIndex(undefined);
+  };
+  const addItem = async () => {
+    const { hasError } = runValidationTasks();
+    if (
+      currentFieldValue !== undefined &&
+      currentFieldValue !== null &&
+      currentFieldValue !== "" &&
+      !hasError
+    ) {
+      const newItems = [...items];
+      if (selectedBadgeIndex !== undefined) {
+        newItems[selectedBadgeIndex] = currentFieldValue;
+        setSelectedBadgeIndex(undefined);
+      } else {
+        newItems.push(currentFieldValue);
+      }
+      await onChange(newItems);
+      setIsEditing(false);
+    }
+  };
+  const arraySection = (
+    <React.Fragment>
+      {!!items?.length && (
+        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
+          {items.map((value, index) => {
+            return (
+              <Badge
+                key={index}
+                style={{
+                  cursor: "pointer",
+                  alignItems: "center",
+                  marginRight: 3,
+                  marginTop: 3,
+                  backgroundColor:
+                    index === selectedBadgeIndex ? "#B8CEF9" : "",
+                }}
+                onClick={() => {
+                  setSelectedBadgeIndex(index);
+                  setFieldValue(items[index]);
+                  setIsEditing(true);
+                }}
+              >
+                {getBadgeText ? getBadgeText(value) : value.toString()}
+                <Icon
+                  style={{
+                    cursor: "pointer",
+                    paddingLeft: 3,
+                    width: 20,
+                    height: 20,
+                  }}
+                  viewBox={{ width: 20, height: 20 }}
+                  paths={[
+                    {
+                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
+                      stroke: "black",
+                    },
+                  ]}
+                  ariaLabel="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    removeItem(index);
+                  }}
+                />
+              </Badge>
+            );
+          })}
+        </ScrollView>
+      )}
+      <Divider orientation="horizontal" marginTop={5} />
+    </React.Fragment>
+  );
+  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
+    return (
+      <React.Fragment>
+        {labelElement}
+        {arraySection}
+      </React.Fragment>
+    );
+  }
+  return (
+    <React.Fragment>
+      {labelElement}
+      {isEditing && children}
+      {!isEditing ? (
+        <>
+          <Button
+            onClick={() => {
+              setIsEditing(true);
+            }}
+          >
+            Add item
+          </Button>
+          {errorMessage && hasError && (
+            <Text color={errorStyles.color} fontSize={errorStyles.fontSize}>
+              {errorMessage}
+            </Text>
+          )}
+        </>
+      ) : (
+        <Flex justifyContent="flex-end">
+          {(currentFieldValue || isEditing) && (
+            <Button
+              children="Cancel"
+              type="button"
+              size="small"
+              onClick={() => {
+                setFieldValue(defaultFieldValue);
+                setIsEditing(false);
+                setSelectedBadgeIndex(undefined);
+              }}
+            ></Button>
+          )}
+          <Button size="small" variation="link" onClick={addItem}>
+            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
+          </Button>
+        </Flex>
+      )}
+      {arraySection}
+    </React.Fragment>
+  );
+}
 export default function ShowInfo(props) {
   const {
     id: idProp,
@@ -42,6 +205,8 @@ export default function ShowInfo(props) {
     UID: "",
     CATEGORIES: "",
     DTSTAMP: "",
+    confirmed: false,
+    Importance: undefined,
   };
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
   const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
@@ -55,10 +220,15 @@ export default function ShowInfo(props) {
   const [UID, setUID] = React.useState(initialValues.UID);
   const [CATEGORIES, setCATEGORIES] = React.useState(initialValues.CATEGORIES);
   const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
+  const [confirmed, setConfirmed] = React.useState(initialValues.confirmed);
+  const [Importance, setImportance] = React.useState(initialValues.Importance);
+  const [ImportanceLoading, setImportanceLoading] = React.useState(false);
+  const [importanceRecords, setImportanceRecords] = React.useState([]);
+  const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = scheduleRecord
-      ? { ...initialValues, ...scheduleRecord }
+      ? { ...initialValues, ...scheduleRecord, Importance }
       : initialValues;
     setSUMMARY(cleanValues.SUMMARY);
     setDTSTART(cleanValues.DTSTART);
@@ -74,6 +244,10 @@ export default function ShowInfo(props) {
     setUID(cleanValues.UID);
     setCATEGORIES(cleanValues.CATEGORIES);
     setDTSTAMP(cleanValues.DTSTAMP);
+    setConfirmed(cleanValues.confirmed);
+    setImportance(cleanValues.Importance);
+    setCurrentImportanceValue(undefined);
+    setCurrentImportanceDisplayValue("");
     setErrors({});
   };
   const [scheduleRecord, setScheduleRecord] = React.useState(scheduleModelProp);
@@ -87,11 +261,30 @@ export default function ShowInfo(props) {
             })
           )?.data?.getSchedule
         : scheduleModelProp;
+      const ImportanceRecord = record ? await record.Importance : undefined;
+      setImportance(ImportanceRecord);
       setScheduleRecord(record);
     };
     queryData();
   }, [idProp, scheduleModelProp]);
-  React.useEffect(resetStateValues, [scheduleRecord]);
+  React.useEffect(resetStateValues, [scheduleRecord, Importance]);
+  const [currentImportanceDisplayValue, setCurrentImportanceDisplayValue] =
+    React.useState("");
+  const [currentImportanceValue, setCurrentImportanceValue] =
+    React.useState(undefined);
+  const ImportanceRef = React.createRef();
+  const getIDValue = {
+    Importance: (r) => JSON.stringify({ id: r?.id }),
+  };
+  const ImportanceIdSet = new Set(
+    Array.isArray(Importance)
+      ? Importance.map((r) => getIDValue.Importance?.(r))
+      : getIDValue.Importance?.(Importance)
+  );
+  const getDisplayValue = {
+    Importance: (r) =>
+      `${r?.Grade_Percentage ? r?.Grade_Percentage + " - " : ""}${r?.id}`,
+  };
   const validations = {
     SUMMARY: [{ type: "Required" }],
     DTSTART: [{ type: "Required" }],
@@ -103,6 +296,8 @@ export default function ShowInfo(props) {
     UID: [],
     CATEGORIES: [],
     DTSTAMP: [],
+    confirmed: [],
+    Importance: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -138,6 +333,41 @@ export default function ShowInfo(props) {
     }, {});
     return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
   };
+  const fetchImportanceRecords = async (value) => {
+    setImportanceLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { Grade_Percentage: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listImportances.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listImportances?.items;
+      var loaded = result.filter(
+        (item) => !ImportanceIdSet.has(getIDValue.Importance?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setImportanceRecords(newOptions.slice(0, autocompleteLength));
+    setImportanceLoading(false);
+  };
+  React.useEffect(() => {
+    fetchImportanceRecords("");
+  }, []);
   return (
     <Grid
       as="form"
@@ -157,19 +387,29 @@ export default function ShowInfo(props) {
           UID: UID ?? null,
           CATEGORIES: CATEGORIES ?? null,
           DTSTAMP: DTSTAMP ?? null,
+          confirmed: confirmed ?? null,
+          Importance: Importance ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
             if (Array.isArray(modelFields[fieldName])) {
               promises.push(
                 ...modelFields[fieldName].map((item) =>
-                  runValidationTasks(fieldName, item)
+                  runValidationTasks(
+                    fieldName,
+                    item,
+                    getDisplayValue[fieldName]
+                  )
                 )
               );
               return promises;
             }
             promises.push(
-              runValidationTasks(fieldName, modelFields[fieldName])
+              runValidationTasks(
+                fieldName,
+                modelFields[fieldName],
+                getDisplayValue[fieldName]
+              )
             );
             return promises;
           }, [])
@@ -196,6 +436,8 @@ export default function ShowInfo(props) {
             UID: modelFields.UID ?? null,
             CATEGORIES: modelFields.CATEGORIES ?? null,
             DTSTAMP: modelFields.DTSTAMP ?? null,
+            confirmed: modelFields.confirmed ?? null,
+            scheduleImportanceId: modelFields?.Importance?.id ?? null,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
@@ -241,6 +483,8 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -276,6 +520,8 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -311,6 +557,8 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -352,6 +600,8 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -393,6 +643,8 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -426,6 +678,8 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -467,6 +721,8 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -508,6 +764,8 @@ export default function ShowInfo(props) {
               UID: value,
               CATEGORIES,
               DTSTAMP,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.UID ?? value;
@@ -549,6 +807,8 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES: value,
               DTSTAMP,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.CATEGORIES ?? value;
@@ -592,6 +852,8 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP: value,
+              confirmed,
+              Importance,
             };
             const result = onChange(modelFields);
             value = result?.DTSTAMP ?? value;
@@ -606,6 +868,156 @@ export default function ShowInfo(props) {
         hasError={errors.DTSTAMP?.hasError}
         {...getOverrideProps(overrides, "DTSTAMP")}
       ></TextField>
+      <SwitchField
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Confirmed</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
+        defaultChecked={false}
+        isDisabled={false}
+        isChecked={confirmed}
+        onChange={(e) => {
+          let value = e.target.checked;
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+              RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
+              confirmed: value,
+              Importance,
+            };
+            const result = onChange(modelFields);
+            value = result?.confirmed ?? value;
+          }
+          if (errors.confirmed?.hasError) {
+            runValidationTasks("confirmed", value);
+          }
+          setConfirmed(value);
+        }}
+        onBlur={() => runValidationTasks("confirmed", confirmed)}
+        errorMessage={errors.confirmed?.errorMessage}
+        hasError={errors.confirmed?.hasError}
+        {...getOverrideProps(overrides, "confirmed")}
+      ></SwitchField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+              RRULE,
+              UID,
+              CATEGORIES,
+              DTSTAMP,
+              confirmed,
+              Importance: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.Importance ?? value;
+          }
+          setImportance(value);
+          setCurrentImportanceValue(undefined);
+          setCurrentImportanceDisplayValue("");
+        }}
+        currentFieldValue={currentImportanceValue}
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Importance</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
+        items={Importance ? [Importance] : []}
+        hasError={errors?.Importance?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("Importance", currentImportanceValue)
+        }
+        errorMessage={errors?.Importance?.errorMessage}
+        getBadgeText={getDisplayValue.Importance}
+        setFieldValue={(model) => {
+          setCurrentImportanceDisplayValue(
+            model ? getDisplayValue.Importance(model) : ""
+          );
+          setCurrentImportanceValue(model);
+        }}
+        inputFieldRef={ImportanceRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label={
+            <span style={{ display: "inline-flex" }}>
+              <span>Importance</span>
+              <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+                {" "}
+                - optional
+              </span>
+            </span>
+          }
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search Importance"
+          value={currentImportanceDisplayValue}
+          options={importanceRecords
+            .filter((r) => !ImportanceIdSet.has(getIDValue.Importance?.(r)))
+            .map((r) => ({
+              id: getIDValue.Importance?.(r),
+              label: getDisplayValue.Importance?.(r),
+            }))}
+          isLoading={ImportanceLoading}
+          onSelect={({ id, label }) => {
+            setCurrentImportanceValue(
+              importanceRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentImportanceDisplayValue(label);
+            runValidationTasks("Importance", label);
+          }}
+          onClear={() => {
+            setCurrentImportanceDisplayValue("");
+          }}
+          defaultValue={Importance}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchImportanceRecords(value);
+            if (errors.Importance?.hasError) {
+              runValidationTasks("Importance", value);
+            }
+            setCurrentImportanceDisplayValue(value);
+            setCurrentImportanceValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("Importance", currentImportanceDisplayValue)
+          }
+          errorMessage={errors.Importance?.errorMessage}
+          hasError={errors.Importance?.hasError}
+          ref={ImportanceRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "Importance")}
+        ></Autocomplete>
+      </ArrayField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

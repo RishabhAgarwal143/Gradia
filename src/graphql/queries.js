@@ -1,6 +1,44 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getImportance = /* GraphQL */ `
+  query GetImportance($id: ID!) {
+    getImportance(id: $id) {
+      id
+      Grade_Percentage
+      Task_info
+      Expected_Time
+      Course
+      Additional_Info
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listImportances = /* GraphQL */ `
+  query ListImportances(
+    $filter: ModelImportanceFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listImportances(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        Grade_Percentage
+        Task_info
+        Expected_Time
+        Course
+        Additional_Info
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getSubscribedCalendar = /* GraphQL */ `
   query GetSubscribedCalendar($id: ID!) {
     getSubscribedCalendar(id: $id) {
@@ -214,8 +252,21 @@ export const getSchedule = /* GraphQL */ `
       UID
       CATEGORIES
       DTSTAMP
+      confirmed
+      Importance {
+        id
+        Grade_Percentage
+        Task_info
+        Expected_Time
+        Course
+        Additional_Info
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      scheduleImportanceId
       owner
       __typename
     }
@@ -249,8 +300,21 @@ export const listSchedules = /* GraphQL */ `
         UID
         CATEGORIES
         DTSTAMP
+        confirmed
+        Importance {
+          id
+          Grade_Percentage
+          Task_info
+          Expected_Time
+          Course
+          Additional_Info
+          createdAt
+          updatedAt
+          __typename
+        }
         createdAt
         updatedAt
+        scheduleImportanceId
         owner
         __typename
       }
@@ -295,8 +359,21 @@ export const schedulesByUserinfoID = /* GraphQL */ `
         UID
         CATEGORIES
         DTSTAMP
+        confirmed
+        Importance {
+          id
+          Grade_Percentage
+          Task_info
+          Expected_Time
+          Course
+          Additional_Info
+          createdAt
+          updatedAt
+          __typename
+        }
         createdAt
         updatedAt
+        scheduleImportanceId
         owner
         __typename
       }
@@ -319,8 +396,20 @@ export const getTask = /* GraphQL */ `
       CATEGORIES
       PRIORITY
       DTSTAMP
+      Importance {
+        id
+        Grade_Percentage
+        Task_info
+        Expected_Time
+        Course
+        Additional_Info
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      taskImportanceId
       owner
       __typename
     }
@@ -345,8 +434,20 @@ export const listTasks = /* GraphQL */ `
         CATEGORIES
         PRIORITY
         DTSTAMP
+        Importance {
+          id
+          Grade_Percentage
+          Task_info
+          Expected_Time
+          Course
+          Additional_Info
+          createdAt
+          updatedAt
+          __typename
+        }
         createdAt
         updatedAt
+        taskImportanceId
         owner
         __typename
       }
@@ -382,8 +483,20 @@ export const tasksByUserinfoID = /* GraphQL */ `
         CATEGORIES
         PRIORITY
         DTSTAMP
+        Importance {
+          id
+          Grade_Percentage
+          Task_info
+          Expected_Time
+          Course
+          Additional_Info
+          createdAt
+          updatedAt
+          __typename
+        }
         createdAt
         updatedAt
+        taskImportanceId
         owner
         __typename
       }

@@ -1,6 +1,57 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateImportance = /* GraphQL */ `
+  subscription OnCreateImportance(
+    $filter: ModelSubscriptionImportanceFilterInput
+  ) {
+    onCreateImportance(filter: $filter) {
+      id
+      Grade_Percentage
+      Task_info
+      Expected_Time
+      Course
+      Additional_Info
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateImportance = /* GraphQL */ `
+  subscription OnUpdateImportance(
+    $filter: ModelSubscriptionImportanceFilterInput
+  ) {
+    onUpdateImportance(filter: $filter) {
+      id
+      Grade_Percentage
+      Task_info
+      Expected_Time
+      Course
+      Additional_Info
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteImportance = /* GraphQL */ `
+  subscription OnDeleteImportance(
+    $filter: ModelSubscriptionImportanceFilterInput
+  ) {
+    onDeleteImportance(filter: $filter) {
+      id
+      Grade_Percentage
+      Task_info
+      Expected_Time
+      Course
+      Additional_Info
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const onCreateSubscribedCalendar = /* GraphQL */ `
   subscription OnCreateSubscribedCalendar(
     $filter: ModelSubscriptionSubscribedCalendarFilterInput
@@ -255,8 +306,21 @@ export const onCreateSchedule = /* GraphQL */ `
       UID
       CATEGORIES
       DTSTAMP
+      confirmed
+      Importance {
+        id
+        Grade_Percentage
+        Task_info
+        Expected_Time
+        Course
+        Additional_Info
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      scheduleImportanceId
       owner
       __typename
     }
@@ -288,8 +352,21 @@ export const onUpdateSchedule = /* GraphQL */ `
       UID
       CATEGORIES
       DTSTAMP
+      confirmed
+      Importance {
+        id
+        Grade_Percentage
+        Task_info
+        Expected_Time
+        Course
+        Additional_Info
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      scheduleImportanceId
       owner
       __typename
     }
@@ -321,8 +398,21 @@ export const onDeleteSchedule = /* GraphQL */ `
       UID
       CATEGORIES
       DTSTAMP
+      confirmed
+      Importance {
+        id
+        Grade_Percentage
+        Task_info
+        Expected_Time
+        Course
+        Additional_Info
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      scheduleImportanceId
       owner
       __typename
     }
@@ -345,8 +435,20 @@ export const onCreateTask = /* GraphQL */ `
       CATEGORIES
       PRIORITY
       DTSTAMP
+      Importance {
+        id
+        Grade_Percentage
+        Task_info
+        Expected_Time
+        Course
+        Additional_Info
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      taskImportanceId
       owner
       __typename
     }
@@ -369,8 +471,20 @@ export const onUpdateTask = /* GraphQL */ `
       CATEGORIES
       PRIORITY
       DTSTAMP
+      Importance {
+        id
+        Grade_Percentage
+        Task_info
+        Expected_Time
+        Course
+        Additional_Info
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      taskImportanceId
       owner
       __typename
     }
@@ -393,8 +507,20 @@ export const onDeleteTask = /* GraphQL */ `
       CATEGORIES
       PRIORITY
       DTSTAMP
+      Importance {
+        id
+        Grade_Percentage
+        Task_info
+        Expected_Time
+        Course
+        Additional_Info
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      taskImportanceId
       owner
       __typename
     }

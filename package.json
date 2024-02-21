@@ -23,7 +23,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start && python src/Flask_server/flask_view.py",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test nyc mocha",
     "eject": "react-scripts eject",

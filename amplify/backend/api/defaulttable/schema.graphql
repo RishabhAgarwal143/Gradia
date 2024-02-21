@@ -1,3 +1,12 @@
+type Importance @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  Grade_Percentage: String
+  Task_info: String
+  Expected_Time: String
+  Course: String
+  Additional_Info: AWSJSON
+}
+
 type SubscribedCalendar @model @auth(rules: [{allow: private}, {allow: owner}, {allow: public}]) {
   id: ID!
   Calendar_Name: String
@@ -44,6 +53,8 @@ type Schedule @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Adm
   UID: String
   CATEGORIES: String
   DTSTAMP: AWSDateTime
+  confirmed: Boolean
+  Importance: Importance @hasOne
 }
 
 type Task @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"], operations: [create, read, update, delete]}, {allow: public}]) {
@@ -58,5 +69,6 @@ type Task @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"
   CATEGORIES: String
   PRIORITY: Int
   DTSTAMP: AWSDateTime
+  Importance: Importance @hasOne
 }
  
