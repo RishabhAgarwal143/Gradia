@@ -5,6 +5,7 @@ import * as commands from "./support_local_files/support_func.js";
 import BasicCalendar from "./Components/BaseCalendar.js";
 
 function App() {
+  commands.create_user();
   return (
     <div className="App" style={{ height: "100vh", weight: "100vw" }}>
       {/* <header className="App-header"> */}
