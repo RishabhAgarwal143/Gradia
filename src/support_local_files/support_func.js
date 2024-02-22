@@ -122,7 +122,7 @@ export async function subscribedScedule() {
 }
 
 export async function create_schedule() {
-  await client.graphql({
+  const newSchedule = await client.graphql({
     query: mutations.createSchedule,
     variables: {
       input: {
@@ -132,10 +132,13 @@ export async function create_schedule() {
         DESCRIPTION: "Lorem ipsum dolor sit amet",
         LOCATION: "Lorem ipsum dolor sit amet",
         userinfoID: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-        RRULE: /* Provide a Repeatdata instance here */ "",
+        UID: "Lorem ipsum dolor sit amet",
+        CATEGORIES: "Lorem ipsum dolor sit amet",
+        DTSTAMP: "1970-01-01T12:30:23.999Z",
       },
     },
   });
+  return newSchedule;
 }
 
 export async function list_schedule_item() {
@@ -195,3 +198,5 @@ export async function list_tasks_item() {
     throw error; // Rethrow the error if needed
   }
 }
+
+export async function conflict_event() {}

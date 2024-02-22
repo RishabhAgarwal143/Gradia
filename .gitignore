@@ -22,6 +22,8 @@ src/Flask_server/__pycache__
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+run_server.sh
+
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend

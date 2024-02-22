@@ -1,6 +1,8 @@
 #!/bin/bash
-source ../.venv/Scripts/activate
-export GENERATE_SOURCEMAP=false
+
+if [ -e ".env" ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
 pip install -r requirements.txt
 npm install
 npm run all
