@@ -25,7 +25,8 @@ const Chatbot = () => {
       .then((data) => {
         // Display bot response
         const botMessageDiv = document.createElement("div");
-        botMessageDiv.className = "chat-message bot-message";
+        botMessageDiv.className =
+          "bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs";
         botMessageDiv.innerHTML = data.bot_response;
         document.getElementById("chat-messages").appendChild(botMessageDiv);
       })
@@ -37,8 +38,13 @@ const Chatbot = () => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4 text-left" id="chat-messages">
-        HI! How are you?
-        {/* Chat messages will be displayed here */}
+        {/* Example Chat Messages */}
+        <div className="flex flex-col items-start mb-4">
+          <div className="bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs">
+            <p className="">Hi! How are you?</p>
+          </div>
+        </div>
+        {/* Additional Chat Messages will be displayed here */}
       </div>
       <div className="p-4 border-t border-gray-700">
         <div className="flex items-center">

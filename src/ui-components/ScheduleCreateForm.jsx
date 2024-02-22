@@ -15,7 +15,6 @@ import {
   Grid,
   Icon,
   ScrollView,
-  SwitchField,
   Text,
   TextAreaField,
   TextField,
@@ -203,7 +202,6 @@ export default function ScheduleCreateForm(props) {
     UID: "",
     CATEGORIES: "",
     DTSTAMP: "",
-    confirmed: false,
     Importance: undefined,
   };
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
@@ -218,7 +216,6 @@ export default function ScheduleCreateForm(props) {
   const [UID, setUID] = React.useState(initialValues.UID);
   const [CATEGORIES, setCATEGORIES] = React.useState(initialValues.CATEGORIES);
   const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
-  const [confirmed, setConfirmed] = React.useState(initialValues.confirmed);
   const [Importance, setImportance] = React.useState(initialValues.Importance);
   const [ImportanceLoading, setImportanceLoading] = React.useState(false);
   const [importanceRecords, setImportanceRecords] = React.useState([]);
@@ -235,7 +232,6 @@ export default function ScheduleCreateForm(props) {
     setUID(initialValues.UID);
     setCATEGORIES(initialValues.CATEGORIES);
     setDTSTAMP(initialValues.DTSTAMP);
-    setConfirmed(initialValues.confirmed);
     setImportance(initialValues.Importance);
     setCurrentImportanceValue(undefined);
     setCurrentImportanceDisplayValue("");
@@ -269,7 +265,6 @@ export default function ScheduleCreateForm(props) {
     UID: [],
     CATEGORIES: [],
     DTSTAMP: [],
-    confirmed: [],
     Importance: [],
   };
   const runValidationTasks = async (
@@ -360,7 +355,6 @@ export default function ScheduleCreateForm(props) {
           UID,
           CATEGORIES,
           DTSTAMP,
-          confirmed,
           Importance,
         };
         const validationResponses = await Promise.all(
@@ -409,7 +403,6 @@ export default function ScheduleCreateForm(props) {
             UID: modelFields.UID,
             CATEGORIES: modelFields.CATEGORIES,
             DTSTAMP: modelFields.DTSTAMP,
-            confirmed: modelFields.confirmed,
             scheduleImportanceId: modelFields?.Importance?.id,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
@@ -463,7 +456,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -503,7 +495,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -545,7 +536,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -587,7 +577,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -622,7 +611,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -657,7 +645,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -691,7 +678,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -726,7 +712,6 @@ export default function ScheduleCreateForm(props) {
               UID: value,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -761,7 +746,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES: value,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -798,7 +782,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES,
               DTSTAMP: value,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -814,41 +797,6 @@ export default function ScheduleCreateForm(props) {
         hasError={errors.DTSTAMP?.hasError}
         {...getOverrideProps(overrides, "DTSTAMP")}
       ></TextField>
-      <SwitchField
-        label="Confirmed"
-        defaultChecked={false}
-        isDisabled={false}
-        isChecked={confirmed}
-        onChange={(e) => {
-          let value = e.target.checked;
-          if (onChange) {
-            const modelFields = {
-              userinfoID,
-              SUMMARY,
-              DTSTART,
-              DTEND,
-              DESCRIPTION,
-              LOCATION,
-              RRULE,
-              UID,
-              CATEGORIES,
-              DTSTAMP,
-              confirmed: value,
-              Importance,
-            };
-            const result = onChange(modelFields);
-            value = result?.confirmed ?? value;
-          }
-          if (errors.confirmed?.hasError) {
-            runValidationTasks("confirmed", value);
-          }
-          setConfirmed(value);
-        }}
-        onBlur={() => runValidationTasks("confirmed", confirmed)}
-        errorMessage={errors.confirmed?.errorMessage}
-        hasError={errors.confirmed?.hasError}
-        {...getOverrideProps(overrides, "confirmed")}
-      ></SwitchField>
       <ArrayField
         lengthLimit={1}
         onChange={async (items) => {
@@ -865,7 +813,6 @@ export default function ScheduleCreateForm(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance: value,
             };
             const result = onChange(modelFields);

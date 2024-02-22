@@ -45,7 +45,7 @@ const MyCalendar = () => {
           );
           console.log("todos", todos.data.listSchedules.items);
         }
-        await subscribeToChanges(); // Call function to subscribe to database changes
+        await subscribeToChanges(); // Call function toLocaleString('') subscribe toLocaleString('') database changes
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -56,10 +56,10 @@ const MyCalendar = () => {
       try {
         const todos = await list_schedule_item();
         // Inside fetchData_local
-        localStorage.setItem(
-          "todos",
-          JSON.stringify(todos.data.listSchedules.items)
-        );
+        // localStorage.setItem(
+        //   "todos",
+        //   JSON.stringify(todos.data.listSchedules.items)
+        // );
 
         const allEvents = processEvents(todos.data.listSchedules.items);
         // console.log("HERE in fetch", todos.data.listSchedules.items);
@@ -78,7 +78,7 @@ const MyCalendar = () => {
           updateLocalStorage(allEvents);
         }
       } catch (error) {
-        console.error("Error subscribing to changes:", error);
+        console.error("Error subscribing toLocaleString('') changes:", error);
       }
     }
     const processEvents = (fetchedEvents) => {
@@ -93,6 +93,7 @@ const MyCalendar = () => {
       });
       return processedEvents;
     };
+
     async function updateLocalStorage(data) {
       try {
         localStorage.setItem("todos", JSON.stringify(data));
@@ -127,7 +128,7 @@ const MyCalendar = () => {
   const generateOccurrences = (event) => {
     const { BYDAYS, FREQ, INTERVALS, UNTIL, WKST } = event.RRULE;
 
-    // Convert BYDAYS string to an array of days
+    // Convert BYDAYS string toLocaleString('') an array of days
     const byDaysArray = BYDAYS ? BYDAYS.split(",") : [];
 
     // Parse UNTIL date
@@ -230,76 +231,63 @@ const MyCalendar = () => {
   //   );
 
   return (
-    <div>
-      {/* <div
-        className="fixed top-0 left-0 h-full w-1/4 flex flex-col items-center justify-center overflow-y-auto"
+    <div className="flex flex-row bg-black">
+      <div className="flex-1 relative">
+        <div className="h-screen bg-gray-200 flex items-center justify-center">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 flex items-center justify-center"
+          >
+            <img src={addIcon} alt="Add Event" className="w-6 h-6" />
+          </button>
+          <AddEventModal
+            isOpen={isAddModalOpen}
+            onRequestClose={() => setIsAddModalOpen(false)}
+            onAddEvent={handleAddEvent}
+          />
+          <EventDescModal
+            event={originalSelectedEvent}
+            isOpen={isEventModalOpen}
+            onClose={() => setIsEventModalOpen(false)}
+          />
+          <div></div>
+          <Calendar
+            localizer={localizer}
+            events={transformedEvents}
+            startAccessor="start"
+            endAccessor="end"
+            onDoubleClickEvent={handleDoubleClickEvent}
+            defaultView="week"
+            views={["month", "week", "day", "agenda"]}
+            className="w-3/4 left-0 top-0 absolute bg-white p-4  shadow-lg"
+          />
+          {/* <Sidebar /> */}
+        </div>
+      </div>
+      <div></div>
+      {/* <div className="flex"> */}
+      {/* Search bar */}
+      <div
+        className="fixed top-0 right-0 h-1/2 w-1/4 flex flex-col items-center justify-center overflow-y-auto"
+        style={{
+          background: "#1f1f1f",
+          fontFamily: "proxima-nova",
+          color: "white",
+        }}
+      >
+        <h1 className="text-white text-xl font-bold mt-8 mb-4">Tasks</h1>
+        <Sidebar />
+      </div>
+
+      <div
+        className="fixed bottom-0 right-0 h-1/2 w-1/4 flex flex-col items-center justify-center overflow-y-auto"
         style={{
           background: "#1f1f1f",
           fontFamily: "cursive",
           color: "white",
         }}
       >
-        <h1 className="text-white text-xl font-bold mt-8 mb-4">Chatbot</h1>
         <MyComponent />
-      </div> */}
-      <div className="flex flex-row bg-black">
-        <div className="flex-1 relative">
-          <div className="h-screen bg-gray-200 flex items-center justify-center">
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 flex items-center justify-center"
-            >
-              <img src={addIcon} alt="Add Event" className="w-6 h-6" />
-            </button>
-            <AddEventModal
-              isOpen={isAddModalOpen}
-              onRequestClose={() => setIsAddModalOpen(false)}
-              onAddEvent={handleAddEvent}
-            />
-            <EventDescModal
-              event={originalSelectedEvent}
-              isOpen={isEventModalOpen}
-              onClose={() => setIsEventModalOpen(false)}
-            />
-            <div></div>
-            <Calendar
-              localizer={localizer}
-              events={transformedEvents}
-              startAccessor="start"
-              endAccessor="end"
-              onDoubleClickEvent={handleDoubleClickEvent}
-              defaultView="week"
-              views={["month", "week", "day", "agenda"]}
-              className="w-3/4 left-0 top-0 absolute bg-white p-4  shadow-lg"
-            />
-            {/* <Sidebar /> */}
-          </div>
-        </div>
-        <div></div>
-        {/* <div className="flex"> */}
-        {/* Search bar */}
-        <div
-          className="fixed top-0 right-0 h-1/2 w-1/4 flex flex-col items-center justify-center overflow-y-auto"
-          style={{
-            background: "#1f1f1f",
-            fontFamily: "proxima-nova",
-            color: "white",
-          }}
-        >
-          <h1 className="text-white text-xl font-bold mt-8 mb-4">Tasks</h1>
-          <Sidebar />
-        </div>
-
-        <div
-          className="fixed bottom-0 right-0 h-1/2 w-1/4 flex flex-col items-center justify-center overflow-y-auto"
-          style={{
-            background: "#1f1f1f",
-            fontFamily: "cursive",
-            color: "white",
-          }}
-        >
-          <MyComponent />
-        </div>
       </div>
     </div>
   );

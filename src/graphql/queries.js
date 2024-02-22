@@ -252,7 +252,6 @@ export const getSchedule = /* GraphQL */ `
       UID
       CATEGORIES
       DTSTAMP
-      confirmed
       Importance {
         id
         Grade_Percentage
@@ -300,7 +299,6 @@ export const listSchedules = /* GraphQL */ `
         UID
         CATEGORIES
         DTSTAMP
-        confirmed
         Importance {
           id
           Grade_Percentage
@@ -359,7 +357,6 @@ export const schedulesByUserinfoID = /* GraphQL */ `
         UID
         CATEGORIES
         DTSTAMP
-        confirmed
         Importance {
           id
           Grade_Percentage

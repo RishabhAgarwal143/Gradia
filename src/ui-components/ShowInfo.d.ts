@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { AutocompleteProps, GridProps, SwitchFieldProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { AutocompleteProps, GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -32,7 +32,6 @@ export declare type ShowInfoInputValues = {
     UID?: string;
     CATEGORIES?: string;
     DTSTAMP?: string;
-    confirmed?: boolean;
     Importance?: any;
 };
 export declare type ShowInfoValidationValues = {
@@ -46,7 +45,6 @@ export declare type ShowInfoValidationValues = {
     UID?: ValidationFunction<string>;
     CATEGORIES?: ValidationFunction<string>;
     DTSTAMP?: ValidationFunction<string>;
-    confirmed?: ValidationFunction<boolean>;
     Importance?: ValidationFunction<any>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
@@ -62,7 +60,6 @@ export declare type ShowInfoOverridesProps = {
     UID?: PrimitiveOverrideProps<TextFieldProps>;
     CATEGORIES?: PrimitiveOverrideProps<TextFieldProps>;
     DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
-    confirmed?: PrimitiveOverrideProps<SwitchFieldProps>;
     Importance?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type ShowInfoProps = React.PropsWithChildren<{

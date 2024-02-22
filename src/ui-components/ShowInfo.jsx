@@ -15,7 +15,6 @@ import {
   Grid,
   Icon,
   ScrollView,
-  SwitchField,
   Text,
   TextAreaField,
   TextField,
@@ -205,7 +204,6 @@ export default function ShowInfo(props) {
     UID: "",
     CATEGORIES: "",
     DTSTAMP: "",
-    confirmed: false,
     Importance: undefined,
   };
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
@@ -220,7 +218,6 @@ export default function ShowInfo(props) {
   const [UID, setUID] = React.useState(initialValues.UID);
   const [CATEGORIES, setCATEGORIES] = React.useState(initialValues.CATEGORIES);
   const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
-  const [confirmed, setConfirmed] = React.useState(initialValues.confirmed);
   const [Importance, setImportance] = React.useState(initialValues.Importance);
   const [ImportanceLoading, setImportanceLoading] = React.useState(false);
   const [importanceRecords, setImportanceRecords] = React.useState([]);
@@ -244,7 +241,6 @@ export default function ShowInfo(props) {
     setUID(cleanValues.UID);
     setCATEGORIES(cleanValues.CATEGORIES);
     setDTSTAMP(cleanValues.DTSTAMP);
-    setConfirmed(cleanValues.confirmed);
     setImportance(cleanValues.Importance);
     setCurrentImportanceValue(undefined);
     setCurrentImportanceDisplayValue("");
@@ -296,7 +292,6 @@ export default function ShowInfo(props) {
     UID: [],
     CATEGORIES: [],
     DTSTAMP: [],
-    confirmed: [],
     Importance: [],
   };
   const runValidationTasks = async (
@@ -387,7 +382,6 @@ export default function ShowInfo(props) {
           UID: UID ?? null,
           CATEGORIES: CATEGORIES ?? null,
           DTSTAMP: DTSTAMP ?? null,
-          confirmed: confirmed ?? null,
           Importance: Importance ?? null,
         };
         const validationResponses = await Promise.all(
@@ -436,7 +430,6 @@ export default function ShowInfo(props) {
             UID: modelFields.UID ?? null,
             CATEGORIES: modelFields.CATEGORIES ?? null,
             DTSTAMP: modelFields.DTSTAMP ?? null,
-            confirmed: modelFields.confirmed ?? null,
             scheduleImportanceId: modelFields?.Importance?.id ?? null,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
@@ -483,7 +476,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -520,7 +512,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -557,7 +548,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -600,7 +590,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -643,7 +632,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -678,7 +666,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -721,7 +708,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -764,7 +750,6 @@ export default function ShowInfo(props) {
               UID: value,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -807,7 +792,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES: value,
               DTSTAMP,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -852,7 +836,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP: value,
-              confirmed,
               Importance,
             };
             const result = onChange(modelFields);
@@ -868,49 +851,6 @@ export default function ShowInfo(props) {
         hasError={errors.DTSTAMP?.hasError}
         {...getOverrideProps(overrides, "DTSTAMP")}
       ></TextField>
-      <SwitchField
-        label={
-          <span style={{ display: "inline-flex" }}>
-            <span>Confirmed</span>
-            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
-              {" "}
-              - optional
-            </span>
-          </span>
-        }
-        defaultChecked={false}
-        isDisabled={false}
-        isChecked={confirmed}
-        onChange={(e) => {
-          let value = e.target.checked;
-          if (onChange) {
-            const modelFields = {
-              SUMMARY,
-              DTSTART,
-              DTEND,
-              DESCRIPTION,
-              LOCATION,
-              userinfoID,
-              RRULE,
-              UID,
-              CATEGORIES,
-              DTSTAMP,
-              confirmed: value,
-              Importance,
-            };
-            const result = onChange(modelFields);
-            value = result?.confirmed ?? value;
-          }
-          if (errors.confirmed?.hasError) {
-            runValidationTasks("confirmed", value);
-          }
-          setConfirmed(value);
-        }}
-        onBlur={() => runValidationTasks("confirmed", confirmed)}
-        errorMessage={errors.confirmed?.errorMessage}
-        hasError={errors.confirmed?.hasError}
-        {...getOverrideProps(overrides, "confirmed")}
-      ></SwitchField>
       <ArrayField
         lengthLimit={1}
         onChange={async (items) => {
@@ -927,7 +867,6 @@ export default function ShowInfo(props) {
               UID,
               CATEGORIES,
               DTSTAMP,
-              confirmed,
               Importance: value,
             };
             const result = onChange(modelFields);

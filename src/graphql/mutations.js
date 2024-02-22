@@ -309,7 +309,6 @@ export const createSchedule = /* GraphQL */ `
       UID
       CATEGORIES
       DTSTAMP
-      confirmed
       Importance {
         id
         Grade_Percentage
@@ -355,7 +354,6 @@ export const updateSchedule = /* GraphQL */ `
       UID
       CATEGORIES
       DTSTAMP
-      confirmed
       Importance {
         id
         Grade_Percentage
@@ -401,7 +399,6 @@ export const deleteSchedule = /* GraphQL */ `
       UID
       CATEGORIES
       DTSTAMP
-      confirmed
       Importance {
         id
         Grade_Percentage
