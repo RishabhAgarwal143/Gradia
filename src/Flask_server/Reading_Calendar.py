@@ -2,7 +2,8 @@ import icalendar
 import requests
 import json
 import os
-
+import pytz
+from datetime import datetime
 class Subscribing_to_Calendar:
 
     def __init__(self,calendar_URL,accesstoken,userid, categories_name) -> None:
@@ -123,11 +124,19 @@ class Subscribing_to_Calendar:
             else:
                 summary_details = "null"
             if(event.get('DTSTART')):
-                dtstart = r"\"%s\"" % (event.get('DTSTART').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+                if(isinstance(event.get('DTSTART').dt, datetime)):
+                    temp = (event.get('DTSTART').dt.astimezone(pytz.utc))
+                    dtstart = r"\"%s\"" % (temp.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+                else:
+                    dtstart = r"\"%s\"" % (event.get('DTSTART').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
             else:
                 dtstart = "null"
             if(event.get('DTEND')):
-                dtend = r"\"%s\"" % (event.get('DTEND').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+                if(isinstance(event.get('DTEND').dt, datetime)):
+                    temp = (event.get('DTEND').dt.astimezone(pytz.utc))
+                    dtend = r"\"%s\"" % (temp.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+                else:
+                    dtend = r"\"%s\"" % (event.get('DTEND').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
             else:
                 dtend = "null"
             if(event.get('LOCATION')):
@@ -140,7 +149,8 @@ class Subscribing_to_Calendar:
             else:
                 description = "null"
             if(event.get('LAST-MODIFIED')):
-                dtstamp = r"\"%s\"" % event.get('LAST-MODIFIED').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                temp = (event.get('LAST-MODIFIED').dt.astimezone(pytz.utc))
+                dtstamp = r"\"%s\"" % (temp.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
             else:
                 dtstamp = "null"
 
@@ -154,7 +164,8 @@ class Subscribing_to_Calendar:
                 rrule["INTERVAL"] = interval
                 rrule["UNTIL"] = "null"
                 if(event.get('RRULE').get('UNTIL')):
-                    rrule["UNTIL"] = r"\"%s\"" % event.get('RRULE').get('UNTIL')[0].strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                    temp = event.get('RRULE').get('UNTIL')[0].astimezone(pytz.utc)
+                    rrule["UNTIL"] = r"\"%s\"" % temp.strftime("%Y-%m-%dT%H:%M:%S.000Z")
                 rrule["BYDAYS"] = "null"
                 if(event.get('RRULE').get('BYDAY')):
                     rrule["BYDAYS"] = r"\"%s\"" % (",".join(event.get('RRULE').get('BYDAY')))
@@ -231,11 +242,20 @@ class Subscribing_to_Calendar:
             if(event.get('SUMMARY')):
                 summary_details = r"\"%s\"" % event.get('SUMMARY')
             dtstart = "null"
+
             if(event.get('DTSTART')):
-                dtstart = r"\"%s\"" % (event.get('DTSTART').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
-            due = "null"
+                if(isinstance(event.get('DTSTART').dt, datetime)):
+                    temp = (event.get('DTSTART').dt.astimezone(pytz.utc))
+                    dtstart = r"\"%s\"" % (temp.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+                else:
+                    dtstart = r"\"%s\"" % (event.get('DTSTART').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
             if(event.get('DUE')):
-                due = r"\"%s\"" % (event.get('DUE').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+                if(isinstance(event.get('DUE').dt, datetime)):
+                    temp = (event.get('DUE').dt.astimezone(pytz.utc))
+                    due = r"\"%s\"" % (temp.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+                else:
+                    due = r"\"%s\"" % (event.get('DUE').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+
             completed = "null"
             if(event.get('COMPLETED')):
                 completed = r"\"%s\"" % (event.get('COMPLETED'))
@@ -270,15 +290,14 @@ class Subscribing_to_Calendar:
             response = requests.request("POST", url, headers=headers, data=payload)
             print("line 263" +response.text)
 
-# if __name__ == '__main__':
-
-#     Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImMzZmNiNjA5LTJkYzQtNGRkYi1hMzkwLWIxOWI4ZmQ5NDRlYiIsImV2ZW50X2lkIjoiYjhkZDIxNTItNDRiZC00Y2Y3LWFjMjYtYTY5OTYwNWIzYzdiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODIwNDA5MiwiZXhwIjoxNzA4MjExMzQ5LCJpYXQiOjE3MDgyMDc3NDksImp0aSI6IjZlZDlkNzVjLTRlOTgtNDQwMS1iOTMxLTliMTMwOWU2YTAxMSIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.ZrOqOF-MHb1X-BGEsxGcJjz11N4emayAofwL54gSWKhwuA7_iJ3Sxo6I1BsN0sQpClE7TyHWCzbB5oq-Lr2cTxINv8NUXZFm5j1T01F8GVrld1tEemxaN-LJLiPPIWofYRcnSss4iWTzWH7vdKezFwgCOA9l06VXZQ-0pjQ0ZY2ToXFWtbsgcBcFrDFw3oDh9XCyjW_Fn5ZFNfkmdi_uM4YLivSVxkvZWYMGR9Csiv4WHZnQx-p-KU4azCnzGyGMANZuz2CmOwHyTWfYktypLXHAVdYCXDKNs0uUKJXavXLniwlWYx4PGN_3IOXYwwNyWp14Eurzvij1RTEVSe7YFw'
-#     y = Subscribing_to_Calendar("https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
-#     x = Subscribing_to_Calendar("https://purdue.brightspace.com/d2l/le/calendar/feed/user/feed.ics?token=abm22pjnrmcaxnps38b1d",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Assignments List")
+if __name__ == '__main__':
+    Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6ImMzZmNiNjA5LTJkYzQtNGRkYi1hMzkwLWIxOWI4ZmQ5NDRlYiIsImV2ZW50X2lkIjoiYjhkZDIxNTItNDRiZC00Y2Y3LWFjMjYtYTY5OTYwNWIzYzdiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcwODIwNDA5MiwiZXhwIjoxNzA4NjI1NzUxLCJpYXQiOjE3MDg2MjIxNTEsImp0aSI6IjU5NmQxMzY4LWViMzMtNDU0NC04YWFiLTBjMDJkY2E4YjY1YSIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.MXcBbI6Keq2YVFc5oczGtTG_3AyZKJRXvv0UPL2NZm6-t7HFVJDvBfDn17o8eBh0Z4B2kE_VKUi4CuLy5N0CRNBlbRoneMKB6F_77RTlF3s_N10zHMdT72jd7QF3DkcWFm1Jmi4MOd4nUzg0pNGwZN5UJep_OXFD3W6SyDjByjnp1_bKqY_6MjUpOAgQFdRDfNkz4BeYVW1QPc6FpVU3v4UGcSBXC7QRSW95enT1zaTkO9wyCsO4Y6LV5ItXZzfvlMoTCpzUGszjx8IKe8ZCmNHfnlb6kSXm5d7RX_bLbTfZp9OUAI7VjVqCi3Ahs0qZChMTk4POMxfQWUucUYXb3Q'
+    y = Subscribing_to_Calendar("https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
+    x = Subscribing_to_Calendar("https://purdue.brightspace.com/d2l/le/calendar/feed/user/feed.ics?token=abm22pjnrmcaxnps38b1d",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Assignments List")
 #     # pulkit = Subscribing_to_Calendar("C:\Rishabh\Homeworks\\49595O\\quantumcalendar-v1\\src\\support_local_files\\AIFevents.ics",Token,"8019ecdb-3d9e-4659-8ce4-46e2663633a8","AIF Event Calendar")
 #     # pulkit.add_record_to_database()
-#     # x.add_record_to_database()
-#     # y.add_record_to_database()
+    x.add_record_to_database()
+    y.add_record_to_database()
 #     # x.create_file("adsfasdf")
 #     # y.add_record_to_database()
 #     x.get_current_schedules()
