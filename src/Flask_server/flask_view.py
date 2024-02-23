@@ -4,6 +4,8 @@ from chatbot_api import openai_manager
 from api_calls import initialize_payload_user
 from Reading_Calendar import Subscribing_to_Calendar
 import jwt
+import markdown
+
 
 
 app = Flask(__name__,template_folder="templates")
@@ -32,6 +34,7 @@ def index():
 def chat():
     user_message = request.form['user_message']
     response = info.chats.sendcall(user_message)
+    response = markdown.markdown(response)
     return jsonify({'bot_response': response})
 
 @app.route('/Subscribe',methods=['POST'])
