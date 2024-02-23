@@ -234,23 +234,12 @@ const MyCalendar = () => {
     <div className="flex flex-row bg-black">
       <div className="flex-1 relative">
         <div className="h-screen bg-gray-200 flex items-center justify-center">
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="absolute top-4 right-4 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 flex items-center justify-center"
-          >
-            <img src={addIcon} alt="Add Event" className="w-6 h-6" />
-          </button>
-          <AddEventModal
-            isOpen={isAddModalOpen}
-            onRequestClose={() => setIsAddModalOpen(false)}
-            onAddEvent={handleAddEvent}
-          />
+
           <EventDescModal
             event={originalSelectedEvent}
             isOpen={isEventModalOpen}
             onClose={() => setIsEventModalOpen(false)}
           />
-          <div></div>
           <Calendar
             localizer={localizer}
             events={transformedEvents}
@@ -264,10 +253,11 @@ const MyCalendar = () => {
           {/* <Sidebar /> */}
         </div>
       </div>
-      <div></div>
+
       {/* <div className="flex"> */}
       {/* Search bar */}
-      <div
+
+      {/* <div
         className="fixed top-0 right-0 h-1/2 w-1/4 flex flex-col items-center justify-center overflow-y-auto"
         style={{
           background: "#1f1f1f",
@@ -275,7 +265,7 @@ const MyCalendar = () => {
           color: "white",
         }}
       >
-        <h1 className="text-white text-xl font-bold mt-8 mb-4">Tasks</h1>
+        <h1 className="text-white text-xl font-bold mt-8 mb-4 py-5">Tasks</h1>
         <Sidebar />
       </div>
 
@@ -289,6 +279,63 @@ const MyCalendar = () => {
       >
         <MyComponent />
       </div>
+
+      <button
+        onClick={() => setIsAddModalOpen(true)}
+        className="fixed top-0 right-4 mx-auto bg-white text-black p-2 rounded-full flex items-center justify-center hover:bg-gray-200 transition duration-300"
+      >
+        <span className="text-black font-bold px-5 text-lg">Add Event</span>
+
+        <img src={addIcon} alt="Add Event" className="w-6 h-6" />
+      </button>
+      <AddEventModal
+        isOpen={isAddModalOpen}
+        onRequestClose={() => setIsAddModalOpen(false)}
+        onAddEvent={handleAddEvent}
+      />
+    </div> */}
+      <div className="fixed top-0 right-0 h-full w-1/4 flex flex-col items-center justify-start overflow-y-auto"
+        style={{ background: "#1f1f1f", fontFamily: "cursive", color: "white" }}>
+        <div className="flex">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-gray-800 p-2 rounded-full flex items-center justify-center hover:bg-gray-200  transition duration-300 mt-4 mb-2 mr-3" // Added mr-2 for right margin
+            style={{ fontFamily: "cursive", color: "white" }}
+          >
+            <span className="text-white font-bold px-2  hover:text-black">Add Event</span>
+            <img src={addIcon} alt="Add Event" className="w-6 h-6 fill-current text-white" />
+          </button>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-gray-800 p-2 rounded-full flex items-center justify-center hover:bg-gray-200  transition duration-300 mt-4 mb-2"
+            style={{ fontFamily: "cursive", color: "white" }}
+          >
+            <span className="text-white font-bold px-2  hover:text-black">Add Tasks</span>
+            <img src={addIcon} alt="Add Tasks" className="w-6 h-6 fill-current text-white" />
+          </button>
+        </div>
+
+        <div
+          className="flex flex-col items-center justify-start overflow-y-auto"
+          style={{ background: "#1f1f1f", fontFamily: "proxima-nova", color: "white", height: "75%", width: "100%" }}
+        >
+          <h1 className="text-white text-xl font-bold mt-8 mb-4 py-5">Tasks</h1>
+          <Sidebar />
+        </div>
+
+        <div
+          className="flex flex-col items-center justify-start overflow-y-auto"
+          style={{ background: "#1f1f1f", fontFamily: "cursive", color: "white", height: "50%", width: "100%" }}
+        >
+          <MyComponent />
+        </div>
+      </div>
+
+      <AddEventModal
+        isOpen={isAddModalOpen}
+        onRequestClose={() => setIsAddModalOpen(false)}
+        onAddEvent={handleAddEvent}
+      />
     </div>
   );
 };

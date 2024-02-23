@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactModal from 'react-modal'; // Import the modal component from your modal library
-import { EventDesc } from '../ui-components'; // Import EventDesc from AWS Amplify
+import EventDetailsCard from './EventDetailsCard';// Import EventDesc from AWS Amplify
 
 const EventDescModal = ({ event, isOpen, onClose }) => {
     return (
@@ -28,7 +28,7 @@ const EventDescModal = ({ event, isOpen, onClose }) => {
                         <path d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
-                <EventDesc schedule={event} />
+                <EventDetailsCard event={event} />
             </div>
             {/* <div className="bg-white rounded-lg p-6 w-1/4 h-1/4">
 
