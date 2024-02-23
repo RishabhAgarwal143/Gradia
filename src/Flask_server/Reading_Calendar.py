@@ -298,9 +298,4 @@ if __name__ == '__main__':
 #     # pulkit.add_record_to_database()
     x.add_record_to_database()
     y.add_record_to_database()
-#     # x.create_file("adsfasdf")
-#     # y.add_record_to_database()
-#     x.get_current_schedules()
-#     # y.print_calendar_details()
-#     # x.print_calendar_details()
 

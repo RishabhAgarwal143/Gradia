@@ -9,7 +9,7 @@ import os
 
 openai.api_key = f'{os.environ["OPENAI_API_KEY"]}'
 client = OpenAI(api_key=openai.api_key)
-assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
+assistant_id = "asst_F3y8sO8bTCWimmvExFsrLLsa"
 
 functions = {
     'initialize_payload_user': ac.initialize_payload_user,

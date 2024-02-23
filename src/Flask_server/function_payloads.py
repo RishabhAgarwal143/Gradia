@@ -54,14 +54,15 @@ class Payload:
         self.token = token
         self.user_info_id = user_info_id
         self.timezone = timezone
-        # self.rrule_schedules = None
+        self.schedules = None
 
 
     def get_schedule_pd(self, user_time="1800-01-01 00:00:01", limit=1000, rrule=False):
-        if not rrule:
-            start_filter = "{ DTSTART: { gt: \\\"%s\\\" } }" % user_time
-        else:
-            start_filter = "null"
+        # if not rrule:
+        #     start_filter = "{ DTSTART: { gt: \\\"%s\\\" } }" % user_time
+        # else:
+        start_filter = "null"
+        limit = 1000
 
         payload = "{\"query\":\"query ListSchedules {\\r\\n    listSchedules(filter: %s,\
                     limit: %d) {\\r\\n        items {\\r\\n            id\\r\\n            SUMMARY\\r\\n          \

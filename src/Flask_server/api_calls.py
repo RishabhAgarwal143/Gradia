@@ -18,6 +18,8 @@ global payload
 global time_converter
 
 
+def store_schedules(schedules):
+    payload.schedules = schedules
 def initialize_payload_user(token, user_info_id):
     TOKEN = token
     user_id = user_info_id
@@ -41,6 +43,7 @@ def initialize_payload_user(token, user_info_id):
     user_info = UserInfo(user_id, user_timezone, user_email, user_name)
     global payload
     payload = Payload(url, headers, user_timezone, TOKEN, user_info_id)
+
 
     # rrule_schedules = payload.get_rrule_schedules()
 

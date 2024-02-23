@@ -15,6 +15,7 @@ import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 import { subscribedScedule } from "../support_local_files/support_func";
 import MyComponent from "./Chatbot";
+import axios from "axios";
 
 const localizer = momentLocalizer(moment);
 
@@ -171,6 +172,15 @@ const MyCalendar = () => {
     userinfoID: event.userinfoID,
     id: event.id,
   }));
+
+  axios
+    .post("http://127.0.0.1:5000/api/schedule", transformedEvents)
+    .then((response) => {
+      console.log("Data sent successfully:");
+    })
+    .catch((error) => {
+      console.error("Error sending data:", error);
+    });
 
   const handleAddEvent = (newEvent) => {
     setAllEvents([...myEvents, newEvent]);
