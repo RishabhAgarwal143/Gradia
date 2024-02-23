@@ -6,7 +6,8 @@ const Chatbot = () => {
 
     // Display user message
     const userMessageDiv = document.createElement("div");
-    userMessageDiv.className = "chat-message user-message";
+    userMessageDiv.className =
+      "chat-message user-message bg-blue-500 text-white rounded-lg p-2 mb-2";
     userMessageDiv.innerHTML = userInput;
     document.getElementById("chat-messages").appendChild(userMessageDiv);
 
@@ -26,7 +27,7 @@ const Chatbot = () => {
         // Display bot response
         const botMessageDiv = document.createElement("div");
         botMessageDiv.className =
-          "bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs";
+          "bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs ml-auto";
         botMessageDiv.innerHTML = data.bot_response;
         document.getElementById("chat-messages").appendChild(botMessageDiv);
       })
@@ -36,14 +37,10 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto p-4 text-left" id="chat-messages">
+    <div className="flex flex-col h-full w-full text-white p-2 rounded-lg">
+      <div className="flex-1 overflow-y-auto p-2 text-left" id="chat-messages">
         {/* Example Chat Messages */}
-        <div className="flex flex-col items-start mb-4">
-          <div className="bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs">
-            <p className="">Hi! How are you?</p>
-          </div>
-        </div>
+        <div className="flex flex-col items-start mb-4"></div>
         {/* Additional Chat Messages will be displayed here */}
       </div>
       <div className="p-4 border-t border-gray-700">
@@ -52,7 +49,7 @@ const Chatbot = () => {
             type="text"
             id="user-input"
             placeholder="Type your message..."
-            className="flex-1 p-2 mr-2 bg-gray-800 text-white rounded-lg focus:outline-none"
+            className="flex-1 p-2 mr-2 bg-gray-700 text-white rounded-lg focus:outline-none"
           />
           <button
             onClick={sendMessage}
