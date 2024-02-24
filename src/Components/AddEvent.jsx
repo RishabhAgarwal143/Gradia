@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { cognito_Id } from '../support_local_files/support_func';
 const AddEvent = ({ onSubmit }) => {
     const [summary, setSummary] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -21,16 +21,19 @@ const AddEvent = ({ onSubmit }) => {
         // Create an event object with the form data
         const eventData = {
             SUMMARY: summary,
-            DTSTART: `${startDate}T${startTime}`,
-            DTEND: `${endDate}T${endTime}`,
+            DTSTART: new Date(`${startDate}T${startTime}Z`),
+            DTEND: new Date(`${endDate}T${endTime}Z`),
             LOCATION: location,
             DESCRIPTION: description,
-            rrule: {
-                rule: rrule,
-                frequency,
-                interval,
-                byDay: selectedDays.join(','), // Convert selected days to comma-separated string
+            RRULE: {
+                FREQ: "WEEKLY",
+                INTERVAL: 1,
+            // BYDAYS: selectedDays,
+            // UNTIL: new Date(`${endDate}T${endTime}Z`),
+            // WKST: new Date(startDate).getDay(),
+
             },
+            userinfoID: cognito_Id,
         };
         // Call the onSubmit function and pass the event data
         onSubmit(eventData);

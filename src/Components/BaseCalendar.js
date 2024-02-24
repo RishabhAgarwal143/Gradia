@@ -13,8 +13,9 @@ import addIcon from "../icons/add.svg";
 import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
-import { subscribedScedule } from "../support_local_files/support_func";
+import { subscribedScedule, create_schedule } from "../support_local_files/support_func";
 import MyComponent from "./Chatbot";
+import { createSchedule } from "../graphql/mutations";
 
 const localizer = momentLocalizer(moment);
 
@@ -152,6 +153,8 @@ const MyCalendar = () => {
 
   const handleAddEvent = (newEvent) => {
     setAllEvents([...myEvents, newEvent]);
+    create_schedule(newEvent);
+    console.log("newEvent", newEvent);
     setIsAddModalOpen(false); // Close the form after adding event
   };
 

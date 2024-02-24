@@ -121,24 +121,21 @@ export async function subscribedScedule() {
   return [createSub, UpdateSub, DeleteSub];
 }
 
-export async function create_schedule() {
-  const newSchedule = await client.graphql({
-    query: mutations.createSchedule,
-    variables: {
-      input: {
-        SUMMARY: "Lorem ipsum dolor sit amet",
-        DTSTART: "1970-01-01T12:30:23.999Z",
-        DTEND: "1970-01-01T12:30:23.999Z",
-        DESCRIPTION: "Lorem ipsum dolor sit amet",
-        LOCATION: "Lorem ipsum dolor sit amet",
-        userinfoID: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-        UID: "Lorem ipsum dolor sit amet",
-        CATEGORIES: "Lorem ipsum dolor sit amet",
-        DTSTAMP: "1970-01-01T12:30:23.999Z",
+export async function create_schedule(event) {
+  try {
+    console.log("event", event);
+    const newSchedule = await client.graphql({
+      query: mutations.createSchedule,
+      variables: {
+        input: event,
       },
-    },
-  });
-  return newSchedule;
+    });
+    return newSchedule;
+  }
+  catch (error) {
+    console.error("Error creating schedule:", error);
+    throw error; // Rethrow the error if needed
+  }
 }
 
 export async function list_schedule_item() {
@@ -199,4 +196,4 @@ export async function list_tasks_item() {
   }
 }
 
-export async function conflict_event() {}
+
