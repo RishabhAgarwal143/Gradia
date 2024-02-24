@@ -15,7 +15,7 @@ import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 import { subscribedScedule, create_schedule } from "../support_local_files/support_func";
 import MyComponent from "./Chatbot";
-import { createSchedule } from "../graphql/mutations";
+// import { createSchedule } from "../graphql/mutations";
 
 const localizer = momentLocalizer(moment);
 
@@ -23,6 +23,7 @@ const MyCalendar = () => {
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
   useEffect(() => {
