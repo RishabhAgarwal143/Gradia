@@ -9,12 +9,12 @@ import os
 
 openai.api_key = f'{os.environ["OPENAI_API_KEY"]}'
 client = OpenAI(api_key=openai.api_key)
-assistant_id = "asst_F3y8sO8bTCWimmvExFsrLLsa"
+assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
 
 functions = {
     'initialize_payload_user': ac.initialize_payload_user,
     'get_user_time': ac.get_user_time,
-    'get_schedule': ac.get_schedule
+    'get_schedule_range': ac.get_schedule_range
     # 'add_event_to_calendar': ac.add_event_to_calendar,
     # 'schedule_new_event': ac.schedule_new_event,
     # 'modify_event_in_calendar': ac.modify_event_in_calendar,

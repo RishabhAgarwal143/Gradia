@@ -26,6 +26,7 @@ class TimeConverter:
         sys_time = datetime.now(pytz.timezone('UTC'))
         user_time = sys_time.astimezone(pytz.timezone(self.user_timezone))
         return user_time.strftime('%Y-%m-%d %H:%M:%S')
+    
 
     def convert_utc_to_user_tz(self, utc_time):
         user_dt = utc_time.astimezone(pytz.timezone(self.user_timezone))
@@ -35,12 +36,12 @@ class TimeConverter:
         user_dt = datetime.strptime(user_time, '%Y-%m-%d %H:%M:%S').astimezone(pytz.timezone(self.user_timezone))
         return user_dt.astimezone(pytz.utc)
 
-    def convert_utc_time_to_ics_format(utc_time):
+    def convert_utc_time_to_ics_format(self, utc_time):
         # convert datetime.datetime(2024, 2, 11, 15, 44, 24, tzinfo=<UTC>) to ics format
         # return time.strftime('%Y%m%dT%H%M%SZ')
         return utc_time.strftime('%Y-%m-%dT%H:%M:%S.000Z')
 
-    def convert_ics_time_to_utc_format(utc_time):
+    def convert_ics_time_to_utc_format(self, utc_time):
         dt = datetime.strptime(utc_time, '%Y-%m-%dT%H:%M:%S.000Z')
         return dt.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -79,11 +80,8 @@ class Payload:
         'Authorization': 'Bearer %s' % self.token
         }
 
-        # print(headers)
         response = requests.request("POST", self.url, headers=headers, data=payload)
 
-
-        # print(response.text)
 
         return response.json()
 

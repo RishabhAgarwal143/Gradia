@@ -9,18 +9,48 @@ import sys
 from function_payloads import Payload
 from function_payloads import TimeConverter
 from function_payloads import UserInfo
+import pandas as pd
 
 global user_info
 global payload
-# global headers
-# global TOKEN
-# global url
 global time_converter
 
 
-def store_schedules(schedules):
-    payload.schedules = schedules
-def initialize_payload_user(token, user_info_id):
+def set_schedules(schedules):
+    global payload
+    # convert list of json to just one json
+    data_dicts = []
+    ct = 0
+
+    for schedule in schedules:
+        data_dicts.append(schedule)
+
+    df = pd.DataFrame(data_dicts)
+
+    # # Convert start, end column to datetime type
+    df['start'] = pd.to_datetime(df['start'])
+    df['end'] = pd.to_datetime(df['end'])
+
+    # Sort DataFrame by 'start' column
+    df_sorted = df.sort_values(by='start')
+    payload.schedules = df_sorted
+
+
+
+def schedule_range_df(user_start_time, user_end_time):
+    global payload
+    global time_converter
+    user_start_time_utc = time_converter.convert_user_to_utc_tz(user_start_time)
+    user_end_time_utc = time_converter.convert_user_to_utc_tz(user_end_time)
+
+
+    schedule_range = payload.schedules[(payload.schedules['start'] <= user_end_time_utc) & (payload.schedules['end'] >= user_start_time_utc)]
+
+    return schedule_range
+
+
+def initialize_payload_user(token, user_info_id,schedule):
+
     TOKEN = token
     user_id = user_info_id
 
@@ -43,6 +73,9 @@ def initialize_payload_user(token, user_info_id):
     user_info = UserInfo(user_id, user_timezone, user_email, user_name)
     global payload
     payload = Payload(url, headers, user_timezone, TOKEN, user_info_id)
+    # print("INITIALIZE PAYLOAD USER")
+    if(schedule != None):
+        set_schedules(schedule)
 
 
     # rrule_schedules = payload.get_rrule_schedules()
@@ -67,28 +100,32 @@ def initialize_payload_user(token, user_info_id):
 
 def get_user_time(n):
     global user_info
+    global time_converter
     user_timezone = user_info.user_timezone
     user_time = datetime.now(pytz.timezone(user_timezone))
-    user_time = user_time.strftime('%Y-%m-%d %H:%M:%S')
-
-    return user_time, user_timezone
+    user_time_t = user_time.strftime('%Y-%m-%d %H:%M:%S %A')
+    
+    return user_time_t, user_timezone
 
 
 def get_sys_time():
     return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
-def get_schedule(n, limit=10000, rrule=False):
-    global payload
-    global user_info
+def convert_time_column(column):
+    return column.apply(lambda x: time_converter.convert_utc_to_user_tz(x))
 
-    user_time, user_timezone = get_user_time(1)
-    user_time = datetime.strptime(user_time, '%Y-%m-%d %H:%M:%S')
-    user_time = user_time - timedelta(days=7)
-    user_time = user_time.strftime('%Y-%m-%d %H:%M:%S')
-    
-    schedule_json = payload.get_schedule_pd(user_time, limit=10000, rrule=False)
+def get_schedule_range(start_time, end_time, limit=1000):
+    # dataframe containing all the schedules in utc
+    global payload
+
+    df_range = schedule_range_df(start_time, end_time)
+    df_range.loc[:, ['start', 'end']] = df_range[['start', 'end']].apply(convert_time_column)
+
+    # convert to json
+    schedule_json = df_range.to_json(orient='records')
     return schedule_json
+
 
 def add_event_to_calendar(start_time, end_time, event_name, event_description=None, event_location=None):
     global payload
