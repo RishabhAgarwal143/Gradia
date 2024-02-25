@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { list_tasks_item } from "../support_local_files/support_func";
-
 const Sidebar = () => {
   const [schedules, setSchedules] = useState([]);
+  // const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,11 +35,14 @@ const Sidebar = () => {
   };
 
   return (
-    <div className=" text-white p-4 overflow-y-auto rounded-lg h-50">
+    <div
+      className=" text-white p-4 overflow-y-auto rounded-lg"
+      style={{ maxHeight: "calc(100vh - 100px)" }}
+    >
       {loading ? (
-        <p className="text-center">Loading...</p>
+        <p>Loading...</p>
       ) : (
-        <ul className="grid gap-2">
+        <ul className="grid gap-4">
           {schedules.map((schedule) => (
             <li
               key={schedule.id}
@@ -62,7 +65,7 @@ const Sidebar = () => {
           ))}
         </ul>
       )}
-      {error && <p className="text-red-500">{error.message}</p>}
+      {error && <p>{error.message}</p>}
     </div>
   );
 };

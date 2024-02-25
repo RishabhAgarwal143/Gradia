@@ -35,6 +35,8 @@ export async function currentAuthenticatedUser() {
       .catch((error) => {
         console.error("Error sending data:", error);
       });
+
+      
   } catch (err) {
     console.log(err);
   }
@@ -63,9 +65,17 @@ export async function get_item() {
   console.log(allTodos);
 }
 
-export async function create_user() {
+export async function create_user(transformedEvents) {
   await currentAuthenticatedUser();
   await handleFetchUserAttributes();
+  axios
+    .post("http://127.0.0.1:5000/api/schedule", transformedEvents)
+    .then((response) => {
+      console.log("Data sent successfully:");
+    })
+    .catch((error) => {
+      console.error("Error sending data:", error);
+    });
   try {
     const oneTodo = await client.graphql({
       query: queries.getUserinfo,

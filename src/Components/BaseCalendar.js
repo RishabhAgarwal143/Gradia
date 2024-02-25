@@ -13,9 +13,13 @@ import addIcon from "../icons/add.svg";
 import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
-import { subscribedScedule, create_schedule } from "../support_local_files/support_func";
+import {
+  subscribedScedule,
+  create_user,
+} from "../support_local_files/support_func";
 import MyComponent from "./Chatbot";
 // import { createSchedule } from "../graphql/mutations";
+import axios from "axios";
 
 const localizer = momentLocalizer(moment);
 
@@ -151,6 +155,7 @@ const MyCalendar = () => {
     userinfoID: event.userinfoID,
     id: event.id,
   }));
+  create_user(transformedEvents);
 
   const handleAddEvent = (newEvent) => {
     setAllEvents([...myEvents, newEvent]);
