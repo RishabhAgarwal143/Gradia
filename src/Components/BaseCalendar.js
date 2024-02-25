@@ -16,10 +16,11 @@ import { RRule } from "rrule";
 import {
   subscribedScedule,
   create_user,
+  create_schedule,
 } from "../support_local_files/support_func";
 import MyComponent from "./Chatbot";
 // import { createSchedule } from "../graphql/mutations";
-import axios from "axios";
+// import axios from "axios";
 
 const localizer = momentLocalizer(moment);
 
