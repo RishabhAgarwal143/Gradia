@@ -115,24 +115,56 @@ def get_sys_time():
 def convert_time_column(column):
     return column.apply(lambda x: time_converter.convert_utc_to_user_tz(x))
 
-def get_schedule_range(start_time, end_time, limit=1000):
-    # dataframe containing all the schedules in utc
+def _get_schedule_range_df(start_time, end_time):
     global payload
-
     df_range = schedule_range_df(start_time, end_time)
     df_range.loc[:, ['start', 'end']] = df_range[['start', 'end']].apply(convert_time_column)
+
+    return df_range
+
+
+def get_schedule_range(start_time, end_time):
+    # start_time: %Y-%m-%d %H:%M:%S
+    # end_time: %Y-%m-%d %H:%M:%S
+    # start_time and end_time are in user's timezone
+    # dataframe containing all the schedules in utc
+
+    df_range = _get_schedule_range_df(start_time, end_time)
 
     # convert to json
     schedule_json = df_range.to_json(orient='records')
     return schedule_json
 
 
+def _conflict_detector(event_add, conflict):
+    print("TO ADD " , event_add)
+    print("CONFLICT" , conflict)
+
 def add_event_to_calendar(start_time, end_time, event_name, event_description=None, event_location=None):
     global payload
     global user_info
-    start_time_utc = time_converter.convert_to_utc(start_time)
-    end_time_utc = time_converter.convert_to_utc(end_time)
-    payload.schedule_new_event_pd(start_time_utc, end_time_utc, event_name, event_location, event_description)
+
+
+    existing_events = _get_schedule_range_df(start_time, end_time)
+    temp_d = dict()
+    temp_d["DTSTART"] = start_time
+    temp_d["DTEND"] = end_time
+    temp_d["SUMMARY"] = event_name
+    temp_d["DESCRIPTION"] = event_description
+    temp_d["LOCATION"] = event_location
+    
+    event_add = json.dumps(temp_d)
+    
+    if not existing_events.empty:
+        # print("CONFLICT DETECTED!!")
+        _conflict_detector(event_add, existing_events.to_json(orient='records'))
+        return "CONFLICTING EVENTS", existing_events.to_json(orient='records')
+    else:
+        _conflict_detector(event_add, None)
+        return "SUCCESS"
+    
+
+
 
 
 
