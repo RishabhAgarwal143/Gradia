@@ -40,7 +40,7 @@ const AddEvent = ({ onSubmit }) => {
       rrule_val = null;
     } else {
       var interval2;
-      if (freq == "DAILY") {
+      if (freq === "DAILY") {
         interval2 = 1;
       } else {
         interval2 = interval;
