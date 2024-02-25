@@ -20,6 +20,20 @@ const Sidebar = () => {
     fetchData();
   }, []);
 
+  const categoryColors = {};
+
+  // const getCategoryColor = (category) => {
+  const getCategoryColor = (category) => {
+    if (categoryColors[category]) {
+      return categoryColors[category];
+    } else {
+      const hue = Math.floor(Math.random() * 360);
+      const newColor = `hsl(${hue}deg, 100%, 50%)`;
+      categoryColors[category] = newColor;
+      return newColor;
+    }
+  };
+
   return (
     <div className=" text-white p-4 overflow-y-auto rounded-lg h-50">
       {loading ? (
@@ -31,13 +45,18 @@ const Sidebar = () => {
               key={schedule.id}
               className="bg-gray-400 bg-opacity-10 p-2 rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-200"
             >
-              <div
-                className="absolute left-0 top-0 h-full bg-blue-500"
-                style={{ width: "4px" }}
-              ></div>
-              <div className="text-left mb-2 text-lg ">
+              <div className="text-left align-middle mb-2 text-md ">
+                <span
+                  className="inline-block w-1 h-6 mr-1 bg-blue-900"
+                  style={{
+                    backgroundColor: getCategoryColor(schedule.CATEGORIES),
+                  }}
+                ></span>
                 {schedule.SUMMARY + ` `}
                 {new Date(schedule.DUE).toLocaleDateString()}
+              </div>
+              <div className="text-left mb-2 text-sm ">
+                {schedule.CATEGORIES}
               </div>
             </li>
           ))}
