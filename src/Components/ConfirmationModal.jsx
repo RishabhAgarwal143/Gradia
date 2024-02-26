@@ -37,7 +37,7 @@ const ConfirmationModal = ({ event, isOpen, isClose }) => {
             });
 
         }
-    });
+    }, []);
 
     return null;
 };

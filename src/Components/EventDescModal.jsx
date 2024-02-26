@@ -2,7 +2,8 @@ import React from "react";
 import ReactModal from "react-modal"; // Import the modal component from your modal library
 import EventDetailsCard from "./EventDetailsCard"; // Import EventDesc from AWS Amplify
 
-const EventDescModal = ({ event, isOpen, onClose }) => {
+const EventDescModal = ({ event, isOpen, onClose, position }) => {
+
   return (
     <ReactModal
       isOpen={isOpen}
@@ -10,6 +11,21 @@ const EventDescModal = ({ event, isOpen, onClose }) => {
       ariaHideApp={false}
       className="fixed inset-0 flex items-center justify-center"
       overlayClassName="fixed inset-0 bg-gray-500 bg-opacity-75"
+      style={{
+        content: {
+          top: position.top,
+          left: position.left,
+          right: 'auto',
+          bottom: 'auto',
+          padding: '20px',
+          border: 'none',
+          zIndex: 9999,
+        },
+        overlay: {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        },
+      }}
+
     >
       <div className="relative rounded-lg py-8 px-8">
         <button
