@@ -10,6 +10,7 @@ import os
 openai.api_key = f'{os.environ["OPENAI_API_KEY"]}'
 client = OpenAI(api_key=openai.api_key)
 assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
+pop_up_flag = False
 
 functions = {
     'initialize_payload_user': ac.initialize_payload_user,
@@ -31,6 +32,9 @@ def execute_required_functions(required_actions):
         # Call the corresponding Python function
         if func_name in functions:
             function = functions[func_name]
+            if (function == ac.add_event_to_calendar):
+                pop_up_flag = True
+                
             result = function(**args)
 
             # Serialize the function's output to JSON
@@ -79,7 +83,9 @@ class openai_manager():
 
             if(run.status == "requires_action"):
                 print(run.required_action)
-                tool_outputs = execute_required_functions(run.required_action)
+                tool_outputs, popup_flag = execute_required_functions(run.required_action)
+
+
                 run = client.beta.threads.runs.submit_tool_outputs(
                     thread_id=self.thread_info.id,
                     run_id= run.id,

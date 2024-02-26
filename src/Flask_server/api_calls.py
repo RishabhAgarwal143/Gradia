@@ -112,13 +112,16 @@ def get_sys_time():
     return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
-def convert_time_column(column):
+def _convert_time_column(column):
     return column.apply(lambda x: time_converter.convert_utc_to_user_tz(x))
+
+def _convert_time_column_utc(column):
+    return column.apply(lambda x: time_converter.convert_user_to_utc_tz(x))
 
 def _get_schedule_range_df(start_time, end_time):
     global payload
     df_range = schedule_range_df(start_time, end_time)
-    df_range.loc[:, ['start', 'end']] = df_range[['start', 'end']].apply(convert_time_column)
+    df_range.loc[:, ['start', 'end']] = df_range[['start', 'end']].apply(_convert_time_column)
 
     return df_range
 
@@ -136,32 +139,56 @@ def get_schedule_range(start_time, end_time):
     return schedule_json
 
 
-def _conflict_detector(event_add, conflict):
-    print("TO ADD " , event_add)
-    print("CONFLICT" , conflict)
+def _conflict_detector(conflict):
+    return _df_to_json(conflict)
+
+
+def _df_to_json(df):
+    # convert df to json format DTSTART, DTEND, SUMMARY, DESCRIPTION, LOCATION
+    new_df = df.copy()
+
+    new_df.rename(columns={'start': 'DTSTART', 'end': 'DTEND', 'title': 'SUMMARY', 'description': 'DESCRIPTION', 'location': 'LOCATION'}, inplace=True)
+
+    # drop id, createdAt, updatedAt, owner
+    new_df = new_df.drop(columns= ['id', 'createdAt', 'updatedAt', 'owner'])
+
+    # do strftime to convert to %Y-%m-%d %H:%M:%S
+    new_df['DTSTART'] = new_df['DTSTART'].dt.strftime('%Y-%m-%d %H:%M:%S')
+    new_df['DTEND'] = new_df['DTEND'].dt.strftime('%Y-%m-%d %H:%M:%S')
+
+    # returns list of conflicting events
+    return new_df.to_json(orient='records')
+
+    
 
 def add_event_to_calendar(start_time, end_time, event_name, event_description=None, event_location=None):
     global payload
     global user_info
 
-
     existing_events = _get_schedule_range_df(start_time, end_time)
     temp_d = dict()
+
+
+    # convert time from %Y-%m-%d %H:%M:%S to utc %Y-%m-%d %H:%M:%S
+
+    start_time = time_converter.convert_user_to_utc_tz(start_time).strftime('%Y-%m-%d %H:%M:%S')
+    end_time = time_converter.convert_user_to_utc_tz(end_time).strftime('%Y-%m-%d %H:%M:%S')
+
+
+    temp_d["SUMMARY"] = event_name
     temp_d["DTSTART"] = start_time
     temp_d["DTEND"] = end_time
-    temp_d["SUMMARY"] = event_name
-    temp_d["DESCRIPTION"] = event_description
     temp_d["LOCATION"] = event_location
-    
+    temp_d["DESCRIPTION"] = event_description
+    temp_d["userinfoID"] = user_info.user_i
+
     event_add = json.dumps(temp_d)
     
     if not existing_events.empty:
-        # print("CONFLICT DETECTED!!")
-        _conflict_detector(event_add, existing_events.to_json(orient='records'))
-        return "CONFLICTING EVENTS", existing_events.to_json(orient='records')
+        conflicting_events = _conflict_detector(existing_events)
+        return event_add, conflicting_events
     else:
-        _conflict_detector(event_add, None)
-        return "SUCCESS"
+        return event_add, None
     
 
 
