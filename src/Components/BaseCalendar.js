@@ -13,14 +13,14 @@ import addIcon from "../icons/add.svg";
 import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
+import ConfirmAddModal from "./ConfirmAddEvent";
 import {
-  subscribedScedule,
+
   create_user,
   create_schedule,
 } from "../support_local_files/support_func";
 import MyComponent from "./Chatbot";
-// import { createSchedule } from "../graphql/mutations";
-// import axios from "axios";
+
 
 const localizer = momentLocalizer(moment);
 
@@ -28,66 +28,18 @@ const MyCalendar = () => {
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [pendingEvent, setPendingEvent] = useState(null);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+
   // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
+
+  // const [selectedSlot, setSelectedSlot] = useState(null);
+  const [modalPosition, setModalPosition] = useState(null);
+
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let todos;
-        const localData = localStorage.getItem("todos");
-        if (localData) {
-          console.log("localData");
-          const parsedData = JSON.parse(localData);
-          // const allEventsData = processEvents(parsedData);
-          setAllEvents(parsedData);
-          // console.log("parsedData", parsedData);
-        } else {
-          todos = await fetchData_local();
-          const allEventsData = processEvents(todos.data.listSchedules.items);
-          setAllEvents(allEventsData);
-          localStorage.setItem(
-            "todos",
-            JSON.stringify(todos.data.listSchedules.items)
-          );
-          console.log("todos", todos.data.listSchedules.items);
-        }
-        await subscribeToChanges(); // Call function toLocaleString('') subscribe toLocaleString('') database changes
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData(); // Call fetchData when the component mounts
-    async function fetchData_local() {
-      try {
-        const todos = await list_schedule_item();
-        // Inside fetchData_local
-        // localStorage.setItem(
-        //   "todos",
-        //   JSON.stringify(todos.data.listSchedules.items)
-        // );
-
-        const allEvents = processEvents(todos.data.listSchedules.items);
-        // console.log("HERE in fetch", todos.data.listSchedules.items);
-        setAllEvents(allEvents);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-    async function subscribeToChanges() {
-      try {
-        //
-        const [createSub, updateSub, deleteSub] = await subscribedScedule();
-        if (createSub || updateSub || deleteSub) {
-          const todos = await list_schedule_item();
-          const allEvents = processEvents(todos.data.listSchedules.items);
-          updateLocalStorage(allEvents);
-        }
-      } catch (error) {
-        console.error("Error subscribing toLocaleString('') changes:", error);
-      }
-    }
     const processEvents = (fetchedEvents) => {
       const processedEvents = [];
       fetchedEvents.forEach((event) => {
@@ -100,16 +52,21 @@ const MyCalendar = () => {
       });
       return processedEvents;
     };
-
-    async function updateLocalStorage(data) {
+    async function fetchData() {
       try {
-        localStorage.setItem("todos", JSON.stringify(data));
-        setAllEvents(data);
+        const todos = await list_schedule_item();
+        const allEvents = processEvents(todos.data.listSchedules.items);
+        setAllEvents(allEvents);
       } catch (error) {
-        console.error("Error updating local storage:", error);
+        console.error("Error fetching data:", error);
       }
     }
+    fetchData();
   }, []);
+
+
+
+
   const generateOccurrences = (event) => {
     const { BYDAYS, FREQ, INTERVALS, UNTIL, WKST } = event.RRULE;
 
@@ -148,13 +105,14 @@ const MyCalendar = () => {
     title: event.SUMMARY,
     start: new Date(event.DTSTART),
     end: new Date(event.DTEND),
-    location: event.LOCATION,
-    description: event.DESCRIPTION,
+    location: event.LOCATION ? event.LOCATION : "",
+    description: event.DESCRIPTION ? event.DESCRIPTION : "",
     createdAt: new Date(event.createdAt),
     updatedAt: new Date(event.updatedAt),
     owner: event.owner,
     userinfoID: event.userinfoID,
     id: event.id,
+    isNew: event.isNew ? event.isNew : false,
   }));
   create_user(transformedEvents);
 
@@ -165,35 +123,91 @@ const MyCalendar = () => {
     setIsAddModalOpen(false); // Close the form after adding event
   };
 
+  const handleGPTevent = (newEvent) => {
+    // Highlight the new event by adding a special property
+    const highlightedNewEvent = { ...newEvent, isNew: true };
+    // Temporarily add the new event to the list of events
+    setAllEvents([...myEvents, highlightedNewEvent]);
+    // Store the new event as the pending event
+    setPendingEvent(highlightedNewEvent);
+    console.log("PENDING", pendingEvent);
+    setSelectedEvent(highlightedNewEvent);
+    // setModalPosition({ top: rect.top, left: rect.left });
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleEventClick = (clickedEvent, e) => {
+    // Check if the clicked event is the pending event
+    const rect = e.target.getBoundingClientRect();
+    setModalPosition({ top: rect.top, left: rect.left });
+    console.log("rect", modalPosition);
+    // if (clickedEvent.isNew) {
+    //   // If yes, open a confirmation pop-up
+    //   console.log("clickedEvent", clickedEvent);
+    //   setIsConfirmationModalOpen(true);
+    // }
+  };
+
+  const handleConfirmation = (confirmed) => {
+    // Close the confirmation pop-up
+    setIsConfirmationModalOpen(false);
+    if (confirmed) {
+      // If the user confirms, remove the 'isNew' property from the pending event
+      const confirmedEvent = { ...pendingEvent };
+      delete confirmedEvent.isNew;
+      console.log("confirmedEvent", confirmedEvent);
+      // Add the confirmed event to the list of events
+      create_schedule(confirmedEvent);
+    } else {
+      // If the user denies, remove the pending event from the list of events
+      setAllEvents(myEvents.filter(event => event !== pendingEvent));
+    }
+  };
+
+
   const handleDoubleClickEvent = (event) => {
     setSelectedEvent(event);
     setIsEventModalOpen(true); // Open the modal
   };
+
   const originalSelectedEvent = myEvents.find(
     (item) => item.id === selectedEvent?.id
   );
-  console.log("originalSelectedEvent", originalSelectedEvent);
+
+
+
 
   return (
     <div className="flex flex-row bg-black">
       <div className="flex-1 relative">
         <div className="h-screen bg-gray-200 flex items-center justify-center">
-          <EventDescModal
+          {isEventModalOpen && <EventDescModal
             event={originalSelectedEvent}
             isOpen={isEventModalOpen}
             onClose={() => setIsEventModalOpen(false)}
-          />
+            position={modalPosition}
+          />}
+          {isConfirmationModalOpen &&
+            <ConfirmAddModal
+              event={pendingEvent}
+              isOpen={isConfirmationModalOpen}
+              onConfirm={handleConfirmation}
+              onCancel={() => setIsConfirmationModalOpen(false)}
+              position={modalPosition}
+            />}
           <Calendar
             localizer={localizer}
             events={transformedEvents}
             startAccessor="start"
             endAccessor="end"
+            onSelectEvent={handleEventClick}
             onDoubleClickEvent={handleDoubleClickEvent}
             defaultView="week"
             views={["month", "week", "day", "agenda"]}
             className="w-3/4 left-0 top-0 absolute bg-white p-4  shadow-lg"
           />
           {/* <Sidebar /> */}
+
         </div>
       </div>
 

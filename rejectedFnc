@@ -1,0 +1,60 @@
+// useEffect(() => {
+//   const fetchData = async () => {
+//     try {
+//       let todos;
+//       const localData = localStorage.getItem("todos");
+//       if (localData) {
+//         console.log("localData");
+//         const parsedData = JSON.parse(localData);
+//         // const allEventsData = processEvents(parsedData);
+//         setAllEvents(parsedData);
+//         // console.log("parsedData", parsedData);
+//       } else {
+//         todos = await fetchData_local();
+//         const allEventsData = processEvents(todos.data.listSchedules.items);
+//         setAllEvents(allEventsData);
+//         localStorage.setItem(
+//           "todos",
+//           JSON.stringify(todos.data.listSchedules.items)
+//         );
+//         console.log("todos", todos.data.listSchedules.items);
+//       }
+//       await subscribeToChanges(); // Call function toLocaleString('') subscribe toLocaleString('') database changes
+//     } catch (error) {
+//       console.error("Error fetching data:", error);
+//     }
+//   };
+
+//   fetchData(); // Call fetchData when the component mounts
+//   async function fetchData_local() {
+//     try {
+//       const todos = await list_schedule_item();
+//       const allEvents = processEvents(todos.data.listSchedules.items);
+//       setAllEvents(allEvents);
+//     } catch (error) {
+//       console.error("Error fetching data:", error);
+//     }
+//   }
+//   async function subscribeToChanges() {
+//     try {
+//       //
+//       const [createSub, updateSub, deleteSub] = await subscribedScedule();
+//       if (createSub || updateSub || deleteSub) {
+//         const todos = await list_schedule_item();
+//         const allEvents = processEvents(todos.data.listSchedules.items);
+//         updateLocalStorage(allEvents);
+//       }
+//     } catch (error) {
+//       console.error("Error subscribing toLocaleString('') changes:", error);
+//     }
+//   }
+
+//   async function updateLocalStorage(data) {
+//     try {
+//       localStorage.setItem("todos", JSON.stringify(data));
+//       setAllEvents(data);
+//     } catch (error) {
+//       console.error("Error updating local storage:", error);
+//     }
+//   }
+// }, []);
