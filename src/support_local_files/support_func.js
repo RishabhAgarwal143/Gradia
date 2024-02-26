@@ -35,8 +35,6 @@ export async function currentAuthenticatedUser() {
       .catch((error) => {
         console.error("Error sending data:", error);
       });
-
-      
   } catch (err) {
     console.log(err);
   }
@@ -66,7 +64,7 @@ export async function get_item() {
 }
 
 export async function create_user(transformedEvents) {
-  await currentAuthenticatedUser();
+  await currentAuthenticatedUser(transformedEvents);
   await handleFetchUserAttributes();
   axios
     .post("http://127.0.0.1:5000/api/schedule", transformedEvents)
@@ -131,24 +129,20 @@ export async function subscribedScedule() {
   return [createSub, UpdateSub, DeleteSub];
 }
 
-export async function create_schedule() {
-  const newSchedule = await client.graphql({
-    query: mutations.createSchedule,
-    variables: {
-      input: {
-        SUMMARY: "Lorem ipsum dolor sit amet",
-        DTSTART: "1970-01-01T12:30:23.999Z",
-        DTEND: "1970-01-01T12:30:23.999Z",
-        DESCRIPTION: "Lorem ipsum dolor sit amet",
-        LOCATION: "Lorem ipsum dolor sit amet",
-        userinfoID: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-        UID: "Lorem ipsum dolor sit amet",
-        CATEGORIES: "Lorem ipsum dolor sit amet",
-        DTSTAMP: "1970-01-01T12:30:23.999Z",
+export async function create_schedule(event) {
+  try {
+    console.log("event", event);
+    const newSchedule = await client.graphql({
+      query: mutations.createSchedule,
+      variables: {
+        input: event,
       },
-    },
-  });
-  return newSchedule;
+    });
+    return newSchedule;
+  } catch (error) {
+    console.error("Error creating schedule:", error);
+    throw error; // Rethrow the error if needed
+  }
 }
 
 export async function list_schedule_item() {
@@ -208,5 +202,3 @@ export async function list_tasks_item() {
     throw error; // Rethrow the error if needed
   }
 }
-
-export async function conflict_event() {}

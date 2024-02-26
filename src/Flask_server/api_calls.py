@@ -150,16 +150,12 @@ def _df_to_json(df):
     new_df.rename(columns={'start': 'DTSTART', 'end': 'DTEND', 'title': 'SUMMARY', 'description': 'DESCRIPTION', 'location': 'LOCATION'}, inplace=True)
 
     # drop id, createdAt, updatedAt, owner
-    new_df = new_df.drop(columns= ['id', 'createdAt', 'updatedAt', 'owner'])
+    new_df = new_df.drop(columns= [ 'createdAt', 'updatedAt', 'owner'])
 
     # do strftime to convert to %Y-%m-%d %H:%M:%S
     new_df['DTSTART'] = new_df['DTSTART'].dt.strftime('%Y-%m-%d %H:%M:%S')
     new_df['DTEND'] = new_df['DTEND'].dt.strftime('%Y-%m-%d %H:%M:%S')
-
-    # returns list of conflicting events
-    return new_df.to_json(orient='records')
-
-    
+    return json.loads(new_df.to_json(orient='records'))
 
 def add_event_to_calendar(start_time, end_time, event_name, event_description=None, event_location=None):
     global payload
@@ -181,14 +177,16 @@ def add_event_to_calendar(start_time, end_time, event_name, event_description=No
     temp_d["LOCATION"] = event_location
     temp_d["DESCRIPTION"] = event_description
     temp_d["userinfoID"] = user_info.user_id
+    temp_d["RRULE"] = None
 
     event_add = json.dumps(temp_d)
+    event_add = json.loads(event_add)
     
     if not existing_events.empty:
         conflicting_events = _conflict_detector(existing_events)
-        return event_add, conflicting_events
+        return ["CONFLICT", event_add, conflicting_events]
     else:
-        return event_add, None
+        return ["ADD", event_add, None]
     
 
 

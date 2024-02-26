@@ -6,7 +6,6 @@ import api_calls as ac
 import time
 import os
 
-
 openai.api_key = f'{os.environ["OPENAI_API_KEY"]}'
 client = OpenAI(api_key=openai.api_key)
 assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
@@ -45,7 +44,7 @@ def execute_required_functions(required_actions):
                 "tool_call_id": tool_call.id,
                 "output": result_str,
             })
-    return tool_outputs
+    return tool_outputs,result
 
 class openai_manager():
 
@@ -65,7 +64,6 @@ class openai_manager():
         self.thread_info = thread
 
     def sendcall(self,user_message) -> str:
-        
         print(self.thread_info.id)
         messages = client.beta.threads.messages.create(
                 thread_id=self.thread_info.id,
@@ -79,12 +77,13 @@ class openai_manager():
             )
         
         print(run.status)
+        outputs = None
         while(run.status != "completed"):
 
             if(run.status == "requires_action"):
                 print(run.required_action)
-                tool_outputs = execute_required_functions(run.required_action)
-
+                tool_outputs,result = execute_required_functions(run.required_action)
+                outputs = result
 
                 run = client.beta.threads.runs.submit_tool_outputs(
                     thread_id=self.thread_info.id,
@@ -106,5 +105,5 @@ class openai_manager():
         messages = client.beta.threads.messages.list(
             thread_id=self.thread_info.id
         )
-
-        return messages.data[0].content[0].text.value
+        print((messages.data[0].content[0].text.value,outputs))
+        return (messages.data[0].content[0].text.value,outputs)

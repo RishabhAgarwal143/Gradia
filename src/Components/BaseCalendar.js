@@ -13,9 +13,12 @@ import addIcon from "../icons/add.svg";
 import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
-import { subscribedScedule,create_user } from "../support_local_files/support_func";
+import {
+  subscribedScedule,
+  create_user,
+} from "../support_local_files/support_func";
 import MyComponent from "./Chatbot";
-import axios from "axios";
+// import axios from "axios";
 
 const localizer = momentLocalizer(moment);
 
@@ -150,8 +153,6 @@ const MyCalendar = () => {
     userinfoID: event.userinfoID,
     id: event.id,
   }));
-  create_user(transformedEvents);
-  
 
   const handleAddEvent = (newEvent) => {
     setAllEvents([...myEvents, newEvent]);
@@ -167,6 +168,7 @@ const MyCalendar = () => {
   );
   console.log("originalSelectedEvent", originalSelectedEvent);
 
+  create_user(transformedEvents);
   return (
     <div className="flex flex-row bg-black">
       <div className="flex-1 relative">

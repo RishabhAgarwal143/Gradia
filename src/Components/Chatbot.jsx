@@ -4,7 +4,6 @@ const Chatbot = () => {
   const sendMessage = () => {
     const userInput = document.getElementById("user-input").value;
 
-    // Display user message
     const userMessageDiv = document.createElement("div");
     userMessageDiv.className =
       "chat-message user-message bg-blue-500 text-white rounded-lg p-2 mb-2";
@@ -25,11 +24,15 @@ const Chatbot = () => {
       .then((response) => response.json())
       .then((data) => {
         // Display bot response
-        const botMessageDiv = document.createElement("div");
-        botMessageDiv.className =
-          "bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs ml-auto";
-        botMessageDiv.innerHTML = data.bot_response;
-        document.getElementById("chat-messages").appendChild(botMessageDiv);
+        console.log(data.events_to_be_managed);
+        if (!data.events_to_be_managed) {
+          const botMessageDiv = document.createElement("div");
+          botMessageDiv.className =
+            "bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs ml-auto";
+          botMessageDiv.innerHTML = data.bot_response;
+          document.getElementById("chat-messages").appendChild(botMessageDiv);
+        } else {
+        }
       })
       .catch((error) => {
         console.error("Error:", error);
