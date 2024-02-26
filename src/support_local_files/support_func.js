@@ -35,8 +35,6 @@ export async function currentAuthenticatedUser() {
       .catch((error) => {
         console.error("Error sending data:", error);
       });
-
-      
   } catch (err) {
     console.log(err);
   }
@@ -66,7 +64,7 @@ export async function get_item() {
 }
 
 export async function create_user(transformedEvents) {
-  await currentAuthenticatedUser();
+  await currentAuthenticatedUser(transformedEvents);
   await handleFetchUserAttributes();
   axios
     .post("http://127.0.0.1:5000/api/schedule", transformedEvents)
@@ -141,8 +139,7 @@ export async function create_schedule(event) {
       },
     });
     return newSchedule;
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error creating schedule:", error);
     throw error; // Rethrow the error if needed
   }
@@ -205,5 +202,3 @@ export async function list_tasks_item() {
     throw error; // Rethrow the error if needed
   }
 }
-
-

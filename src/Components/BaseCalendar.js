@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
-
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CalendarStyle.css";
 import { list_schedule_item } from "../support_local_files/support_func";
-// import { EventDesc, ScheduleCreateForm } from '../ui-components';
 import AddEventModal from "./AddEventModal";
 import addIcon from "../icons/add.svg";
-// import { InfoBox } from '../ui-components';
-// import ConfirmationModal from './ConfirmationModal'; // Import the new component
 import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
