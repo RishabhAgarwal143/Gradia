@@ -2,8 +2,7 @@ import React from "react";
 import ReactModal from "react-modal"; // Import the modal component from your modal library
 import EventDetailsCard from "./EventDetailsCard"; // Import EventDesc from AWS Amplify
 
-const EventDescModal = ({ event, isOpen, onClose, position }) => {
-
+const EventDescModal = ({ event, isOpen, onClose, position, onDel }) => {
   return (
     <ReactModal
       isOpen={isOpen}
@@ -15,17 +14,16 @@ const EventDescModal = ({ event, isOpen, onClose, position }) => {
         content: {
           top: position.top,
           left: position.left,
-          right: 'auto',
-          bottom: 'auto',
-          padding: '20px',
-          border: 'none',
+          right: "auto",
+          bottom: "auto",
+          padding: "20px",
+          border: "none",
           zIndex: 9999,
         },
         overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
         },
       }}
-
     >
       <div className="relative rounded-lg py-8 px-8">
         <button
@@ -44,7 +42,7 @@ const EventDescModal = ({ event, isOpen, onClose, position }) => {
             <path d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <EventDetailsCard event={event} Close={onClose} />
+        <EventDetailsCard event={event} Close={onClose} onDel={onDel} />
       </div>
       {/* <div className="bg-white rounded-lg p-6 w-1/4 h-1/4">
 

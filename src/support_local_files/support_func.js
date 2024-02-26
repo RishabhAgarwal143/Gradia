@@ -12,16 +12,16 @@ export var cognito_Id;
 var CurrentUsersEmail;
 export async function currentAuthenticatedUser() {
   try {
-    const { username, userId, signInDetails } = await getCurrentUser();
-    const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {};
+    const { userId } = await getCurrentUser();
+    const { accessToken } = (await fetchAuthSession()).tokens ?? {};
 
     cognito_Id = userId;
 
-    console.log(`The username: ${username}`);
+    // console.log(`The username: ${username}`);
     console.log(`The userId: ${cognito_Id}`);
-    console.log(`The accessToken: ${accessToken}`);
-    console.log(`The idToken: ${idToken}`);
-    console.log(`The signInDetails: ${signInDetails}`);
+    // console.log(`The accessToken: ${accessToken}`);
+    // console.log(`The idToken: ${idToken}`);
+    // console.log(`The signInDetails: ${signInDetails}`);
 
     const dataToSend = {
       userId: cognito_Id,
@@ -146,19 +146,44 @@ export async function create_schedule(event) {
 }
 
 export async function list_schedule_item() {
-  try {
-    // List all items
-    const allSchedules = await client.graphql({
-      query: queries.listSchedules,
-      variables: { limit: 1000 },
-    });
-    console.log(allSchedules);
-    return allSchedules;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    throw error; // Rethrow the error if needed
-  }
+  let items = [];
+  let nextToken = null;
+
+  do {
+    try {
+      const allSchedules = await client.graphql({
+        query: queries.listSchedules,
+        variables: { nextToken: nextToken },
+      });
+      const { items: currentItems, nextToken: newNextToken } =
+        allSchedules.data.listSchedules;
+
+      items = [...items, ...currentItems];
+      console.log("events recieved", items.length);
+
+      nextToken = newNextToken;
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      break; // Exit the loop if there's an error
+    }
+  } while (nextToken);
+  console.log("events recieved", items);
+  return items;
 }
+
+// try {
+//   // List all items
+//   const allSchedules = await client.graphql({
+//     query: queries.listSchedules,
+//     variables: { limit: 1000 },
+//   });
+//   console.log(allSchedules);
+//   return allSchedules;
+// } catch (error) {
+//   console.error("Error fetching data:", error);
+//   throw error; // Rethrow the error if needed
+// }
+
 export const deleteSchedule = async (eventId) => {
   try {
     // Make the GraphQL API call to delete the schedule

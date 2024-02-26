@@ -1,6 +1,6 @@
 import React from "react";
 
-const Chatbot = () => {
+const Chatbot = ({ onAddgptevent }) => {
   const sendMessage = () => {
     const userInput = document.getElementById("user-input").value;
 
@@ -32,6 +32,13 @@ const Chatbot = () => {
           botMessageDiv.innerHTML = data.bot_response;
           document.getElementById("chat-messages").appendChild(botMessageDiv);
         } else {
+          data.events_to_be_managed[1]["DTSTART"] = new Date(
+            data.events_to_be_managed[1]["DTSTART"]
+          );
+          data.events_to_be_managed[1]["DTEND"] = new Date(
+            data.events_to_be_managed[1]["DTEND"]
+          );
+          onAddgptevent(data.events_to_be_managed[1]);
         }
       })
       .catch((error) => {

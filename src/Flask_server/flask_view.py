@@ -55,7 +55,7 @@ def chat():
     user_message = request.form['user_message']
     response,outputs = info.chats.sendcall(user_message)
     response = markdown.markdown(response)
-
+    print(outputs[1])
     return jsonify({'bot_response': response,'events_to_be_managed' : outputs })
 
 @app.route('/Subscribe',methods=['POST'])

@@ -11,12 +11,10 @@ import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 import ConfirmAddModal from "./ConfirmAddEvent";
 import {
-
   create_user,
   create_schedule,
 } from "../support_local_files/support_func";
-import MyComponent from "./Chatbot";
-
+import Chatbot from "./Chatbot";
 
 const localizer = momentLocalizer(moment);
 
@@ -34,10 +32,10 @@ const MyCalendar = () => {
   // const [selectedSlot, setSelectedSlot] = useState(null);
   const [modalPosition, setModalPosition] = useState(null);
 
-
   useEffect(() => {
     const processEvents = (fetchedEvents) => {
       const processedEvents = [];
+
       fetchedEvents.forEach((event) => {
         if (event.RRULE) {
           const occurrences = generateOccurrences(event);
@@ -46,12 +44,13 @@ const MyCalendar = () => {
           processedEvents.push(event);
         }
       });
+
       return processedEvents;
     };
     async function fetchData() {
       try {
         const todos = await list_schedule_item();
-        const allEvents = processEvents(todos.data.listSchedules.items);
+        const allEvents = processEvents(todos);
         setAllEvents(allEvents);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -59,9 +58,6 @@ const MyCalendar = () => {
     }
     fetchData();
   }, []);
-
-
-
 
   const generateOccurrences = (event) => {
     const { BYDAYS, FREQ, INTERVALS, UNTIL, WKST } = event.RRULE;
@@ -111,25 +107,34 @@ const MyCalendar = () => {
     isNew: event.isNew ? event.isNew : false,
   }));
 
-  const handleAddEvent = (newEvent) => {
-    setAllEvents([...myEvents, newEvent]);
-    create_schedule(newEvent);
+  const handleAddEvent = async (newEvent) => {
+    const result = await create_schedule(newEvent);
+    console.log(result);
+    setAllEvents([...myEvents, result.data.createSchedule]);
     console.log("newEvent", newEvent);
     setIsAddModalOpen(false); // Close the form after adding event
   };
 
-  const handleGPTevent = (newEvent) => {
+  const handleDelEvent = (newEvent) => {
+    // const result = await create_schedule(newEvent);
+    console.log("In del");
+    setAllEvents(myEvents.filter((event) => event !== newEvent));
+  };
+
+  function handleGPTevent(newEvent) {
     // Highlight the new event by adding a special property
+
     const highlightedNewEvent = { ...newEvent, isNew: true };
+    console.log("GPT EVENT", highlightedNewEvent);
     // Temporarily add the new event to the list of events
-    setAllEvents([...myEvents, highlightedNewEvent]);
+    // setAllEvents([...myEvents, highlightedNewEvent]);
     // Store the new event as the pending event
     setPendingEvent(highlightedNewEvent);
     console.log("PENDING", pendingEvent);
-    setSelectedEvent(highlightedNewEvent);
+    setSelectedEvent(pendingEvent);
     // setModalPosition({ top: rect.top, left: rect.left });
     setIsConfirmationModalOpen(true);
-  };
+  }
 
   const handleEventClick = (clickedEvent, e) => {
     // Check if the clicked event is the pending event
@@ -143,7 +148,7 @@ const MyCalendar = () => {
     // }
   };
 
-  const handleConfirmation = (confirmed) => {
+  const handleConfirmation = async (confirmed) => {
     // Close the confirmation pop-up
     setIsConfirmationModalOpen(false);
     if (confirmed) {
@@ -152,13 +157,14 @@ const MyCalendar = () => {
       delete confirmedEvent.isNew;
       console.log("confirmedEvent", confirmedEvent);
       // Add the confirmed event to the list of events
-      create_schedule(confirmedEvent);
+      setAllEvents(myEvents.filter((event) => event !== confirmedEvent));
+      const result = await create_schedule(confirmedEvent);
+      setAllEvents([...myEvents, result.data.createSchedule]);
     } else {
       // If the user denies, remove the pending event from the list of events
-      setAllEvents(myEvents.filter(event => event !== pendingEvent));
+      setAllEvents(myEvents.filter((event) => event !== pendingEvent));
     }
   };
-
 
   const handleDoubleClickEvent = (event) => {
     setSelectedEvent(event);
@@ -169,28 +175,29 @@ const MyCalendar = () => {
     (item) => item.id === selectedEvent?.id
   );
 
-
-
-
   create_user(transformedEvents);
   return (
     <div className="flex flex-row bg-black">
       <div className="flex-1 relative">
         <div className="h-screen bg-gray-200 flex items-center justify-center">
-          {isEventModalOpen && <EventDescModal
-            event={originalSelectedEvent}
-            isOpen={isEventModalOpen}
-            onClose={() => setIsEventModalOpen(false)}
-            position={modalPosition}
-          />}
-          {isConfirmationModalOpen &&
+          {isEventModalOpen && (
+            <EventDescModal
+              event={originalSelectedEvent}
+              isOpen={isEventModalOpen}
+              onClose={() => setIsEventModalOpen(false)}
+              position={modalPosition}
+              onDel={handleDelEvent}
+            />
+          )}
+          {
             <ConfirmAddModal
               event={pendingEvent}
               isOpen={isConfirmationModalOpen}
               onConfirm={handleConfirmation}
               onCancel={() => setIsConfirmationModalOpen(false)}
               position={modalPosition}
-            />}
+            />
+          }
           <Calendar
             localizer={localizer}
             events={transformedEvents}
@@ -203,13 +210,16 @@ const MyCalendar = () => {
             className="w-3/4 left-0 top-0 absolute bg-white p-4  shadow-lg"
           />
           {/* <Sidebar /> */}
-
         </div>
       </div>
 
       <div
         className="fixed top-0 right-0 h-full w-1/4 flex flex-col items-center justify-start overflow-y-auto"
-        style={{ background: "#171717", fontFamily: "cursive", color: "white" }}
+        style={{
+          background: "#171717",
+          fontFamily: "cursive",
+          color: "white",
+        }}
       >
         <div className="flex">
           <button
@@ -268,7 +278,7 @@ const MyCalendar = () => {
         >
           <div className="text-white text-sm font-bold py-2">CHATBOT</div>
 
-          <MyComponent />
+          <Chatbot onAddgptevent={handleGPTevent} />
         </div>
       </div>
 
