@@ -53,9 +53,10 @@ def index():
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.form['user_message']
-    response = info.chats.sendcall(user_message)
+    response,outputs = info.chats.sendcall(user_message)
     response = markdown.markdown(response)
-    return jsonify({'bot_response': response})
+
+    return jsonify({'bot_response': response,'events_to_be_managed' : outputs })
 
 @app.route('/Subscribe',methods=['POST'])
 def subscribe_cal():

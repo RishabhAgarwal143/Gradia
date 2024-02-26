@@ -110,7 +110,6 @@ const MyCalendar = () => {
     id: event.id,
     isNew: event.isNew ? event.isNew : false,
   }));
-  create_user(transformedEvents);
 
   const handleAddEvent = (newEvent) => {
     setAllEvents([...myEvents, newEvent]);
@@ -173,6 +172,7 @@ const MyCalendar = () => {
 
 
 
+  create_user(transformedEvents);
   return (
     <div className="flex flex-row bg-black">
       <div className="flex-1 relative">
