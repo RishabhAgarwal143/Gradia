@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from "react";
-
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CalendarStyle.css";
 import { list_schedule_item } from "../support_local_files/support_func";
-// import { EventDesc, ScheduleCreateForm } from '../ui-components';
 import AddEventModal from "./AddEventModal";
 import addIcon from "../icons/add.svg";
-// import { InfoBox } from '../ui-components';
-// import ConfirmationModal from './ConfirmationModal'; // Import the new component
 import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 import {
   subscribedScedule,
   create_user,
+  create_schedule,
 } from "../support_local_files/support_func";
 import MyComponent from "./Chatbot";
-// import axios from "axios";
 
 const localizer = momentLocalizer(moment);
 
@@ -26,6 +22,7 @@ const MyCalendar = () => {
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
   useEffect(() => {
@@ -78,8 +75,8 @@ const MyCalendar = () => {
         const [createSub, updateSub, deleteSub] = await subscribedScedule();
         if (createSub || updateSub || deleteSub) {
           const todos = await list_schedule_item();
-          const allEvents = processEvents(todos.data.listSchedules.items);
-          updateLocalStorage(allEvents);
+          console.log(todos.data.listSchedules.items.length);
+          processEvents(todos.data.listSchedules.items);
         }
       } catch (error) {
         console.error("Error subscribing toLocaleString('') changes:", error);
@@ -97,15 +94,6 @@ const MyCalendar = () => {
       });
       return processedEvents;
     };
-
-    async function updateLocalStorage(data) {
-      try {
-        localStorage.setItem("todos", JSON.stringify(data));
-        setAllEvents(data);
-      } catch (error) {
-        console.error("Error updating local storage:", error);
-      }
-    }
   }, []);
   const generateOccurrences = (event) => {
     const { BYDAYS, FREQ, INTERVALS, UNTIL, WKST } = event.RRULE;
@@ -156,6 +144,8 @@ const MyCalendar = () => {
 
   const handleAddEvent = (newEvent) => {
     setAllEvents([...myEvents, newEvent]);
+    create_schedule(newEvent);
+    console.log("newEvent", newEvent);
     setIsAddModalOpen(false); // Close the form after adding event
   };
 

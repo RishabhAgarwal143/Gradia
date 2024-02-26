@@ -7,7 +7,7 @@ const EventDescModal = ({ event, isOpen, onClose }) => {
     <ReactModal
       isOpen={isOpen}
       onRequestClose={onClose}
-      // ariaHideApp={false}
+      ariaHideApp={false}
       className="fixed inset-0 flex items-center justify-center"
       overlayClassName="fixed inset-0 bg-gray-500 bg-opacity-75"
     >
@@ -28,7 +28,7 @@ const EventDescModal = ({ event, isOpen, onClose }) => {
             <path d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <EventDetailsCard event={event} />
+        <EventDetailsCard event={event} Close={onClose} />
       </div>
       {/* <div className="bg-white rounded-lg p-6 w-1/4 h-1/4">
 
