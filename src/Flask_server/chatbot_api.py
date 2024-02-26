@@ -34,7 +34,7 @@ def execute_required_functions(required_actions):
             function = functions[func_name]
             if (function == ac.add_event_to_calendar):
                 pop_up_flag = True
-                
+
             result = function(**args)
 
             # Serialize the function's output to JSON
@@ -83,7 +83,7 @@ class openai_manager():
 
             if(run.status == "requires_action"):
                 print(run.required_action)
-                tool_outputs, popup_flag = execute_required_functions(run.required_action)
+                tool_outputs = execute_required_functions(run.required_action)
 
 
                 run = client.beta.threads.runs.submit_tool_outputs(

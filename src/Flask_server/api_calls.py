@@ -180,7 +180,7 @@ def add_event_to_calendar(start_time, end_time, event_name, event_description=No
     temp_d["DTEND"] = end_time
     temp_d["LOCATION"] = event_location
     temp_d["DESCRIPTION"] = event_description
-    temp_d["userinfoID"] = user_info.user_i
+    temp_d["userinfoID"] = user_info.user_id
 
     event_add = json.dumps(temp_d)
     
