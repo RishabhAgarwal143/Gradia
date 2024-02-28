@@ -152,9 +152,13 @@ def _df_to_json(df):
     # drop id, createdAt, updatedAt, owner
     new_df = new_df.drop(columns= [ 'createdAt', 'updatedAt', 'owner'])
 
+    # convert to user's timezone
+    new_df.loc[:, ['DTSTART', 'DTEND']] = new_df[['DTSTART', 'DTEND']].apply(_convert_time_column)
+
     # do strftime to convert to %Y-%m-%d %H:%M:%S
     new_df['DTSTART'] = new_df['DTSTART'].dt.strftime('%Y-%m-%d %H:%M:%S')
     new_df['DTEND'] = new_df['DTEND'].dt.strftime('%Y-%m-%d %H:%M:%S')
+
     return json.loads(new_df.to_json(orient='records'))
 
 def add_event_to_calendar(start_time, end_time, event_name, event_description=None, event_location=None):
@@ -198,7 +202,19 @@ def add_event_to_calendar(start_time, end_time, event_name, event_description=No
         return ["ADD", event_add, None]
     
 
+def delete_events_in_range(start_time, end_time):
+    global payload
+    global user_info
+    global time_converter
+    
+    existing_events = _get_schedule_range_df(start_time, end_time)
+    print(existing_events)
 
+    if not existing_events.empty:
+        existing_events = _conflict_detector(existing_events)
+        return ["DELETED", existing_events]
+    else:
+        return ["NO_EVENTS", None]
 
 
 

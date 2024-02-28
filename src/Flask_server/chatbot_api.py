@@ -9,13 +9,15 @@ import os
 openai.api_key = f'{os.environ["OPENAI_API_KEY"]}'
 client = OpenAI(api_key=openai.api_key)
 assistant_id = "asst_VihgAgN5L4DlshFFnNdxJLMH"
+global pop_up_flag
 pop_up_flag = False
 
 functions = {
     'initialize_payload_user': ac.initialize_payload_user,
     'get_user_time': ac.get_user_time,
     'get_schedule_range': ac.get_schedule_range,
-    'add_event_to_calendar': ac.add_event_to_calendar
+    'add_event_to_calendar': ac.add_event_to_calendar,
+    'delete_events_in_range': ac.delete_events_in_range
     # 'schedule_new_event': ac.schedule_new_event,
     # 'modify_event_in_calendar': ac.modify_event_in_calendar,
 }
@@ -32,7 +34,9 @@ def execute_required_functions(required_actions):
         if func_name in functions:
             function = functions[func_name]
             if (function == ac.add_event_to_calendar):
+                global pop_up_flag
                 pop_up_flag = True
+                print("POP UP FLAG IS TRUE")
 
             result = function(**args)
 
@@ -105,5 +109,9 @@ class openai_manager():
         messages = client.beta.threads.messages.list(
             thread_id=self.thread_info.id
         )
-        print((messages.data[0].content[0].text.value,outputs))
+        # print((messages.data[0].content[0].text.value,outputs))
+        global pop_up_flag
+        if not pop_up_flag:
+            outputs = None
+            pop_up_flag = False
         return (messages.data[0].content[0].text.value,outputs)
