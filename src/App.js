@@ -1,7 +1,7 @@
 import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import * as commands from "./support_local_files/support_func.js";
+import * as commands from "./Components/support_func.js";
 import BasicCalendar from "./Components/BaseCalendar.js";
 
 function App() {

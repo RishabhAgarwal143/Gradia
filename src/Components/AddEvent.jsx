@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { cognito_Id } from "../support_local_files/support_func";
+import { cognito_Id } from "./support_func";
 const AddEvent = ({ onSubmit }) => {
   const [summary, setSummary] = useState("");
   const [startDate, setStartDate] = useState("");

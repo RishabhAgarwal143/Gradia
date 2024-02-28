@@ -32,7 +32,7 @@
   /* Prevent text wrapping */
   width: 10rem;
   right: 0%;
-  font-family: "source-sans-pro", sans-serif;
+  /* font-family: "source-sans-pro", sans-serif; */
   /* Make the event occupy the entire width of the day slot */
 }
 
@@ -89,7 +89,7 @@ button,
 textarea,
 select {
   font: inherit;
-  font-family: "proxima-nova", sans-serif;
+  /* font-family: "proxima-nova", sans-serif; */
   color: #8c8e8efb !important;
   justify-items: center;
 }
@@ -126,7 +126,7 @@ select {
 
 .rbc-label {
   padding: 0 5px;
-  font-family: "proxima-nova", sans-serif;
+  /* font-family: "proxima-nova", sans-serif; */
   color: #8c8e8efb;
 }
 
@@ -135,7 +135,7 @@ select {
   padding: 0 10px;
   text-align: center;
   font-size: larger;
-  font-family: "proxima-nova", sans-serif;
+  /* font-family: "proxima-nova", sans-serif; */
   color: #8c8e8efb;
 }
 /* width */

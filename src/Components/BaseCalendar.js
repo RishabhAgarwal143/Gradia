@@ -3,17 +3,14 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CalendarStyle.css";
-import { list_schedule_item } from "../support_local_files/support_func";
+import { list_schedule_item } from "./support_func";
 import AddEventModal from "./AddEventModal";
 import addIcon from "../icons/add.svg";
 import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 import ConfirmAddModal from "./ConfirmAddEvent";
-import {
-  create_user,
-  create_schedule,
-} from "../support_local_files/support_func";
+import { create_user, create_schedule } from "./support_func";
 import Chatbot from "./Chatbot";
 
 const localizer = momentLocalizer(moment);
@@ -139,6 +136,7 @@ const MyCalendar = () => {
   const handleEventClick = (clickedEvent, e) => {
     // Check if the clicked event is the pending event
     const rect = e.target.getBoundingClientRect();
+    console.log(rect);
     setModalPosition({ top: rect.top, left: rect.left });
     console.log("rect", modalPosition);
     // if (clickedEvent.isNew) {
@@ -217,7 +215,7 @@ const MyCalendar = () => {
         className="fixed top-0 right-0 h-full w-1/4 flex flex-col items-center justify-start overflow-y-auto"
         style={{
           background: "#171717",
-          fontFamily: "cursive",
+          // fontFamily: "cursive",
           color: "white",
         }}
       >
@@ -225,7 +223,7 @@ const MyCalendar = () => {
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="bg-gray-800 p-2 rounded-full flex items-center justify-center hover:bg-gray-200  transition duration-300 mt-4 mb-2 mr-3" // Added mr-2 for right margin
-            style={{ fontFamily: "cursive", color: "white" }}
+            style={{ color: "white" }}
           >
             <span className="text-white font-bold px-2  hover:text-black">
               Add Event
@@ -239,7 +237,7 @@ const MyCalendar = () => {
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="bg-gray-800 p-2 rounded-full flex items-center justify-center hover:bg-gray-200  transition duration-300 mt-4 mb-2"
-            style={{ fontFamily: "cursive", color: "white" }}
+            style={{ color: "white" }}
           >
             <span className="text-white font-bold px-2  hover:text-black">
               Add Tasks
@@ -256,7 +254,7 @@ const MyCalendar = () => {
           className="flex flex-col items-center justify-start overflow-y-auto"
           style={{
             background: "#171717",
-            fontFamily: "proxima-nova",
+            // fontFamily: "proxima-nova",
             color: "white",
             height: "55%",
             width: "100%",
@@ -270,7 +268,7 @@ const MyCalendar = () => {
           className="flex flex-col items-center justify-start overflow-y-auto"
           style={{
             background: "#171717",
-            fontFamily: "cursive",
+            // fontFamily: "cursive",
             color: "white",
             height: "50%",
             width: "100%",

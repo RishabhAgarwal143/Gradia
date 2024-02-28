@@ -167,8 +167,17 @@ def add_event_to_calendar(start_time, end_time, event_name, event_description=No
 
     # convert time from %Y-%m-%d %H:%M:%S to utc %Y-%m-%d %H:%M:%S
 
-    start_time = time_converter.convert_user_to_utc_tz(start_time).strftime('%Y-%m-%d %H:%M:%S')
-    end_time = time_converter.convert_user_to_utc_tz(end_time).strftime('%Y-%m-%d %H:%M:%S')
+    # start_time_utc = time_converter.convert_user_to_utc_tz(start_time)
+    # end_time_utc = time_converter.convert_user_to_utc_tz(end_time)
+    # # start_time_out = start_time_utc.strftime('%Y-%m-%d %H:%M:%S')
+    # # end_time_out = end_time_utc.strftime('%Y-%m-%d %H:%M:%S')
+
+    # start_time_t = time_converter.convert_utc_to_user_tz(start_time_utc).strftime('%Y-%m-%d %H:%M:%S')
+    # end_time_t = time_converter.convert_utc_to_user_tz(end_time_utc).strftime('%Y-%m-%d %H:%M:%S')
+    # print(start_time, end_time)
+    # start_time_t = start_time.strftime('%Y-%m-%d %H:%M:%S')
+    # end_time_t = end_time.strftime('%Y-%m-%d %H:%M:%S')
+    
 
 
     temp_d["SUMMARY"] = event_name

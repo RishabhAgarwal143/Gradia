@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import { deleteSchedule } from "../support_local_files/support_func";
+import { deleteSchedule } from "./support_func";
 
 const ConfirmationModal = ({ event, isOpen, isClose, onDel }) => {
   const handleDelete = async () => {

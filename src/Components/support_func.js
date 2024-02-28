@@ -19,7 +19,7 @@ export async function currentAuthenticatedUser() {
 
     // console.log(`The username: ${username}`);
     console.log(`The userId: ${cognito_Id}`);
-    // console.log(`The accessToken: ${accessToken}`);
+    console.log(`The accessToken: ${accessToken}`);
     // console.log(`The idToken: ${idToken}`);
     // console.log(`The signInDetails: ${signInDetails}`);
 

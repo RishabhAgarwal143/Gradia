@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { list_tasks_item } from "../support_local_files/support_func";
+import { list_tasks_item } from "./support_func";
 const Sidebar = () => {
   const [schedules, setSchedules] = useState([]);
   // const [tasks, setTasks] = useState([]);

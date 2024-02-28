@@ -2,7 +2,7 @@
 // import React, { useState } from 'react';
 import Modal from "react-modal";
 import AddEvent from "./AddEvent.jsx";
-import * as commands from "../support_local_files/support_func.js";
+import * as commands from "./support_func.js";
 // import AddEvent from "./AddEvent.jsx";
 // const AddEventModal = ({ isOpen, onRequestClose, onAddEvent }) => {
 // return (
@@ -49,10 +49,15 @@ import * as commands from "../support_local_files/support_func.js";
 //     padding: '20px', // Adjust the padding as needed
 //   },
 // };
-const AddEventModal = ({ isOpen, onRequestClose, onAddEvent, onUpdateFields }) => {
+const AddEventModal = ({
+  isOpen,
+  onRequestClose,
+  onAddEvent,
+  onUpdateFields,
+}) => {
   const handleAddEvent = (fields) => {
     const updatedFields = { ...fields, userinfoID: commands.cognito_Id };
-    console.log('Updated fields:', updatedFields);
+    console.log("Updated fields:", updatedFields);
     onAddEvent(updatedFields); // Pass the updated fields to the parent component
   };
 
@@ -65,12 +70,21 @@ const AddEventModal = ({ isOpen, onRequestClose, onAddEvent, onUpdateFields }) =
       overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       className="bg-gray-800 text-white rounded-lg shadow-lg p-6 w-1/2 relative"
     >
-      <h2 className="text-2xl font-bold mb-4 justify-center text-center">Add Event</h2>
-      <button className="absolute top-0 right-0 p-4 text-white" onClick={onRequestClose}>X</button>
-      <AddEvent onSubmit={handleAddEvent} onError={(error) => console.log('Error:', error)} />
+      <h2 className="text-2xl font-bold mb-4 justify-center text-center">
+        Add Event
+      </h2>
+      <button
+        className="absolute top-0 right-0 p-4 text-white"
+        onClick={onRequestClose}
+      >
+        X
+      </button>
+      <AddEvent
+        onSubmit={handleAddEvent}
+        onError={(error) => console.log("Error:", error)}
+      />
     </Modal>
   );
 };
 
 export default AddEventModal;
-
