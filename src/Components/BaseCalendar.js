@@ -104,7 +104,6 @@ const MyCalendar = () => {
     isNew: event.isNew ? event.isNew : false,
   }));
 
-  create_temp(transformedEvents);
   const handleAddEvent = async (newEvent) => {
     const result = await create_schedule(newEvent);
     console.log(result);
@@ -174,6 +173,7 @@ const MyCalendar = () => {
     (item) => item.id === selectedEvent?.id
   );
 
+  create_temp(transformedEvents);
   return (
     <div className="flex flex-row bg-black">
       <div className="flex-1 relative">

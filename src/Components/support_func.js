@@ -104,11 +104,17 @@ async function create_temp_user(transformedEvents) {
 
 export function create_user() {
   let hasbeencalled = false;
+  let counter = 4;
   return function (transformedEvents) {
     if (!hasbeencalled) {
-      hasbeencalled = true;
+      if (counter === 0) {
+        hasbeencalled = true;
+      }
+      counter--;
       create_temp_user(transformedEvents);
-      subscribedScedule();
+      if (counter > 2) {
+        subscribedScedule();
+      }
     } else {
       console.log("FUCNTION ALREADY CALLED");
     }

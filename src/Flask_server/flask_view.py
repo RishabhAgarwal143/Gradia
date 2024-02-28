@@ -58,8 +58,10 @@ def delete_data():
 def receive_schedule():
     # TODO: FIX SETTING SCHEDULES AFTER INITIALIZATION
     time.sleep(0.5)
-    data = request.json 
+    data = request.json
+    # print((data))
 
+    print(len(data))
     try:
         if(info.checker == False):
             print("stored schedule")
