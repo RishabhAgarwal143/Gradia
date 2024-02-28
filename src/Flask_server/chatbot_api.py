@@ -33,10 +33,10 @@ def execute_required_functions(required_actions):
         # Call the corresponding Python function
         if func_name in functions:
             function = functions[func_name]
-            if (function == ac.add_event_to_calendar):
+            if (function == ac.add_event_to_calendar or function == ac.delete_events_in_range):
                 global pop_up_flag
                 pop_up_flag = True
-                print("POP UP FLAG IS TRUE")
+                # print("POP UP FLAG IS TRUE")
 
             result = function(**args)
 
