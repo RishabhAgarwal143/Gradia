@@ -30,6 +30,30 @@ def receive_data():
     return jsonify({'message': 'Data received successfully'})
 
 
+@app.route('/api/createsubscribe', methods=['POST'])
+def create_data():
+    data = request.json  # Assuming data is sent as JSON
+    # Process the received data here
+
+    print(data)
+    return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/updatesubscribe', methods=['POST'])
+def update_data():
+    data = request.json  # Assuming data is sent as JSON
+    # Process the received data here
+
+    print(data)
+    return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/deletesubscribe', methods=['POST'])
+def delete_data():
+    data = request.json  # Assuming data is sent as JSON
+    # Process the received data here
+
+    print(data)
+    return jsonify({'message': 'Data received successfully'})
+
 @app.route('/api/schedule', methods=['POST'])
 def receive_schedule():
     # TODO: FIX SETTING SCHEDULES AFTER INITIALIZATION

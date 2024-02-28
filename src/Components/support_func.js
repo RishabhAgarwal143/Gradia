@@ -63,7 +63,7 @@ export async function get_item() {
   console.log(allTodos);
 }
 
-export async function create_user(transformedEvents) {
+async function create_temp_user(transformedEvents) {
   await currentAuthenticatedUser(transformedEvents);
   await handleFetchUserAttributes();
   axios
@@ -102,11 +102,34 @@ export async function create_user(transformedEvents) {
   }
 }
 
+export function create_user() {
+  let hasbeencalled = false;
+  return function (transformedEvents) {
+    if (!hasbeencalled) {
+      hasbeencalled = true;
+      create_temp_user(transformedEvents);
+      subscribedScedule();
+    } else {
+      console.log("FUCNTION ALREADY CALLED");
+    }
+  };
+}
+
 export async function subscribedScedule() {
   const createSub = client
     .graphql({ query: subscriptions.onCreateSchedule })
     .subscribe({
-      next: ({ data }) => console.log(data),
+      next: ({ data }) => {
+        axios
+          .post("http://127.0.0.1:5000/api/createsubscribe", data)
+          .then((response) => {
+            console.log("Data sent successfully:");
+          })
+          .catch((error) => {
+            console.error("Error sending data:", error);
+          });
+        console.log(data);
+      },
       error: (error) => console.warn(error),
     });
   console.log(createSub);
@@ -114,15 +137,35 @@ export async function subscribedScedule() {
   const UpdateSub = client
     .graphql({ query: subscriptions.onUpdateSchedule })
     .subscribe({
-      next: ({ data }) => console.log(data),
+      next: ({ data }) => {
+        axios
+          .post("http://127.0.0.1:5000/api/updatesubscribe", data)
+          .then((response) => {
+            console.log("Data sent successfully:");
+          })
+          .catch((error) => {
+            console.error("Error sending data:", error);
+          });
+        console.log(data);
+      },
       error: (error) => console.warn(error),
     });
-  console.log(UpdateSub);
+  // console.log(UpdateSub);
 
   const DeleteSub = client
     .graphql({ query: subscriptions.onDeleteSchedule })
     .subscribe({
-      next: ({ data }) => console.log(data),
+      next: ({ data }) => {
+        axios
+          .post("http://127.0.0.1:5000/api/deletesubscribe", data)
+          .then((response) => {
+            console.log("Data sent successfully:");
+          })
+          .catch((error) => {
+            console.error("Error sending data:", error);
+          });
+        console.log(data);
+      },
       error: (error) => console.warn(error),
     });
   console.log(DeleteSub);

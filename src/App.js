@@ -6,6 +6,7 @@ import BasicCalendar from "./Components/BaseCalendar.js";
 
 function App() {
   // commands.create_user();
+  // commands.subscribedScedule();
   return (
     <div className="App" style={{ height: "100vh", weight: "100vw" }}>
       {/* <header className="App-header"> */}

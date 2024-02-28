@@ -14,7 +14,7 @@ import { create_user, create_schedule } from "./support_func";
 import Chatbot from "./Chatbot";
 
 const localizer = momentLocalizer(moment);
-
+const create_temp = create_user();
 const MyCalendar = () => {
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -104,6 +104,7 @@ const MyCalendar = () => {
     isNew: event.isNew ? event.isNew : false,
   }));
 
+  create_temp(transformedEvents);
   const handleAddEvent = async (newEvent) => {
     const result = await create_schedule(newEvent);
     console.log(result);
@@ -173,7 +174,6 @@ const MyCalendar = () => {
     (item) => item.id === selectedEvent?.id
   );
 
-  create_user(transformedEvents);
   return (
     <div className="flex flex-row bg-black">
       <div className="flex-1 relative">
@@ -240,7 +240,7 @@ const MyCalendar = () => {
             style={{ color: "white" }}
           >
             <span className="text-white font-bold px-2  hover:text-black">
-              Add Tasks
+              Subscribe
             </span>
             <img
               src={addIcon}
