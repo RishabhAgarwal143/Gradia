@@ -7,7 +7,7 @@ const ConfirmationModal = ({ event, isOpen, isClose, onDel }) => {
   const handleDelete = async () => {
     try {
       // Call the delete function to delete the event
-      console.log("Event:", event);
+      // console.log("Event:", event);
       const deletedSchedule = await deleteSchedule(event.id);
       isOpen = false;
       isClose();
@@ -18,7 +18,7 @@ const ConfirmationModal = ({ event, isOpen, isClose, onDel }) => {
     }
   };
   useEffect(() => {
-    console.log("in delete confirmation", event);
+    // console.log("in delete confirmation", event);
     if (isOpen) {
       confirmAlert({
         title: "Confirm Deletion",

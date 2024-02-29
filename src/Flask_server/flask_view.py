@@ -37,7 +37,7 @@ def create_data():
     # Process the received data here
     add_schedule_to_payload_schedules(data)
 
-    print(data)
+    # print(data)
 
     return jsonify({'message': 'Data received successfully'})
 

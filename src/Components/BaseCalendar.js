@@ -121,8 +121,9 @@ const MyCalendar = () => {
 
   const handleDelEvent = (newEvent) => {
     // const result = await create_schedule(newEvent);
-    console.log("In del");
-    setAllEvents(myEvents.filter((event) => event !== newEvent));
+    console.log("In del", newEvent);
+
+    setAllEvents(myEvents.filter((event) => event.id !== newEvent.id));
   };
 
   function handleGPTevent(newEvent, tasktype) {
@@ -134,7 +135,6 @@ const MyCalendar = () => {
     setPendingEvent(highlightedNewEvent);
     console.log("PENDING", pendingEvent);
     setSelectedEvent(pendingEvent);
-
     setIsConfirmationModalOpen(true);
   }
 

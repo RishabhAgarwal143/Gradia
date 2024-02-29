@@ -73,17 +73,17 @@ def add_schedule_to_payload_schedules(schedule):
     # print("COMBINED SCHEDULES", payload.schedules)
     df = df[payload.schedules.columns]
 
-    combined = pd.concat([payload.schedules, df], ignore_index=True)
-    combined = combined.sort_values(by='start', ascending=False)
+    payload.schedules = pd.concat([payload.schedules, df], ignore_index=True)
+    payload.schedules = payload.schedules.sort_values(by='start', ascending=False)
 
     # print("ORIGINAL:", payload.schedules)
     # print("NEW:", df)
     # print(_get_schedule_range_df('2024-03-01 16:00:00', '2024-03-01 17:00:00'))
     # print("COMBINED: ", combined)
-    payload.schedules = combined.copy()
+    # payload.schedules = combined.copy()
     print("AFTER ADDING", payload.schedules)
 
-    delete_events_in_range('2024-03-02 20:00:00', '2024-03-02 21:00:00')
+    # delete_events_in_range('2024-03-02 20:00:00', '2024-03-02 21:00:00')
     
 
     print("ADDED")
@@ -103,10 +103,12 @@ def delete_schedule_from_payload_schedules(schedule):
     ids = set(payload.schedules['id'])
     if id not in ids:
         return
+    print("BEFORE ADDING", payload.schedules)
 
     payload.schedules = payload.schedules[payload.schedules['id'] != id]
-    print("DELETED")
+    print("AFTER ADDING", payload.schedules)
 
+    print("DELETED")
 
 def schedule_range_df(user_start_time, user_end_time):
     global payload
