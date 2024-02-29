@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from chatbot_api import openai_manager
 from api_calls import initialize_payload_user
-from api_calls import set_schedules
+from api_calls import set_schedules, add_schedule_to_payload_schedules, delete_schedule_from_payload_schedules
 from Reading_Calendar import Subscribing_to_Calendar
 import jwt
 import markdown
@@ -34,8 +34,9 @@ def receive_data():
 def create_data():
     data = request.json  # Assuming data is sent as JSON
     # Process the received data here
+    add_schedule_to_payload_schedules(data)
 
-    print(data)
+    # print(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/updatesubscribe', methods=['POST'])
@@ -43,15 +44,16 @@ def update_data():
     data = request.json  # Assuming data is sent as JSON
     # Process the received data here
 
-    print(data)
+    # print(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/deletesubscribe', methods=['POST'])
 def delete_data():
     data = request.json  # Assuming data is sent as JSON
     # Process the received data here
-
-    print(data)
+    delete_schedule_from_payload_schedules(data)
+    # print(data)
+    
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/schedule', methods=['POST'])
@@ -81,7 +83,7 @@ def chat():
     user_message = request.form['user_message']
     response,outputs = info.chats.sendcall(user_message)
     response = markdown.markdown(response)
-    print(outputs[1])
+    print(outputs)
     return jsonify({'bot_response': response,'events_to_be_managed' : outputs })
 
 @app.route('/Subscribe',methods=['POST'])

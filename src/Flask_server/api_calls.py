@@ -35,6 +35,53 @@ def set_schedules(schedules):
     df_sorted = df.sort_values(by='start')
     payload.schedules = df_sorted
 
+def add_schedule_to_payload_schedules(schedule):
+    global payload
+    global time_converter
+    global user_info
+    print("CALLED")
+    data_dicts = []
+    # data_dicts.append(schedule[0])
+    out_dict = schedule['onCreateSchedule']
+    print(out_dict)
+    print(type(out_dict))
+
+    id = out_dict['id']
+    ids = set(payload.schedules['id'])
+    if id in ids:
+        return
+
+
+    data_dicts.append(out_dict)
+    df = pd.DataFrame(data_dicts)
+
+    # drop id
+    df = df.drop(columns=['RRULE', 'UID', 'CATEGORIES', 'DTSTAMP','Importance', 'createdAt', 'updatedAt', 'owner', '__typename', 'scheduleImportanceId'])
+
+    df = df.rename(columns={'DTSTART': 'start', 'DTEND': 'end', 'SUMMARY': 'title', 'DESCRIPTION': 'description', 'LOCATION': 'location'}, inplace=True)
+
+    frames = [payload.schedules, df]
+    payload.schedules = pd.concat(frames)
+    print("ADDED")
+
+def delete_schedule_from_payload_schedules(schedule):
+    global payload
+    global time_converter
+    global user_info
+    print("CALLED")
+    data_dicts = []
+    # data_dicts.append(schedule[0])
+    out_dict = schedule['onDeleteSchedule']
+    print(out_dict)
+    print(type(out_dict))
+
+    id = out_dict['id']
+    ids = set(payload.schedules['id'])
+    if id not in ids:
+        return
+
+    payload.schedules = payload.schedules[payload.schedules['id'] != id]
+    print("DELETED")
 
 
 def schedule_range_df(user_start_time, user_end_time):
@@ -190,10 +237,12 @@ def add_event_to_calendar(start_time, end_time, event_name, event_description=No
     temp_d["LOCATION"] = event_location
     temp_d["DESCRIPTION"] = event_description
     temp_d["userinfoID"] = user_info.user_id
-    temp_d["RRULE"] = None
+    # temp_d["RRULE"] = None
 
     event_add = json.dumps(temp_d)
     event_add = json.loads(event_add)
+
+    print(existing_events.columns)
     
     if not existing_events.empty:
         conflicting_events = _conflict_detector(existing_events)
@@ -208,7 +257,7 @@ def delete_events_in_range(start_time, end_time):
     global time_converter
     
     existing_events = _get_schedule_range_df(start_time, end_time)
-    print(existing_events)
+    print(existing_events.columns)
 
     if not existing_events.empty:
         existing_events = _conflict_detector(existing_events)
