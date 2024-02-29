@@ -10,6 +10,7 @@ import time
 
 app = Flask(__name__,template_folder="templates")
 CORS(app)
+
 class user_information():
     def __init__(self):
         self.checker = False
@@ -36,7 +37,8 @@ def create_data():
     # Process the received data here
     add_schedule_to_payload_schedules(data)
 
-    # print(data)
+    print(data)
+
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/updatesubscribe', methods=['POST'])
@@ -90,10 +92,8 @@ def chat():
 def subscribe_cal():
     data = request.json
     # url = data["URL"]
-    # category_name = data["Name"]
-    url = "https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4"
-    category_name = "Purdue Calendar"
-    calendar = Subscribing_to_Calendar(url,info.Token,info.userID,category_name)
+    print(data)
+    calendar = Subscribing_to_Calendar(data["calendar_url"],info.Token,info.userID,data["calendar_name"])
     calendar.add_record_to_database()
     return jsonify({'message' : 'Subscribed Successfully'})
 

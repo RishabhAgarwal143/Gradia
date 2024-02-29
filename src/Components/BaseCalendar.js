@@ -10,9 +10,9 @@ import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 import ConfirmAddModal from "./ConfirmAddEvent";
-import { create_user, create_schedule } from "./support_func";
+import { create_user, create_schedule, deleteSchedule } from "./support_func";
 import Chatbot from "./Chatbot";
-
+import axios from "axios";
 const localizer = momentLocalizer(moment);
 const create_temp = create_user();
 const MyCalendar = () => {
@@ -21,7 +21,7 @@ const MyCalendar = () => {
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [pendingEvent, setPendingEvent] = useState(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-
+  const [gpttask, setGptTask] = useState("");
   // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -56,6 +56,12 @@ const MyCalendar = () => {
     fetchData();
   }, []);
 
+  let counter = 0;
+  const update_counter = () => {
+    counter += 1;
+    return counter;
+  };
+
   const generateOccurrences = (event) => {
     const { BYDAYS, FREQ, INTERVALS, UNTIL, WKST } = event.RRULE;
 
@@ -81,6 +87,7 @@ const MyCalendar = () => {
     // console.log("occurrences", occurrences);
     return occurrences.map((occurrence) => ({
       ...event,
+      id: String(update_counter()),
       DTSTART: occurrence,
       DTEND: new Date(
         new Date(occurrence).getTime() +
@@ -118,18 +125,16 @@ const MyCalendar = () => {
     setAllEvents(myEvents.filter((event) => event !== newEvent));
   };
 
-  function handleGPTevent(newEvent) {
+  function handleGPTevent(newEvent, tasktype) {
     // Highlight the new event by adding a special property
 
+    setGptTask(tasktype);
     const highlightedNewEvent = { ...newEvent, isNew: true };
     console.log("GPT EVENT", highlightedNewEvent);
-    // Temporarily add the new event to the list of events
-    // setAllEvents([...myEvents, highlightedNewEvent]);
-    // Store the new event as the pending event
     setPendingEvent(highlightedNewEvent);
     console.log("PENDING", pendingEvent);
     setSelectedEvent(pendingEvent);
-    // setModalPosition({ top: rect.top, left: rect.left });
+
     setIsConfirmationModalOpen(true);
   }
 
@@ -155,12 +160,17 @@ const MyCalendar = () => {
       delete confirmedEvent.isNew;
       console.log("confirmedEvent", confirmedEvent);
       // Add the confirmed event to the list of events
-      setAllEvents(myEvents.filter((event) => event !== confirmedEvent));
-      const result = await create_schedule(confirmedEvent);
-      setAllEvents([...myEvents, result.data.createSchedule]);
-    } else {
-      // If the user denies, remove the pending event from the list of events
-      setAllEvents(myEvents.filter((event) => event !== pendingEvent));
+      // setAllEvents(myEvents.filter((event) => event !== confirmedEvent));
+      if (gpttask === "CONFLICT" || gpttask === "ADD") {
+        const result = await create_schedule(confirmedEvent);
+        setAllEvents([...myEvents, result.data.createSchedule]);
+      } else if (gpttask === "DELETED") {
+        await deleteSchedule(confirmedEvent.id);
+        console.log(confirmedEvent);
+        setAllEvents(
+          myEvents.filter((event) => event.id !== confirmedEvent.id)
+        );
+      }
     }
   };
 
@@ -172,6 +182,66 @@ const MyCalendar = () => {
   const originalSelectedEvent = myEvents.find(
     (item) => item.id === selectedEvent?.id
   );
+
+  const [subscribe_visible, setSubscribeVisible] = useState(false);
+  const [subscribe_url, setSubscribe_url] = useState("");
+  const [subscribe_name, setSubscribe_name] = useState("");
+  const [urlError, setUrlError] = useState(false);
+
+  const validateUrl = (url) => {
+    // Regular expression to validate URL
+    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+    return urlRegex.test(url);
+  };
+
+  const handleButtonClick = () => {
+    setSubscribeVisible(true);
+  };
+
+  const handleInputChange1 = (event) => {
+    setSubscribe_url(event.target.value);
+    setUrlError(false);
+  };
+
+  const handleInputChange2 = (event) => {
+    setSubscribe_name(event.target.value);
+  };
+
+  const handleSubscribeSubmit = () => {
+    // Send data via Axios
+
+    const isValidUrl = validateUrl(subscribe_url);
+
+    if (!isValidUrl) {
+      setUrlError(true);
+      return;
+    }
+    axios
+      .post("http://127.0.0.1:5000/Subscribe", {
+        calendar_url: subscribe_url,
+        calendar_name: subscribe_name,
+      })
+      .then((response) => {
+        // Handle success
+        console.log("Data sent successfully:", response.data);
+      })
+      .catch((error) => {
+        // Handle error
+        console.error("Error sending data:", error);
+      });
+
+    setSubscribe_url("");
+    setSubscribe_name("");
+
+    setSubscribeVisible(false);
+  };
+
+  const handleSubscribeClose = () => {
+    setSubscribeVisible(false);
+    // Optionally reset input values when closing
+    setSubscribe_url("");
+    setSubscribe_name("");
+  };
 
   create_temp(transformedEvents);
   return (
@@ -234,20 +304,64 @@ const MyCalendar = () => {
               className="w-6 h-6 fill-current text-white"
             />
           </button>
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="bg-gray-800 p-2 rounded-full flex items-center justify-center hover:bg-gray-200  transition duration-300 mt-4 mb-2"
-            style={{ color: "white" }}
-          >
-            <span className="text-white font-bold px-2  hover:text-black">
-              Subscribe
-            </span>
-            <img
-              src={addIcon}
-              alt="Add Tasks"
-              className="w-6 h-6 fill-current text-white"
-            />
-          </button>
+          <div>
+            {!subscribe_visible && (
+              <button
+                onClick={handleButtonClick}
+                className="bg-gray-800 p-2 rounded-full flex items-center justify-center hover:bg-gray-200 transition duration-300 mt-4 mb-2"
+                style={{ color: "white" }}
+              >
+                <span className="text-white font-bold px-2 hover:text-black">
+                  Subscribe
+                </span>
+                <img
+                  src={addIcon}
+                  alt="Add Tasks"
+                  className="w-6 h-6 fill-current text-white"
+                />
+              </button>
+            )}
+
+            {subscribe_visible && (
+              <div className="flex items-center flex-wrap">
+                <input
+                  type="url"
+                  value={subscribe_url}
+                  onChange={handleInputChange1}
+                  placeholder="Enter URL"
+                  className={`bg-gray-200 p-2 rounded-md mb-2 mr-2 ${
+                    urlError ? "border-red-500" : ""
+                  }`}
+                />
+                <input
+                  type="text"
+                  value={subscribe_name}
+                  onChange={handleInputChange2}
+                  placeholder="Enter Calendar Name"
+                  className="bg-gray-200 p-2 rounded-md mb-2"
+                />
+
+                <button
+                  onClick={handleSubscribeSubmit}
+                  className="bg-gray-800 p-2 rounded-full flex items-center justify-center hover:bg-gray-200 transition duration-300"
+                  style={{ color: "white" }}
+                >
+                  <span className="text-white font-bold px-2 hover:text-black">
+                    Submit
+                  </span>
+                </button>
+                <button
+                  onClick={handleSubscribeClose}
+                  className="bg-red-600 p-2 rounded-full flex items-center justify-center hover:bg-red-400 transition duration-300"
+                  style={{ color: "white" }}
+                >
+                  <span className="text-white font-bold px-2 hover:text-black">
+                    Close
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div

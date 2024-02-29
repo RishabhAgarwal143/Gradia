@@ -1,7 +1,7 @@
 import React from "react";
 
 const AddEventCard = ({ event, Close, onConfirm }) => {
-  console.log("in add event card:", event);
+  // console.log("in add event card:", event);
 
   const convertToTimeString = (date) => {
     const options = { hour: "numeric", minute: "numeric" };

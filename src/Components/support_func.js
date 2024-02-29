@@ -236,7 +236,7 @@ export async function list_schedule_item() {
 export const deleteSchedule = async (eventId) => {
   try {
     // Make the GraphQL API call to delete the schedule
-    const deletedSchedule = await client.graphql({
+    const deletedSchedule1 = await client.graphql({
       query: mutations.deleteSchedule,
       variables: {
         input: {
@@ -244,7 +244,9 @@ export const deleteSchedule = async (eventId) => {
         },
       },
     });
-    return deletedSchedule; // Return the result
+
+    console.log(deletedSchedule1);
+    return deletedSchedule1; // Return the result
   } catch (error) {
     throw new Error("Error deleting schedule: " + error.message); // Throw an error if deletion fails
   }

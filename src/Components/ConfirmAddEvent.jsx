@@ -5,7 +5,7 @@ import AddEventCard from "./AddEventCard";
 // import EventDetailsCard from "./EventDetailsCard";
 
 const ConfirmAddModal = ({ event, isOpen, onCancel, position, onConfirm }) => {
-  console.log("I am here", event);
+  // console.log("I am here", event);
   return (
     <ReactModal
       isOpen={isOpen}
