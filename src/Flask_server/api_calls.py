@@ -32,7 +32,7 @@ def set_schedules(schedules):
     df['end'] = pd.to_datetime(df['end'])
 
     # Sort DataFrame by 'start' column
-    df_sorted = df.sort_values(by='start')
+    df_sorted = df.sort_values(by='start', ascending=False)
     payload.schedules = df_sorted
 
 def add_schedule_to_payload_schedules(schedule):
@@ -43,8 +43,8 @@ def add_schedule_to_payload_schedules(schedule):
     data_dicts = []
     # data_dicts.append(schedule[0])
     out_dict = schedule['onCreateSchedule']
-    print(out_dict)
-    print(type(out_dict))
+    # print(out_dict)
+    # print(type(out_dict))
 
     id = out_dict['id']
     ids = set(payload.schedules['id'])
@@ -53,15 +53,39 @@ def add_schedule_to_payload_schedules(schedule):
 
 
     data_dicts.append(out_dict)
+    print("ADDING:", data_dicts)
     df = pd.DataFrame(data_dicts)
 
-    # drop id
-    df = df.drop(columns=['RRULE', 'UID', 'CATEGORIES', 'DTSTAMP','Importance', 'createdAt', 'updatedAt', 'owner', '__typename', 'scheduleImportanceId'])
 
-    df = df.rename(columns={'DTSTART': 'start', 'DTEND': 'end', 'SUMMARY': 'title', 'DESCRIPTION': 'description', 'LOCATION': 'location'}, inplace=True)
+    df.drop(columns=['RRULE', 'UID', 'CATEGORIES', 'DTSTAMP','Importance', '__typename', 'scheduleImportanceId'], inplace=True)
+    df.rename(columns={'DTSTART': 'start', 'DTEND': 'end', 'SUMMARY': 'title', 'DESCRIPTION': 'description', 'LOCATION': 'location'}, inplace=True)
 
-    frames = [payload.schedules, df]
-    payload.schedules = pd.concat(frames)
+    # print("COLUMNS:", df.columns)
+    # print(df.head())
+
+    df['start'] = pd.to_datetime(df['start'])
+    df['end'] = pd.to_datetime(df['end'])
+    
+    df['isNew'] = False
+
+    print("BEFORE ADDING", payload.schedules)
+
+    # print("COMBINED SCHEDULES", payload.schedules)
+    df = df[payload.schedules.columns]
+
+    combined = pd.concat([payload.schedules, df], ignore_index=True)
+    combined = combined.sort_values(by='start', ascending=False)
+
+    # print("ORIGINAL:", payload.schedules)
+    # print("NEW:", df)
+    # print(_get_schedule_range_df('2024-03-01 16:00:00', '2024-03-01 17:00:00'))
+    # print("COMBINED: ", combined)
+    payload.schedules = combined.copy()
+    print("AFTER ADDING", payload.schedules)
+
+    delete_events_in_range('2024-03-02 20:00:00', '2024-03-02 21:00:00')
+    
+
     print("ADDED")
 
 def delete_schedule_from_payload_schedules(schedule):
@@ -168,7 +192,7 @@ def _convert_time_column_utc(column):
 def _get_schedule_range_df(start_time, end_time):
     global payload
     df_range = schedule_range_df(start_time, end_time)
-    df_range.loc[:, ['start', 'end']] = df_range[['start', 'end']].apply(_convert_time_column)
+    # df_range.loc[:, ['start', 'end']] = df_range[['start', 'end']].apply(_convert_time_column)
 
     return df_range
 
@@ -202,7 +226,9 @@ def _df_to_json(df):
     # convert to user's timezone
     new_df.loc[:, ['DTSTART', 'DTEND']] = new_df[['DTSTART', 'DTEND']].apply(_convert_time_column)
 
-    # do strftime to convert to %Y-%m-%d %H:%M:%S
+    # new_df['DTSTART'] = new_df['DTSTART'].dt.tz_convert(user_info.user_timezone)
+    # new_df['DTEND'] = new_df['DTEND'].dt.tz_convert(user_info.user_timezone)
+
     new_df['DTSTART'] = new_df['DTSTART'].dt.strftime('%Y-%m-%d %H:%M:%S')
     new_df['DTEND'] = new_df['DTEND'].dt.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -246,8 +272,10 @@ def add_event_to_calendar(start_time, end_time, event_name, event_description=No
     
     if not existing_events.empty:
         conflicting_events = _conflict_detector(existing_events)
+        # print("CONFLICT", event_add)
         return ["CONFLICT", event_add, conflicting_events]
     else:
+        # print("ADD_EVENT", event_add)
         return ["ADD", event_add, None]
     
 
@@ -255,14 +283,22 @@ def delete_events_in_range(start_time, end_time):
     global payload
     global user_info
     global time_converter
+    print("TRYING TO DELETE FROM", payload.schedules)
     
     existing_events = _get_schedule_range_df(start_time, end_time)
-    print(existing_events.columns)
+
+    # print(existing_events.columns)
+
+    # convert 2024-02-29 05:00:00 format to user's timezone
+
+
 
     if not existing_events.empty:
         existing_events = _conflict_detector(existing_events)
+        print("DELETED", existing_events)
         return ["DELETED", existing_events]
     else:
+        print("NO_EVENTS")
         return ["NO_EVENTS", None]
 
 
