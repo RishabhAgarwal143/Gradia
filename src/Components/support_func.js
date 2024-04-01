@@ -74,6 +74,27 @@ async function create_temp_user(transformedEvents) {
     .catch((error) => {
       console.error("Error sending data:", error);
     });
+
+  let tasks = await listTasks();
+  axios
+    .post("http://127.0.0.1:5000/api/task", tasks)
+    .then((response) => {
+      console.log("Data sent successfully:");
+    })
+    .catch((error) => {
+      console.error("Error sending data:", error);
+    });
+
+  let subjects = await listSubjects();
+  axios
+    .post("http://127.0.0.1:5000/api/subjects", subjects)
+    .then((response) => {
+      console.log("Data sent successfully:");
+    })
+    .catch((error) => {
+      console.error("Error sending data:", error);
+    });
+
   try {
     const oneTodo = await client.graphql({
       query: queries.getUserinfo,
@@ -95,7 +116,7 @@ async function create_temp_user(transformedEvents) {
         query: mutations.createUserinfo,
         variables: { input: todoDetails },
       });
-      
+
       console.log("item created");
     }
   } catch (error) {
@@ -176,6 +197,60 @@ export async function subscribedScedule() {
       error: (error) => console.warn(error),
     });
   console.log(DeleteSub);
+
+  const createTask = client
+    .graphql({ query: subscriptions.onCreateTask })
+    .subscribe({
+      next: ({ data }) => {
+        axios
+          .post("http://127.0.0.1:5000/api/createTask", data)
+          .then((response) => {
+            console.log("Data sent successfully:");
+          })
+          .catch((error) => {
+            console.error("Error sending data:", error);
+          });
+        console.log(data);
+      },
+      error: (error) => console.warn(error),
+    });
+  console.log(createTask);
+
+  const UpdateTask = client
+    .graphql({ query: subscriptions.onUpdateTask })
+    .subscribe({
+      next: ({ data }) => {
+        axios
+          .post("http://127.0.0.1:5000/api/updateTask", data)
+          .then((response) => {
+            console.log("Data sent successfully:");
+          })
+          .catch((error) => {
+            console.error("Error sending data:", error);
+          });
+        console.log(data);
+      },
+      error: (error) => console.warn(error),
+    });
+  console.log(UpdateTask);
+
+  const DeleteTask = client
+    .graphql({ query: subscriptions.onDeleteTask })
+    .subscribe({
+      next: ({ data }) => {
+        axios
+          .post("http://127.0.0.1:5000/api/deleteTask", data)
+          .then((response) => {
+            console.log("Data sent successfully:");
+          })
+          .catch((error) => {
+            console.error("Error sending data:", error);
+          });
+        console.log(data);
+      },
+      error: (error) => console.warn(error),
+    });
+  console.log(DeleteTask);
   return [createSub, UpdateSub, DeleteSub];
 }
 
@@ -221,19 +296,6 @@ export async function list_schedule_item() {
   return items;
 }
 
-// try {
-//   // List all items
-//   const allSchedules = await client.graphql({
-//     query: queries.listSchedules,
-//     variables: { limit: 1000 },
-//   });
-//   console.log(allSchedules);
-//   return allSchedules;
-// } catch (error) {
-//   console.error("Error fetching data:", error);
-//   throw error; // Rethrow the error if needed
-// }
-
 export const deleteSchedule = async (eventId) => {
   try {
     // Make the GraphQL API call to delete the schedule
@@ -255,16 +317,55 @@ export const deleteSchedule = async (eventId) => {
 
 // List all items
 export const listTasks = async () => {
-  try {
-    // Make the GraphQL API call to delete the schedule
-    const allTasks = await client.graphql({
-      query: queries.listTasks,
-    });
-    return allTasks; // Return the result
-  } catch (error) {
-    throw new Error("Error getting tasks: " + error.message); // Throw an error if deletion fails
-  }
+  let items = [];
+  let nextToken = null;
+  do {
+    try {
+      const allTask = await client.graphql({
+        query: queries.listTasks,
+        variables: { nextToken: nextToken },
+      });
+      const { items: currentItems, nextToken: newNextToken } =
+        allTask.data.listTasks;
+
+      items = [...items, ...currentItems];
+      console.log("events recieved", items.length);
+
+      nextToken = newNextToken;
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      break; // Exit the loop if there's an error
+    }
+  } while (nextToken);
+
+  return items;
 };
+
+export const listSubjects = async () => {
+  let items = [];
+  let nextToken = null;
+  do {
+    try {
+      const allTask = await client.graphql({
+        query: queries.listSubjects,
+        variables: { nextToken: nextToken },
+      });
+      const { items: currentItems, nextToken: newNextToken } =
+        allTask.data.listSubjects;
+
+      items = [...items, ...currentItems];
+      console.log("events recieved", items.length);
+
+      nextToken = newNextToken;
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      break; // Exit the loop if there's an error
+    }
+  } while (nextToken);
+
+  return items;
+};
+
 export async function list_tasks_item() {
   try {
     // List all items

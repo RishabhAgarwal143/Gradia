@@ -10,7 +10,7 @@ from function_payloads import Payload
 from function_payloads import TimeConverter
 from function_payloads import UserInfo
 import pandas as pd
-from database_queries import process_and_add_schedule
+from database_queries import process_add_schedule
 
 global user_info
 global payload
@@ -145,7 +145,7 @@ def initialize_payload_user(token, user_info_id,schedule):
     # print("INITIALIZE PAYLOAD USER")
     if(schedule != None):
         set_schedules(schedule)
-        process_and_add_schedule(schedule)
+        process_add_schedule(schedule)
         
 
 

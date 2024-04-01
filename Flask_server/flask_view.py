@@ -3,7 +3,7 @@ from flask_cors import CORS
 from chatbot_api import openai_manager
 from api_calls import initialize_payload_user
 from api_calls import set_schedules, add_schedule_to_payload_schedules, delete_schedule_from_payload_schedules
-from database_queries import process_and_add_schedule
+from database_queries import process_add_schedule,process_delete_schedule,process_add_task,process_delete_task,process_add_subject
 from Reading_Calendar import Subscribing_to_Calendar
 import markdown
 import time
@@ -36,7 +36,7 @@ def create_data():
     data = request.json  # Assuming data is sent as JSON
     # Process the received data here
     # add_schedule_to_payload_schedules(data)
-    # process_and_add_schedule(data)
+    process_add_schedule(data)
     print(data)
 
     return jsonify({'message': 'Data received successfully'})
@@ -54,14 +54,38 @@ def delete_data():
     data = request.json  # Assuming data is sent as JSON
     # Process the received data here
     # delete_schedule_from_payload_schedules(data)
-    # print(data)
-    
+    process_delete_schedule(data)
     return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/createTask', methods=['POST'])
+def create_task():
+    data = request.json  # Assuming data is sent as JSON
+
+    process_add_task(data)
+    print(data)
+
+    return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/updateTask', methods=['POST'])
+def update_task():
+    data = request.json  # Assuming data is sent as JSON
+    # Process the received data here
+
+    # print(data)
+    return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/deleteTask', methods=['POST'])
+def delete_task():
+    data = request.json  # Assuming data is sent as JSON
+
+    process_delete_task(data)
+    return jsonify({'message': 'Data received successfully'})
+
 
 @app.route('/api/schedule', methods=['POST'])
 def receive_schedule():
     # TODO: FIX SETTING SCHEDULES AFTER INITIALIZATION
-    time.sleep(0.5)
+    # time.sleep(0.5)
     data = request.json
     # print((data))
 
@@ -72,11 +96,31 @@ def receive_schedule():
             info.schedule = data
         else:
             set_schedules(data)
-            process_and_add_schedule(data)
+            process_add_schedule(data)
             info.checker = True
             
     except:
         pass
+    return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/task', methods=['POST'])
+def receive_task():
+    # TODO: FIX SETTING SCHEDULES AFTER INITIALIZATION
+    # time.sleep(0.5)
+    data = request.json
+    # print((data))
+    print(data)
+    process_add_task(data)
+    return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/subjects', methods=['POST'])
+def receive_subjects():
+    # TODO: FIX SETTING SCHEDULES AFTER INITIALIZATION
+    # time.sleep(0.5)
+    data = request.json
+    # print((data))
+    # print(data)
+    process_add_subject(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/')

@@ -37,7 +37,7 @@ class Task(Base):
     id: Mapped[str] = mapped_column(primary_key=True)
     SUMMARY: Mapped[Optional[str]]
     DTSTART: Mapped[Optional[datetime.datetime]]
-    DTEND: Mapped[Optional[datetime.datetime]]
+    DUE: Mapped[Optional[datetime.datetime]]
     DESCRIPTION: Mapped[Optional[str]]
     LOCATION: Mapped[Optional[str]]
     STATUS: Mapped[Optional[str]]

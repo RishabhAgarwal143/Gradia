@@ -10,8 +10,6 @@ from database_setup import Schedule,Task,Subjects
 import datetime
 
 engine = create_engine("sqlite:///Flask_server/database/userdata.db")
-
-# Create session
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -25,6 +23,7 @@ def check_if_object_exists(obj):
 
 
 def add_to_database(obj):
+    
     if(check_if_object_exists(obj)):
         return
     
@@ -48,9 +47,8 @@ def delete_from_database(obj_class, filter_attr, filter_value):
         return True
     return False
 
-def process_and_add_schedule(schedules):
-    # schedule_list = []
-    print("Entered")
+def process_add_schedule(schedules):
+
     if("onCreateSchedule" in schedules):
         schedule = schedules['onCreateSchedule']
         print(schedule)
@@ -60,15 +58,78 @@ def process_and_add_schedule(schedules):
         add_to_database(new_schedule)
         return
 
-    counter = 0
     for schedule in schedules:
-        # counter+=1
         startTime = datetime.datetime.fromisoformat(schedule["start"].replace('Z', '+00:00'))
         endTime = datetime.datetime.fromisoformat(schedule["end"].replace('Z', '+00:00'))
         new_schedule = Schedule(id=schedule["id"], SUMMARY=schedule["title"], DTSTART=startTime, DTEND=endTime,DESCRIPTION=schedule["description"], LOCATION=schedule["location"],subjectsID=schedule["subject_id"])
         add_to_database(new_schedule)
-    print(counter)
     pass
+
+def process_delete_schedule(schedules):
+    
+    schedule = schedules['onDeleteSchedule']
+    print(schedules)
+    delete_from_database(Schedule,"id",schedule["id"])
+    pass
+
+
+def process_add_task(tasks):
+
+    if("onCreateTask" in tasks):
+        task = tasks['onCreateTask']
+        if(task["DTSTART"]):
+            startTime = datetime.datetime.fromisoformat(task["DTSTART"].replace('Z', '+00:00'))
+        if(task["DUE"]):
+            endTime = datetime.datetime.fromisoformat(task["DUE"].replace('Z', '+00:00'))
+        if(task["COMPLETED"]):
+            completed = datetime.datetime.fromisoformat(task["COMPLETED"].replace('Z', '+00:00'))
+        new_Task = Task(id=task["id"], SUMMARY=task["SUMMARY"], DTSTART=startTime, DUE=endTime,DESCRIPTION=task["DESCRIPTION"], LOCATION=task["LOCATION"],STATUS=task["STATUS"],PRIORITY=task["PRIORITY"],COMPLETED=completed,subjectsID=task["subjectsID"])
+        add_to_database(new_Task)
+        return
+
+    for task in tasks:
+        if(task["DTSTART"]):
+            startTime = datetime.datetime.fromisoformat(task["DTSTART"].replace('Z', '+00:00'))
+        if(task["DUE"]):
+            endTime = datetime.datetime.fromisoformat(task["DUE"].replace('Z', '+00:00'))
+        completed = None
+        if(task["COMPLETED"]):
+            completed = datetime.datetime.fromisoformat(task["COMPLETED"].replace('Z', '+00:00'))
+        
+        new_Task = Task(id=task["id"], SUMMARY=task["SUMMARY"], DTSTART=startTime, DUE=endTime,DESCRIPTION=task["DESCRIPTION"], LOCATION=task["LOCATION"],STATUS=task["STATUS"],PRIORITY=task["PRIORITY"],COMPLETED=completed,subjectsID=task["subjectsID"])
+        add_to_database(new_Task)
+    pass
+
+def process_delete_task(tasks):
+    
+    task = tasks['onDeleteTask']
+    print(tasks)
+    delete_from_database(Task,"id",task["id"])
+    pass
+
+
+def process_add_subject(subjects):
+
+    if("onCreateSubjects" in subjects):
+        subject = subjects['onCreateSubjects']
+        # print(subject)
+        new_subject = Subjects(id=subject["id"], subject_Name=subject["subject_Name"], current_Grade=subject["current_Grade"], target_Grade=subject["target_Grade"])
+        add_to_database(new_subject)
+        return
+
+    for subject in subjects:
+        # print(subject)
+        new_subject = Subjects(id=subject["id"], subject_Name=subject["subject_Name"], current_Grade=subject["current_Grade"], target_Grade=subject["target_Grade"])
+        add_to_database(new_subject)
+        
+    pass
+
+def process_delete_subject(subjects):
+    
+    subject = subjects['onDeleteSubjects']
+    delete_from_database(Subjects,"id",subject["id"])
+    pass
+
 
 # new_subject = Subjects(id="1", subject_Name="Math", current_Grade=85, target_Grade=90)
 # add_to_database(new_subject)
