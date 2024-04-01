@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { AutocompleteProps, GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { AutocompleteProps, GridProps, SelectFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -31,10 +31,13 @@ export declare type TaskCreateFormInputValues = {
     SUMMARY?: string;
     COMPLETED?: string;
     STATUS?: string;
-    CATEGORIES?: string;
     PRIORITY?: number;
     DTSTAMP?: string;
-    Importance?: any;
+    subscribedcalendarID?: string;
+    DESCRIPTION?: string;
+    subjectsID?: string;
+    TaskGradeInfo?: any;
+    LOCATION?: string;
 };
 export declare type TaskCreateFormValidationValues = {
     due_time?: ValidationFunction<string>;
@@ -46,10 +49,13 @@ export declare type TaskCreateFormValidationValues = {
     SUMMARY?: ValidationFunction<string>;
     COMPLETED?: ValidationFunction<string>;
     STATUS?: ValidationFunction<string>;
-    CATEGORIES?: ValidationFunction<string>;
     PRIORITY?: ValidationFunction<number>;
     DTSTAMP?: ValidationFunction<string>;
-    Importance?: ValidationFunction<any>;
+    subscribedcalendarID?: ValidationFunction<string>;
+    DESCRIPTION?: ValidationFunction<string>;
+    subjectsID?: ValidationFunction<string>;
+    TaskGradeInfo?: ValidationFunction<any>;
+    LOCATION?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TaskCreateFormOverridesProps = {
@@ -62,11 +68,14 @@ export declare type TaskCreateFormOverridesProps = {
     DUE?: PrimitiveOverrideProps<TextFieldProps>;
     SUMMARY?: PrimitiveOverrideProps<TextFieldProps>;
     COMPLETED?: PrimitiveOverrideProps<TextFieldProps>;
-    STATUS?: PrimitiveOverrideProps<TextFieldProps>;
-    CATEGORIES?: PrimitiveOverrideProps<TextFieldProps>;
+    STATUS?: PrimitiveOverrideProps<SelectFieldProps>;
     PRIORITY?: PrimitiveOverrideProps<TextFieldProps>;
     DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
-    Importance?: PrimitiveOverrideProps<AutocompleteProps>;
+    subscribedcalendarID?: PrimitiveOverrideProps<AutocompleteProps>;
+    DESCRIPTION?: PrimitiveOverrideProps<TextFieldProps>;
+    subjectsID?: PrimitiveOverrideProps<AutocompleteProps>;
+    TaskGradeInfo?: PrimitiveOverrideProps<AutocompleteProps>;
+    LOCATION?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type TaskCreateFormProps = React.PropsWithChildren<{
     overrides?: TaskCreateFormOverridesProps | undefined | null;

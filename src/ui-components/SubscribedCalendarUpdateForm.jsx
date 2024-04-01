@@ -24,9 +24,15 @@ import { generateClient } from "aws-amplify/api";
 import {
   getSubscribedCalendar,
   getUserinfo,
+  listSchedules,
+  listTasks,
   listUserinfos,
 } from "../graphql/queries";
-import { updateSubscribedCalendar } from "../graphql/mutations";
+import {
+  updateSchedule,
+  updateSubscribedCalendar,
+  updateTask,
+} from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
   items = [],
@@ -199,6 +205,9 @@ export default function SubscribedCalendarUpdateForm(props) {
     Calendar_Name: "",
     Calendar_URL: "",
     userinfoID: undefined,
+    Schedules: [],
+    Tasks: [],
+    LAST_MODIFIED: "",
   };
   const [Calendar_Name, setCalendar_Name] = React.useState(
     initialValues.Calendar_Name
@@ -211,21 +220,47 @@ export default function SubscribedCalendarUpdateForm(props) {
   const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
   const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
     React.useState([]);
+  const [Schedules, setSchedules] = React.useState(initialValues.Schedules);
+  const [SchedulesLoading, setSchedulesLoading] = React.useState(false);
+  const [schedulesRecords, setSchedulesRecords] = React.useState([]);
+  const [Tasks, setTasks] = React.useState(initialValues.Tasks);
+  const [TasksLoading, setTasksLoading] = React.useState(false);
+  const [tasksRecords, setTasksRecords] = React.useState([]);
+  const [LAST_MODIFIED, setLAST_MODIFIED] = React.useState(
+    initialValues.LAST_MODIFIED
+  );
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = subscribedCalendarRecord
-      ? { ...initialValues, ...subscribedCalendarRecord, userinfoID }
+      ? {
+          ...initialValues,
+          ...subscribedCalendarRecord,
+          userinfoID,
+          Schedules: linkedSchedules,
+          Tasks: linkedTasks,
+        }
       : initialValues;
     setCalendar_Name(cleanValues.Calendar_Name);
     setCalendar_URL(cleanValues.Calendar_URL);
     setUserinfoID(cleanValues.userinfoID);
     setCurrentUserinfoIDValue(undefined);
     setCurrentUserinfoIDDisplayValue("");
+    setSchedules(cleanValues.Schedules ?? []);
+    setCurrentSchedulesValue(undefined);
+    setCurrentSchedulesDisplayValue("");
+    setTasks(cleanValues.Tasks ?? []);
+    setCurrentTasksValue(undefined);
+    setCurrentTasksDisplayValue("");
+    setLAST_MODIFIED(cleanValues.LAST_MODIFIED);
     setErrors({});
   };
   const [subscribedCalendarRecord, setSubscribedCalendarRecord] =
     React.useState(subscribedCalendarModelProp);
+  const [linkedSchedules, setLinkedSchedules] = React.useState([]);
+  const canUnlinkSchedules = true;
+  const [linkedTasks, setLinkedTasks] = React.useState([]);
+  const canUnlinkTasks = true;
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
@@ -247,23 +282,60 @@ export default function SubscribedCalendarUpdateForm(props) {
         : undefined;
       setUserinfoID(userinfoIDRecord);
       setSelectedUserinfoIDRecords([userinfoRecord]);
+      const linkedSchedules = record?.Schedules?.items ?? [];
+      setLinkedSchedules(linkedSchedules);
+      const linkedTasks = record?.Tasks?.items ?? [];
+      setLinkedTasks(linkedTasks);
       setSubscribedCalendarRecord(record);
     };
     queryData();
   }, [idProp, subscribedCalendarModelProp]);
-  React.useEffect(resetStateValues, [subscribedCalendarRecord, userinfoID]);
+  React.useEffect(resetStateValues, [
+    subscribedCalendarRecord,
+    userinfoID,
+    linkedSchedules,
+    linkedTasks,
+  ]);
   const [currentUserinfoIDDisplayValue, setCurrentUserinfoIDDisplayValue] =
     React.useState("");
   const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
     React.useState(undefined);
   const userinfoIDRef = React.createRef();
+  const [currentSchedulesDisplayValue, setCurrentSchedulesDisplayValue] =
+    React.useState("");
+  const [currentSchedulesValue, setCurrentSchedulesValue] =
+    React.useState(undefined);
+  const SchedulesRef = React.createRef();
+  const [currentTasksDisplayValue, setCurrentTasksDisplayValue] =
+    React.useState("");
+  const [currentTasksValue, setCurrentTasksValue] = React.useState(undefined);
+  const TasksRef = React.createRef();
+  const getIDValue = {
+    Schedules: (r) => JSON.stringify({ id: r?.id }),
+    Tasks: (r) => JSON.stringify({ id: r?.id }),
+  };
+  const SchedulesIdSet = new Set(
+    Array.isArray(Schedules)
+      ? Schedules.map((r) => getIDValue.Schedules?.(r))
+      : getIDValue.Schedules?.(Schedules)
+  );
+  const TasksIdSet = new Set(
+    Array.isArray(Tasks)
+      ? Tasks.map((r) => getIDValue.Tasks?.(r))
+      : getIDValue.Tasks?.(Tasks)
+  );
   const getDisplayValue = {
     userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
+    Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
+    Tasks: (r) => `${r?.UID ? r?.UID + " - " : ""}${r?.id}`,
   };
   const validations = {
     Calendar_Name: [],
     Calendar_URL: [{ type: "URL" }],
     userinfoID: [{ type: "Required" }],
+    Schedules: [],
+    Tasks: [],
+    LAST_MODIFIED: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -309,8 +381,68 @@ export default function SubscribedCalendarUpdateForm(props) {
     setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
     setUserinfoIDLoading(false);
   };
+  const fetchSchedulesRecords = async (value) => {
+    setSchedulesLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ SUMMARY: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listSchedules.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listSchedules?.items;
+      var loaded = result.filter(
+        (item) => !SchedulesIdSet.has(getIDValue.Schedules?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setSchedulesRecords(newOptions.slice(0, autocompleteLength));
+    setSchedulesLoading(false);
+  };
+  const fetchTasksRecords = async (value) => {
+    setTasksLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ UID: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listTasks.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listTasks?.items;
+      var loaded = result.filter(
+        (item) => !TasksIdSet.has(getIDValue.Tasks?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setTasksRecords(newOptions.slice(0, autocompleteLength));
+    setTasksLoading(false);
+  };
   React.useEffect(() => {
     fetchUserinfoIDRecords("");
+    fetchSchedulesRecords("");
+    fetchTasksRecords("");
   }, []);
   return (
     <Grid
@@ -324,19 +456,30 @@ export default function SubscribedCalendarUpdateForm(props) {
           Calendar_Name: Calendar_Name ?? null,
           Calendar_URL: Calendar_URL ?? null,
           userinfoID,
+          Schedules: Schedules ?? null,
+          Tasks: Tasks ?? null,
+          LAST_MODIFIED: LAST_MODIFIED ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
             if (Array.isArray(modelFields[fieldName])) {
               promises.push(
                 ...modelFields[fieldName].map((item) =>
-                  runValidationTasks(fieldName, item)
+                  runValidationTasks(
+                    fieldName,
+                    item,
+                    getDisplayValue[fieldName]
+                  )
                 )
               );
               return promises;
             }
             promises.push(
-              runValidationTasks(fieldName, modelFields[fieldName])
+              runValidationTasks(
+                fieldName,
+                modelFields[fieldName],
+                getDisplayValue[fieldName]
+              )
             );
             return promises;
           }, [])
@@ -353,15 +496,121 @@ export default function SubscribedCalendarUpdateForm(props) {
               modelFields[key] = null;
             }
           });
-          await client.graphql({
-            query: updateSubscribedCalendar.replaceAll("__typename", ""),
-            variables: {
-              input: {
-                id: subscribedCalendarRecord.id,
-                ...modelFields,
-              },
-            },
+          const promises = [];
+          const schedulesToLink = [];
+          const schedulesToUnLink = [];
+          const schedulesSet = new Set();
+          const linkedSchedulesSet = new Set();
+          Schedules.forEach((r) => schedulesSet.add(getIDValue.Schedules?.(r)));
+          linkedSchedules.forEach((r) =>
+            linkedSchedulesSet.add(getIDValue.Schedules?.(r))
+          );
+          linkedSchedules.forEach((r) => {
+            if (!schedulesSet.has(getIDValue.Schedules?.(r))) {
+              schedulesToUnLink.push(r);
+            }
           });
+          Schedules.forEach((r) => {
+            if (!linkedSchedulesSet.has(getIDValue.Schedules?.(r))) {
+              schedulesToLink.push(r);
+            }
+          });
+          schedulesToUnLink.forEach((original) => {
+            if (!canUnlinkSchedules) {
+              throw Error(
+                `Schedule ${original.id} cannot be unlinked from SubscribedCalendar because subscribedcalendarID is a required field.`
+              );
+            }
+            promises.push(
+              client.graphql({
+                query: updateSchedule.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    subscribedcalendarID: null,
+                  },
+                },
+              })
+            );
+          });
+          schedulesToLink.forEach((original) => {
+            promises.push(
+              client.graphql({
+                query: updateSchedule.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    subscribedcalendarID: subscribedCalendarRecord.id,
+                  },
+                },
+              })
+            );
+          });
+          const tasksToLink = [];
+          const tasksToUnLink = [];
+          const tasksSet = new Set();
+          const linkedTasksSet = new Set();
+          Tasks.forEach((r) => tasksSet.add(getIDValue.Tasks?.(r)));
+          linkedTasks.forEach((r) => linkedTasksSet.add(getIDValue.Tasks?.(r)));
+          linkedTasks.forEach((r) => {
+            if (!tasksSet.has(getIDValue.Tasks?.(r))) {
+              tasksToUnLink.push(r);
+            }
+          });
+          Tasks.forEach((r) => {
+            if (!linkedTasksSet.has(getIDValue.Tasks?.(r))) {
+              tasksToLink.push(r);
+            }
+          });
+          tasksToUnLink.forEach((original) => {
+            if (!canUnlinkTasks) {
+              throw Error(
+                `Task ${original.id} cannot be unlinked from SubscribedCalendar because subscribedcalendarID is a required field.`
+              );
+            }
+            promises.push(
+              client.graphql({
+                query: updateTask.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    subscribedcalendarID: null,
+                  },
+                },
+              })
+            );
+          });
+          tasksToLink.forEach((original) => {
+            promises.push(
+              client.graphql({
+                query: updateTask.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    subscribedcalendarID: subscribedCalendarRecord.id,
+                  },
+                },
+              })
+            );
+          });
+          const modelFieldsToSave = {
+            Calendar_Name: modelFields.Calendar_Name ?? null,
+            Calendar_URL: modelFields.Calendar_URL ?? null,
+            userinfoID: modelFields.userinfoID,
+            LAST_MODIFIED: modelFields.LAST_MODIFIED ?? null,
+          };
+          promises.push(
+            client.graphql({
+              query: updateSubscribedCalendar.replaceAll("__typename", ""),
+              variables: {
+                input: {
+                  id: subscribedCalendarRecord.id,
+                  ...modelFieldsToSave,
+                },
+              },
+            })
+          );
+          await Promise.all(promises);
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -387,6 +636,9 @@ export default function SubscribedCalendarUpdateForm(props) {
               Calendar_Name: value,
               Calendar_URL,
               userinfoID,
+              Schedules,
+              Tasks,
+              LAST_MODIFIED,
             };
             const result = onChange(modelFields);
             value = result?.Calendar_Name ?? value;
@@ -413,6 +665,9 @@ export default function SubscribedCalendarUpdateForm(props) {
               Calendar_Name,
               Calendar_URL: value,
               userinfoID,
+              Schedules,
+              Tasks,
+              LAST_MODIFIED,
             };
             const result = onChange(modelFields);
             value = result?.Calendar_URL ?? value;
@@ -436,6 +691,9 @@ export default function SubscribedCalendarUpdateForm(props) {
               Calendar_Name,
               Calendar_URL,
               userinfoID: value,
+              Schedules,
+              Tasks,
+              LAST_MODIFIED,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -521,6 +779,199 @@ export default function SubscribedCalendarUpdateForm(props) {
           {...getOverrideProps(overrides, "userinfoID")}
         ></Autocomplete>
       </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              Calendar_Name,
+              Calendar_URL,
+              userinfoID,
+              Schedules: values,
+              Tasks,
+              LAST_MODIFIED,
+            };
+            const result = onChange(modelFields);
+            values = result?.Schedules ?? values;
+          }
+          setSchedules(values);
+          setCurrentSchedulesValue(undefined);
+          setCurrentSchedulesDisplayValue("");
+        }}
+        currentFieldValue={currentSchedulesValue}
+        label={"Schedules"}
+        items={Schedules}
+        hasError={errors?.Schedules?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("Schedules", currentSchedulesValue)
+        }
+        errorMessage={errors?.Schedules?.errorMessage}
+        getBadgeText={getDisplayValue.Schedules}
+        setFieldValue={(model) => {
+          setCurrentSchedulesDisplayValue(
+            model ? getDisplayValue.Schedules(model) : ""
+          );
+          setCurrentSchedulesValue(model);
+        }}
+        inputFieldRef={SchedulesRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Schedules"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search Schedule"
+          value={currentSchedulesDisplayValue}
+          options={schedulesRecords
+            .filter((r) => !SchedulesIdSet.has(getIDValue.Schedules?.(r)))
+            .map((r) => ({
+              id: getIDValue.Schedules?.(r),
+              label: getDisplayValue.Schedules?.(r),
+            }))}
+          isLoading={SchedulesLoading}
+          onSelect={({ id, label }) => {
+            setCurrentSchedulesValue(
+              schedulesRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentSchedulesDisplayValue(label);
+            runValidationTasks("Schedules", label);
+          }}
+          onClear={() => {
+            setCurrentSchedulesDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchSchedulesRecords(value);
+            if (errors.Schedules?.hasError) {
+              runValidationTasks("Schedules", value);
+            }
+            setCurrentSchedulesDisplayValue(value);
+            setCurrentSchedulesValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("Schedules", currentSchedulesDisplayValue)
+          }
+          errorMessage={errors.Schedules?.errorMessage}
+          hasError={errors.Schedules?.hasError}
+          ref={SchedulesRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "Schedules")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              Calendar_Name,
+              Calendar_URL,
+              userinfoID,
+              Schedules,
+              Tasks: values,
+              LAST_MODIFIED,
+            };
+            const result = onChange(modelFields);
+            values = result?.Tasks ?? values;
+          }
+          setTasks(values);
+          setCurrentTasksValue(undefined);
+          setCurrentTasksDisplayValue("");
+        }}
+        currentFieldValue={currentTasksValue}
+        label={"Tasks"}
+        items={Tasks}
+        hasError={errors?.Tasks?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("Tasks", currentTasksValue)
+        }
+        errorMessage={errors?.Tasks?.errorMessage}
+        getBadgeText={getDisplayValue.Tasks}
+        setFieldValue={(model) => {
+          setCurrentTasksDisplayValue(
+            model ? getDisplayValue.Tasks(model) : ""
+          );
+          setCurrentTasksValue(model);
+        }}
+        inputFieldRef={TasksRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Tasks"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search Task"
+          value={currentTasksDisplayValue}
+          options={tasksRecords
+            .filter((r) => !TasksIdSet.has(getIDValue.Tasks?.(r)))
+            .map((r) => ({
+              id: getIDValue.Tasks?.(r),
+              label: getDisplayValue.Tasks?.(r),
+            }))}
+          isLoading={TasksLoading}
+          onSelect={({ id, label }) => {
+            setCurrentTasksValue(
+              tasksRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentTasksDisplayValue(label);
+            runValidationTasks("Tasks", label);
+          }}
+          onClear={() => {
+            setCurrentTasksDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchTasksRecords(value);
+            if (errors.Tasks?.hasError) {
+              runValidationTasks("Tasks", value);
+            }
+            setCurrentTasksDisplayValue(value);
+            setCurrentTasksValue(undefined);
+          }}
+          onBlur={() => runValidationTasks("Tasks", currentTasksDisplayValue)}
+          errorMessage={errors.Tasks?.errorMessage}
+          hasError={errors.Tasks?.hasError}
+          ref={TasksRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "Tasks")}
+        ></Autocomplete>
+      </ArrayField>
+      <TextField
+        label="Last modified"
+        isRequired={false}
+        isReadOnly={false}
+        value={LAST_MODIFIED}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              Calendar_Name,
+              Calendar_URL,
+              userinfoID,
+              Schedules,
+              Tasks,
+              LAST_MODIFIED: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.LAST_MODIFIED ?? value;
+          }
+          if (errors.LAST_MODIFIED?.hasError) {
+            runValidationTasks("LAST_MODIFIED", value);
+          }
+          setLAST_MODIFIED(value);
+        }}
+        onBlur={() => runValidationTasks("LAST_MODIFIED", LAST_MODIFIED)}
+        errorMessage={errors.LAST_MODIFIED?.errorMessage}
+        hasError={errors.LAST_MODIFIED?.hasError}
+        {...getOverrideProps(overrides, "LAST_MODIFIED")}
+      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

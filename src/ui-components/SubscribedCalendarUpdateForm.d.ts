@@ -25,11 +25,17 @@ export declare type SubscribedCalendarUpdateFormInputValues = {
     Calendar_Name?: string;
     Calendar_URL?: string;
     userinfoID?: string;
+    Schedules?: any[];
+    Tasks?: any[];
+    LAST_MODIFIED?: string;
 };
 export declare type SubscribedCalendarUpdateFormValidationValues = {
     Calendar_Name?: ValidationFunction<string>;
     Calendar_URL?: ValidationFunction<string>;
     userinfoID?: ValidationFunction<string>;
+    Schedules?: ValidationFunction<any>;
+    Tasks?: ValidationFunction<any>;
+    LAST_MODIFIED?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type SubscribedCalendarUpdateFormOverridesProps = {
@@ -37,6 +43,9 @@ export declare type SubscribedCalendarUpdateFormOverridesProps = {
     Calendar_Name?: PrimitiveOverrideProps<TextFieldProps>;
     Calendar_URL?: PrimitiveOverrideProps<TextFieldProps>;
     userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
+    Schedules?: PrimitiveOverrideProps<AutocompleteProps>;
+    Tasks?: PrimitiveOverrideProps<AutocompleteProps>;
+    LAST_MODIFIED?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type SubscribedCalendarUpdateFormProps = React.PropsWithChildren<{
     overrides?: SubscribedCalendarUpdateFormOverridesProps | undefined | null;

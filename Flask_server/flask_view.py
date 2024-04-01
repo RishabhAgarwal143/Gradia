@@ -3,12 +3,12 @@ from flask_cors import CORS
 from chatbot_api import openai_manager
 from api_calls import initialize_payload_user
 from api_calls import set_schedules, add_schedule_to_payload_schedules, delete_schedule_from_payload_schedules
+from database_queries import process_and_add_schedule
 from Reading_Calendar import Subscribing_to_Calendar
-import jwt
 import markdown
 import time
 
-app = Flask(__name__,template_folder="templates")
+app = Flask(__name__, template_folder="templates")
 CORS(app)
 
 class user_information():
@@ -35,9 +35,9 @@ def receive_data():
 def create_data():
     data = request.json  # Assuming data is sent as JSON
     # Process the received data here
-    add_schedule_to_payload_schedules(data)
-
-    # print(data)
+    # add_schedule_to_payload_schedules(data)
+    # process_and_add_schedule(data)
+    print(data)
 
     return jsonify({'message': 'Data received successfully'})
 
@@ -53,7 +53,7 @@ def update_data():
 def delete_data():
     data = request.json  # Assuming data is sent as JSON
     # Process the received data here
-    delete_schedule_from_payload_schedules(data)
+    # delete_schedule_from_payload_schedules(data)
     # print(data)
     
     return jsonify({'message': 'Data received successfully'})
@@ -72,6 +72,9 @@ def receive_schedule():
             info.schedule = data
         else:
             set_schedules(data)
+            process_and_add_schedule(data)
+            info.checker = True
+            
     except:
         pass
     return jsonify({'message': 'Data received successfully'})
@@ -100,4 +103,4 @@ def subscribe_cal():
 if __name__ == '__main__':
     global info
     info = user_information()
-    app.run(debug=True)
+    app.run(threaded = False, debug=True)

@@ -28,7 +28,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test nyc mocha",
     "eject": "react-scripts eject",
-    "flask_server": "python src/Flask_server/flask_view.py",
+    "flask_server": "python Flask_server/flask_view.py",
     "coverage": "nyc mocha --coverage -watchall",
     "all": "npm-run-all --parallel start flask_server"
   },

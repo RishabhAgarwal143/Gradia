@@ -21,9 +21,9 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listSchedules, listTasks, listUserinfos } from "../graphql/queries";
+import { listSchedules, listTasks } from "../graphql/queries";
 import {
-  createSubscribedCalendar,
+  createSubjects,
   updateSchedule,
   updateTask,
 } from "../graphql/mutations";
@@ -183,7 +183,7 @@ function ArrayField({
     </React.Fragment>
   );
 }
-export default function SubscribedCalendarCreateForm(props) {
+export default function SubjectsCreateForm(props) {
   const {
     clearOnSuccess = true,
     onSuccess,
@@ -195,90 +195,74 @@ export default function SubscribedCalendarCreateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    Calendar_Name: "",
-    Calendar_URL: "",
-    userinfoID: undefined,
-    Schedules: [],
+    subject_Name: "",
+    current_Grade: "",
+    target_Grade: "",
     Tasks: [],
-    LAST_MODIFIED: "",
+    Schedules: [],
   };
-  const [Calendar_Name, setCalendar_Name] = React.useState(
-    initialValues.Calendar_Name
+  const [subject_Name, setSubject_Name] = React.useState(
+    initialValues.subject_Name
   );
-  const [Calendar_URL, setCalendar_URL] = React.useState(
-    initialValues.Calendar_URL
+  const [current_Grade, setCurrent_Grade] = React.useState(
+    initialValues.current_Grade
   );
-  const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
-  const [userinfoIDLoading, setUserinfoIDLoading] = React.useState(false);
-  const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
-  const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
-    React.useState([]);
-  const [Schedules, setSchedules] = React.useState(initialValues.Schedules);
-  const [SchedulesLoading, setSchedulesLoading] = React.useState(false);
-  const [schedulesRecords, setSchedulesRecords] = React.useState([]);
+  const [target_Grade, setTarget_Grade] = React.useState(
+    initialValues.target_Grade
+  );
   const [Tasks, setTasks] = React.useState(initialValues.Tasks);
   const [TasksLoading, setTasksLoading] = React.useState(false);
   const [tasksRecords, setTasksRecords] = React.useState([]);
-  const [LAST_MODIFIED, setLAST_MODIFIED] = React.useState(
-    initialValues.LAST_MODIFIED
-  );
+  const [Schedules, setSchedules] = React.useState(initialValues.Schedules);
+  const [SchedulesLoading, setSchedulesLoading] = React.useState(false);
+  const [schedulesRecords, setSchedulesRecords] = React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    setCalendar_Name(initialValues.Calendar_Name);
-    setCalendar_URL(initialValues.Calendar_URL);
-    setUserinfoID(initialValues.userinfoID);
-    setCurrentUserinfoIDValue(undefined);
-    setCurrentUserinfoIDDisplayValue("");
-    setSchedules(initialValues.Schedules);
-    setCurrentSchedulesValue(undefined);
-    setCurrentSchedulesDisplayValue("");
+    setSubject_Name(initialValues.subject_Name);
+    setCurrent_Grade(initialValues.current_Grade);
+    setTarget_Grade(initialValues.target_Grade);
     setTasks(initialValues.Tasks);
     setCurrentTasksValue(undefined);
     setCurrentTasksDisplayValue("");
-    setLAST_MODIFIED(initialValues.LAST_MODIFIED);
+    setSchedules(initialValues.Schedules);
+    setCurrentSchedulesValue(undefined);
+    setCurrentSchedulesDisplayValue("");
     setErrors({});
   };
-  const [currentUserinfoIDDisplayValue, setCurrentUserinfoIDDisplayValue] =
+  const [currentTasksDisplayValue, setCurrentTasksDisplayValue] =
     React.useState("");
-  const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
-    React.useState(undefined);
-  const userinfoIDRef = React.createRef();
+  const [currentTasksValue, setCurrentTasksValue] = React.useState(undefined);
+  const TasksRef = React.createRef();
   const [currentSchedulesDisplayValue, setCurrentSchedulesDisplayValue] =
     React.useState("");
   const [currentSchedulesValue, setCurrentSchedulesValue] =
     React.useState(undefined);
   const SchedulesRef = React.createRef();
-  const [currentTasksDisplayValue, setCurrentTasksDisplayValue] =
-    React.useState("");
-  const [currentTasksValue, setCurrentTasksValue] = React.useState(undefined);
-  const TasksRef = React.createRef();
   const getIDValue = {
-    Schedules: (r) => JSON.stringify({ id: r?.id }),
     Tasks: (r) => JSON.stringify({ id: r?.id }),
+    Schedules: (r) => JSON.stringify({ id: r?.id }),
   };
-  const SchedulesIdSet = new Set(
-    Array.isArray(Schedules)
-      ? Schedules.map((r) => getIDValue.Schedules?.(r))
-      : getIDValue.Schedules?.(Schedules)
-  );
   const TasksIdSet = new Set(
     Array.isArray(Tasks)
       ? Tasks.map((r) => getIDValue.Tasks?.(r))
       : getIDValue.Tasks?.(Tasks)
   );
+  const SchedulesIdSet = new Set(
+    Array.isArray(Schedules)
+      ? Schedules.map((r) => getIDValue.Schedules?.(r))
+      : getIDValue.Schedules?.(Schedules)
+  );
   const getDisplayValue = {
-    userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
-    Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
     Tasks: (r) => `${r?.UID ? r?.UID + " - " : ""}${r?.id}`,
+    Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
   };
   const validations = {
-    Calendar_Name: [],
-    Calendar_URL: [{ type: "URL" }],
-    userinfoID: [{ type: "Required" }],
-    Schedules: [],
+    subject_Name: [],
+    current_Grade: [],
+    target_Grade: [],
     Tasks: [],
-    LAST_MODIFIED: [],
+    Schedules: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -296,62 +280,6 @@ export default function SubscribedCalendarCreateForm(props) {
     }
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
-  };
-  const fetchUserinfoIDRecords = async (value) => {
-    setUserinfoIDLoading(true);
-    const newOptions = [];
-    let newNext = "";
-    while (newOptions.length < autocompleteLength && newNext != null) {
-      const variables = {
-        limit: autocompleteLength * 5,
-        filter: {
-          or: [{ name: { contains: value } }, { id: { contains: value } }],
-        },
-      };
-      if (newNext) {
-        variables["nextToken"] = newNext;
-      }
-      const result = (
-        await client.graphql({
-          query: listUserinfos.replaceAll("__typename", ""),
-          variables,
-        })
-      )?.data?.listUserinfos?.items;
-      var loaded = result.filter((item) => userinfoID !== item.id);
-      newOptions.push(...loaded);
-      newNext = result.nextToken;
-    }
-    setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
-    setUserinfoIDLoading(false);
-  };
-  const fetchSchedulesRecords = async (value) => {
-    setSchedulesLoading(true);
-    const newOptions = [];
-    let newNext = "";
-    while (newOptions.length < autocompleteLength && newNext != null) {
-      const variables = {
-        limit: autocompleteLength * 5,
-        filter: {
-          or: [{ SUMMARY: { contains: value } }, { id: { contains: value } }],
-        },
-      };
-      if (newNext) {
-        variables["nextToken"] = newNext;
-      }
-      const result = (
-        await client.graphql({
-          query: listSchedules.replaceAll("__typename", ""),
-          variables,
-        })
-      )?.data?.listSchedules?.items;
-      var loaded = result.filter(
-        (item) => !SchedulesIdSet.has(getIDValue.Schedules?.(item))
-      );
-      newOptions.push(...loaded);
-      newNext = result.nextToken;
-    }
-    setSchedulesRecords(newOptions.slice(0, autocompleteLength));
-    setSchedulesLoading(false);
   };
   const fetchTasksRecords = async (value) => {
     setTasksLoading(true);
@@ -382,10 +310,38 @@ export default function SubscribedCalendarCreateForm(props) {
     setTasksRecords(newOptions.slice(0, autocompleteLength));
     setTasksLoading(false);
   };
+  const fetchSchedulesRecords = async (value) => {
+    setSchedulesLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ SUMMARY: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listSchedules.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listSchedules?.items;
+      var loaded = result.filter(
+        (item) => !SchedulesIdSet.has(getIDValue.Schedules?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setSchedulesRecords(newOptions.slice(0, autocompleteLength));
+    setSchedulesLoading(false);
+  };
   React.useEffect(() => {
-    fetchUserinfoIDRecords("");
-    fetchSchedulesRecords("");
     fetchTasksRecords("");
+    fetchSchedulesRecords("");
   }, []);
   return (
     <Grid
@@ -396,12 +352,11 @@ export default function SubscribedCalendarCreateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          Calendar_Name,
-          Calendar_URL,
-          userinfoID,
-          Schedules,
+          subject_Name,
+          current_Grade,
+          target_Grade,
           Tasks,
-          LAST_MODIFIED,
+          Schedules,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -440,38 +395,21 @@ export default function SubscribedCalendarCreateForm(props) {
             }
           });
           const modelFieldsToSave = {
-            Calendar_Name: modelFields.Calendar_Name,
-            Calendar_URL: modelFields.Calendar_URL,
-            userinfoID: modelFields.userinfoID,
-            LAST_MODIFIED: modelFields.LAST_MODIFIED,
+            subject_Name: modelFields.subject_Name,
+            current_Grade: modelFields.current_Grade,
+            target_Grade: modelFields.target_Grade,
           };
-          const subscribedCalendar = (
+          const subjects = (
             await client.graphql({
-              query: createSubscribedCalendar.replaceAll("__typename", ""),
+              query: createSubjects.replaceAll("__typename", ""),
               variables: {
                 input: {
                   ...modelFieldsToSave,
                 },
               },
             })
-          )?.data?.createSubscribedCalendar;
+          )?.data?.createSubjects;
           const promises = [];
-          promises.push(
-            ...Schedules.reduce((promises, original) => {
-              promises.push(
-                client.graphql({
-                  query: updateSchedule.replaceAll("__typename", ""),
-                  variables: {
-                    input: {
-                      id: original.id,
-                      subscribedcalendarID: subscribedCalendar.id,
-                    },
-                  },
-                })
-              );
-              return promises;
-            }, [])
-          );
           promises.push(
             ...Tasks.reduce((promises, original) => {
               promises.push(
@@ -480,7 +418,23 @@ export default function SubscribedCalendarCreateForm(props) {
                   variables: {
                     input: {
                       id: original.id,
-                      subscribedcalendarID: subscribedCalendar.id,
+                      subjectsID: subjects.id,
+                    },
+                  },
+                })
+              );
+              return promises;
+            }, [])
+          );
+          promises.push(
+            ...Schedules.reduce((promises, original) => {
+              promises.push(
+                client.graphql({
+                  query: updateSchedule.replaceAll("__typename", ""),
+                  variables: {
+                    input: {
+                      id: original.id,
+                      subjectsID: subjects.id,
                     },
                   },
                 })
@@ -502,161 +456,179 @@ export default function SubscribedCalendarCreateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "SubscribedCalendarCreateForm")}
+      {...getOverrideProps(overrides, "SubjectsCreateForm")}
       {...rest}
     >
       <TextField
-        label="Calendar name"
+        label="Subject name"
         isRequired={false}
         isReadOnly={false}
-        value={Calendar_Name}
+        value={subject_Name}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              Calendar_Name: value,
-              Calendar_URL,
-              userinfoID,
-              Schedules,
+              subject_Name: value,
+              current_Grade,
+              target_Grade,
               Tasks,
-              LAST_MODIFIED,
+              Schedules,
             };
             const result = onChange(modelFields);
-            value = result?.Calendar_Name ?? value;
+            value = result?.subject_Name ?? value;
           }
-          if (errors.Calendar_Name?.hasError) {
-            runValidationTasks("Calendar_Name", value);
+          if (errors.subject_Name?.hasError) {
+            runValidationTasks("subject_Name", value);
           }
-          setCalendar_Name(value);
+          setSubject_Name(value);
         }}
-        onBlur={() => runValidationTasks("Calendar_Name", Calendar_Name)}
-        errorMessage={errors.Calendar_Name?.errorMessage}
-        hasError={errors.Calendar_Name?.hasError}
-        {...getOverrideProps(overrides, "Calendar_Name")}
+        onBlur={() => runValidationTasks("subject_Name", subject_Name)}
+        errorMessage={errors.subject_Name?.errorMessage}
+        hasError={errors.subject_Name?.hasError}
+        {...getOverrideProps(overrides, "subject_Name")}
       ></TextField>
       <TextField
-        label="Calendar url"
+        label="Current grade"
         isRequired={false}
         isReadOnly={false}
-        value={Calendar_URL}
+        type="number"
+        step="any"
+        value={current_Grade}
         onChange={(e) => {
-          let { value } = e.target;
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
           if (onChange) {
             const modelFields = {
-              Calendar_Name,
-              Calendar_URL: value,
-              userinfoID,
-              Schedules,
+              subject_Name,
+              current_Grade: value,
+              target_Grade,
               Tasks,
-              LAST_MODIFIED,
+              Schedules,
             };
             const result = onChange(modelFields);
-            value = result?.Calendar_URL ?? value;
+            value = result?.current_Grade ?? value;
           }
-          if (errors.Calendar_URL?.hasError) {
-            runValidationTasks("Calendar_URL", value);
+          if (errors.current_Grade?.hasError) {
+            runValidationTasks("current_Grade", value);
           }
-          setCalendar_URL(value);
+          setCurrent_Grade(value);
         }}
-        onBlur={() => runValidationTasks("Calendar_URL", Calendar_URL)}
-        errorMessage={errors.Calendar_URL?.errorMessage}
-        hasError={errors.Calendar_URL?.hasError}
-        {...getOverrideProps(overrides, "Calendar_URL")}
+        onBlur={() => runValidationTasks("current_Grade", current_Grade)}
+        errorMessage={errors.current_Grade?.errorMessage}
+        hasError={errors.current_Grade?.hasError}
+        {...getOverrideProps(overrides, "current_Grade")}
+      ></TextField>
+      <TextField
+        label="Target grade"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={target_Grade}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              subject_Name,
+              current_Grade,
+              target_Grade: value,
+              Tasks,
+              Schedules,
+            };
+            const result = onChange(modelFields);
+            value = result?.target_Grade ?? value;
+          }
+          if (errors.target_Grade?.hasError) {
+            runValidationTasks("target_Grade", value);
+          }
+          setTarget_Grade(value);
+        }}
+        onBlur={() => runValidationTasks("target_Grade", target_Grade)}
+        errorMessage={errors.target_Grade?.errorMessage}
+        hasError={errors.target_Grade?.hasError}
+        {...getOverrideProps(overrides, "target_Grade")}
       ></TextField>
       <ArrayField
-        lengthLimit={1}
         onChange={async (items) => {
-          let value = items[0];
+          let values = items;
           if (onChange) {
             const modelFields = {
-              Calendar_Name,
-              Calendar_URL,
-              userinfoID: value,
+              subject_Name,
+              current_Grade,
+              target_Grade,
+              Tasks: values,
               Schedules,
-              Tasks,
-              LAST_MODIFIED,
             };
             const result = onChange(modelFields);
-            value = result?.userinfoID ?? value;
+            values = result?.Tasks ?? values;
           }
-          setUserinfoID(value);
-          setCurrentUserinfoIDValue(undefined);
+          setTasks(values);
+          setCurrentTasksValue(undefined);
+          setCurrentTasksDisplayValue("");
         }}
-        currentFieldValue={currentUserinfoIDValue}
-        label={"Userinfo id"}
-        items={userinfoID ? [userinfoID] : []}
-        hasError={errors?.userinfoID?.hasError}
+        currentFieldValue={currentTasksValue}
+        label={"Tasks"}
+        items={Tasks}
+        hasError={errors?.Tasks?.hasError}
         runValidationTasks={async () =>
-          await runValidationTasks("userinfoID", currentUserinfoIDValue)
+          await runValidationTasks("Tasks", currentTasksValue)
         }
-        errorMessage={errors?.userinfoID?.errorMessage}
-        getBadgeText={(value) =>
-          value
-            ? getDisplayValue.userinfoID(
-                userinfoIDRecords.find((r) => r.id === value) ??
-                  selectedUserinfoIDRecords.find((r) => r.id === value)
-              )
-            : ""
-        }
-        setFieldValue={(value) => {
-          setCurrentUserinfoIDDisplayValue(
-            value
-              ? getDisplayValue.userinfoID(
-                  userinfoIDRecords.find((r) => r.id === value) ??
-                    selectedUserinfoIDRecords.find((r) => r.id === value)
-                )
-              : ""
+        errorMessage={errors?.Tasks?.errorMessage}
+        getBadgeText={getDisplayValue.Tasks}
+        setFieldValue={(model) => {
+          setCurrentTasksDisplayValue(
+            model ? getDisplayValue.Tasks(model) : ""
           );
-          setCurrentUserinfoIDValue(value);
-          const selectedRecord = userinfoIDRecords.find((r) => r.id === value);
-          if (selectedRecord) {
-            setSelectedUserinfoIDRecords([selectedRecord]);
-          }
+          setCurrentTasksValue(model);
         }}
-        inputFieldRef={userinfoIDRef}
+        inputFieldRef={TasksRef}
         defaultFieldValue={""}
       >
         <Autocomplete
-          label="Userinfo id"
-          isRequired={true}
+          label="Tasks"
+          isRequired={false}
           isReadOnly={false}
-          placeholder="Search Userinfo"
-          value={currentUserinfoIDDisplayValue}
-          options={userinfoIDRecords
-            .filter(
-              (r, i, arr) =>
-                arr.findIndex((member) => member?.id === r?.id) === i
-            )
+          placeholder="Search Task"
+          value={currentTasksDisplayValue}
+          options={tasksRecords
+            .filter((r) => !TasksIdSet.has(getIDValue.Tasks?.(r)))
             .map((r) => ({
-              id: r?.id,
-              label: getDisplayValue.userinfoID?.(r),
+              id: getIDValue.Tasks?.(r),
+              label: getDisplayValue.Tasks?.(r),
             }))}
-          isLoading={userinfoIDLoading}
+          isLoading={TasksLoading}
           onSelect={({ id, label }) => {
-            setCurrentUserinfoIDValue(id);
-            setCurrentUserinfoIDDisplayValue(label);
-            runValidationTasks("userinfoID", label);
+            setCurrentTasksValue(
+              tasksRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentTasksDisplayValue(label);
+            runValidationTasks("Tasks", label);
           }}
           onClear={() => {
-            setCurrentUserinfoIDDisplayValue("");
+            setCurrentTasksDisplayValue("");
           }}
           onChange={(e) => {
             let { value } = e.target;
-            fetchUserinfoIDRecords(value);
-            if (errors.userinfoID?.hasError) {
-              runValidationTasks("userinfoID", value);
+            fetchTasksRecords(value);
+            if (errors.Tasks?.hasError) {
+              runValidationTasks("Tasks", value);
             }
-            setCurrentUserinfoIDDisplayValue(value);
-            setCurrentUserinfoIDValue(undefined);
+            setCurrentTasksDisplayValue(value);
+            setCurrentTasksValue(undefined);
           }}
-          onBlur={() =>
-            runValidationTasks("userinfoID", currentUserinfoIDValue)
-          }
-          errorMessage={errors.userinfoID?.errorMessage}
-          hasError={errors.userinfoID?.hasError}
-          ref={userinfoIDRef}
+          onBlur={() => runValidationTasks("Tasks", currentTasksDisplayValue)}
+          errorMessage={errors.Tasks?.errorMessage}
+          hasError={errors.Tasks?.hasError}
+          ref={TasksRef}
           labelHidden={true}
-          {...getOverrideProps(overrides, "userinfoID")}
+          {...getOverrideProps(overrides, "Tasks")}
         ></Autocomplete>
       </ArrayField>
       <ArrayField
@@ -664,12 +636,11 @@ export default function SubscribedCalendarCreateForm(props) {
           let values = items;
           if (onChange) {
             const modelFields = {
-              Calendar_Name,
-              Calendar_URL,
-              userinfoID,
-              Schedules: values,
+              subject_Name,
+              current_Grade,
+              target_Grade,
               Tasks,
-              LAST_MODIFIED,
+              Schedules: values,
             };
             const result = onChange(modelFields);
             values = result?.Schedules ?? values;
@@ -742,116 +713,6 @@ export default function SubscribedCalendarCreateForm(props) {
           {...getOverrideProps(overrides, "Schedules")}
         ></Autocomplete>
       </ArrayField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              Calendar_Name,
-              Calendar_URL,
-              userinfoID,
-              Schedules,
-              Tasks: values,
-              LAST_MODIFIED,
-            };
-            const result = onChange(modelFields);
-            values = result?.Tasks ?? values;
-          }
-          setTasks(values);
-          setCurrentTasksValue(undefined);
-          setCurrentTasksDisplayValue("");
-        }}
-        currentFieldValue={currentTasksValue}
-        label={"Tasks"}
-        items={Tasks}
-        hasError={errors?.Tasks?.hasError}
-        runValidationTasks={async () =>
-          await runValidationTasks("Tasks", currentTasksValue)
-        }
-        errorMessage={errors?.Tasks?.errorMessage}
-        getBadgeText={getDisplayValue.Tasks}
-        setFieldValue={(model) => {
-          setCurrentTasksDisplayValue(
-            model ? getDisplayValue.Tasks(model) : ""
-          );
-          setCurrentTasksValue(model);
-        }}
-        inputFieldRef={TasksRef}
-        defaultFieldValue={""}
-      >
-        <Autocomplete
-          label="Tasks"
-          isRequired={false}
-          isReadOnly={false}
-          placeholder="Search Task"
-          value={currentTasksDisplayValue}
-          options={tasksRecords
-            .filter((r) => !TasksIdSet.has(getIDValue.Tasks?.(r)))
-            .map((r) => ({
-              id: getIDValue.Tasks?.(r),
-              label: getDisplayValue.Tasks?.(r),
-            }))}
-          isLoading={TasksLoading}
-          onSelect={({ id, label }) => {
-            setCurrentTasksValue(
-              tasksRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentTasksDisplayValue(label);
-            runValidationTasks("Tasks", label);
-          }}
-          onClear={() => {
-            setCurrentTasksDisplayValue("");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            fetchTasksRecords(value);
-            if (errors.Tasks?.hasError) {
-              runValidationTasks("Tasks", value);
-            }
-            setCurrentTasksDisplayValue(value);
-            setCurrentTasksValue(undefined);
-          }}
-          onBlur={() => runValidationTasks("Tasks", currentTasksDisplayValue)}
-          errorMessage={errors.Tasks?.errorMessage}
-          hasError={errors.Tasks?.hasError}
-          ref={TasksRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, "Tasks")}
-        ></Autocomplete>
-      </ArrayField>
-      <TextField
-        label="Last modified"
-        isRequired={false}
-        isReadOnly={false}
-        value={LAST_MODIFIED}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              Calendar_Name,
-              Calendar_URL,
-              userinfoID,
-              Schedules,
-              Tasks,
-              LAST_MODIFIED: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.LAST_MODIFIED ?? value;
-          }
-          if (errors.LAST_MODIFIED?.hasError) {
-            runValidationTasks("LAST_MODIFIED", value);
-          }
-          setLAST_MODIFIED(value);
-        }}
-        onBlur={() => runValidationTasks("LAST_MODIFIED", LAST_MODIFIED)}
-        errorMessage={errors.LAST_MODIFIED?.errorMessage}
-        hasError={errors.LAST_MODIFIED?.hasError}
-        {...getOverrideProps(overrides, "LAST_MODIFIED")}
-      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

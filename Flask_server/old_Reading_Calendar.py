@@ -1,12 +1,13 @@
 import icalendar
 import requests
 import json
-import os
 import pytz
 from datetime import datetime
+
+
 class Subscribing_to_Calendar:
 
-    def __init__(self,calendar_URL,accesstoken,userid, categories_name) -> None:
+    def __init__(self, calendar_URL, accesstoken,userid, categories_name) -> None:
         self.calendar_URL = calendar_URL
         self.token = accesstoken
         self.userinfoid = userid
@@ -40,7 +41,7 @@ class Subscribing_to_Calendar:
             response = requests.request("POST", url, headers=headers, data=payload)
             print(response.text)
 
-    def reading_file(self,file):
+    def reading_file(self, file):
         path_to_ics_file = file
         with open(path_to_ics_file) as f:
             self.calendar = icalendar.Calendar.from_ical(f.read())
@@ -98,9 +99,7 @@ class Subscribing_to_Calendar:
         for event in self.calendar.walk('VEVENT'):
 
             if(str(event.get('UID')) in listofuid):
-                if(listofstamps[listofuid.index(event.get('UID'))] and event.get('LAST-MODIFIED') and event.get('LAST-MODIFIED').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z") == listofstamps[listofuid.index(event.get('UID'))]):
-                    continue
-                else:
+                if (listofstamps[listofuid.index(event.get('UID'))] and event.get('LAST-MODIFIED') and event.get('LAST-MODIFIED').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z") != listofstamps[listofuid.index(event.get('UID'))]):
                     if(listofuid.index(event.get('UID')) < task_separator):
                         payload = "{\"query\":\"mutation DeleteSchedule {\\r\\n    deleteSchedule(input: { id: \\\"%s\\\" }) {\\r\\n        id\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" % str(listofid[listofuid.index(event.get('UID'))])
                     else:
@@ -114,6 +113,8 @@ class Subscribing_to_Calendar:
                     # print(payload)
                     response = requests.request("POST", url, headers=headers, data=payload)
                     print(response.text)
+                else:
+                    continue
 
             uid = event.get('UID')
             userinfoId = self.userinfoid
@@ -150,9 +151,9 @@ class Subscribing_to_Calendar:
                 description = "null"
             if(event.get('LAST-MODIFIED')):
                 temp = (event.get('LAST-MODIFIED').dt.astimezone(pytz.utc))
-                dtstamp = r"\"%s\"" % (temp.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+                last_modified = r"\"%s\"" % (temp.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
             else:
-                dtstamp = "null"
+                last_modified = "null"
 
             if(event.get('RRULE')):
                 rrule = {}
@@ -181,7 +182,7 @@ class Subscribing_to_Calendar:
 
                 payload = "{\"query\":\"mutation CreateSchedule {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            SUMMARY: %s\\r\\n            DTSTART: %s\\r\\n            DTEND: %s\\r\\n            DESCRIPTION: %s\\r\\n            LOCATION: %s\\r\\n            userinfoID: \\\"%s\\\"\\r\\n            "\
                 "RRULE: {\\r\\n                FREQ: %s\\r\\n                INTERVALS: %d\\r\\n                UNTIL: %s\\r\\n                WKST: %s\\r\\n                BYDAYS: %s\\r\\n                BYMONTH: %s\\r\\n                COUNT: %s\\r\\n            }\\r\\n            CATEGORIES: %s\\r\\n            DTSTAMP: %s\\r\\n            UID: \\\"%s\\\"\\r\\n        }\\r\\n    ) {\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DTEND\\r\\n        DESCRIPTION\\r\\n        LOCATION\\r\\n        userinfoID\\r\\n        UID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    "\
-                "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,dtend,(description),location,userinfoId,rrule["FREQ"],rrule["INTERVAL"],rrule["UNTIL"],rrule["WKST"],rrule["BYDAYS"],rrule["BYMONTH"],rrule["COUNT"],categories,dtstamp,uid)
+                "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,dtend,(description),location,userinfoId,rrule["FREQ"],rrule["INTERVAL"],rrule["UNTIL"],rrule["WKST"],rrule["BYDAYS"],rrule["BYMONTH"],rrule["COUNT"],categories,last_modified,uid)
             else:
                 if(dtstart == dtend):
                     payload = "{\"query\":\"mutation CreateTask {\\r\\n    createTask(\\r\\n        input: {\\r\\n            "\
@@ -196,7 +197,7 @@ class Subscribing_to_Calendar:
                     "DTSTAMP: %s\\r\\n            "\
                     "UID: \\\"%s\\\"\\r\\n        }\\r\\n    ) "\
                     "{\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DUE\\r\\n        COMPLETED\\r\\n        STATUS\\r\\n        userinfoID\\r\\n        UID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    "\
-                    "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,dtend,categories,"null",userinfoId,location,5,dtstamp,uid)
+                    "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,dtend,categories,"null",userinfoId,location,5,last_modified,uid)
                 elif(dtend == "null"):
                     payload = "{\"query\":\"mutation CreateTask {\\r\\n    createTask(\\r\\n        input: {\\r\\n            "\
                     "SUMMARY: %s\\r\\n            "\
@@ -210,8 +211,23 @@ class Subscribing_to_Calendar:
                     "DTSTAMP: %s\\r\\n            "\
                     "UID: \\\"%s\\\"\\r\\n        }\\r\\n    ) "\
                     "{\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DUE\\r\\n        COMPLETED\\r\\n        STATUS\\r\\n        userinfoID\\r\\n        UID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    "\
-                    "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,"null",dtstart,categories,"null",userinfoId,location,5,dtstamp,uid)
+                    "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,"null",dtstart,categories,"null",userinfoId,location,5,last_modified,uid)
                 else:
+                    # payload = "{\"query\":\"mutation CreateTask {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            "\
+                    # "SUMMARY: %s\\r\\n            "\
+                    # "DTSTART: %s\\r\\n            "\
+                    # "DTEND: %s\\r\\n            "\
+                    # "DESCRIPTION: %s\\r\\n            "\
+                    # "LOCATION: %s\\r\\n            "\
+                    # "userinfoID: %s\\r\\n            "\
+                    # "RRULE: %s\\r\\n            "\
+                    # "UID: \\\"%s\\\"\\r\\n            "\
+                    # "CATEGORIES: %s\\r\\n            "\
+                    # "DTSTAMP: %s\\r\\n            "\
+                    # "subscribedcalendarID: \\\"%s\\\"\\r\\n            "\
+                    # "subjectsID: \\\"%s\\\"\\r\\n        }\\r\\n    ) "\
+                    # "{\\r\\n        id\\r\\n        SUMMARY\\r\\n        subscribedcalendarID\\r\\n        subjectsID\\r\\n    "\
+                    # "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,dtend,str(description),location,userinfoId,"null",uid,"null",last_modified)
                     payload = "{\"query\":\"mutation CreateSchedule {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            "\
                     "SUMMARY: %s\\r\\n            "\
                     "DTSTART: %s\\r\\n            "\
@@ -224,7 +240,7 @@ class Subscribing_to_Calendar:
                     "DTSTAMP: %s\\r\\n            "\
                     "UID: \\\"%s\\\"\\r\\n        }\\r\\n    ) "\
                     "{\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DTEND\\r\\n        DESCRIPTION\\r\\n        LOCATION\\r\\n        userinfoID\\r\\n        UID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    "\
-                    "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,dtend,str(description),categories,location,userinfoId,"null",dtstamp,uid)
+                    "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,dtend,str(description),categories,location,userinfoId,"null",last_modified,uid)
                 
             headers = {
             'Content-Type': 'application/json',
@@ -281,7 +297,7 @@ class Subscribing_to_Calendar:
                     "DTSTAMP: %s\\r\\n            "\
                     "UID: \\\"%s\\\"\\r\\n        }\\r\\n    ) "\
                     "{\\r\\n        id\\r\\n        SUMMARY\\r\\n        DTSTART\\r\\n        DUE\\r\\n        COMPLETED\\r\\n        STATUS\\r\\n        userinfoID\\r\\n        UID\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    "\
-                    "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,due,completed,status,userinfoId,categories,priority,dtstamp,uid)
+                    "}\\r\\n}\\r\\n\",\"variables\":{}}" %(summary_details,dtstart,due,completed,status,userinfoId,categories,priority,last_modified,uid)
             
             headers = {
             'Content-Type': 'application/json',

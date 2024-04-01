@@ -10,6 +10,7 @@ from function_payloads import Payload
 from function_payloads import TimeConverter
 from function_payloads import UserInfo
 import pandas as pd
+from database_queries import process_and_add_schedule
 
 global user_info
 global payload
@@ -17,6 +18,8 @@ global time_converter
 
 
 def set_schedules(schedules):
+    
+    
     global payload
     # convert list of json to just one json
     data_dicts = []
@@ -39,7 +42,6 @@ def add_schedule_to_payload_schedules(schedule):
     global payload
     global time_converter
     global user_info
-    print("CALLED")
     data_dicts = []
     # data_dicts.append(schedule[0])
     out_dict = schedule['onCreateSchedule']
@@ -68,8 +70,6 @@ def add_schedule_to_payload_schedules(schedule):
     
     df['isNew'] = False
 
-    print("BEFORE ADDING", payload.schedules)
-
     # print("COMBINED SCHEDULES", payload.schedules)
     df = df[payload.schedules.columns]
 
@@ -92,7 +92,6 @@ def delete_schedule_from_payload_schedules(schedule):
     global payload
     global time_converter
     global user_info
-    print("CALLED")
     data_dicts = []
     # data_dicts.append(schedule[0])
     out_dict = schedule['onDeleteSchedule']
@@ -103,10 +102,8 @@ def delete_schedule_from_payload_schedules(schedule):
     ids = set(payload.schedules['id'])
     if id not in ids:
         return
-    print("BEFORE ADDING", payload.schedules)
 
     payload.schedules = payload.schedules[payload.schedules['id'] != id]
-    print("AFTER ADDING", payload.schedules)
 
     print("DELETED")
 
@@ -115,7 +112,6 @@ def schedule_range_df(user_start_time, user_end_time):
     global time_converter
     user_start_time_utc = time_converter.convert_user_to_utc_tz(user_start_time)
     user_end_time_utc = time_converter.convert_user_to_utc_tz(user_end_time)
-
 
     schedule_range = payload.schedules[(payload.schedules['start'] <= user_end_time_utc) & (payload.schedules['end'] >= user_start_time_utc)]
 
@@ -149,6 +145,8 @@ def initialize_payload_user(token, user_info_id,schedule):
     # print("INITIALIZE PAYLOAD USER")
     if(schedule != None):
         set_schedules(schedule)
+        process_and_add_schedule(schedule)
+        
 
 
     # rrule_schedules = payload.get_rrule_schedules()
@@ -194,7 +192,6 @@ def _convert_time_column_utc(column):
 def _get_schedule_range_df(start_time, end_time):
     global payload
     df_range = schedule_range_df(start_time, end_time)
-    # df_range.loc[:, ['start', 'end']] = df_range[['start', 'end']].apply(_convert_time_column)
 
     return df_range
 
@@ -294,9 +291,9 @@ def delete_events_in_range(start_time, end_time):
     # convert 2024-02-29 05:00:00 format to user's timezone
 
 
-
     if not existing_events.empty:
         existing_events = _conflict_detector(existing_events)
+        
         print("DELETED", existing_events)
         return ["DELETED", existing_events]
     else:

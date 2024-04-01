@@ -1,10 +1,27 @@
-type Importance @model @auth(rules: [{allow: private}]) {
+enum StatusValues {
+  NEEDS_ACTION
+  COMPLETED
+  IN_PROCESS
+  CANCELLED
+}
+
+type Subjects @model @auth(rules: [{allow: private}, {allow: owner}]) {
   id: ID!
-  Grade_Percentage: String
-  Task_info: String
-  Expected_Time: String
-  Course: String
-  Additional_Info: AWSJSON
+  subject_Name: String
+  current_Grade: Int
+  target_Grade: Int
+  Tasks: [Task] @hasMany(indexName: "bySubjects", fields: ["id"])
+  Schedules: [Schedule] @hasMany(indexName: "bySubjects", fields: ["id"])
+}
+
+type TaskGradeInfo @model @auth(rules: [{allow: private}, {allow: owner}]) {
+  id: ID!
+  current_Grade: Int
+  task_Weightage: Int
+  overall_Percentage: Int
+  extra_Info: String
+  time_Taken: AWSTime
+  Task: Task @belongsTo
 }
 
 type SubscribedCalendar @model @auth(rules: [{allow: private}, {allow: owner}, {allow: public}]) {
@@ -12,6 +29,9 @@ type SubscribedCalendar @model @auth(rules: [{allow: private}, {allow: owner}, {
   Calendar_Name: String
   Calendar_URL: AWSURL
   userinfoID: ID! @index(name: "byUserinfo")
+  Schedules: [Schedule] @hasMany(indexName: "bySubscribedCalendar", fields: ["id"])
+  Tasks: [Task] @hasMany(indexName: "bySubscribedCalendar", fields: ["id"])
+  LAST_MODIFIED: String
 }
 
 enum Frequencytype {
@@ -51,9 +71,9 @@ type Schedule @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Adm
   userinfoID: ID! @index(name: "byUserinfo")
   RRULE: Repeatdata
   UID: String
-  CATEGORIES: String
   DTSTAMP: AWSDateTime
-  Importance: Importance @hasOne
+  subscribedcalendarID: ID @index(name: "bySubscribedCalendar")
+  subjectsID: ID @index(name: "bySubjects")
 }
 
 type Task @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"], operations: [create, read, update, delete]}, {allow: public}]) {
@@ -63,11 +83,14 @@ type Task @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"
   DUE: AWSDateTime!
   SUMMARY: String
   userinfoID: ID! @index(name: "byUserinfo")
-  COMPLETED: String
-  STATUS: String
-  CATEGORIES: String
+  COMPLETED: AWSDateTime
+  STATUS: StatusValues
   PRIORITY: Int
   DTSTAMP: AWSDateTime
-  Importance: Importance @hasOne
+  subscribedcalendarID: ID @index(name: "bySubscribedCalendar")
+  DESCRIPTION: String
+  subjectsID: ID @index(name: "bySubjects")
+  TaskGradeInfo: TaskGradeInfo @hasOne
+  LOCATION: String
 }
  

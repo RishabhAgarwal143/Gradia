@@ -22,7 +22,7 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listImportances } from "../graphql/queries";
+import { listSubjects, listSubscribedCalendars } from "../graphql/queries";
 import { createSchedule } from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
@@ -200,9 +200,9 @@ export default function ScheduleCreateForm(props) {
     LOCATION: "",
     RRULE: "",
     UID: "",
-    CATEGORIES: "",
     DTSTAMP: "",
-    Importance: undefined,
+    subscribedcalendarID: undefined,
+    subjectsID: undefined,
   };
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
@@ -214,11 +214,23 @@ export default function ScheduleCreateForm(props) {
   const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const [RRULE, setRRULE] = React.useState(initialValues.RRULE);
   const [UID, setUID] = React.useState(initialValues.UID);
-  const [CATEGORIES, setCATEGORIES] = React.useState(initialValues.CATEGORIES);
   const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
-  const [Importance, setImportance] = React.useState(initialValues.Importance);
-  const [ImportanceLoading, setImportanceLoading] = React.useState(false);
-  const [importanceRecords, setImportanceRecords] = React.useState([]);
+  const [subscribedcalendarID, setSubscribedcalendarID] = React.useState(
+    initialValues.subscribedcalendarID
+  );
+  const [subscribedcalendarIDLoading, setSubscribedcalendarIDLoading] =
+    React.useState(false);
+  const [subscribedcalendarIDRecords, setSubscribedcalendarIDRecords] =
+    React.useState([]);
+  const [
+    selectedSubscribedcalendarIDRecords,
+    setSelectedSubscribedcalendarIDRecords,
+  ] = React.useState([]);
+  const [subjectsID, setSubjectsID] = React.useState(initialValues.subjectsID);
+  const [subjectsIDLoading, setSubjectsIDLoading] = React.useState(false);
+  const [subjectsIDRecords, setSubjectsIDRecords] = React.useState([]);
+  const [selectedSubjectsIDRecords, setSelectedSubjectsIDRecords] =
+    React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -230,29 +242,34 @@ export default function ScheduleCreateForm(props) {
     setLOCATION(initialValues.LOCATION);
     setRRULE(initialValues.RRULE);
     setUID(initialValues.UID);
-    setCATEGORIES(initialValues.CATEGORIES);
     setDTSTAMP(initialValues.DTSTAMP);
-    setImportance(initialValues.Importance);
-    setCurrentImportanceValue(undefined);
-    setCurrentImportanceDisplayValue("");
+    setSubscribedcalendarID(initialValues.subscribedcalendarID);
+    setCurrentSubscribedcalendarIDValue(undefined);
+    setCurrentSubscribedcalendarIDDisplayValue("");
+    setSubjectsID(initialValues.subjectsID);
+    setCurrentSubjectsIDValue(undefined);
+    setCurrentSubjectsIDDisplayValue("");
     setErrors({});
   };
-  const [currentImportanceDisplayValue, setCurrentImportanceDisplayValue] =
+  const [
+    currentSubscribedcalendarIDDisplayValue,
+    setCurrentSubscribedcalendarIDDisplayValue,
+  ] = React.useState("");
+  const [
+    currentSubscribedcalendarIDValue,
+    setCurrentSubscribedcalendarIDValue,
+  ] = React.useState(undefined);
+  const subscribedcalendarIDRef = React.createRef();
+  const [currentSubjectsIDDisplayValue, setCurrentSubjectsIDDisplayValue] =
     React.useState("");
-  const [currentImportanceValue, setCurrentImportanceValue] =
+  const [currentSubjectsIDValue, setCurrentSubjectsIDValue] =
     React.useState(undefined);
-  const ImportanceRef = React.createRef();
-  const getIDValue = {
-    Importance: (r) => JSON.stringify({ id: r?.id }),
-  };
-  const ImportanceIdSet = new Set(
-    Array.isArray(Importance)
-      ? Importance.map((r) => getIDValue.Importance?.(r))
-      : getIDValue.Importance?.(Importance)
-  );
+  const subjectsIDRef = React.createRef();
   const getDisplayValue = {
-    Importance: (r) =>
-      `${r?.Grade_Percentage ? r?.Grade_Percentage + " - " : ""}${r?.id}`,
+    subscribedcalendarID: (r) =>
+      `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
+    subjectsID: (r) =>
+      `${r?.subject_Name ? r?.subject_Name + " - " : ""}${r?.id}`,
   };
   const validations = {
     userinfoID: [{ type: "Required" }],
@@ -263,9 +280,9 @@ export default function ScheduleCreateForm(props) {
     LOCATION: [],
     RRULE: [{ type: "JSON" }],
     UID: [],
-    CATEGORIES: [],
     DTSTAMP: [],
-    Importance: [],
+    subscribedcalendarID: [],
+    subjectsID: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -301,8 +318,8 @@ export default function ScheduleCreateForm(props) {
     }, {});
     return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
   };
-  const fetchImportanceRecords = async (value) => {
-    setImportanceLoading(true);
+  const fetchSubscribedcalendarIDRecords = async (value) => {
+    setSubscribedcalendarIDLoading(true);
     const newOptions = [];
     let newNext = "";
     while (newOptions.length < autocompleteLength && newNext != null) {
@@ -310,7 +327,7 @@ export default function ScheduleCreateForm(props) {
         limit: autocompleteLength * 5,
         filter: {
           or: [
-            { Grade_Percentage: { contains: value } },
+            { Calendar_Name: { contains: value } },
             { id: { contains: value } },
           ],
         },
@@ -320,21 +337,50 @@ export default function ScheduleCreateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listImportances.replaceAll("__typename", ""),
+          query: listSubscribedCalendars.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listImportances?.items;
-      var loaded = result.filter(
-        (item) => !ImportanceIdSet.has(getIDValue.Importance?.(item))
-      );
+      )?.data?.listSubscribedCalendars?.items;
+      var loaded = result.filter((item) => subscribedcalendarID !== item.id);
       newOptions.push(...loaded);
       newNext = result.nextToken;
     }
-    setImportanceRecords(newOptions.slice(0, autocompleteLength));
-    setImportanceLoading(false);
+    setSubscribedcalendarIDRecords(newOptions.slice(0, autocompleteLength));
+    setSubscribedcalendarIDLoading(false);
+  };
+  const fetchSubjectsIDRecords = async (value) => {
+    setSubjectsIDLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { subject_Name: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listSubjects.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listSubjects?.items;
+      var loaded = result.filter((item) => subjectsID !== item.id);
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setSubjectsIDRecords(newOptions.slice(0, autocompleteLength));
+    setSubjectsIDLoading(false);
   };
   React.useEffect(() => {
-    fetchImportanceRecords("");
+    fetchSubscribedcalendarIDRecords("");
+    fetchSubjectsIDRecords("");
   }, []);
   return (
     <Grid
@@ -353,30 +399,22 @@ export default function ScheduleCreateForm(props) {
           LOCATION,
           RRULE,
           UID,
-          CATEGORIES,
           DTSTAMP,
-          Importance,
+          subscribedcalendarID,
+          subjectsID,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
             if (Array.isArray(modelFields[fieldName])) {
               promises.push(
                 ...modelFields[fieldName].map((item) =>
-                  runValidationTasks(
-                    fieldName,
-                    item,
-                    getDisplayValue[fieldName]
-                  )
+                  runValidationTasks(fieldName, item)
                 )
               );
               return promises;
             }
             promises.push(
-              runValidationTasks(
-                fieldName,
-                modelFields[fieldName],
-                getDisplayValue[fieldName]
-              )
+              runValidationTasks(fieldName, modelFields[fieldName])
             );
             return promises;
           }, [])
@@ -401,9 +439,9 @@ export default function ScheduleCreateForm(props) {
             DESCRIPTION: modelFields.DESCRIPTION,
             LOCATION: modelFields.LOCATION,
             UID: modelFields.UID,
-            CATEGORIES: modelFields.CATEGORIES,
             DTSTAMP: modelFields.DTSTAMP,
-            scheduleImportanceId: modelFields?.Importance?.id,
+            subscribedcalendarID: modelFields.subscribedcalendarID,
+            subjectsID: modelFields.subjectsID,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
@@ -454,9 +492,9 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              CATEGORIES,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              subjectsID,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -493,9 +531,9 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              CATEGORIES,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              subjectsID,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -534,9 +572,9 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              CATEGORIES,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              subjectsID,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -575,9 +613,9 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              CATEGORIES,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              subjectsID,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -609,9 +647,9 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              CATEGORIES,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              subjectsID,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -643,9 +681,9 @@ export default function ScheduleCreateForm(props) {
               LOCATION: value,
               RRULE,
               UID,
-              CATEGORIES,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              subjectsID,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -676,9 +714,9 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE: value,
               UID,
-              CATEGORIES,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              subjectsID,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -710,9 +748,9 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID: value,
-              CATEGORIES,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              subjectsID,
             };
             const result = onChange(modelFields);
             value = result?.UID ?? value;
@@ -726,40 +764,6 @@ export default function ScheduleCreateForm(props) {
         errorMessage={errors.UID?.errorMessage}
         hasError={errors.UID?.hasError}
         {...getOverrideProps(overrides, "UID")}
-      ></TextField>
-      <TextField
-        label="Categories"
-        isRequired={false}
-        isReadOnly={false}
-        value={CATEGORIES}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              userinfoID,
-              SUMMARY,
-              DTSTART,
-              DTEND,
-              DESCRIPTION,
-              LOCATION,
-              RRULE,
-              UID,
-              CATEGORIES: value,
-              DTSTAMP,
-              Importance,
-            };
-            const result = onChange(modelFields);
-            value = result?.CATEGORIES ?? value;
-          }
-          if (errors.CATEGORIES?.hasError) {
-            runValidationTasks("CATEGORIES", value);
-          }
-          setCATEGORIES(value);
-        }}
-        onBlur={() => runValidationTasks("CATEGORIES", CATEGORIES)}
-        errorMessage={errors.CATEGORIES?.errorMessage}
-        hasError={errors.CATEGORIES?.hasError}
-        {...getOverrideProps(overrides, "CATEGORIES")}
       ></TextField>
       <TextField
         label="Dtstamp"
@@ -780,9 +784,9 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              CATEGORIES,
               DTSTAMP: value,
-              Importance,
+              subscribedcalendarID,
+              subjectsID,
             };
             const result = onChange(modelFields);
             value = result?.DTSTAMP ?? value;
@@ -811,79 +815,204 @@ export default function ScheduleCreateForm(props) {
               LOCATION,
               RRULE,
               UID,
-              CATEGORIES,
               DTSTAMP,
-              Importance: value,
+              subscribedcalendarID: value,
+              subjectsID,
             };
             const result = onChange(modelFields);
-            value = result?.Importance ?? value;
+            value = result?.subscribedcalendarID ?? value;
           }
-          setImportance(value);
-          setCurrentImportanceValue(undefined);
-          setCurrentImportanceDisplayValue("");
+          setSubscribedcalendarID(value);
+          setCurrentSubscribedcalendarIDValue(undefined);
         }}
-        currentFieldValue={currentImportanceValue}
-        label={"Importance"}
-        items={Importance ? [Importance] : []}
-        hasError={errors?.Importance?.hasError}
+        currentFieldValue={currentSubscribedcalendarIDValue}
+        label={"Subscribedcalendar id"}
+        items={subscribedcalendarID ? [subscribedcalendarID] : []}
+        hasError={errors?.subscribedcalendarID?.hasError}
         runValidationTasks={async () =>
-          await runValidationTasks("Importance", currentImportanceValue)
+          await runValidationTasks(
+            "subscribedcalendarID",
+            currentSubscribedcalendarIDValue
+          )
         }
-        errorMessage={errors?.Importance?.errorMessage}
-        getBadgeText={getDisplayValue.Importance}
-        setFieldValue={(model) => {
-          setCurrentImportanceDisplayValue(
-            model ? getDisplayValue.Importance(model) : ""
+        errorMessage={errors?.subscribedcalendarID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.subscribedcalendarID(
+                subscribedcalendarIDRecords.find((r) => r.id === value) ??
+                  selectedSubscribedcalendarIDRecords.find(
+                    (r) => r.id === value
+                  )
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentSubscribedcalendarIDDisplayValue(
+            value
+              ? getDisplayValue.subscribedcalendarID(
+                  subscribedcalendarIDRecords.find((r) => r.id === value) ??
+                    selectedSubscribedcalendarIDRecords.find(
+                      (r) => r.id === value
+                    )
+                )
+              : ""
           );
-          setCurrentImportanceValue(model);
+          setCurrentSubscribedcalendarIDValue(value);
+          const selectedRecord = subscribedcalendarIDRecords.find(
+            (r) => r.id === value
+          );
+          if (selectedRecord) {
+            setSelectedSubscribedcalendarIDRecords([selectedRecord]);
+          }
         }}
-        inputFieldRef={ImportanceRef}
+        inputFieldRef={subscribedcalendarIDRef}
         defaultFieldValue={""}
       >
         <Autocomplete
-          label="Importance"
+          label="Subscribedcalendar id"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search Importance"
-          value={currentImportanceDisplayValue}
-          options={importanceRecords
-            .filter((r) => !ImportanceIdSet.has(getIDValue.Importance?.(r)))
+          placeholder="Search SubscribedCalendar"
+          value={currentSubscribedcalendarIDDisplayValue}
+          options={subscribedcalendarIDRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
             .map((r) => ({
-              id: getIDValue.Importance?.(r),
-              label: getDisplayValue.Importance?.(r),
+              id: r?.id,
+              label: getDisplayValue.subscribedcalendarID?.(r),
             }))}
-          isLoading={ImportanceLoading}
+          isLoading={subscribedcalendarIDLoading}
           onSelect={({ id, label }) => {
-            setCurrentImportanceValue(
-              importanceRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentImportanceDisplayValue(label);
-            runValidationTasks("Importance", label);
+            setCurrentSubscribedcalendarIDValue(id);
+            setCurrentSubscribedcalendarIDDisplayValue(label);
+            runValidationTasks("subscribedcalendarID", label);
           }}
           onClear={() => {
-            setCurrentImportanceDisplayValue("");
+            setCurrentSubscribedcalendarIDDisplayValue("");
           }}
           onChange={(e) => {
             let { value } = e.target;
-            fetchImportanceRecords(value);
-            if (errors.Importance?.hasError) {
-              runValidationTasks("Importance", value);
+            fetchSubscribedcalendarIDRecords(value);
+            if (errors.subscribedcalendarID?.hasError) {
+              runValidationTasks("subscribedcalendarID", value);
             }
-            setCurrentImportanceDisplayValue(value);
-            setCurrentImportanceValue(undefined);
+            setCurrentSubscribedcalendarIDDisplayValue(value);
+            setCurrentSubscribedcalendarIDValue(undefined);
           }}
           onBlur={() =>
-            runValidationTasks("Importance", currentImportanceDisplayValue)
+            runValidationTasks(
+              "subscribedcalendarID",
+              currentSubscribedcalendarIDValue
+            )
           }
-          errorMessage={errors.Importance?.errorMessage}
-          hasError={errors.Importance?.hasError}
-          ref={ImportanceRef}
+          errorMessage={errors.subscribedcalendarID?.errorMessage}
+          hasError={errors.subscribedcalendarID?.hasError}
+          ref={subscribedcalendarIDRef}
           labelHidden={true}
-          {...getOverrideProps(overrides, "Importance")}
+          {...getOverrideProps(overrides, "subscribedcalendarID")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID,
+              DTSTAMP,
+              subscribedcalendarID,
+              subjectsID: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.subjectsID ?? value;
+          }
+          setSubjectsID(value);
+          setCurrentSubjectsIDValue(undefined);
+        }}
+        currentFieldValue={currentSubjectsIDValue}
+        label={"Subjects id"}
+        items={subjectsID ? [subjectsID] : []}
+        hasError={errors?.subjectsID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("subjectsID", currentSubjectsIDValue)
+        }
+        errorMessage={errors?.subjectsID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.subjectsID(
+                subjectsIDRecords.find((r) => r.id === value) ??
+                  selectedSubjectsIDRecords.find((r) => r.id === value)
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentSubjectsIDDisplayValue(
+            value
+              ? getDisplayValue.subjectsID(
+                  subjectsIDRecords.find((r) => r.id === value) ??
+                    selectedSubjectsIDRecords.find((r) => r.id === value)
+                )
+              : ""
+          );
+          setCurrentSubjectsIDValue(value);
+          const selectedRecord = subjectsIDRecords.find((r) => r.id === value);
+          if (selectedRecord) {
+            setSelectedSubjectsIDRecords([selectedRecord]);
+          }
+        }}
+        inputFieldRef={subjectsIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Subjects id"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search Subjects"
+          value={currentSubjectsIDDisplayValue}
+          options={subjectsIDRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.subjectsID?.(r),
+            }))}
+          isLoading={subjectsIDLoading}
+          onSelect={({ id, label }) => {
+            setCurrentSubjectsIDValue(id);
+            setCurrentSubjectsIDDisplayValue(label);
+            runValidationTasks("subjectsID", label);
+          }}
+          onClear={() => {
+            setCurrentSubjectsIDDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchSubjectsIDRecords(value);
+            if (errors.subjectsID?.hasError) {
+              runValidationTasks("subjectsID", value);
+            }
+            setCurrentSubjectsIDDisplayValue(value);
+            setCurrentSubjectsIDValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("subjectsID", currentSubjectsIDValue)
+          }
+          errorMessage={errors.subjectsID?.errorMessage}
+          hasError={errors.subjectsID?.hasError}
+          ref={subjectsIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "subjectsID")}
         ></Autocomplete>
       </ArrayField>
       <Flex

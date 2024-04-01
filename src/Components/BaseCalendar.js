@@ -47,6 +47,7 @@ const MyCalendar = () => {
     async function fetchData() {
       try {
         const todos = await list_schedule_item();
+        console.log(todos);
         const allEvents = processEvents(todos);
         setAllEvents(allEvents);
       } catch (error) {
@@ -109,6 +110,7 @@ const MyCalendar = () => {
     userinfoID: event.userinfoID,
     id: event.id,
     isNew: event.isNew ? event.isNew : false,
+    subject_id: event.subjectsID,
   }));
 
   const handleAddEvent = async (newEvent) => {

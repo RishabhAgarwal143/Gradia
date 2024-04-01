@@ -15,14 +15,23 @@ import {
   Grid,
   Icon,
   ScrollView,
+  SelectField,
   Text,
   TextField,
   useTheme,
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listImportances } from "../graphql/queries";
-import { createTask } from "../graphql/mutations";
+import {
+  listSubjects,
+  listSubscribedCalendars,
+  listTaskGradeInfos,
+} from "../graphql/queries";
+import {
+  createTask,
+  updateTask,
+  updateTaskGradeInfo,
+} from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
   items = [],
@@ -201,10 +210,13 @@ export default function TaskCreateForm(props) {
     SUMMARY: "",
     COMPLETED: "",
     STATUS: "",
-    CATEGORIES: "",
     PRIORITY: "",
     DTSTAMP: "",
-    Importance: undefined,
+    subscribedcalendarID: undefined,
+    DESCRIPTION: "",
+    subjectsID: undefined,
+    TaskGradeInfo: undefined,
+    LOCATION: "",
   };
   const [due_time, setDue_time] = React.useState(initialValues.due_time);
   const [due_date, setDue_date] = React.useState(initialValues.due_date);
@@ -217,12 +229,33 @@ export default function TaskCreateForm(props) {
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
   const [COMPLETED, setCOMPLETED] = React.useState(initialValues.COMPLETED);
   const [STATUS, setSTATUS] = React.useState(initialValues.STATUS);
-  const [CATEGORIES, setCATEGORIES] = React.useState(initialValues.CATEGORIES);
   const [PRIORITY, setPRIORITY] = React.useState(initialValues.PRIORITY);
   const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
-  const [Importance, setImportance] = React.useState(initialValues.Importance);
-  const [ImportanceLoading, setImportanceLoading] = React.useState(false);
-  const [importanceRecords, setImportanceRecords] = React.useState([]);
+  const [subscribedcalendarID, setSubscribedcalendarID] = React.useState(
+    initialValues.subscribedcalendarID
+  );
+  const [subscribedcalendarIDLoading, setSubscribedcalendarIDLoading] =
+    React.useState(false);
+  const [subscribedcalendarIDRecords, setSubscribedcalendarIDRecords] =
+    React.useState([]);
+  const [
+    selectedSubscribedcalendarIDRecords,
+    setSelectedSubscribedcalendarIDRecords,
+  ] = React.useState([]);
+  const [DESCRIPTION1, setDESCRIPTION1] = React.useState(
+    initialValues.DESCRIPTION
+  );
+  const [subjectsID, setSubjectsID] = React.useState(initialValues.subjectsID);
+  const [subjectsIDLoading, setSubjectsIDLoading] = React.useState(false);
+  const [subjectsIDRecords, setSubjectsIDRecords] = React.useState([]);
+  const [selectedSubjectsIDRecords, setSelectedSubjectsIDRecords] =
+    React.useState([]);
+  const [TaskGradeInfo, setTaskGradeInfo] = React.useState(
+    initialValues.TaskGradeInfo
+  );
+  const [TaskGradeInfoLoading, setTaskGradeInfoLoading] = React.useState(false);
+  const [taskGradeInfoRecords, setTaskGradeInfoRecords] = React.useState([]);
+  const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -235,30 +268,57 @@ export default function TaskCreateForm(props) {
     setSUMMARY(initialValues.SUMMARY);
     setCOMPLETED(initialValues.COMPLETED);
     setSTATUS(initialValues.STATUS);
-    setCATEGORIES(initialValues.CATEGORIES);
     setPRIORITY(initialValues.PRIORITY);
     setDTSTAMP(initialValues.DTSTAMP);
-    setImportance(initialValues.Importance);
-    setCurrentImportanceValue(undefined);
-    setCurrentImportanceDisplayValue("");
+    setSubscribedcalendarID(initialValues.subscribedcalendarID);
+    setCurrentSubscribedcalendarIDValue(undefined);
+    setCurrentSubscribedcalendarIDDisplayValue("");
+    setDESCRIPTION1(initialValues.DESCRIPTION);
+    setSubjectsID(initialValues.subjectsID);
+    setCurrentSubjectsIDValue(undefined);
+    setCurrentSubjectsIDDisplayValue("");
+    setTaskGradeInfo(initialValues.TaskGradeInfo);
+    setCurrentTaskGradeInfoValue(undefined);
+    setCurrentTaskGradeInfoDisplayValue("");
+    setLOCATION(initialValues.LOCATION);
     setErrors({});
   };
-  const [currentImportanceDisplayValue, setCurrentImportanceDisplayValue] =
+  const [
+    currentSubscribedcalendarIDDisplayValue,
+    setCurrentSubscribedcalendarIDDisplayValue,
+  ] = React.useState("");
+  const [
+    currentSubscribedcalendarIDValue,
+    setCurrentSubscribedcalendarIDValue,
+  ] = React.useState(undefined);
+  const subscribedcalendarIDRef = React.createRef();
+  const [currentSubjectsIDDisplayValue, setCurrentSubjectsIDDisplayValue] =
     React.useState("");
-  const [currentImportanceValue, setCurrentImportanceValue] =
+  const [currentSubjectsIDValue, setCurrentSubjectsIDValue] =
     React.useState(undefined);
-  const ImportanceRef = React.createRef();
+  const subjectsIDRef = React.createRef();
+  const [
+    currentTaskGradeInfoDisplayValue,
+    setCurrentTaskGradeInfoDisplayValue,
+  ] = React.useState("");
+  const [currentTaskGradeInfoValue, setCurrentTaskGradeInfoValue] =
+    React.useState(undefined);
+  const TaskGradeInfoRef = React.createRef();
   const getIDValue = {
-    Importance: (r) => JSON.stringify({ id: r?.id }),
+    TaskGradeInfo: (r) => JSON.stringify({ id: r?.id }),
   };
-  const ImportanceIdSet = new Set(
-    Array.isArray(Importance)
-      ? Importance.map((r) => getIDValue.Importance?.(r))
-      : getIDValue.Importance?.(Importance)
+  const TaskGradeInfoIdSet = new Set(
+    Array.isArray(TaskGradeInfo)
+      ? TaskGradeInfo.map((r) => getIDValue.TaskGradeInfo?.(r))
+      : getIDValue.TaskGradeInfo?.(TaskGradeInfo)
   );
   const getDisplayValue = {
-    Importance: (r) =>
-      `${r?.Grade_Percentage ? r?.Grade_Percentage + " - " : ""}${r?.id}`,
+    subscribedcalendarID: (r) =>
+      `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
+    subjectsID: (r) =>
+      `${r?.subject_Name ? r?.subject_Name + " - " : ""}${r?.id}`,
+    TaskGradeInfo: (r) =>
+      `${r?.current_Grade ? r?.current_Grade + " - " : ""}${r?.id}`,
   };
   const validations = {
     due_time: [],
@@ -270,10 +330,13 @@ export default function TaskCreateForm(props) {
     SUMMARY: [],
     COMPLETED: [],
     STATUS: [],
-    CATEGORIES: [],
     PRIORITY: [],
     DTSTAMP: [],
-    Importance: [],
+    subscribedcalendarID: [],
+    DESCRIPTION: [],
+    subjectsID: [],
+    TaskGradeInfo: [],
+    LOCATION: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -309,8 +372,8 @@ export default function TaskCreateForm(props) {
     }, {});
     return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
   };
-  const fetchImportanceRecords = async (value) => {
-    setImportanceLoading(true);
+  const fetchSubscribedcalendarIDRecords = async (value) => {
+    setSubscribedcalendarIDLoading(true);
     const newOptions = [];
     let newNext = "";
     while (newOptions.length < autocompleteLength && newNext != null) {
@@ -318,7 +381,7 @@ export default function TaskCreateForm(props) {
         limit: autocompleteLength * 5,
         filter: {
           or: [
-            { Grade_Percentage: { contains: value } },
+            { Calendar_Name: { contains: value } },
             { id: { contains: value } },
           ],
         },
@@ -328,21 +391,83 @@ export default function TaskCreateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listImportances.replaceAll("__typename", ""),
+          query: listSubscribedCalendars.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listImportances?.items;
+      )?.data?.listSubscribedCalendars?.items;
+      var loaded = result.filter((item) => subscribedcalendarID !== item.id);
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setSubscribedcalendarIDRecords(newOptions.slice(0, autocompleteLength));
+    setSubscribedcalendarIDLoading(false);
+  };
+  const fetchSubjectsIDRecords = async (value) => {
+    setSubjectsIDLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { subject_Name: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listSubjects.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listSubjects?.items;
+      var loaded = result.filter((item) => subjectsID !== item.id);
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setSubjectsIDRecords(newOptions.slice(0, autocompleteLength));
+    setSubjectsIDLoading(false);
+  };
+  const fetchTaskGradeInfoRecords = async (value) => {
+    setTaskGradeInfoLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { current_Grade: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listTaskGradeInfos.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listTaskGradeInfos?.items;
       var loaded = result.filter(
-        (item) => !ImportanceIdSet.has(getIDValue.Importance?.(item))
+        (item) => !TaskGradeInfoIdSet.has(getIDValue.TaskGradeInfo?.(item))
       );
       newOptions.push(...loaded);
       newNext = result.nextToken;
     }
-    setImportanceRecords(newOptions.slice(0, autocompleteLength));
-    setImportanceLoading(false);
+    setTaskGradeInfoRecords(newOptions.slice(0, autocompleteLength));
+    setTaskGradeInfoLoading(false);
   };
   React.useEffect(() => {
-    fetchImportanceRecords("");
+    fetchSubscribedcalendarIDRecords("");
+    fetchSubjectsIDRecords("");
+    fetchTaskGradeInfoRecords("");
   }, []);
   return (
     <Grid
@@ -362,10 +487,13 @@ export default function TaskCreateForm(props) {
           SUMMARY,
           COMPLETED,
           STATUS,
-          CATEGORIES,
           PRIORITY,
           DTSTAMP,
-          Importance,
+          subscribedcalendarID,
+          DESCRIPTION: DESCRIPTION1,
+          subjectsID,
+          TaskGradeInfo,
+          LOCATION,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -410,19 +538,54 @@ export default function TaskCreateForm(props) {
             SUMMARY: modelFields.SUMMARY,
             COMPLETED: modelFields.COMPLETED,
             STATUS: modelFields.STATUS,
-            CATEGORIES: modelFields.CATEGORIES,
             PRIORITY: modelFields.PRIORITY,
             DTSTAMP: modelFields.DTSTAMP,
-            taskImportanceId: modelFields?.Importance?.id,
+            subscribedcalendarID: modelFields.subscribedcalendarID,
+            DESCRIPTION: modelFields.DESCRIPTION,
+            subjectsID: modelFields.subjectsID,
+            taskTaskGradeInfoId: modelFields?.TaskGradeInfo?.id,
+            LOCATION: modelFields.LOCATION,
           };
-          await client.graphql({
-            query: createTask.replaceAll("__typename", ""),
-            variables: {
-              input: {
-                ...modelFieldsToSave,
+          const task = (
+            await client.graphql({
+              query: createTask.replaceAll("__typename", ""),
+              variables: {
+                input: {
+                  ...modelFieldsToSave,
+                },
               },
-            },
-          });
+            })
+          )?.data?.createTask;
+          const promises = [];
+          const taskGradeInfoToLink = modelFields.TaskGradeInfo;
+          if (taskGradeInfoToLink) {
+            promises.push(
+              client.graphql({
+                query: updateTaskGradeInfo.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: TaskGradeInfo.id,
+                    taskGradeInfoTaskId: task.id,
+                  },
+                },
+              })
+            );
+            const taskToUnlink = await taskGradeInfoToLink.Task;
+            if (taskToUnlink) {
+              promises.push(
+                client.graphql({
+                  query: updateTask.replaceAll("__typename", ""),
+                  variables: {
+                    input: {
+                      id: taskToUnlink.id,
+                      taskTaskGradeInfoId: null,
+                    },
+                  },
+                })
+              );
+            }
+          }
+          await Promise.all(promises);
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -455,10 +618,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.due_time ?? value;
@@ -489,10 +655,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.due_date ?? value;
@@ -523,10 +692,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.description ?? value;
@@ -559,10 +731,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.UID ?? value;
@@ -597,10 +772,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -635,10 +813,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.DUE ?? value;
@@ -671,10 +852,13 @@ export default function TaskCreateForm(props) {
               SUMMARY: value,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -693,9 +877,11 @@ export default function TaskCreateForm(props) {
         label="Completed"
         isRequired={false}
         isReadOnly={false}
-        value={COMPLETED}
+        type="datetime-local"
+        value={COMPLETED && convertToLocal(new Date(COMPLETED))}
         onChange={(e) => {
-          let { value } = e.target;
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
           if (onChange) {
             const modelFields = {
               due_time,
@@ -707,10 +893,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED: value,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.COMPLETED ?? value;
@@ -725,10 +914,10 @@ export default function TaskCreateForm(props) {
         hasError={errors.COMPLETED?.hasError}
         {...getOverrideProps(overrides, "COMPLETED")}
       ></TextField>
-      <TextField
+      <SelectField
         label="Status"
-        isRequired={false}
-        isReadOnly={false}
+        placeholder="Please select an option"
+        isDisabled={false}
         value={STATUS}
         onChange={(e) => {
           let { value } = e.target;
@@ -743,10 +932,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS: value,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.STATUS ?? value;
@@ -760,43 +952,28 @@ export default function TaskCreateForm(props) {
         errorMessage={errors.STATUS?.errorMessage}
         hasError={errors.STATUS?.hasError}
         {...getOverrideProps(overrides, "STATUS")}
-      ></TextField>
-      <TextField
-        label="Categories"
-        isRequired={false}
-        isReadOnly={false}
-        value={CATEGORIES}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              due_time,
-              due_date,
-              description,
-              UID,
-              DTSTART,
-              DUE,
-              SUMMARY,
-              COMPLETED,
-              STATUS,
-              CATEGORIES: value,
-              PRIORITY,
-              DTSTAMP,
-              Importance,
-            };
-            const result = onChange(modelFields);
-            value = result?.CATEGORIES ?? value;
-          }
-          if (errors.CATEGORIES?.hasError) {
-            runValidationTasks("CATEGORIES", value);
-          }
-          setCATEGORIES(value);
-        }}
-        onBlur={() => runValidationTasks("CATEGORIES", CATEGORIES)}
-        errorMessage={errors.CATEGORIES?.errorMessage}
-        hasError={errors.CATEGORIES?.hasError}
-        {...getOverrideProps(overrides, "CATEGORIES")}
-      ></TextField>
+      >
+        <option
+          children="Needs action"
+          value="NEEDS_ACTION"
+          {...getOverrideProps(overrides, "STATUSoption0")}
+        ></option>
+        <option
+          children="Completed"
+          value="COMPLETED"
+          {...getOverrideProps(overrides, "STATUSoption1")}
+        ></option>
+        <option
+          children="In process"
+          value="IN_PROCESS"
+          {...getOverrideProps(overrides, "STATUSoption2")}
+        ></option>
+        <option
+          children="Cancelled"
+          value="CANCELLED"
+          {...getOverrideProps(overrides, "STATUSoption3")}
+        ></option>
+      </SelectField>
       <TextField
         label="Priority"
         isRequired={false}
@@ -819,10 +996,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY: value,
               DTSTAMP,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.PRIORITY ?? value;
@@ -857,10 +1037,13 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP: value,
-              Importance,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
             value = result?.DTSTAMP ?? value;
@@ -890,82 +1073,392 @@ export default function TaskCreateForm(props) {
               SUMMARY,
               COMPLETED,
               STATUS,
-              CATEGORIES,
               PRIORITY,
               DTSTAMP,
-              Importance: value,
+              subscribedcalendarID: value,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
             };
             const result = onChange(modelFields);
-            value = result?.Importance ?? value;
+            value = result?.subscribedcalendarID ?? value;
           }
-          setImportance(value);
-          setCurrentImportanceValue(undefined);
-          setCurrentImportanceDisplayValue("");
+          setSubscribedcalendarID(value);
+          setCurrentSubscribedcalendarIDValue(undefined);
         }}
-        currentFieldValue={currentImportanceValue}
-        label={"Importance"}
-        items={Importance ? [Importance] : []}
-        hasError={errors?.Importance?.hasError}
+        currentFieldValue={currentSubscribedcalendarIDValue}
+        label={"Subscribedcalendar id"}
+        items={subscribedcalendarID ? [subscribedcalendarID] : []}
+        hasError={errors?.subscribedcalendarID?.hasError}
         runValidationTasks={async () =>
-          await runValidationTasks("Importance", currentImportanceValue)
+          await runValidationTasks(
+            "subscribedcalendarID",
+            currentSubscribedcalendarIDValue
+          )
         }
-        errorMessage={errors?.Importance?.errorMessage}
-        getBadgeText={getDisplayValue.Importance}
-        setFieldValue={(model) => {
-          setCurrentImportanceDisplayValue(
-            model ? getDisplayValue.Importance(model) : ""
+        errorMessage={errors?.subscribedcalendarID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.subscribedcalendarID(
+                subscribedcalendarIDRecords.find((r) => r.id === value) ??
+                  selectedSubscribedcalendarIDRecords.find(
+                    (r) => r.id === value
+                  )
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentSubscribedcalendarIDDisplayValue(
+            value
+              ? getDisplayValue.subscribedcalendarID(
+                  subscribedcalendarIDRecords.find((r) => r.id === value) ??
+                    selectedSubscribedcalendarIDRecords.find(
+                      (r) => r.id === value
+                    )
+                )
+              : ""
           );
-          setCurrentImportanceValue(model);
+          setCurrentSubscribedcalendarIDValue(value);
+          const selectedRecord = subscribedcalendarIDRecords.find(
+            (r) => r.id === value
+          );
+          if (selectedRecord) {
+            setSelectedSubscribedcalendarIDRecords([selectedRecord]);
+          }
         }}
-        inputFieldRef={ImportanceRef}
+        inputFieldRef={subscribedcalendarIDRef}
         defaultFieldValue={""}
       >
         <Autocomplete
-          label="Importance"
+          label="Subscribedcalendar id"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search Importance"
-          value={currentImportanceDisplayValue}
-          options={importanceRecords
-            .filter((r) => !ImportanceIdSet.has(getIDValue.Importance?.(r)))
+          placeholder="Search SubscribedCalendar"
+          value={currentSubscribedcalendarIDDisplayValue}
+          options={subscribedcalendarIDRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
             .map((r) => ({
-              id: getIDValue.Importance?.(r),
-              label: getDisplayValue.Importance?.(r),
+              id: r?.id,
+              label: getDisplayValue.subscribedcalendarID?.(r),
             }))}
-          isLoading={ImportanceLoading}
+          isLoading={subscribedcalendarIDLoading}
           onSelect={({ id, label }) => {
-            setCurrentImportanceValue(
-              importanceRecords.find((r) =>
+            setCurrentSubscribedcalendarIDValue(id);
+            setCurrentSubscribedcalendarIDDisplayValue(label);
+            runValidationTasks("subscribedcalendarID", label);
+          }}
+          onClear={() => {
+            setCurrentSubscribedcalendarIDDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchSubscribedcalendarIDRecords(value);
+            if (errors.subscribedcalendarID?.hasError) {
+              runValidationTasks("subscribedcalendarID", value);
+            }
+            setCurrentSubscribedcalendarIDDisplayValue(value);
+            setCurrentSubscribedcalendarIDValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks(
+              "subscribedcalendarID",
+              currentSubscribedcalendarIDValue
+            )
+          }
+          errorMessage={errors.subscribedcalendarID?.errorMessage}
+          hasError={errors.subscribedcalendarID?.hasError}
+          ref={subscribedcalendarIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "subscribedcalendarID")}
+        ></Autocomplete>
+      </ArrayField>
+      <TextField
+        label="Description"
+        isRequired={false}
+        isReadOnly={false}
+        value={DESCRIPTION1}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              due_time,
+              due_date,
+              description,
+              UID,
+              DTSTART,
+              DUE,
+              SUMMARY,
+              COMPLETED,
+              STATUS,
+              PRIORITY,
+              DTSTAMP,
+              subscribedcalendarID,
+              DESCRIPTION: value,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION,
+            };
+            const result = onChange(modelFields);
+            value = result?.DESCRIPTION ?? value;
+          }
+          if (errors.DESCRIPTION?.hasError) {
+            runValidationTasks("DESCRIPTION", value);
+          }
+          setDESCRIPTION1(value);
+        }}
+        onBlur={() => runValidationTasks("DESCRIPTION", DESCRIPTION1)}
+        errorMessage={errors.DESCRIPTION?.errorMessage}
+        hasError={errors.DESCRIPTION?.hasError}
+        {...getOverrideProps(overrides, "DESCRIPTION")}
+      ></TextField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
+          if (onChange) {
+            const modelFields = {
+              due_time,
+              due_date,
+              description,
+              UID,
+              DTSTART,
+              DUE,
+              SUMMARY,
+              COMPLETED,
+              STATUS,
+              PRIORITY,
+              DTSTAMP,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID: value,
+              TaskGradeInfo,
+              LOCATION,
+            };
+            const result = onChange(modelFields);
+            value = result?.subjectsID ?? value;
+          }
+          setSubjectsID(value);
+          setCurrentSubjectsIDValue(undefined);
+        }}
+        currentFieldValue={currentSubjectsIDValue}
+        label={"Subjects id"}
+        items={subjectsID ? [subjectsID] : []}
+        hasError={errors?.subjectsID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("subjectsID", currentSubjectsIDValue)
+        }
+        errorMessage={errors?.subjectsID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.subjectsID(
+                subjectsIDRecords.find((r) => r.id === value) ??
+                  selectedSubjectsIDRecords.find((r) => r.id === value)
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentSubjectsIDDisplayValue(
+            value
+              ? getDisplayValue.subjectsID(
+                  subjectsIDRecords.find((r) => r.id === value) ??
+                    selectedSubjectsIDRecords.find((r) => r.id === value)
+                )
+              : ""
+          );
+          setCurrentSubjectsIDValue(value);
+          const selectedRecord = subjectsIDRecords.find((r) => r.id === value);
+          if (selectedRecord) {
+            setSelectedSubjectsIDRecords([selectedRecord]);
+          }
+        }}
+        inputFieldRef={subjectsIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Subjects id"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search Subjects"
+          value={currentSubjectsIDDisplayValue}
+          options={subjectsIDRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.subjectsID?.(r),
+            }))}
+          isLoading={subjectsIDLoading}
+          onSelect={({ id, label }) => {
+            setCurrentSubjectsIDValue(id);
+            setCurrentSubjectsIDDisplayValue(label);
+            runValidationTasks("subjectsID", label);
+          }}
+          onClear={() => {
+            setCurrentSubjectsIDDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchSubjectsIDRecords(value);
+            if (errors.subjectsID?.hasError) {
+              runValidationTasks("subjectsID", value);
+            }
+            setCurrentSubjectsIDDisplayValue(value);
+            setCurrentSubjectsIDValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("subjectsID", currentSubjectsIDValue)
+          }
+          errorMessage={errors.subjectsID?.errorMessage}
+          hasError={errors.subjectsID?.hasError}
+          ref={subjectsIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "subjectsID")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
+          if (onChange) {
+            const modelFields = {
+              due_time,
+              due_date,
+              description,
+              UID,
+              DTSTART,
+              DUE,
+              SUMMARY,
+              COMPLETED,
+              STATUS,
+              PRIORITY,
+              DTSTAMP,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo: value,
+              LOCATION,
+            };
+            const result = onChange(modelFields);
+            value = result?.TaskGradeInfo ?? value;
+          }
+          setTaskGradeInfo(value);
+          setCurrentTaskGradeInfoValue(undefined);
+          setCurrentTaskGradeInfoDisplayValue("");
+        }}
+        currentFieldValue={currentTaskGradeInfoValue}
+        label={"Task grade info"}
+        items={TaskGradeInfo ? [TaskGradeInfo] : []}
+        hasError={errors?.TaskGradeInfo?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("TaskGradeInfo", currentTaskGradeInfoValue)
+        }
+        errorMessage={errors?.TaskGradeInfo?.errorMessage}
+        getBadgeText={getDisplayValue.TaskGradeInfo}
+        setFieldValue={(model) => {
+          setCurrentTaskGradeInfoDisplayValue(
+            model ? getDisplayValue.TaskGradeInfo(model) : ""
+          );
+          setCurrentTaskGradeInfoValue(model);
+        }}
+        inputFieldRef={TaskGradeInfoRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Task grade info"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search TaskGradeInfo"
+          value={currentTaskGradeInfoDisplayValue}
+          options={taskGradeInfoRecords
+            .filter(
+              (r) => !TaskGradeInfoIdSet.has(getIDValue.TaskGradeInfo?.(r))
+            )
+            .map((r) => ({
+              id: getIDValue.TaskGradeInfo?.(r),
+              label: getDisplayValue.TaskGradeInfo?.(r),
+            }))}
+          isLoading={TaskGradeInfoLoading}
+          onSelect={({ id, label }) => {
+            setCurrentTaskGradeInfoValue(
+              taskGradeInfoRecords.find((r) =>
                 Object.entries(JSON.parse(id)).every(
                   ([key, value]) => r[key] === value
                 )
               )
             );
-            setCurrentImportanceDisplayValue(label);
-            runValidationTasks("Importance", label);
+            setCurrentTaskGradeInfoDisplayValue(label);
+            runValidationTasks("TaskGradeInfo", label);
           }}
           onClear={() => {
-            setCurrentImportanceDisplayValue("");
+            setCurrentTaskGradeInfoDisplayValue("");
           }}
           onChange={(e) => {
             let { value } = e.target;
-            fetchImportanceRecords(value);
-            if (errors.Importance?.hasError) {
-              runValidationTasks("Importance", value);
+            fetchTaskGradeInfoRecords(value);
+            if (errors.TaskGradeInfo?.hasError) {
+              runValidationTasks("TaskGradeInfo", value);
             }
-            setCurrentImportanceDisplayValue(value);
-            setCurrentImportanceValue(undefined);
+            setCurrentTaskGradeInfoDisplayValue(value);
+            setCurrentTaskGradeInfoValue(undefined);
           }}
           onBlur={() =>
-            runValidationTasks("Importance", currentImportanceDisplayValue)
+            runValidationTasks(
+              "TaskGradeInfo",
+              currentTaskGradeInfoDisplayValue
+            )
           }
-          errorMessage={errors.Importance?.errorMessage}
-          hasError={errors.Importance?.hasError}
-          ref={ImportanceRef}
+          errorMessage={errors.TaskGradeInfo?.errorMessage}
+          hasError={errors.TaskGradeInfo?.hasError}
+          ref={TaskGradeInfoRef}
           labelHidden={true}
-          {...getOverrideProps(overrides, "Importance")}
+          {...getOverrideProps(overrides, "TaskGradeInfo")}
         ></Autocomplete>
       </ArrayField>
+      <TextField
+        label="Location"
+        isRequired={false}
+        isReadOnly={false}
+        value={LOCATION}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              due_time,
+              due_date,
+              description,
+              UID,
+              DTSTART,
+              DUE,
+              SUMMARY,
+              COMPLETED,
+              STATUS,
+              PRIORITY,
+              DTSTAMP,
+              subscribedcalendarID,
+              DESCRIPTION: DESCRIPTION1,
+              subjectsID,
+              TaskGradeInfo,
+              LOCATION: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.LOCATION ?? value;
+          }
+          if (errors.LOCATION?.hasError) {
+            runValidationTasks("LOCATION", value);
+          }
+          setLOCATION(value);
+        }}
+        onBlur={() => runValidationTasks("LOCATION", LOCATION)}
+        errorMessage={errors.LOCATION?.errorMessage}
+        hasError={errors.LOCATION?.hasError}
+        {...getOverrideProps(overrides, "LOCATION")}
+      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

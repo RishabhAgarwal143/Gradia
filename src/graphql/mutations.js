@@ -1,56 +1,485 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createImportance = /* GraphQL */ `
-  mutation CreateImportance(
-    $input: CreateImportanceInput!
-    $condition: ModelImportanceConditionInput
+export const createSubjects = /* GraphQL */ `
+  mutation CreateSubjects(
+    $input: CreateSubjectsInput!
+    $condition: ModelSubjectsConditionInput
   ) {
-    createImportance(input: $input, condition: $condition) {
+    createSubjects(input: $input, condition: $condition) {
       id
-      Grade_Percentage
-      Task_info
-      Expected_Time
-      Course
-      Additional_Info
+      subject_Name
+      current_Grade
+      target_Grade
+      Tasks {
+        items {
+          id
+          UID
+          DTSTART
+          DUE
+          SUMMARY
+          userinfoID
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
+            __typename
+          }
+          LOCATION
+          createdAt
+          updatedAt
+          taskTaskGradeInfoId
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      Schedules {
+        items {
+          id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
+            __typename
+          }
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
 `;
-export const updateImportance = /* GraphQL */ `
-  mutation UpdateImportance(
-    $input: UpdateImportanceInput!
-    $condition: ModelImportanceConditionInput
+export const updateSubjects = /* GraphQL */ `
+  mutation UpdateSubjects(
+    $input: UpdateSubjectsInput!
+    $condition: ModelSubjectsConditionInput
   ) {
-    updateImportance(input: $input, condition: $condition) {
+    updateSubjects(input: $input, condition: $condition) {
       id
-      Grade_Percentage
-      Task_info
-      Expected_Time
-      Course
-      Additional_Info
+      subject_Name
+      current_Grade
+      target_Grade
+      Tasks {
+        items {
+          id
+          UID
+          DTSTART
+          DUE
+          SUMMARY
+          userinfoID
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
+            __typename
+          }
+          LOCATION
+          createdAt
+          updatedAt
+          taskTaskGradeInfoId
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      Schedules {
+        items {
+          id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
+            __typename
+          }
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
 `;
-export const deleteImportance = /* GraphQL */ `
-  mutation DeleteImportance(
-    $input: DeleteImportanceInput!
-    $condition: ModelImportanceConditionInput
+export const deleteSubjects = /* GraphQL */ `
+  mutation DeleteSubjects(
+    $input: DeleteSubjectsInput!
+    $condition: ModelSubjectsConditionInput
   ) {
-    deleteImportance(input: $input, condition: $condition) {
+    deleteSubjects(input: $input, condition: $condition) {
       id
-      Grade_Percentage
-      Task_info
-      Expected_Time
-      Course
-      Additional_Info
+      subject_Name
+      current_Grade
+      target_Grade
+      Tasks {
+        items {
+          id
+          UID
+          DTSTART
+          DUE
+          SUMMARY
+          userinfoID
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
+            __typename
+          }
+          LOCATION
+          createdAt
+          updatedAt
+          taskTaskGradeInfoId
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      Schedules {
+        items {
+          id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
+            __typename
+          }
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const createTaskGradeInfo = /* GraphQL */ `
+  mutation CreateTaskGradeInfo(
+    $input: CreateTaskGradeInfoInput!
+    $condition: ModelTaskGradeInfoConditionInput
+  ) {
+    createTaskGradeInfo(input: $input, condition: $condition) {
+      id
+      current_Grade
+      task_Weightage
+      overall_Percentage
+      extra_Info
+      time_Taken
+      Task {
+        id
+        UID
+        DTSTART
+        DUE
+        SUMMARY
+        userinfoID
+        COMPLETED
+        STATUS
+        PRIORITY
+        DTSTAMP
+        subscribedcalendarID
+        DESCRIPTION
+        subjectsID
+        TaskGradeInfo {
+          id
+          current_Grade
+          task_Weightage
+          overall_Percentage
+          extra_Info
+          time_Taken
+          Task {
+            id
+            UID
+            DTSTART
+            DUE
+            SUMMARY
+            userinfoID
+            COMPLETED
+            STATUS
+            PRIORITY
+            DTSTAMP
+            subscribedcalendarID
+            DESCRIPTION
+            subjectsID
+            LOCATION
+            createdAt
+            updatedAt
+            taskTaskGradeInfoId
+            owner
+            __typename
+          }
+          createdAt
+          updatedAt
+          taskGradeInfoTaskId
+          owner
+          __typename
+        }
+        LOCATION
+        createdAt
+        updatedAt
+        taskTaskGradeInfoId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      taskGradeInfoTaskId
+      owner
+      __typename
+    }
+  }
+`;
+export const updateTaskGradeInfo = /* GraphQL */ `
+  mutation UpdateTaskGradeInfo(
+    $input: UpdateTaskGradeInfoInput!
+    $condition: ModelTaskGradeInfoConditionInput
+  ) {
+    updateTaskGradeInfo(input: $input, condition: $condition) {
+      id
+      current_Grade
+      task_Weightage
+      overall_Percentage
+      extra_Info
+      time_Taken
+      Task {
+        id
+        UID
+        DTSTART
+        DUE
+        SUMMARY
+        userinfoID
+        COMPLETED
+        STATUS
+        PRIORITY
+        DTSTAMP
+        subscribedcalendarID
+        DESCRIPTION
+        subjectsID
+        TaskGradeInfo {
+          id
+          current_Grade
+          task_Weightage
+          overall_Percentage
+          extra_Info
+          time_Taken
+          Task {
+            id
+            UID
+            DTSTART
+            DUE
+            SUMMARY
+            userinfoID
+            COMPLETED
+            STATUS
+            PRIORITY
+            DTSTAMP
+            subscribedcalendarID
+            DESCRIPTION
+            subjectsID
+            LOCATION
+            createdAt
+            updatedAt
+            taskTaskGradeInfoId
+            owner
+            __typename
+          }
+          createdAt
+          updatedAt
+          taskGradeInfoTaskId
+          owner
+          __typename
+        }
+        LOCATION
+        createdAt
+        updatedAt
+        taskTaskGradeInfoId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      taskGradeInfoTaskId
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteTaskGradeInfo = /* GraphQL */ `
+  mutation DeleteTaskGradeInfo(
+    $input: DeleteTaskGradeInfoInput!
+    $condition: ModelTaskGradeInfoConditionInput
+  ) {
+    deleteTaskGradeInfo(input: $input, condition: $condition) {
+      id
+      current_Grade
+      task_Weightage
+      overall_Percentage
+      extra_Info
+      time_Taken
+      Task {
+        id
+        UID
+        DTSTART
+        DUE
+        SUMMARY
+        userinfoID
+        COMPLETED
+        STATUS
+        PRIORITY
+        DTSTAMP
+        subscribedcalendarID
+        DESCRIPTION
+        subjectsID
+        TaskGradeInfo {
+          id
+          current_Grade
+          task_Weightage
+          overall_Percentage
+          extra_Info
+          time_Taken
+          Task {
+            id
+            UID
+            DTSTART
+            DUE
+            SUMMARY
+            userinfoID
+            COMPLETED
+            STATUS
+            PRIORITY
+            DTSTAMP
+            subscribedcalendarID
+            DESCRIPTION
+            subjectsID
+            LOCATION
+            createdAt
+            updatedAt
+            taskTaskGradeInfoId
+            owner
+            __typename
+          }
+          createdAt
+          updatedAt
+          taskGradeInfoTaskId
+          owner
+          __typename
+        }
+        LOCATION
+        createdAt
+        updatedAt
+        taskTaskGradeInfoId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      taskGradeInfoTaskId
+      owner
       __typename
     }
   }
@@ -65,6 +494,76 @@ export const createSubscribedCalendar = /* GraphQL */ `
       Calendar_Name
       Calendar_URL
       userinfoID
+      Schedules {
+        items {
+          id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
+            __typename
+          }
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      Tasks {
+        items {
+          id
+          UID
+          DTSTART
+          DUE
+          SUMMARY
+          userinfoID
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
+            __typename
+          }
+          LOCATION
+          createdAt
+          updatedAt
+          taskTaskGradeInfoId
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      LAST_MODIFIED
       createdAt
       updatedAt
       owner
@@ -82,6 +581,76 @@ export const updateSubscribedCalendar = /* GraphQL */ `
       Calendar_Name
       Calendar_URL
       userinfoID
+      Schedules {
+        items {
+          id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
+            __typename
+          }
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      Tasks {
+        items {
+          id
+          UID
+          DTSTART
+          DUE
+          SUMMARY
+          userinfoID
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
+            __typename
+          }
+          LOCATION
+          createdAt
+          updatedAt
+          taskTaskGradeInfoId
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      LAST_MODIFIED
       createdAt
       updatedAt
       owner
@@ -99,6 +668,76 @@ export const deleteSubscribedCalendar = /* GraphQL */ `
       Calendar_Name
       Calendar_URL
       userinfoID
+      Schedules {
+        items {
+          id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
+            __typename
+          }
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      Tasks {
+        items {
+          id
+          UID
+          DTSTART
+          DUE
+          SUMMARY
+          userinfoID
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
+            __typename
+          }
+          LOCATION
+          createdAt
+          updatedAt
+          taskTaskGradeInfoId
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      LAST_MODIFIED
       createdAt
       updatedAt
       owner
@@ -122,6 +761,15 @@ export const createUserinfo = /* GraphQL */ `
           Calendar_Name
           Calendar_URL
           userinfoID
+          Schedules {
+            nextToken
+            __typename
+          }
+          Tasks {
+            nextToken
+            __typename
+          }
+          LAST_MODIFIED
           createdAt
           updatedAt
           owner
@@ -136,6 +784,15 @@ export const createUserinfo = /* GraphQL */ `
           Calendar_Name
           Calendar_URL
           userinfoID
+          Schedules {
+            nextToken
+            __typename
+          }
+          Tasks {
+            nextToken
+            __typename
+          }
+          LAST_MODIFIED
           createdAt
           updatedAt
           owner
@@ -150,6 +807,15 @@ export const createUserinfo = /* GraphQL */ `
           Calendar_Name
           Calendar_URL
           userinfoID
+          Schedules {
+            nextToken
+            __typename
+          }
+          Tasks {
+            nextToken
+            __typename
+          }
+          LAST_MODIFIED
           createdAt
           updatedAt
           owner
@@ -181,6 +847,15 @@ export const updateUserinfo = /* GraphQL */ `
           Calendar_Name
           Calendar_URL
           userinfoID
+          Schedules {
+            nextToken
+            __typename
+          }
+          Tasks {
+            nextToken
+            __typename
+          }
+          LAST_MODIFIED
           createdAt
           updatedAt
           owner
@@ -195,6 +870,15 @@ export const updateUserinfo = /* GraphQL */ `
           Calendar_Name
           Calendar_URL
           userinfoID
+          Schedules {
+            nextToken
+            __typename
+          }
+          Tasks {
+            nextToken
+            __typename
+          }
+          LAST_MODIFIED
           createdAt
           updatedAt
           owner
@@ -209,6 +893,15 @@ export const updateUserinfo = /* GraphQL */ `
           Calendar_Name
           Calendar_URL
           userinfoID
+          Schedules {
+            nextToken
+            __typename
+          }
+          Tasks {
+            nextToken
+            __typename
+          }
+          LAST_MODIFIED
           createdAt
           updatedAt
           owner
@@ -240,6 +933,15 @@ export const deleteUserinfo = /* GraphQL */ `
           Calendar_Name
           Calendar_URL
           userinfoID
+          Schedules {
+            nextToken
+            __typename
+          }
+          Tasks {
+            nextToken
+            __typename
+          }
+          LAST_MODIFIED
           createdAt
           updatedAt
           owner
@@ -254,6 +956,15 @@ export const deleteUserinfo = /* GraphQL */ `
           Calendar_Name
           Calendar_URL
           userinfoID
+          Schedules {
+            nextToken
+            __typename
+          }
+          Tasks {
+            nextToken
+            __typename
+          }
+          LAST_MODIFIED
           createdAt
           updatedAt
           owner
@@ -268,6 +979,15 @@ export const deleteUserinfo = /* GraphQL */ `
           Calendar_Name
           Calendar_URL
           userinfoID
+          Schedules {
+            nextToken
+            __typename
+          }
+          Tasks {
+            nextToken
+            __typename
+          }
+          LAST_MODIFIED
           createdAt
           updatedAt
           owner
@@ -307,22 +1027,11 @@ export const createSchedule = /* GraphQL */ `
         __typename
       }
       UID
-      CATEGORIES
       DTSTAMP
-      Importance {
-        id
-        Grade_Percentage
-        Task_info
-        Expected_Time
-        Course
-        Additional_Info
-        createdAt
-        updatedAt
-        __typename
-      }
+      subscribedcalendarID
+      subjectsID
       createdAt
       updatedAt
-      scheduleImportanceId
       owner
       __typename
     }
@@ -352,22 +1061,11 @@ export const updateSchedule = /* GraphQL */ `
         __typename
       }
       UID
-      CATEGORIES
       DTSTAMP
-      Importance {
-        id
-        Grade_Percentage
-        Task_info
-        Expected_Time
-        Course
-        Additional_Info
-        createdAt
-        updatedAt
-        __typename
-      }
+      subscribedcalendarID
+      subjectsID
       createdAt
       updatedAt
-      scheduleImportanceId
       owner
       __typename
     }
@@ -397,22 +1095,11 @@ export const deleteSchedule = /* GraphQL */ `
         __typename
       }
       UID
-      CATEGORIES
       DTSTAMP
-      Importance {
-        id
-        Grade_Percentage
-        Task_info
-        Expected_Time
-        Course
-        Additional_Info
-        createdAt
-        updatedAt
-        __typename
-      }
+      subscribedcalendarID
+      subjectsID
       createdAt
       updatedAt
-      scheduleImportanceId
       owner
       __typename
     }
@@ -432,23 +1119,62 @@ export const createTask = /* GraphQL */ `
       userinfoID
       COMPLETED
       STATUS
-      CATEGORIES
       PRIORITY
       DTSTAMP
-      Importance {
+      subscribedcalendarID
+      DESCRIPTION
+      subjectsID
+      TaskGradeInfo {
         id
-        Grade_Percentage
-        Task_info
-        Expected_Time
-        Course
-        Additional_Info
+        current_Grade
+        task_Weightage
+        overall_Percentage
+        extra_Info
+        time_Taken
+        Task {
+          id
+          UID
+          DTSTART
+          DUE
+          SUMMARY
+          userinfoID
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
+            __typename
+          }
+          LOCATION
+          createdAt
+          updatedAt
+          taskTaskGradeInfoId
+          owner
+          __typename
+        }
         createdAt
         updatedAt
+        taskGradeInfoTaskId
+        owner
         __typename
       }
+      LOCATION
       createdAt
       updatedAt
-      taskImportanceId
+      taskTaskGradeInfoId
       owner
       __typename
     }
@@ -468,23 +1194,62 @@ export const updateTask = /* GraphQL */ `
       userinfoID
       COMPLETED
       STATUS
-      CATEGORIES
       PRIORITY
       DTSTAMP
-      Importance {
+      subscribedcalendarID
+      DESCRIPTION
+      subjectsID
+      TaskGradeInfo {
         id
-        Grade_Percentage
-        Task_info
-        Expected_Time
-        Course
-        Additional_Info
+        current_Grade
+        task_Weightage
+        overall_Percentage
+        extra_Info
+        time_Taken
+        Task {
+          id
+          UID
+          DTSTART
+          DUE
+          SUMMARY
+          userinfoID
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
+            __typename
+          }
+          LOCATION
+          createdAt
+          updatedAt
+          taskTaskGradeInfoId
+          owner
+          __typename
+        }
         createdAt
         updatedAt
+        taskGradeInfoTaskId
+        owner
         __typename
       }
+      LOCATION
       createdAt
       updatedAt
-      taskImportanceId
+      taskTaskGradeInfoId
       owner
       __typename
     }
@@ -504,23 +1269,62 @@ export const deleteTask = /* GraphQL */ `
       userinfoID
       COMPLETED
       STATUS
-      CATEGORIES
       PRIORITY
       DTSTAMP
-      Importance {
+      subscribedcalendarID
+      DESCRIPTION
+      subjectsID
+      TaskGradeInfo {
         id
-        Grade_Percentage
-        Task_info
-        Expected_Time
-        Course
-        Additional_Info
+        current_Grade
+        task_Weightage
+        overall_Percentage
+        extra_Info
+        time_Taken
+        Task {
+          id
+          UID
+          DTSTART
+          DUE
+          SUMMARY
+          userinfoID
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
+            __typename
+          }
+          LOCATION
+          createdAt
+          updatedAt
+          taskTaskGradeInfoId
+          owner
+          __typename
+        }
         createdAt
         updatedAt
+        taskGradeInfoTaskId
+        owner
         __typename
       }
+      LOCATION
       createdAt
       updatedAt
-      taskImportanceId
+      taskTaskGradeInfoId
       owner
       __typename
     }

@@ -95,6 +95,7 @@ async function create_temp_user(transformedEvents) {
         query: mutations.createUserinfo,
         variables: { input: todoDetails },
       });
+      
       console.log("item created");
     }
   } catch (error) {
