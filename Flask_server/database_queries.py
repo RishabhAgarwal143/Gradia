@@ -46,6 +46,10 @@ def delete_from_database(obj_class, filter_attr, filter_value):
     return False
 
 
+def delete_obj(obj):
+    session.delete(obj)
+    session.commit()
+
 def process_add_schedule(schedules):
 
     if("onCreateSchedule" in schedules):
@@ -65,11 +69,11 @@ def process_add_schedule(schedules):
         endTime = datetime.datetime.fromisoformat(schedule["end"].replace('Z', '+00:00'))
         schedule_grade_info = None
         if(schedule["ScheduleGradeInfo"]):
-            print(schedule)
             info = schedule["ScheduleGradeInfo"]
             schedule_grade_info = Schedule_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],attended= info["attended"],schedule_id=schedule["id"])
             add_to_database(schedule_grade_info)
         new_schedule = Schedule(id=schedule["id"], SUMMARY=schedule["title"], DTSTART=startTime, DTEND=endTime,DESCRIPTION=schedule["description"], LOCATION=schedule["location"],userinfoID= schedule["userinfoID"],subjectsID=schedule["subject_id"],schedule_grade=schedule_grade_info)
+        # print(new_schedule)
         add_to_database(new_schedule)
     pass
 

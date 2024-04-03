@@ -7,6 +7,9 @@ from typing import Optional,List
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,relationship
 from sqlalchemy import ForeignKey
 import datetime
+import requests
+import pytz
+
 
 class Base(DeclarativeBase):
     pass
@@ -16,6 +19,7 @@ class User(Base):
 
     userinfoID : Mapped[str]= mapped_column(primary_key=True)
     access_Token : Mapped[str]
+    user_timezone : Mapped[Optional[str]]
     schedule_list : Mapped[List["Schedule"]] = relationship()
     task_list : Mapped[List["Task"]] = relationship()
     subjects_list : Mapped[List["Subjects"]] = relationship()
@@ -27,6 +31,20 @@ class User(Base):
         # Query the user by userinfoID
             self.access_Token = new_access_token
             session.commit()
+            
+    def get_timezone(self):
+        headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {self.access_Token}'
+        }
+        url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+        init_payload = "{\"query\":\"query ListSchedules {\\r\\n    getUserinfo(id: \\\"%s\\\") {\\r\\n        id\\r\\n        name\\r\\n        email\\r\\n        Timezone\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %self.userinfoID
+
+        response = requests.request("POST", url, headers=headers, data=init_payload)
+        # print(response.text)
+        json_response = response.json()
+
+        self.user_timezone = json_response['data']['getUserinfo']['Timezone']
 
 class Schedule(Base):
     """An example using regular Columns and no type annotation. 
@@ -44,9 +62,23 @@ class Schedule(Base):
     schedule_grade: Mapped[Optional["Schedule_grade_info"]] = relationship()
     
     def __repr__(self) -> str:
-        return super().__repr__()
-    # def __repr__(self) -> str:
-    #     return f"Schedule(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
+        return f"Schedule(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
+
+    def start_time_userTimezone(self,session):
+        user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
+        if(not user.user_timezone):
+            user.get_timezone()
+        new_timezone = pytz.timezone(user.user_timezone)
+        dt_new_timezone = self.DTSTART.astimezone(new_timezone)
+        return dt_new_timezone
+    
+    def end_time_userTimezone(self,session):
+        user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
+        if(not user.user_timezone):
+            user.get_timezone()
+        new_timezone = pytz.timezone(user.user_timezone)
+        dt_new_timezone = self.DTEND.astimezone(new_timezone)
+        return dt_new_timezone
 
 
 class Task(Base):
@@ -70,6 +102,22 @@ class Task(Base):
     def __repr__(self) -> str:
         return f"Task(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
 
+    def start_time_userTimezone(self,session):
+        user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
+        if(not user.user_timezone):
+            user.get_timezone()
+        new_timezone = pytz.timezone(user.user_timezone)
+        dt_new_timezone = self.DTSTART.astimezone(new_timezone)
+        return dt_new_timezone
+    
+    def end_time_userTimezone(self,session):
+        user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
+        if(not user.user_timezone):
+            user.get_timezone()
+        new_timezone = pytz.timezone(user.user_timezone)
+        dt_new_timezone = self.DUE.astimezone(new_timezone)
+        return dt_new_timezone
+        
 
 class Subjects(Base):
     __tablename__ = "subjects"
@@ -85,6 +133,24 @@ class Subjects(Base):
         return f"Subjects(id={self.id!r}, subject={self.subject_Name!r}, Current Grade={self.current_Grade!r}  Target Grade={self.target_Grade!r})"
 
 
+    def calculate_final_grade(self,session):
+
+        if(not self.current_Grade):
+            self.current_Grade = 0
+            
+        for schedule in self.schedule_list:
+            schedule.schedule_grade.calculate_grades(session)
+            if(schedule.schedule_grade.overall_Percentage):
+                self.current_Grade += schedule.schedule_grade.overall_Percentage
+        
+        for task in self.task_list:
+            task.task_grade.calculate_grades(session)
+            if(task.task_grade.overall_Percentage):
+                self.current_Grade += schedule.schedule_grade.overall_Percentage
+                
+                
+        
+
 class Task_grade_info(Base):
     __tablename__ = "task_grade"
     id: Mapped[str] = mapped_column(primary_key=True)
@@ -95,6 +161,12 @@ class Task_grade_info(Base):
     time_taken: Mapped[Optional[datetime.time]]
     task_id: Mapped[Optional[str]] = mapped_column(ForeignKey("task.id"))
     
+    def calculate_grades(self,session):
+        if(self.current_Grade and self.task_Weightage):
+            self.overall_Percentage = (self.current_Grade * self.task_Weightage) / 100
+            session.commit()
+        
+    
 class Schedule_grade_info(Base):
     __tablename__ = "schedule_grade"
     id: Mapped[str] = mapped_column(primary_key=True)
@@ -104,6 +176,11 @@ class Schedule_grade_info(Base):
     extra_info: Mapped[Optional[str]]
     attended: Mapped[Optional[bool]]
     schedule_id: Mapped[Optional[str]] = mapped_column(ForeignKey("schedule.id"))
+    
+    def calculate_grades(self,session):
+        if(self.current_Grade and self.task_Weightage):
+            self.overall_Percentage = (self.current_Grade * self.task_Weightage) / 100
+            session.commit()
 
 def create_table(engine):
     """Uses all the Base Metadata in this file to create tables"""
