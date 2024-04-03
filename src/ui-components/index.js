@@ -11,6 +11,8 @@ export { default as Iconeditalt } from "./Iconeditalt";
 export { default as InfoBox } from "./InfoBox";
 export { default as Rectangle3 } from "./Rectangle3";
 export { default as ScheduleCreateForm } from "./ScheduleCreateForm";
+export { default as ScheduleGradeInfoCreateForm } from "./ScheduleGradeInfoCreateForm";
+export { default as ScheduleGradeInfoUpdateForm } from "./ScheduleGradeInfoUpdateForm";
 export { default as ScheduleUpdateForm } from "./ScheduleUpdateForm";
 export { default as ShowInfo } from "./ShowInfo";
 export { default as SubjectsCreateForm } from "./SubjectsCreateForm";

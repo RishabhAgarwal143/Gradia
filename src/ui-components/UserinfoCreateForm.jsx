@@ -21,8 +21,12 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listSubscribedCalendars } from "../graphql/queries";
-import { createUserinfo, updateSubscribedCalendar } from "../graphql/mutations";
+import { listSubjects, listSubscribedCalendars } from "../graphql/queries";
+import {
+  createUserinfo,
+  updateSubjects,
+  updateSubscribedCalendar,
+} from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
   items = [],
@@ -197,6 +201,7 @@ export default function UserinfoCreateForm(props) {
     Schedules: [],
     Tasks: [],
     SubscribedCalendars: [],
+    Subjects: [],
   };
   const [name, setName] = React.useState(initialValues.name);
   const [email, setEmail] = React.useState(initialValues.email);
@@ -214,6 +219,9 @@ export default function UserinfoCreateForm(props) {
     React.useState(false);
   const [subscribedCalendarsRecords, setSubscribedCalendarsRecords] =
     React.useState([]);
+  const [Subjects, setSubjects] = React.useState(initialValues.Subjects);
+  const [SubjectsLoading, setSubjectsLoading] = React.useState(false);
+  const [subjectsRecords, setSubjectsRecords] = React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -229,6 +237,9 @@ export default function UserinfoCreateForm(props) {
     setSubscribedCalendars(initialValues.SubscribedCalendars);
     setCurrentSubscribedCalendarsValue(undefined);
     setCurrentSubscribedCalendarsDisplayValue("");
+    setSubjects(initialValues.Subjects);
+    setCurrentSubjectsValue(undefined);
+    setCurrentSubjectsDisplayValue("");
     setErrors({});
   };
   const [currentSchedulesDisplayValue, setCurrentSchedulesDisplayValue] =
@@ -247,10 +258,16 @@ export default function UserinfoCreateForm(props) {
   const [currentSubscribedCalendarsValue, setCurrentSubscribedCalendarsValue] =
     React.useState(undefined);
   const SubscribedCalendarsRef = React.createRef();
+  const [currentSubjectsDisplayValue, setCurrentSubjectsDisplayValue] =
+    React.useState("");
+  const [currentSubjectsValue, setCurrentSubjectsValue] =
+    React.useState(undefined);
+  const SubjectsRef = React.createRef();
   const getIDValue = {
     Schedules: (r) => JSON.stringify({ id: r?.id }),
     Tasks: (r) => JSON.stringify({ id: r?.id }),
     SubscribedCalendars: (r) => JSON.stringify({ id: r?.id }),
+    Subjects: (r) => JSON.stringify({ id: r?.id }),
   };
   const SchedulesIdSet = new Set(
     Array.isArray(Schedules)
@@ -267,12 +284,19 @@ export default function UserinfoCreateForm(props) {
       ? SubscribedCalendars.map((r) => getIDValue.SubscribedCalendars?.(r))
       : getIDValue.SubscribedCalendars?.(SubscribedCalendars)
   );
+  const SubjectsIdSet = new Set(
+    Array.isArray(Subjects)
+      ? Subjects.map((r) => getIDValue.Subjects?.(r))
+      : getIDValue.Subjects?.(Subjects)
+  );
   const getDisplayValue = {
     Schedules: (r) =>
       `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
     Tasks: (r) => `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
     SubscribedCalendars: (r) =>
       `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
+    Subjects: (r) =>
+      `${r?.subject_Name ? r?.subject_Name + " - " : ""}${r?.id}`,
   };
   const validations = {
     name: [{ type: "Required" }],
@@ -281,6 +305,7 @@ export default function UserinfoCreateForm(props) {
     Schedules: [],
     Tasks: [],
     SubscribedCalendars: [],
+    Subjects: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -396,10 +421,43 @@ export default function UserinfoCreateForm(props) {
     setSubscribedCalendarsRecords(newOptions.slice(0, autocompleteLength));
     setSubscribedCalendarsLoading(false);
   };
+  const fetchSubjectsRecords = async (value) => {
+    setSubjectsLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { subject_Name: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listSubjects.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listSubjects?.items;
+      var loaded = result.filter(
+        (item) => !SubjectsIdSet.has(getIDValue.Subjects?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setSubjectsRecords(newOptions.slice(0, autocompleteLength));
+    setSubjectsLoading(false);
+  };
   React.useEffect(() => {
     fetchSchedulesRecords("");
     fetchTasksRecords("");
     fetchSubscribedCalendarsRecords("");
+    fetchSubjectsRecords("");
   }, []);
   return (
     <Grid
@@ -416,6 +474,7 @@ export default function UserinfoCreateForm(props) {
           Schedules,
           Tasks,
           SubscribedCalendars,
+          Subjects,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -517,6 +576,22 @@ export default function UserinfoCreateForm(props) {
               return promises;
             }, [])
           );
+          promises.push(
+            ...Subjects.reduce((promises, original) => {
+              promises.push(
+                client.graphql({
+                  query: updateSubjects.replaceAll("__typename", ""),
+                  variables: {
+                    input: {
+                      id: original.id,
+                      userinfoID: userinfo.id,
+                    },
+                  },
+                })
+              );
+              return promises;
+            }, [])
+          );
           await Promise.all(promises);
           if (onSuccess) {
             onSuccess(modelFields);
@@ -549,6 +624,7 @@ export default function UserinfoCreateForm(props) {
               Schedules,
               Tasks,
               SubscribedCalendars,
+              Subjects,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -578,6 +654,7 @@ export default function UserinfoCreateForm(props) {
               Schedules,
               Tasks,
               SubscribedCalendars,
+              Subjects,
             };
             const result = onChange(modelFields);
             value = result?.email ?? value;
@@ -615,6 +692,7 @@ export default function UserinfoCreateForm(props) {
               Schedules,
               Tasks,
               SubscribedCalendars,
+              Subjects,
             };
             const result = onChange(modelFields);
             value = result?.Timezone ?? value;
@@ -640,6 +718,7 @@ export default function UserinfoCreateForm(props) {
               Schedules: values,
               Tasks,
               SubscribedCalendars,
+              Subjects,
             };
             const result = onChange(modelFields);
             values = result?.Schedules ?? values;
@@ -731,6 +810,7 @@ export default function UserinfoCreateForm(props) {
               Schedules,
               Tasks: values,
               SubscribedCalendars,
+              Subjects,
             };
             const result = onChange(modelFields);
             values = result?.Tasks ?? values;
@@ -820,6 +900,7 @@ export default function UserinfoCreateForm(props) {
               Schedules,
               Tasks,
               SubscribedCalendars: values,
+              Subjects,
             };
             const result = onChange(modelFields);
             values = result?.SubscribedCalendars ?? values;
@@ -909,6 +990,98 @@ export default function UserinfoCreateForm(props) {
           ref={SubscribedCalendarsRef}
           labelHidden={true}
           {...getOverrideProps(overrides, "SubscribedCalendars")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              Timezone,
+              Schedules,
+              Tasks,
+              SubscribedCalendars,
+              Subjects: values,
+            };
+            const result = onChange(modelFields);
+            values = result?.Subjects ?? values;
+          }
+          setSubjects(values);
+          setCurrentSubjectsValue(undefined);
+          setCurrentSubjectsDisplayValue("");
+        }}
+        currentFieldValue={currentSubjectsValue}
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Subjects</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
+        items={Subjects}
+        hasError={errors?.Subjects?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("Subjects", currentSubjectsValue)
+        }
+        errorMessage={errors?.Subjects?.errorMessage}
+        getBadgeText={getDisplayValue.Subjects}
+        setFieldValue={(model) => {
+          setCurrentSubjectsDisplayValue(
+            model ? getDisplayValue.Subjects(model) : ""
+          );
+          setCurrentSubjectsValue(model);
+        }}
+        inputFieldRef={SubjectsRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Subjects"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search Subjects"
+          value={currentSubjectsDisplayValue}
+          options={subjectsRecords
+            .filter((r) => !SubjectsIdSet.has(getIDValue.Subjects?.(r)))
+            .map((r) => ({
+              id: getIDValue.Subjects?.(r),
+              label: getDisplayValue.Subjects?.(r),
+            }))}
+          isLoading={SubjectsLoading}
+          onSelect={({ id, label }) => {
+            setCurrentSubjectsValue(
+              subjectsRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentSubjectsDisplayValue(label);
+            runValidationTasks("Subjects", label);
+          }}
+          onClear={() => {
+            setCurrentSubjectsDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchSubjectsRecords(value);
+            if (errors.Subjects?.hasError) {
+              runValidationTasks("Subjects", value);
+            }
+            setCurrentSubjectsDisplayValue(value);
+            setCurrentSubjectsValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("Subjects", currentSubjectsDisplayValue)
+          }
+          errorMessage={errors.Subjects?.errorMessage}
+          hasError={errors.Subjects?.hasError}
+          ref={SubjectsRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "Subjects")}
         ></Autocomplete>
       </ArrayField>
       <Flex

@@ -22,8 +22,16 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listSubjects, listSubscribedCalendars } from "../graphql/queries";
-import { createSchedule } from "../graphql/mutations";
+import {
+  listScheduleGradeInfos,
+  listSubjects,
+  listSubscribedCalendars,
+} from "../graphql/queries";
+import {
+  createSchedule,
+  updateSchedule,
+  updateScheduleGradeInfo,
+} from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
   items = [],
@@ -203,6 +211,7 @@ export default function ScheduleCreateForm(props) {
     DTSTAMP: "",
     subscribedcalendarID: undefined,
     subjectsID: undefined,
+    ScheduleGradeInfo: undefined,
   };
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
@@ -231,6 +240,13 @@ export default function ScheduleCreateForm(props) {
   const [subjectsIDRecords, setSubjectsIDRecords] = React.useState([]);
   const [selectedSubjectsIDRecords, setSelectedSubjectsIDRecords] =
     React.useState([]);
+  const [ScheduleGradeInfo, setScheduleGradeInfo] = React.useState(
+    initialValues.ScheduleGradeInfo
+  );
+  const [ScheduleGradeInfoLoading, setScheduleGradeInfoLoading] =
+    React.useState(false);
+  const [scheduleGradeInfoRecords, setScheduleGradeInfoRecords] =
+    React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -249,6 +265,9 @@ export default function ScheduleCreateForm(props) {
     setSubjectsID(initialValues.subjectsID);
     setCurrentSubjectsIDValue(undefined);
     setCurrentSubjectsIDDisplayValue("");
+    setScheduleGradeInfo(initialValues.ScheduleGradeInfo);
+    setCurrentScheduleGradeInfoValue(undefined);
+    setCurrentScheduleGradeInfoDisplayValue("");
     setErrors({});
   };
   const [
@@ -265,11 +284,28 @@ export default function ScheduleCreateForm(props) {
   const [currentSubjectsIDValue, setCurrentSubjectsIDValue] =
     React.useState(undefined);
   const subjectsIDRef = React.createRef();
+  const [
+    currentScheduleGradeInfoDisplayValue,
+    setCurrentScheduleGradeInfoDisplayValue,
+  ] = React.useState("");
+  const [currentScheduleGradeInfoValue, setCurrentScheduleGradeInfoValue] =
+    React.useState(undefined);
+  const ScheduleGradeInfoRef = React.createRef();
+  const getIDValue = {
+    ScheduleGradeInfo: (r) => JSON.stringify({ id: r?.id }),
+  };
+  const ScheduleGradeInfoIdSet = new Set(
+    Array.isArray(ScheduleGradeInfo)
+      ? ScheduleGradeInfo.map((r) => getIDValue.ScheduleGradeInfo?.(r))
+      : getIDValue.ScheduleGradeInfo?.(ScheduleGradeInfo)
+  );
   const getDisplayValue = {
     subscribedcalendarID: (r) =>
       `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
     subjectsID: (r) =>
       `${r?.subject_Name ? r?.subject_Name + " - " : ""}${r?.id}`,
+    ScheduleGradeInfo: (r) =>
+      `${r?.current_Grade ? r?.current_Grade + " - " : ""}${r?.id}`,
   };
   const validations = {
     userinfoID: [{ type: "Required" }],
@@ -283,6 +319,7 @@ export default function ScheduleCreateForm(props) {
     DTSTAMP: [],
     subscribedcalendarID: [],
     subjectsID: [],
+    ScheduleGradeInfo: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -378,9 +415,43 @@ export default function ScheduleCreateForm(props) {
     setSubjectsIDRecords(newOptions.slice(0, autocompleteLength));
     setSubjectsIDLoading(false);
   };
+  const fetchScheduleGradeInfoRecords = async (value) => {
+    setScheduleGradeInfoLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { current_Grade: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listScheduleGradeInfos.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listScheduleGradeInfos?.items;
+      var loaded = result.filter(
+        (item) =>
+          !ScheduleGradeInfoIdSet.has(getIDValue.ScheduleGradeInfo?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setScheduleGradeInfoRecords(newOptions.slice(0, autocompleteLength));
+    setScheduleGradeInfoLoading(false);
+  };
   React.useEffect(() => {
     fetchSubscribedcalendarIDRecords("");
     fetchSubjectsIDRecords("");
+    fetchScheduleGradeInfoRecords("");
   }, []);
   return (
     <Grid
@@ -402,19 +473,28 @@ export default function ScheduleCreateForm(props) {
           DTSTAMP,
           subscribedcalendarID,
           subjectsID,
+          ScheduleGradeInfo,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
             if (Array.isArray(modelFields[fieldName])) {
               promises.push(
                 ...modelFields[fieldName].map((item) =>
-                  runValidationTasks(fieldName, item)
+                  runValidationTasks(
+                    fieldName,
+                    item,
+                    getDisplayValue[fieldName]
+                  )
                 )
               );
               return promises;
             }
             promises.push(
-              runValidationTasks(fieldName, modelFields[fieldName])
+              runValidationTasks(
+                fieldName,
+                modelFields[fieldName],
+                getDisplayValue[fieldName]
+              )
             );
             return promises;
           }, [])
@@ -442,18 +522,51 @@ export default function ScheduleCreateForm(props) {
             DTSTAMP: modelFields.DTSTAMP,
             subscribedcalendarID: modelFields.subscribedcalendarID,
             subjectsID: modelFields.subjectsID,
+            scheduleScheduleGradeInfoId: modelFields?.ScheduleGradeInfo?.id,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
           };
-          await client.graphql({
-            query: createSchedule.replaceAll("__typename", ""),
-            variables: {
-              input: {
-                ...modelFieldsToSave,
+          const schedule = (
+            await client.graphql({
+              query: createSchedule.replaceAll("__typename", ""),
+              variables: {
+                input: {
+                  ...modelFieldsToSave,
+                },
               },
-            },
-          });
+            })
+          )?.data?.createSchedule;
+          const promises = [];
+          const scheduleGradeInfoToLink = modelFields.ScheduleGradeInfo;
+          if (scheduleGradeInfoToLink) {
+            promises.push(
+              client.graphql({
+                query: updateScheduleGradeInfo.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: ScheduleGradeInfo.id,
+                    scheduleGradeInfoScheduleId: schedule.id,
+                  },
+                },
+              })
+            );
+            const scheduleToUnlink = await scheduleGradeInfoToLink.Schedule;
+            if (scheduleToUnlink) {
+              promises.push(
+                client.graphql({
+                  query: updateSchedule.replaceAll("__typename", ""),
+                  variables: {
+                    input: {
+                      id: scheduleToUnlink.id,
+                      scheduleScheduleGradeInfoId: null,
+                    },
+                  },
+                })
+              );
+            }
+          }
+          await Promise.all(promises);
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -495,6 +608,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -534,6 +648,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -575,6 +690,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -616,6 +732,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -650,6 +767,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -684,6 +802,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -717,6 +836,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -751,6 +871,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.UID ?? value;
@@ -787,6 +908,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP: value,
               subscribedcalendarID,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.DTSTAMP ?? value;
@@ -818,6 +940,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID: value,
               subjectsID,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.subscribedcalendarID ?? value;
@@ -931,6 +1054,7 @@ export default function ScheduleCreateForm(props) {
               DTSTAMP,
               subscribedcalendarID,
               subjectsID: value,
+              ScheduleGradeInfo,
             };
             const result = onChange(modelFields);
             value = result?.subjectsID ?? value;
@@ -1013,6 +1137,105 @@ export default function ScheduleCreateForm(props) {
           ref={subjectsIDRef}
           labelHidden={true}
           {...getOverrideProps(overrides, "subjectsID")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID,
+              DTSTAMP,
+              subscribedcalendarID,
+              subjectsID,
+              ScheduleGradeInfo: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.ScheduleGradeInfo ?? value;
+          }
+          setScheduleGradeInfo(value);
+          setCurrentScheduleGradeInfoValue(undefined);
+          setCurrentScheduleGradeInfoDisplayValue("");
+        }}
+        currentFieldValue={currentScheduleGradeInfoValue}
+        label={"Schedule grade info"}
+        items={ScheduleGradeInfo ? [ScheduleGradeInfo] : []}
+        hasError={errors?.ScheduleGradeInfo?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks(
+            "ScheduleGradeInfo",
+            currentScheduleGradeInfoValue
+          )
+        }
+        errorMessage={errors?.ScheduleGradeInfo?.errorMessage}
+        getBadgeText={getDisplayValue.ScheduleGradeInfo}
+        setFieldValue={(model) => {
+          setCurrentScheduleGradeInfoDisplayValue(
+            model ? getDisplayValue.ScheduleGradeInfo(model) : ""
+          );
+          setCurrentScheduleGradeInfoValue(model);
+        }}
+        inputFieldRef={ScheduleGradeInfoRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Schedule grade info"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search ScheduleGradeInfo"
+          value={currentScheduleGradeInfoDisplayValue}
+          options={scheduleGradeInfoRecords
+            .filter(
+              (r) =>
+                !ScheduleGradeInfoIdSet.has(getIDValue.ScheduleGradeInfo?.(r))
+            )
+            .map((r) => ({
+              id: getIDValue.ScheduleGradeInfo?.(r),
+              label: getDisplayValue.ScheduleGradeInfo?.(r),
+            }))}
+          isLoading={ScheduleGradeInfoLoading}
+          onSelect={({ id, label }) => {
+            setCurrentScheduleGradeInfoValue(
+              scheduleGradeInfoRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentScheduleGradeInfoDisplayValue(label);
+            runValidationTasks("ScheduleGradeInfo", label);
+          }}
+          onClear={() => {
+            setCurrentScheduleGradeInfoDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchScheduleGradeInfoRecords(value);
+            if (errors.ScheduleGradeInfo?.hasError) {
+              runValidationTasks("ScheduleGradeInfo", value);
+            }
+            setCurrentScheduleGradeInfoDisplayValue(value);
+            setCurrentScheduleGradeInfoValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks(
+              "ScheduleGradeInfo",
+              currentScheduleGradeInfoDisplayValue
+            )
+          }
+          errorMessage={errors.ScheduleGradeInfo?.errorMessage}
+          hasError={errors.ScheduleGradeInfo?.hasError}
+          ref={ScheduleGradeInfoRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "ScheduleGradeInfo")}
         ></Autocomplete>
       </ArrayField>
       <Flex

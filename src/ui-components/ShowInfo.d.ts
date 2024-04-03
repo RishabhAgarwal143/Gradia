@@ -33,6 +33,7 @@ export declare type ShowInfoInputValues = {
     DTSTAMP?: string;
     subscribedcalendarID?: string;
     subjectsID?: string;
+    ScheduleGradeInfo?: any;
 };
 export declare type ShowInfoValidationValues = {
     SUMMARY?: ValidationFunction<string>;
@@ -46,6 +47,7 @@ export declare type ShowInfoValidationValues = {
     DTSTAMP?: ValidationFunction<string>;
     subscribedcalendarID?: ValidationFunction<string>;
     subjectsID?: ValidationFunction<string>;
+    ScheduleGradeInfo?: ValidationFunction<any>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type ShowInfoOverridesProps = {
@@ -61,6 +63,7 @@ export declare type ShowInfoOverridesProps = {
     DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
     subscribedcalendarID?: PrimitiveOverrideProps<AutocompleteProps>;
     subjectsID?: PrimitiveOverrideProps<AutocompleteProps>;
+    ScheduleGradeInfo?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type ShowInfoProps = React.PropsWithChildren<{
     overrides?: ShowInfoOverridesProps | undefined | null;

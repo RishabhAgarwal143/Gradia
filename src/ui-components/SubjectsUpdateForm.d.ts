@@ -27,6 +27,7 @@ export declare type SubjectsUpdateFormInputValues = {
     target_Grade?: number;
     Tasks?: any[];
     Schedules?: any[];
+    userinfoID?: string;
 };
 export declare type SubjectsUpdateFormValidationValues = {
     subject_Name?: ValidationFunction<string>;
@@ -34,6 +35,7 @@ export declare type SubjectsUpdateFormValidationValues = {
     target_Grade?: ValidationFunction<number>;
     Tasks?: ValidationFunction<any>;
     Schedules?: ValidationFunction<any>;
+    userinfoID?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type SubjectsUpdateFormOverridesProps = {
@@ -43,6 +45,7 @@ export declare type SubjectsUpdateFormOverridesProps = {
     target_Grade?: PrimitiveOverrideProps<TextFieldProps>;
     Tasks?: PrimitiveOverrideProps<AutocompleteProps>;
     Schedules?: PrimitiveOverrideProps<AutocompleteProps>;
+    userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type SubjectsUpdateFormProps = React.PropsWithChildren<{
     overrides?: SubjectsUpdateFormOverridesProps | undefined | null;

@@ -72,14 +72,29 @@ export const onCreateSubjects = /* GraphQL */ `
           DTSTAMP
           subscribedcalendarID
           subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
+            __typename
+          }
           createdAt
           updatedAt
+          scheduleScheduleGradeInfoId
           owner
           __typename
         }
         nextToken
         __typename
       }
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -158,14 +173,29 @@ export const onUpdateSubjects = /* GraphQL */ `
           DTSTAMP
           subscribedcalendarID
           subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
+            __typename
+          }
           createdAt
           updatedAt
+          scheduleScheduleGradeInfoId
           owner
           __typename
         }
         nextToken
         __typename
       }
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -244,14 +274,29 @@ export const onDeleteSubjects = /* GraphQL */ `
           DTSTAMP
           subscribedcalendarID
           subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
+            __typename
+          }
           createdAt
           updatedAt
+          scheduleScheduleGradeInfoId
           owner
           __typename
         }
         nextToken
         __typename
       }
+      userinfoID
       createdAt
       updatedAt
       owner
@@ -484,6 +529,243 @@ export const onDeleteTaskGradeInfo = /* GraphQL */ `
     }
   }
 `;
+export const onCreateScheduleGradeInfo = /* GraphQL */ `
+  subscription OnCreateScheduleGradeInfo(
+    $filter: ModelSubscriptionScheduleGradeInfoFilterInput
+    $owner: String
+  ) {
+    onCreateScheduleGradeInfo(filter: $filter, owner: $owner) {
+      id
+      current_Grade
+      task_Weightage
+      overall_Percentage
+      extra_Info
+      attended
+      Schedule {
+        id
+        SUMMARY
+        DTSTART
+        DTEND
+        DESCRIPTION
+        LOCATION
+        userinfoID
+        RRULE {
+          FREQ
+          INTERVALS
+          UNTIL
+          WKST
+          BYDAYS
+          BYMONTH
+          COUNT
+          __typename
+        }
+        UID
+        DTSTAMP
+        subscribedcalendarID
+        subjectsID
+        ScheduleGradeInfo {
+          id
+          current_Grade
+          task_Weightage
+          overall_Percentage
+          extra_Info
+          attended
+          Schedule {
+            id
+            SUMMARY
+            DTSTART
+            DTEND
+            DESCRIPTION
+            LOCATION
+            userinfoID
+            UID
+            DTSTAMP
+            subscribedcalendarID
+            subjectsID
+            createdAt
+            updatedAt
+            scheduleScheduleGradeInfoId
+            owner
+            __typename
+          }
+          createdAt
+          updatedAt
+          scheduleGradeInfoScheduleId
+          owner
+          __typename
+        }
+        createdAt
+        updatedAt
+        scheduleScheduleGradeInfoId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      scheduleGradeInfoScheduleId
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateScheduleGradeInfo = /* GraphQL */ `
+  subscription OnUpdateScheduleGradeInfo(
+    $filter: ModelSubscriptionScheduleGradeInfoFilterInput
+    $owner: String
+  ) {
+    onUpdateScheduleGradeInfo(filter: $filter, owner: $owner) {
+      id
+      current_Grade
+      task_Weightage
+      overall_Percentage
+      extra_Info
+      attended
+      Schedule {
+        id
+        SUMMARY
+        DTSTART
+        DTEND
+        DESCRIPTION
+        LOCATION
+        userinfoID
+        RRULE {
+          FREQ
+          INTERVALS
+          UNTIL
+          WKST
+          BYDAYS
+          BYMONTH
+          COUNT
+          __typename
+        }
+        UID
+        DTSTAMP
+        subscribedcalendarID
+        subjectsID
+        ScheduleGradeInfo {
+          id
+          current_Grade
+          task_Weightage
+          overall_Percentage
+          extra_Info
+          attended
+          Schedule {
+            id
+            SUMMARY
+            DTSTART
+            DTEND
+            DESCRIPTION
+            LOCATION
+            userinfoID
+            UID
+            DTSTAMP
+            subscribedcalendarID
+            subjectsID
+            createdAt
+            updatedAt
+            scheduleScheduleGradeInfoId
+            owner
+            __typename
+          }
+          createdAt
+          updatedAt
+          scheduleGradeInfoScheduleId
+          owner
+          __typename
+        }
+        createdAt
+        updatedAt
+        scheduleScheduleGradeInfoId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      scheduleGradeInfoScheduleId
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteScheduleGradeInfo = /* GraphQL */ `
+  subscription OnDeleteScheduleGradeInfo(
+    $filter: ModelSubscriptionScheduleGradeInfoFilterInput
+    $owner: String
+  ) {
+    onDeleteScheduleGradeInfo(filter: $filter, owner: $owner) {
+      id
+      current_Grade
+      task_Weightage
+      overall_Percentage
+      extra_Info
+      attended
+      Schedule {
+        id
+        SUMMARY
+        DTSTART
+        DTEND
+        DESCRIPTION
+        LOCATION
+        userinfoID
+        RRULE {
+          FREQ
+          INTERVALS
+          UNTIL
+          WKST
+          BYDAYS
+          BYMONTH
+          COUNT
+          __typename
+        }
+        UID
+        DTSTAMP
+        subscribedcalendarID
+        subjectsID
+        ScheduleGradeInfo {
+          id
+          current_Grade
+          task_Weightage
+          overall_Percentage
+          extra_Info
+          attended
+          Schedule {
+            id
+            SUMMARY
+            DTSTART
+            DTEND
+            DESCRIPTION
+            LOCATION
+            userinfoID
+            UID
+            DTSTAMP
+            subscribedcalendarID
+            subjectsID
+            createdAt
+            updatedAt
+            scheduleScheduleGradeInfoId
+            owner
+            __typename
+          }
+          createdAt
+          updatedAt
+          scheduleGradeInfoScheduleId
+          owner
+          __typename
+        }
+        createdAt
+        updatedAt
+        scheduleScheduleGradeInfoId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      scheduleGradeInfoScheduleId
+      owner
+      __typename
+    }
+  }
+`;
 export const onCreateSubscribedCalendar = /* GraphQL */ `
   subscription OnCreateSubscribedCalendar(
     $filter: ModelSubscriptionSubscribedCalendarFilterInput
@@ -517,8 +799,22 @@ export const onCreateSubscribedCalendar = /* GraphQL */ `
           DTSTAMP
           subscribedcalendarID
           subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
+            __typename
+          }
           createdAt
           updatedAt
+          scheduleScheduleGradeInfoId
           owner
           __typename
         }
@@ -604,8 +900,22 @@ export const onUpdateSubscribedCalendar = /* GraphQL */ `
           DTSTAMP
           subscribedcalendarID
           subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
+            __typename
+          }
           createdAt
           updatedAt
+          scheduleScheduleGradeInfoId
           owner
           __typename
         }
@@ -691,8 +1001,22 @@ export const onDeleteSubscribedCalendar = /* GraphQL */ `
           DTSTAMP
           subscribedcalendarID
           subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
+            __typename
+          }
           createdAt
           updatedAt
+          scheduleScheduleGradeInfoId
           owner
           __typename
         }
@@ -824,6 +1148,29 @@ export const onCreateUserinfo = /* GraphQL */ `
         nextToken
         __typename
       }
+      Subjects {
+        items {
+          id
+          subject_Name
+          current_Grade
+          target_Grade
+          Tasks {
+            nextToken
+            __typename
+          }
+          Schedules {
+            nextToken
+            __typename
+          }
+          userinfoID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -902,6 +1249,29 @@ export const onUpdateUserinfo = /* GraphQL */ `
             __typename
           }
           LAST_MODIFIED
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      Subjects {
+        items {
+          id
+          subject_Name
+          current_Grade
+          target_Grade
+          Tasks {
+            nextToken
+            __typename
+          }
+          Schedules {
+            nextToken
+            __typename
+          }
+          userinfoID
           createdAt
           updatedAt
           owner
@@ -996,6 +1366,29 @@ export const onDeleteUserinfo = /* GraphQL */ `
         nextToken
         __typename
       }
+      Subjects {
+        items {
+          id
+          subject_Name
+          current_Grade
+          target_Grade
+          Tasks {
+            nextToken
+            __typename
+          }
+          Schedules {
+            nextToken
+            __typename
+          }
+          userinfoID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -1030,8 +1423,63 @@ export const onCreateSchedule = /* GraphQL */ `
       DTSTAMP
       subscribedcalendarID
       subjectsID
+      ScheduleGradeInfo {
+        id
+        current_Grade
+        task_Weightage
+        overall_Percentage
+        extra_Info
+        attended
+        Schedule {
+          id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
+            __typename
+          }
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
+            __typename
+          }
+          createdAt
+          updatedAt
+          scheduleScheduleGradeInfoId
+          owner
+          __typename
+        }
+        createdAt
+        updatedAt
+        scheduleGradeInfoScheduleId
+        owner
+        __typename
+      }
       createdAt
       updatedAt
+      scheduleScheduleGradeInfoId
       owner
       __typename
     }
@@ -1064,8 +1512,63 @@ export const onUpdateSchedule = /* GraphQL */ `
       DTSTAMP
       subscribedcalendarID
       subjectsID
+      ScheduleGradeInfo {
+        id
+        current_Grade
+        task_Weightage
+        overall_Percentage
+        extra_Info
+        attended
+        Schedule {
+          id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
+            __typename
+          }
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
+            __typename
+          }
+          createdAt
+          updatedAt
+          scheduleScheduleGradeInfoId
+          owner
+          __typename
+        }
+        createdAt
+        updatedAt
+        scheduleGradeInfoScheduleId
+        owner
+        __typename
+      }
       createdAt
       updatedAt
+      scheduleScheduleGradeInfoId
       owner
       __typename
     }
@@ -1098,8 +1601,63 @@ export const onDeleteSchedule = /* GraphQL */ `
       DTSTAMP
       subscribedcalendarID
       subjectsID
+      ScheduleGradeInfo {
+        id
+        current_Grade
+        task_Weightage
+        overall_Percentage
+        extra_Info
+        attended
+        Schedule {
+          id
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
+          userinfoID
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
+            __typename
+          }
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
+            __typename
+          }
+          createdAt
+          updatedAt
+          scheduleScheduleGradeInfoId
+          owner
+          __typename
+        }
+        createdAt
+        updatedAt
+        scheduleGradeInfoScheduleId
+        owner
+        __typename
+      }
       createdAt
       updatedAt
+      scheduleScheduleGradeInfoId
       owner
       __typename
     }

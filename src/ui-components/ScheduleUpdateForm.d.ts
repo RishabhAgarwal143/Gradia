@@ -33,6 +33,7 @@ export declare type ScheduleUpdateFormInputValues = {
     DTSTAMP?: string;
     subscribedcalendarID?: string;
     subjectsID?: string;
+    ScheduleGradeInfo?: any;
 };
 export declare type ScheduleUpdateFormValidationValues = {
     SUMMARY?: ValidationFunction<string>;
@@ -46,6 +47,7 @@ export declare type ScheduleUpdateFormValidationValues = {
     DTSTAMP?: ValidationFunction<string>;
     subscribedcalendarID?: ValidationFunction<string>;
     subjectsID?: ValidationFunction<string>;
+    ScheduleGradeInfo?: ValidationFunction<any>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type ScheduleUpdateFormOverridesProps = {
@@ -61,6 +63,7 @@ export declare type ScheduleUpdateFormOverridesProps = {
     DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;
     subscribedcalendarID?: PrimitiveOverrideProps<AutocompleteProps>;
     subjectsID?: PrimitiveOverrideProps<AutocompleteProps>;
+    ScheduleGradeInfo?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type ScheduleUpdateFormProps = React.PropsWithChildren<{
     overrides?: ScheduleUpdateFormOverridesProps | undefined | null;

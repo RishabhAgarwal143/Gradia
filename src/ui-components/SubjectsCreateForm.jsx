@@ -21,7 +21,7 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listSchedules, listTasks } from "../graphql/queries";
+import { listSchedules, listTasks, listUserinfos } from "../graphql/queries";
 import {
   createSubjects,
   updateSchedule,
@@ -200,6 +200,7 @@ export default function SubjectsCreateForm(props) {
     target_Grade: "",
     Tasks: [],
     Schedules: [],
+    userinfoID: undefined,
   };
   const [subject_Name, setSubject_Name] = React.useState(
     initialValues.subject_Name
@@ -216,6 +217,11 @@ export default function SubjectsCreateForm(props) {
   const [Schedules, setSchedules] = React.useState(initialValues.Schedules);
   const [SchedulesLoading, setSchedulesLoading] = React.useState(false);
   const [schedulesRecords, setSchedulesRecords] = React.useState([]);
+  const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
+  const [userinfoIDLoading, setUserinfoIDLoading] = React.useState(false);
+  const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
+  const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
+    React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -228,6 +234,9 @@ export default function SubjectsCreateForm(props) {
     setSchedules(initialValues.Schedules);
     setCurrentSchedulesValue(undefined);
     setCurrentSchedulesDisplayValue("");
+    setUserinfoID(initialValues.userinfoID);
+    setCurrentUserinfoIDValue(undefined);
+    setCurrentUserinfoIDDisplayValue("");
     setErrors({});
   };
   const [currentTasksDisplayValue, setCurrentTasksDisplayValue] =
@@ -239,6 +248,11 @@ export default function SubjectsCreateForm(props) {
   const [currentSchedulesValue, setCurrentSchedulesValue] =
     React.useState(undefined);
   const SchedulesRef = React.createRef();
+  const [currentUserinfoIDDisplayValue, setCurrentUserinfoIDDisplayValue] =
+    React.useState("");
+  const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
+    React.useState(undefined);
+  const userinfoIDRef = React.createRef();
   const getIDValue = {
     Tasks: (r) => JSON.stringify({ id: r?.id }),
     Schedules: (r) => JSON.stringify({ id: r?.id }),
@@ -256,6 +270,7 @@ export default function SubjectsCreateForm(props) {
   const getDisplayValue = {
     Tasks: (r) => `${r?.UID ? r?.UID + " - " : ""}${r?.id}`,
     Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
+    userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
   };
   const validations = {
     subject_Name: [],
@@ -263,6 +278,7 @@ export default function SubjectsCreateForm(props) {
     target_Grade: [],
     Tasks: [],
     Schedules: [],
+    userinfoID: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -339,9 +355,37 @@ export default function SubjectsCreateForm(props) {
     setSchedulesRecords(newOptions.slice(0, autocompleteLength));
     setSchedulesLoading(false);
   };
+  const fetchUserinfoIDRecords = async (value) => {
+    setUserinfoIDLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ name: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listUserinfos.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listUserinfos?.items;
+      var loaded = result.filter((item) => userinfoID !== item.id);
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
+    setUserinfoIDLoading(false);
+  };
   React.useEffect(() => {
     fetchTasksRecords("");
     fetchSchedulesRecords("");
+    fetchUserinfoIDRecords("");
   }, []);
   return (
     <Grid
@@ -357,6 +401,7 @@ export default function SubjectsCreateForm(props) {
           target_Grade,
           Tasks,
           Schedules,
+          userinfoID,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -398,6 +443,7 @@ export default function SubjectsCreateForm(props) {
             subject_Name: modelFields.subject_Name,
             current_Grade: modelFields.current_Grade,
             target_Grade: modelFields.target_Grade,
+            userinfoID: modelFields.userinfoID,
           };
           const subjects = (
             await client.graphql({
@@ -473,6 +519,7 @@ export default function SubjectsCreateForm(props) {
               target_Grade,
               Tasks,
               Schedules,
+              userinfoID,
             };
             const result = onChange(modelFields);
             value = result?.subject_Name ?? value;
@@ -505,6 +552,7 @@ export default function SubjectsCreateForm(props) {
               target_Grade,
               Tasks,
               Schedules,
+              userinfoID,
             };
             const result = onChange(modelFields);
             value = result?.current_Grade ?? value;
@@ -537,6 +585,7 @@ export default function SubjectsCreateForm(props) {
               target_Grade: value,
               Tasks,
               Schedules,
+              userinfoID,
             };
             const result = onChange(modelFields);
             value = result?.target_Grade ?? value;
@@ -561,6 +610,7 @@ export default function SubjectsCreateForm(props) {
               target_Grade,
               Tasks: values,
               Schedules,
+              userinfoID,
             };
             const result = onChange(modelFields);
             values = result?.Tasks ?? values;
@@ -641,6 +691,7 @@ export default function SubjectsCreateForm(props) {
               target_Grade,
               Tasks,
               Schedules: values,
+              userinfoID,
             };
             const result = onChange(modelFields);
             values = result?.Schedules ?? values;
@@ -711,6 +762,102 @@ export default function SubjectsCreateForm(props) {
           ref={SchedulesRef}
           labelHidden={true}
           {...getOverrideProps(overrides, "Schedules")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
+          if (onChange) {
+            const modelFields = {
+              subject_Name,
+              current_Grade,
+              target_Grade,
+              Tasks,
+              Schedules,
+              userinfoID: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.userinfoID ?? value;
+          }
+          setUserinfoID(value);
+          setCurrentUserinfoIDValue(undefined);
+        }}
+        currentFieldValue={currentUserinfoIDValue}
+        label={"Userinfo id"}
+        items={userinfoID ? [userinfoID] : []}
+        hasError={errors?.userinfoID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("userinfoID", currentUserinfoIDValue)
+        }
+        errorMessage={errors?.userinfoID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.userinfoID(
+                userinfoIDRecords.find((r) => r.id === value) ??
+                  selectedUserinfoIDRecords.find((r) => r.id === value)
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentUserinfoIDDisplayValue(
+            value
+              ? getDisplayValue.userinfoID(
+                  userinfoIDRecords.find((r) => r.id === value) ??
+                    selectedUserinfoIDRecords.find((r) => r.id === value)
+                )
+              : ""
+          );
+          setCurrentUserinfoIDValue(value);
+          const selectedRecord = userinfoIDRecords.find((r) => r.id === value);
+          if (selectedRecord) {
+            setSelectedUserinfoIDRecords([selectedRecord]);
+          }
+        }}
+        inputFieldRef={userinfoIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Userinfo id"
+          isRequired={true}
+          isReadOnly={false}
+          placeholder="Search Userinfo"
+          value={currentUserinfoIDDisplayValue}
+          options={userinfoIDRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.userinfoID?.(r),
+            }))}
+          isLoading={userinfoIDLoading}
+          onSelect={({ id, label }) => {
+            setCurrentUserinfoIDValue(id);
+            setCurrentUserinfoIDDisplayValue(label);
+            runValidationTasks("userinfoID", label);
+          }}
+          onClear={() => {
+            setCurrentUserinfoIDDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchUserinfoIDRecords(value);
+            if (errors.userinfoID?.hasError) {
+              runValidationTasks("userinfoID", value);
+            }
+            setCurrentUserinfoIDDisplayValue(value);
+            setCurrentUserinfoIDValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("userinfoID", currentUserinfoIDValue)
+          }
+          errorMessage={errors.userinfoID?.errorMessage}
+          hasError={errors.userinfoID?.hasError}
+          ref={userinfoIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "userinfoID")}
         ></Autocomplete>
       </ArrayField>
       <Flex

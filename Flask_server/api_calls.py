@@ -254,8 +254,6 @@ def add_event_to_calendar(start_time, end_time, event_name, event_description=No
     # start_time_t = start_time.strftime('%Y-%m-%d %H:%M:%S')
     # end_time_t = end_time.strftime('%Y-%m-%d %H:%M:%S')
     
-
-
     temp_d["SUMMARY"] = event_name
     temp_d["DTSTART"] = start_time
     temp_d["DTEND"] = end_time

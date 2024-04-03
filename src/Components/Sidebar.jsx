@@ -10,8 +10,8 @@ const Sidebar = () => {
     const fetchData = async () => {
       try {
         const TasksData = await list_tasks_item();
-        console.log(TasksData.data.listTasks.items);
-        setSchedules(TasksData.data.listTasks.items);
+        // console.log(TasksData.data.listTasks.items);
+        setSchedules(TasksData);
       } catch (error) {
         setError(error);
       }
@@ -52,15 +52,13 @@ const Sidebar = () => {
                 <span
                   className="inline-block w-1 h-6 mr-1 bg-blue-900"
                   style={{
-                    backgroundColor: getCategoryColor(schedule.CATEGORIES),
+                    backgroundColor: getCategoryColor(schedule.LOCATION),
                   }}
                 ></span>
                 {schedule.SUMMARY + ` `}
                 {new Date(schedule.DUE).toLocaleDateString()}
               </div>
-              <div className="text-left mb-2 text-sm ">
-                {schedule.CATEGORIES}
-              </div>
+              <div className="text-left mb-2 text-sm ">{schedule.LOCATION}</div>
             </li>
           ))}
         </ul>

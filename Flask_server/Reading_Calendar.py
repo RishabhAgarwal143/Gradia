@@ -6,12 +6,34 @@ from datetime import datetime,timezone
 import sqlite3
 import re
 
+import jwt
+
+def is_cognito_token_expired(access_token):
+    try:
+        decoded_token = jwt.decode(access_token, verify=False)
+        expiration_time = datetime.fromtimestamp(decoded_token["exp"])
+        current_time = datetime.now()
+        if current_time > expiration_time:
+            return True  # Token has expired
+        else:
+            return False  # Token is still valid
+    except jwt.ExpiredSignatureError:
+        return True
+    except jwt.InvalidTokenError:
+        print("Invalid access token.")
+        return True
+
+
+
 class Subscribing_to_Calendar:
 
 
     def __init__(self, calendar_URL, accesstoken,userid, categories_name) -> None:
         self.calendar_URL = calendar_URL
         self.token = accesstoken
+        
+        if(is_cognito_token_expired(self.token)):
+            return
         self.userinfoid = userid
         self.category = categories_name
         self.extract_abbreviations()
@@ -19,10 +41,11 @@ class Subscribing_to_Calendar:
         self.get_calendar_info()
         self.get_subjects_info()
         self.add_record_to_database()
+        
 
 
     def extract_abbreviations(self):
-        conn = sqlite3.connect('database\course_list.db')
+        conn = sqlite3.connect('Flask_server\database\course_list.db')
         cursor = conn.cursor()
         cursor.execute('''SELECT course_title FROM courses''')
         abbreviations = [row[0] for row in cursor.fetchall()]
@@ -198,7 +221,7 @@ class Subscribing_to_Calendar:
                 subject = subject.pop()
                 print(subject)
                 if(subject not in self.subjects_dict):
-                    payload = "{\"query\":\"mutation CreateSubjects {\\r\\n    createSubjects(input: { subject_Name: \\\"%s\\\" }) {\\r\\n        id\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %(subject)
+                    payload = "{\"query\":\"mutation CreateSubjects {\\r\\n    createSubjects(input: { subject_Name: \\\"%s\\\", userinfoID: \\\"%s\\\"}) {\\r\\n        id\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %(subject,self.userinfoid)
                     headers = {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer %s' % self.token
@@ -363,7 +386,7 @@ class Subscribing_to_Calendar:
 
 
 if __name__ == '__main__':
-    Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjJlNGRkZjBmLWE3MmUtNDI5Ni04ZGZmLTBkNTM3Mzk0Y2U1ZiIsImV2ZW50X2lkIjoiN2EzOWI2Y2EtZGUzMi00MWE4LTgzNDgtMDkxNmI1NTc1NjAxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcxMTY4OTEzMSwiZXhwIjoxNzExNzM5Nzk4LCJpYXQiOjE3MTE3MzYxOTgsImp0aSI6ImUxZDFjOWVhLTg5MjItNGI0NS1hY2ZlLTBjNDMwYzRmMmVmNCIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.a5mM-mqUrciEJd1PBngK8j6nC8qnwXPJHld4np0rSsWBYcbJcRJrQdRw8hYJGWeUex6AmP5sIJ2zcelYTD6be8bcq0RFulEdUjLqjG0tXssX0n7OkcPQAOHjwgkiGH4hRY3wxYTQBCTvkwilhOcDcjw2k065gfvJe-Kyegivg_GdNSZuZeNbLyunJ_JPfZ5-O27vMaoNJu4hmElzqkA3lhBiHc3Xapyp3s8bS7y1MiaX54iWO8eY24KoD59sQZR27YIp21sSYZcAqavSA77vCSWxPuKzAIk8svWeeaWznUc8H5f9Oz-Rp6y9uTQu1RsvmK3O_OWfP1H_P0DYFjiq-Q'
+    Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjJlNGRkZjBmLWE3MmUtNDI5Ni04ZGZmLTBkNTM3Mzk0Y2U1ZiIsImV2ZW50X2lkIjoiN2EzOWI2Y2EtZGUzMi00MWE4LTgzNDgtMDkxNmI1NTc1NjAxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcxMTY4OTEzMSwiZXhwIjoxNzEyMDA3NzM3LCJpYXQiOjE3MTIwMDQxMzcsImp0aSI6IjUzNGMwNzIwLTU1MmYtNDc2OC05ODUyLTkwNjQ1M2E0NzFiYiIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.CtGEbMJKne3JcJQrV2i3hHKAJlH_y5S6xt9D-0KFrDGfy5BE4wxnjISCo-adFZKJ_nbYS5xSIawC7QpwLCUq0O4vdZqWfqnt2tw9YYNAHu86tZyX9hc8v4I4SJsYvr-7TZCS1_7JMJGoyiBkb9F0yTZ75_9q0FbhApTgobHHHCK_kJiX9PCEF_Z2639dTlDy0gmjcXuE4uuS6SUXPLXCRLIXUIMCLbyN3wjSSUO_M8ZSzLFnqIH4WLL90yc31H6ezO_zseoHqgu9aKIA7Iv8-mhp-NIEb1ev42c3IxZsp7ZXkb7bDlybIsT7SqmUvWaRFJR7d847wojV04BqxycvZw'
     y = Subscribing_to_Calendar("https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
     x = Subscribing_to_Calendar("https://purdue.brightspace.com/d2l/le/calendar/feed/user/feed.ics?token=abm22pjnrmcaxnps38b1d",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Assignments List")
     # print(y.calendar_id)

@@ -75,7 +75,7 @@ async function create_temp_user(transformedEvents) {
       console.error("Error sending data:", error);
     });
 
-  let tasks = await listTasks();
+  let tasks = await list_tasks_item();
   axios
     .post("http://127.0.0.1:5000/api/task", tasks)
     .then((response) => {
@@ -315,32 +315,6 @@ export const deleteSchedule = async (eventId) => {
   }
 };
 
-// List all items
-export const listTasks = async () => {
-  let items = [];
-  let nextToken = null;
-  do {
-    try {
-      const allTask = await client.graphql({
-        query: queries.listTasks,
-        variables: { nextToken: nextToken },
-      });
-      const { items: currentItems, nextToken: newNextToken } =
-        allTask.data.listTasks;
-
-      items = [...items, ...currentItems];
-      console.log("events recieved", items.length);
-
-      nextToken = newNextToken;
-    } catch (error) {
-      console.error("Error fetching items:", error);
-      break; // Exit the loop if there's an error
-    }
-  } while (nextToken);
-
-  return items;
-};
-
 export const listSubjects = async () => {
   let items = [];
   let nextToken = null;
@@ -367,16 +341,26 @@ export const listSubjects = async () => {
 };
 
 export async function list_tasks_item() {
-  try {
-    // List all items
-    const allTasks = await client.graphql({
-      query: queries.listTasks,
-      variables: { limit: 1000 },
-    });
-    console.log(allTasks);
-    return allTasks;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    throw error; // Rethrow the error if needed
-  }
+  let items = [];
+  let nextToken = null;
+  do {
+    try {
+      const allTask = await client.graphql({
+        query: queries.listTasks,
+        variables: { nextToken: nextToken },
+      });
+      const { items: currentItems, nextToken: newNextToken } =
+        allTask.data.listTasks;
+
+      items = [...items, ...currentItems];
+      console.log("events recieved", items.length);
+
+      nextToken = newNextToken;
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      break; // Exit the loop if there's an error
+    }
+  } while (nextToken);
+
+  return items;
 }

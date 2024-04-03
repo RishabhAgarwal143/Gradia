@@ -3,9 +3,11 @@ from flask_cors import CORS
 from chatbot_api import openai_manager
 from api_calls import initialize_payload_user
 from api_calls import set_schedules, add_schedule_to_payload_schedules, delete_schedule_from_payload_schedules
-from database_queries import process_add_schedule,process_delete_schedule,process_add_task,process_delete_task,process_add_subject
+from database_queries import process_add_schedule,process_delete_schedule,process_add_task,process_delete_task,process_add_subject,add_user_info
+from database_cleaner import check_database
 from Reading_Calendar import Subscribing_to_Calendar
 import markdown
+import multiprocessing
 import time
 
 app = Flask(__name__, template_folder="templates")
@@ -24,6 +26,7 @@ def receive_data():
     # Process the received data here
     info.userID = data["userId"]
     info.Token = data["Token"]
+    add_user_info(info.userID,info.Token)
     if(info.checker == False):
         initialize_payload_user(info.Token,info.userID,info.schedule)
         info.checker = True
@@ -37,7 +40,7 @@ def create_data():
     # Process the received data here
     # add_schedule_to_payload_schedules(data)
     process_add_schedule(data)
-    print(data)
+    # print(data)
 
     return jsonify({'message': 'Data received successfully'})
 
@@ -62,7 +65,7 @@ def create_task():
     data = request.json  # Assuming data is sent as JSON
 
     process_add_task(data)
-    print(data)
+    # print(data)
 
     return jsonify({'message': 'Data received successfully'})
 
@@ -109,7 +112,7 @@ def receive_task():
     # time.sleep(0.5)
     data = request.json
     # print((data))
-    print(data)
+    # print(data)
     process_add_task(data)
     return jsonify({'message': 'Data received successfully'})
 
@@ -139,12 +142,14 @@ def chat():
 def subscribe_cal():
     data = request.json
     # url = data["URL"]
-    print(data)
+    # print(data)
     calendar = Subscribing_to_Calendar(data["calendar_url"],info.Token,info.userID,data["calendar_name"])
     calendar.add_record_to_database()
     return jsonify({'message' : 'Subscribed Successfully'})
 
 if __name__ == '__main__':
     global info
+    background_process = multiprocessing.Process(target=check_database)
+    background_process.start()
     info = user_information()
     app.run(threaded = False, debug=True)

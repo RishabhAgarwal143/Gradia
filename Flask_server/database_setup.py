@@ -11,6 +11,22 @@ import datetime
 class Base(DeclarativeBase):
     pass
 
+class User(Base):
+    __tablename__ = "user"
+
+    userinfoID : Mapped[str]= mapped_column(primary_key=True)
+    access_Token : Mapped[str]
+    schedule_list : Mapped[List["Schedule"]] = relationship()
+    task_list : Mapped[List["Task"]] = relationship()
+    subjects_list : Mapped[List["Subjects"]] = relationship()
+    
+    def __repr__(self) -> str:
+        return super().__repr__()
+    
+    def update_access_token(self,session, new_access_token):
+        # Query the user by userinfoID
+            self.access_Token = new_access_token
+            session.commit()
 
 class Schedule(Base):
     """An example using regular Columns and no type annotation. 
@@ -23,10 +39,14 @@ class Schedule(Base):
     DTEND: Mapped[Optional[datetime.datetime]]
     DESCRIPTION: Mapped[Optional[str]]
     LOCATION: Mapped[Optional[str]]
+    userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
-
+    schedule_grade: Mapped[Optional["Schedule_grade_info"]] = relationship()
+    
     def __repr__(self) -> str:
-        return f"User(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
+        return super().__repr__()
+    # def __repr__(self) -> str:
+    #     return f"Schedule(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
 
 
 class Task(Base):
@@ -43,10 +63,12 @@ class Task(Base):
     STATUS: Mapped[Optional[str]]
     PRIORITY: Mapped[Optional[int]]
     COMPLETED: Mapped[Optional[datetime.datetime]]
+    userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
-
+    task_grade: Mapped[Optional["Task_grade_info"]] = relationship()
+    
     def __repr__(self) -> str:
-        return f"User(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
+        return f"Task(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
 
 
 class Subjects(Base):
@@ -55,12 +77,33 @@ class Subjects(Base):
     subject_Name: Mapped[Optional[str]]
     current_Grade: Mapped[Optional[int]]
     target_Grade: Mapped[Optional[int]]
+    userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     schedule_list : Mapped[List["Schedule"]] = relationship()
     task_list : Mapped[List["Task"]] = relationship()
 
     def __repr__(self) -> str:
-        return f"User(id={self.id!r}, subject={self.subject_Name!r}, Current Grade={self.current_Grade!r}  Target Grade={self.target_Grade!r})"
+        return f"Subjects(id={self.id!r}, subject={self.subject_Name!r}, Current Grade={self.current_Grade!r}  Target Grade={self.target_Grade!r})"
 
+
+class Task_grade_info(Base):
+    __tablename__ = "task_grade"
+    id: Mapped[str] = mapped_column(primary_key=True)
+    current_Grade: Mapped[Optional[int]]
+    task_Weightage: Mapped[Optional[int]]
+    overall_Percentage: Mapped[Optional[int]]
+    extra_info: Mapped[Optional[str]]
+    time_taken: Mapped[Optional[datetime.time]]
+    task_id: Mapped[Optional[str]] = mapped_column(ForeignKey("task.id"))
+    
+class Schedule_grade_info(Base):
+    __tablename__ = "schedule_grade"
+    id: Mapped[str] = mapped_column(primary_key=True)
+    current_Grade: Mapped[Optional[int]]
+    task_Weightage: Mapped[Optional[int]]
+    overall_Percentage: Mapped[Optional[int]]
+    extra_info: Mapped[Optional[str]]
+    attended: Mapped[Optional[bool]]
+    schedule_id: Mapped[Optional[str]] = mapped_column(ForeignKey("schedule.id"))
 
 def create_table(engine):
     """Uses all the Base Metadata in this file to create tables"""
