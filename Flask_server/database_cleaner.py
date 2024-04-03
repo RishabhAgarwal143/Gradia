@@ -54,9 +54,13 @@ def check_database():
         for user in session.query(User).all():
             if is_cognito_token_expired(user.access_Token):
                 delete_user_data(user,session)
+            else:
+                for subject in user.subjects_list:
+                    subject.calculate_final_grade(session)
+
 
         session.close()
 
         time.sleep(60)
 
-# check_database()
+check_database()

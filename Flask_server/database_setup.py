@@ -38,7 +38,7 @@ class User(Base):
         'Authorization': f'Bearer {self.access_Token}'
         }
         url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
-        init_payload = "{\"query\":\"query ListSchedules {\\r\\n    getUserinfo(id: \\\"%s\\\") {\\r\\n        id\\r\\n        name\\r\\n        email\\r\\n        Timezone\\r\\n        createdAt\\r\\n        updatedAt\\r\\n        owner\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %self.userinfoID
+        init_payload = "{\"query\":\"query ListSchedules {\\r\\n    getUserinfo(id: \\\"%s\\\") {\\r\\n        Timezone\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %self.userinfoID
 
         response = requests.request("POST", url, headers=headers, data=init_payload)
         # print(response.text)
@@ -135,19 +135,21 @@ class Subjects(Base):
 
     def calculate_final_grade(self,session):
 
-        if(not self.current_Grade):
-            self.current_Grade = 0
-            
+        # if(not self.current_Grade):
+        self.current_Grade = 0
         for schedule in self.schedule_list:
-            schedule.schedule_grade.calculate_grades(session)
-            if(schedule.schedule_grade.overall_Percentage):
-                self.current_Grade += schedule.schedule_grade.overall_Percentage
+            if(schedule.schedule_grade):
+                schedule.schedule_grade.calculate_grades(session)
+                if(schedule.schedule_grade.overall_Percentage):
+                    self.current_Grade += schedule.schedule_grade.overall_Percentage
         
         for task in self.task_list:
-            task.task_grade.calculate_grades(session)
-            if(task.task_grade.overall_Percentage):
-                self.current_Grade += schedule.schedule_grade.overall_Percentage
-                
+            if(task.task_grade):
+                task.task_grade.calculate_grades(session)
+                if(task.task_grade.overall_Percentage):
+                    self.current_Grade += task.task_grade.overall_Percentage
+        
+        session.commit()
                 
         
 
