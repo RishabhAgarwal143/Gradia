@@ -14,6 +14,7 @@ import pytz
 class Base(DeclarativeBase):
     pass
 
+
 class User(Base):
     __tablename__ = "user"
 
@@ -43,8 +44,11 @@ class User(Base):
         response = requests.request("POST", url, headers=headers, data=init_payload)
         # print(response.text)
         json_response = response.json()
-
+        print(json_response)
         self.user_timezone = json_response['data']['getUserinfo']['Timezone']
+        
+        return self.user_timezone
+
 
 class Schedule(Base):
     """An example using regular Columns and no type annotation. 
@@ -61,8 +65,9 @@ class Schedule(Base):
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
     schedule_grade: Mapped[Optional["Schedule_grade_info"]] = relationship()
     
-    def __repr__(self) -> str:
-        return f"Schedule(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
+    def __repr__(self):
+        
+        return (f"Schedule(id={self.id!r},SUMMARY={self.SUMMARY!r}, DTSTART={self.DTSTART!r}, DTEND={self.DTEND!r}, DESCRIPTION={self.DESCRIPTION!r},LOCATION={self.LOCATION!r})")
 
     def start_time_userTimezone(self,session):
         user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
@@ -135,7 +140,6 @@ class Subjects(Base):
 
     def calculate_final_grade(self,session):
 
-        # if(not self.current_Grade):
         self.current_Grade = 0
         for schedule in self.schedule_list:
             if(schedule.schedule_grade):

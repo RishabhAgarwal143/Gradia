@@ -13,24 +13,25 @@ import time
 app = Flask(__name__, template_folder="templates")
 CORS(app)
 
-class user_information():
-    def __init__(self):
-        self.checker = False
-        self.Token = ""
-        self.userID = ""
-        self.schedule = None
+# class user_information():
+#     def __init__(self):
+#         self.checker = False
+#         self.Token = ""
+#         self.userID = ""
+#         self.schedule = None
 
 @app.route('/api/data', methods=['POST'])
 def receive_data():
-    data = request.json  # Assuming data is sent as JSON
-    # Process the received data here
-    info.userID = data["userId"]
-    info.Token = data["Token"]
-    add_user_info(info.userID,info.Token)
-    if(info.checker == False):
-        initialize_payload_user(info.Token,info.userID,info.schedule)
-        info.checker = True
-    info.chats = openai_manager()
+    
+    data = request.json  
+    userID = data["userId"]
+    Token = data["Token"]
+    add_user_info(userID,Token)
+    # initialize_payload_user(Token,userID)
+    chat_obj = openai_manager(userID)
+    if(userID not in thread_info):
+        thread_info[userID] = chat_obj
+        
     return jsonify({'message': 'Data received successfully'})
 
 
@@ -72,9 +73,7 @@ def create_task():
 @app.route('/api/updateTask', methods=['POST'])
 def update_task():
     data = request.json  # Assuming data is sent as JSON
-    # Process the received data here
 
-    # print(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/deleteTask', methods=['POST'])
@@ -87,42 +86,25 @@ def delete_task():
 
 @app.route('/api/schedule', methods=['POST'])
 def receive_schedule():
-    # TODO: FIX SETTING SCHEDULES AFTER INITIALIZATION
-    # time.sleep(0.5)
-    data = request.json
-    # print((data))
 
+    data = request.json
     print(len(data))
-    try:
-        if(info.checker == False):
-            print("stored schedule")
-            info.schedule = data
-        else:
-            set_schedules(data)
-            process_add_schedule(data)
-            info.checker = True
+
+    process_add_schedule(data)
             
-    except:
-        pass
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/task', methods=['POST'])
 def receive_task():
-    # TODO: FIX SETTING SCHEDULES AFTER INITIALIZATION
-    # time.sleep(0.5)
+
     data = request.json
-    # print((data))
-    # print(data)
     process_add_task(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/subjects', methods=['POST'])
 def receive_subjects():
-    # TODO: FIX SETTING SCHEDULES AFTER INITIALIZATION
-    # time.sleep(0.5)
+
     data = request.json
-    # print((data))
-    # print(data)
     process_add_subject(data)
     return jsonify({'message': 'Data received successfully'})
 
@@ -132,10 +114,13 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_message = request.form['user_message']
-    response,outputs = info.chats.sendcall(user_message)
+    data = request.json
+    userID = data["userId"]
+    user_message = data['user_message']
+    if(userID not in thread_info):
+        thread_info[userID] = openai_manager(userID)
+    response,outputs =thread_info[userID].sendcall(user_message)
     response = markdown.markdown(response)
-    print(outputs)
     return jsonify({'bot_response': response,'events_to_be_managed' : outputs })
 
 @app.route('/Subscribe',methods=['POST'])
@@ -149,7 +134,7 @@ def subscribe_cal():
 
 if __name__ == '__main__':
     global info
-    background_process = multiprocessing.Process(target=check_database)
-    background_process.start()
-    info = user_information()
+    # background_process = multiprocessing.Process(target=check_database)
+    # background_process.start()
+    thread_info = {}
     app.run(threaded = False, debug=True)

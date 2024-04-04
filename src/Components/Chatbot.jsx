@@ -1,5 +1,6 @@
 import React from "react";
-
+import { cognito_Id } from "./support_func";
+import axios from "axios";
 const Chatbot = ({ onAddgptevent }) => {
   const sendMessage = () => {
     const userInput = document.getElementById("user-input").value;
@@ -12,18 +13,24 @@ const Chatbot = ({ onAddgptevent }) => {
 
     // Clear input field
     document.getElementById("user-input").value = "";
-
+    const dataToSend = {
+      userId: cognito_Id,
+      user_message: userInput,
+    };
     // Make POST request to Flask server
-    fetch("http://127.0.0.1:5000/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: "user_message=" + encodeURIComponent(userInput),
-    })
-      .then((response) => response.json())
-      .then((data) => {
+    // fetch("http://127.0.0.1:5000/chat", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/x-www-form-urlencoded",
+    //   },
+    //   body: "user_message=" + encodeURIComponent(userInput),
+    // })
+    axios
+      .post("http://127.0.0.1:5000/chat", dataToSend)
+      // .then((response) => response.json())
+      .then((response) => {
         // Display bot response
+        let data = response.data;
         console.log(data.events_to_be_managed);
         if (!data.events_to_be_managed) {
           const botMessageDiv = document.createElement("div");

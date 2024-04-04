@@ -182,7 +182,7 @@ def get_task_range(userinfo_id, start_date, end_date):
 
 
 def add_user_info(userinfoID,accesstoken):
-    print("HI")
+
     user = session.query(User).filter_by(userinfoID=userinfoID).first()
     if(user):
         user.update_access_token(session,accesstoken)
@@ -190,6 +190,7 @@ def add_user_info(userinfoID,accesstoken):
     user = User(userinfoID=userinfoID,access_Token=accesstoken)
     session.add(user)
     session.commit()
+
 
 def get_subject():
     subject_id = "57426fa8-8596-43d1-8a75-bb3bf3ebb51c"
@@ -214,6 +215,10 @@ def get_subject():
         print("Subject not found.")
         
 
+def get_user_info(userinfoID):
+    
+    user = session.query(User).filter_by(userinfoID=userinfoID).first()
+    return user
 # get_subject()``
 
 # new_subject = Subjects(id="1", subject_Name="Math", current_Grade=85, target_Grade=90)

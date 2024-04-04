@@ -24,11 +24,12 @@ functions = {
 
 
 # Function to call the assistant required functions and return their outputs as JSON strings
-def execute_required_functions(required_actions):
+def execute_required_functions(required_actions,userID):
     tool_outputs = []
     for tool_call in required_actions.submit_tool_outputs.tool_calls:
         func_name = tool_call.function.name
         args = json.loads(tool_call.function.arguments)
+        args["userinfoID"] = userID
 
         # Call the corresponding Python function
         if func_name in functions:
@@ -52,9 +53,10 @@ def execute_required_functions(required_actions):
 
 class openai_manager():
 
-    def __init__(self) -> None:
+    def __init__(self,userinfoID) -> None:
 
         self.initialize_tread()
+        self.userID = userinfoID
         pass
 
 
@@ -86,7 +88,7 @@ class openai_manager():
 
             if(run.status == "requires_action"):
                 print(run.required_action)
-                tool_outputs,result = execute_required_functions(run.required_action)
+                tool_outputs,result = execute_required_functions(run.required_action,self.userID)
                 outputs = result
 
                 run = client.beta.threads.runs.submit_tool_outputs(

@@ -10,7 +10,7 @@ from function_payloads import Payload
 from function_payloads import TimeConverter
 from function_payloads import UserInfo
 import pandas as pd
-from database_queries import process_add_schedule
+import database_queries
 
 global user_info
 global payload
@@ -18,7 +18,6 @@ global time_converter
 
 
 def set_schedules(schedules):
-    
     
     global payload
     # convert list of json to just one json
@@ -142,10 +141,11 @@ def initialize_payload_user(token, user_info_id,schedule):
     user_info = UserInfo(user_id, user_timezone, user_email, user_name)
     global payload
     payload = Payload(url, headers, user_timezone, TOKEN, user_info_id)
+
     # print("INITIALIZE PAYLOAD USER")
-    if(schedule != None):
-        set_schedules(schedule)
-        process_add_schedule(schedule)
+    # if(schedule != None):
+        # set_schedules(schedule)
+        # process_add_schedule(schedule)
         
 
 
@@ -163,16 +163,16 @@ def initialize_payload_user(token, user_info_id,schedule):
 
     # payload.rrule_schedules = rrule_schedule
 
-    
-
     global time_converter
     time_converter = TimeConverter(user_timezone)
 
 
-def get_user_time(n):
-    global user_info
-    global time_converter
-    user_timezone = user_info.user_timezone
+def get_user_time(n,userinfoID):
+    # global user_info
+    
+    # global time_converter
+    user = database_queries.get_user_info(userinfoID)
+    user_timezone = user.get_timezone()
     user_time = datetime.now(pytz.timezone(user_timezone))
     user_time_t = user_time.strftime('%Y-%m-%d %H:%M:%S %A')
     
@@ -196,17 +196,19 @@ def _get_schedule_range_df(start_time, end_time):
     return df_range
 
 
-def get_schedule_range(start_time, end_time):
+def get_schedule_range(start_time, end_time,userinfoID):
     # start_time: %Y-%m-%d %H:%M:%S
     # end_time: %Y-%m-%d %H:%M:%S
     # start_time and end_time are in user's timezone
     # dataframe containing all the schedules in utc
+    
+    schedules = database_queries.get_schedule_range(userinfoID,start_time,end_time)
+    result = ""
+    for schedule in schedules:
+        result += schedule.__repr__()
+        result += "\n"
 
-    df_range = _get_schedule_range_df(start_time, end_time)
-
-    # convert to json
-    schedule_json = df_range.to_json(orient='records')
-    return schedule_json
+    return result
 
 
 def _conflict_detector(conflict):
