@@ -315,7 +315,7 @@ export const deleteSchedule = async (eventId) => {
   }
 };
 
-export const listSubjects = async () => {
+export async function listSubjects() {
   let items = [];
   let nextToken = null;
   do {
@@ -338,7 +338,7 @@ export const listSubjects = async () => {
   } while (nextToken);
 
   return items;
-};
+}
 
 export async function list_tasks_item() {
   let items = [];

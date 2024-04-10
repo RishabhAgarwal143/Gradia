@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from chatbot_api import openai_manager
-from api_calls import initialize_payload_user
-from api_calls import set_schedules, add_schedule_to_payload_schedules, delete_schedule_from_payload_schedules
+# from api_calls import initialize_payload_user
+# from api_calls import set_schedules, add_schedule_to_payload_schedules, delete_schedule_from_payload_schedules
 from database_queries import process_add_schedule,process_delete_schedule,process_add_task,process_delete_task,process_add_subject,add_user_info
 from database_cleaner import check_database
 from Reading_Calendar import Subscribing_to_Calendar
@@ -13,12 +13,6 @@ import time
 app = Flask(__name__, template_folder="templates")
 CORS(app)
 
-# class user_information():
-#     def __init__(self):
-#         self.checker = False
-#         self.Token = ""
-#         self.userID = ""
-#         self.schedule = None
 
 @app.route('/api/data', methods=['POST'])
 def receive_data():
@@ -27,7 +21,6 @@ def receive_data():
     userID = data["userId"]
     Token = data["Token"]
     add_user_info(userID,Token)
-    # initialize_payload_user(Token,userID)
     chat_obj = openai_manager(userID)
     if(userID not in thread_info):
         thread_info[userID] = chat_obj
@@ -38,8 +31,7 @@ def receive_data():
 @app.route('/api/createsubscribe', methods=['POST'])
 def create_data():
     data = request.json  # Assuming data is sent as JSON
-    # Process the received data here
-    # add_schedule_to_payload_schedules(data)
+
     process_add_schedule(data)
     # print(data)
 
@@ -48,9 +40,8 @@ def create_data():
 @app.route('/api/updatesubscribe', methods=['POST'])
 def update_data():
     data = request.json  # Assuming data is sent as JSON
-    # Process the received data here
 
-    # print(data)
+    print(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/deletesubscribe', methods=['POST'])
@@ -66,19 +57,18 @@ def create_task():
     data = request.json  # Assuming data is sent as JSON
 
     process_add_task(data)
-    # print(data)
 
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/updateTask', methods=['POST'])
 def update_task():
-    data = request.json  # Assuming data is sent as JSON
+    data = request.json 
 
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/deleteTask', methods=['POST'])
 def delete_task():
-    data = request.json  # Assuming data is sent as JSON
+    data = request.json 
 
     process_delete_task(data)
     return jsonify({'message': 'Data received successfully'})

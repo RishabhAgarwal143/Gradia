@@ -3,6 +3,7 @@ import "@aws-amplify/ui-react/styles.css";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import * as commands from "./Components/support_func.js";
 import BasicCalendar from "./Components/BaseCalendar.js";
+import Grade_view from "./Components/Grade_view.js";
 
 function App() {
   // commands.create_user();
@@ -11,7 +12,7 @@ function App() {
     <div className="App" style={{ height: "100vh", weight: "100vw" }}>
       {/* <header className="App-header"> */}
       <BasicCalendar />
-
+      {/* <Grade_view /> */}
       {/* <button onClick={commands.create_user}>Create User</button> */}
       {/* <button onClick={commands.handleFetchUserAttributes}>Fetch User</button>
         <button onClick={commands.get_item}>Get record</button>

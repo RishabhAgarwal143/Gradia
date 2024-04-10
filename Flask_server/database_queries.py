@@ -56,6 +56,8 @@ def process_add_schedule(schedules):
         schedule = schedules['onCreateSchedule']
         startTime = datetime.datetime.fromisoformat(schedule["DTSTART"].replace('Z', '+00:00'))
         endTime = datetime.datetime.fromisoformat(schedule["DTEND"].replace('Z', '+00:00'))
+        schedule_grade_info = None
+
         if(schedule["ScheduleGradeInfo"]):
             info = schedule["ScheduleGradeInfo"]
             schedule_grade_info = Schedule_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],attended= parse_time(info["attended"]),schedule_id=schedule["id"])
@@ -200,14 +202,11 @@ def get_subject():
     if subject:
         # Get all the schedules associated with the subject
         schedules = subject.schedule_list
-        
         # Print the schedules
         for schedule in schedules:
             print(schedule)
-            
         print("Tasks")
         tasks = subject.task_list
-        
         # Print the schedules
         for task in tasks:
             print(task)

@@ -13,7 +13,7 @@ global pop_up_flag
 pop_up_flag = False
 
 functions = {
-    'initialize_payload_user': ac.initialize_payload_user,
+    # 'initialize_payload_user': ac.initialize_payload_user,
     'get_user_time': ac.get_user_time,
     'get_schedule_range': ac.get_schedule_range,
     'add_event_to_calendar': ac.add_event_to_calendar,

@@ -34,18 +34,19 @@ class User(Base):
             session.commit()
             
     def get_timezone(self):
-        headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {self.access_Token}'
-        }
-        url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
-        init_payload = "{\"query\":\"query ListSchedules {\\r\\n    getUserinfo(id: \\\"%s\\\") {\\r\\n        Timezone\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %self.userinfoID
+        if(self.user_timezone):
+            headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {self.access_Token}'
+            }
+            url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+            init_payload = "{\"query\":\"query ListSchedules {\\r\\n    getUserinfo(id: \\\"%s\\\") {\\r\\n        Timezone\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %self.userinfoID
 
-        response = requests.request("POST", url, headers=headers, data=init_payload)
-        # print(response.text)
-        json_response = response.json()
-        print(json_response)
-        self.user_timezone = json_response['data']['getUserinfo']['Timezone']
+            response = requests.request("POST", url, headers=headers, data=init_payload)
+            # print(response.text)
+            json_response = response.json()
+            print(json_response)
+            self.user_timezone = json_response['data']['getUserinfo']['Timezone']
         
         return self.user_timezone
 
@@ -68,6 +69,21 @@ class Schedule(Base):
     def __repr__(self):
         
         return (f"Schedule(id={self.id!r},SUMMARY={self.SUMMARY!r}, DTSTART={self.DTSTART!r}, DTEND={self.DTEND!r}, DESCRIPTION={self.DESCRIPTION!r},LOCATION={self.LOCATION!r})")
+
+    def dict_representation(self) -> dict:
+        temp_d = {}
+        temp_d["SUMMARY"] = self.SUMMARY
+        temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
+        temp_d["DTEND"] = self.DTEND.strftime('%Y-%m-%d %H:%M:%S')
+        temp_d["LOCATION"] = self.LOCATION
+        temp_d["DESCRIPTION"] = self.DESCRIPTION
+        temp_d["userinfoID"] = self.userinfoID
+        temp_d["subjectsID"] = self.subjectsID
+        if(self.schedule_grade):
+            temp_d["scheduleScheduleGradeInfoId"] = self.schedule_grade.id
+        
+        return temp_d
+        
 
     def start_time_userTimezone(self,session):
         user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
@@ -106,6 +122,22 @@ class Task(Base):
     
     def __repr__(self) -> str:
         return f"Task(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
+
+    def dict_representation(self) -> dict:
+        temp_d = {}
+        temp_d["SUMMARY"] = self.SUMMARY
+        temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
+        temp_d["DUE"] = self.DUE.strftime('%Y-%m-%d %H:%M:%S')
+        temp_d["LOCATION"] = self.LOCATION
+        temp_d["DESCRIPTION"] = self.DESCRIPTION
+        temp_d["STATUS"] = self.STATUS
+        temp_d["PRIORITY"] = self.PRIORITY
+        temp_d["userinfoID"] = self.userinfoID
+        temp_d["subjectsID"] = self.subjectsID
+        if(self.task_grade):
+            temp_d["taskTaskGradeInfoId"] = self.task_grade.id
+        
+        return temp_d
 
     def start_time_userTimezone(self,session):
         user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
