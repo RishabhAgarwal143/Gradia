@@ -14,11 +14,12 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="App" style={{ height: "100vh", weight: "100vw" }}>
       <button onClick={toggleComponent}>
         {showBasicCalendar ? "Show GradeView" : "Show BasicCalendar"}
       </button>
       {showBasicCalendar ? <BasicCalendar /> : <GradeView />}
+      <button onClick={commands.handleSignOut}>Sign out</button>
     </div>
   );
 }

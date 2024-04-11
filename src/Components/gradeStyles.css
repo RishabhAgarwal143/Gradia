@@ -5,7 +5,7 @@
 }
 
 .main-content {
-  width: 100%;
+  width: 80%;
   padding: 10px;
 }
 
@@ -39,7 +39,7 @@
   background-color: #ddd;
 }
 .table-container {
-  height: 700px;
+  height: 80vh;
   width: max-content;
   overflow-y: auto;
   scrollbar-color: #f00 #ccc;
@@ -64,13 +64,13 @@
   background-color: #f0f0f0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow-y: auto; /* Add scrollbar if content overflows vertically */
-  max-height: max-content;
+  height: 100vh;
 }
 
 h2 {
   font-size: 1.5rem;
   margin-bottom: 20px;
-  width: 100%;
+  width: 1000px;
 }
 
 .search-input {
