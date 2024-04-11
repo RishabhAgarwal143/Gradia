@@ -364,3 +364,28 @@ export async function list_tasks_item() {
 
   return items;
 }
+
+export async function list_tasks_grade_item() {
+  let items = [];
+  let nextToken = null;
+  do {
+    try {
+      const allTask = await client.graphql({
+        query: queries.listTaskGradeInfos,
+        variables: { nextToken: nextToken },
+      });
+      const { items: currentItems, nextToken: newNextToken } =
+        allTask.data.listTaskGradeInfos;
+
+      items = [...items, ...currentItems];
+      console.log("events recieved", items.length);
+
+      nextToken = newNextToken;
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      break; // Exit the loop if there's an error
+    }
+  } while (nextToken);
+
+  return items;
+}

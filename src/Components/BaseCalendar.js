@@ -55,6 +55,7 @@ const MyCalendar = () => {
       }
     }
     fetchData();
+    // eslint-disable-next-line
   }, []);
 
   let counter = 0;

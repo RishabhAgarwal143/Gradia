@@ -1,0 +1,98 @@
+.container {
+  display: flex;
+  height: 100vh;
+  /* width: 100vw; */
+}
+
+.main-content {
+  width: 100%;
+  padding: 10px;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  /* width: 300px; */
+  text-align: left;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.table tr:nth-child(even) {
+  background-color: #ccc;
+}
+
+.table tr:nth-child(odd) {
+  background-color: #fff;
+}
+
+.table tr:hover {
+  background-color: #ddd;
+}
+.table-container {
+  height: 700px;
+  width: max-content;
+  overflow-y: auto;
+  scrollbar-color: #f00 #ccc;
+}
+
+.table-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background-color: #ccc;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #f00;
+  border-radius: 5px;
+}
+
+.sidebar {
+  width: 300px;
+  padding: 20px;
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Add scrollbar if content overflows vertically */
+  max-height: max-content;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.subject-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.subject-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.subject-item:hover {
+  background-color: #e0e0e0;
+}

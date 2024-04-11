@@ -1,18 +1,48 @@
-// Add your JavaScript code here
-import { listSubjects } from "./support_func";
+import { listSubjects, list_tasks_grade_item } from "./support_func";
 import React, { useState, useEffect } from "react";
-import "./styles.css";
-// Get a reference to the homework list and grade form
+import "./gradeStyles.css";
+
 let subject_list_json = [];
-const Sidebar = ({ subjects, onClick }) => {
+let task_grade_info = [];
+
+function formatLocalTime(isoString) {
+  // Create a Date object from the ISO string
+  const date = new Date(isoString);
+
+  // Convert the Date object to a string in the local timezone using Intl.DateTimeFormat
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  const formatter = new Intl.DateTimeFormat("en-US", options);
+  const formattedDate = formatter.format(date);
+
+  return formattedDate;
+}
+
+const Sidebar = ({ subjects, onClick, onSearch }) => {
   return (
     <div className="sidebar">
       <h2>
         <b>Subjects</b>
       </h2>
-      <ul>
+      <input
+        type="text"
+        className="search-input"
+        placeholder="Search..."
+        onChange={(e) => onSearch(e.target.value)}
+      />
+      <ul className="subject-list">
         {subjects.map((subject, index) => (
-          <li key={index} onClick={() => onClick(subject)}>
+          <li
+            key={index}
+            onClick={() => onClick(subject)}
+            className="subject-item"
+          >
             {subject}
           </li>
         ))}
@@ -20,26 +50,155 @@ const Sidebar = ({ subjects, onClick }) => {
     </div>
   );
 };
+
+const statusOrder = ["IN_PROCESS", "NEEDS_ACTION", "COMPLETED", "CANCELLED"];
+
+const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
+  const [selectedStatus, setSelectedStatus] = React.useState(status);
+
+  const handleConfirm = () => {
+    onStatusChange(selectedStatus);
+    onToggle(); // Close the dropdown after confirming
+  };
+
+  return (
+    <>
+      <button style={{ color: "black " }} onClick={onToggle}>
+        {status}
+      </button>
+      {isOpen && (
+        <div>
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+          >
+            {statusOrder.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <button
+              style={{ color: "blue ", marginRight: "10px" }}
+              onClick={handleConfirm}
+            >
+              Confirm
+            </button>
+            <button style={{ color: "red" }} onClick={onToggle}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
 const SecondComponent = ({ subject, task }) => {
+  const [selectedStatuses, setSelectedStatuses] = useState({});
+
   let tasks = [];
-  if (task.Tasks) {
-    tasks = task.Tasks.items;
+  if (task && task.Tasks) {
+    tasks = task.Tasks.items.sort((a, b) => {
+      const indexA = statusOrder.indexOf(a.STATUS);
+      const indexB = statusOrder.indexOf(b.STATUS);
+
+      if (indexA === -1) {
+        return 1;
+      } else if (indexB === -1) {
+        return -1;
+      } else if (indexA < indexB) {
+        return -1;
+      } else if (indexA > indexB) {
+        return 1;
+      } else {
+        const dueIndexA = new Date(a.DUE).getTime();
+        const dueIndexB = new Date(b.DUE).getTime();
+
+        if (dueIndexA === dueIndexB) {
+          return 0;
+        } else if (dueIndexA < dueIndexB) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+    });
   }
+  if (task_grade_info) {
+    for (let i = 0; i < tasks.length; i++) {
+      let id = tasks[i].taskTaskGradeInfoId;
+
+      // Check if the id exists in list2
+      let index = task_grade_info.findIndex((item) => item.id === id);
+
+      if (index !== -1) {
+        // Add the json information from list2 to list1
+        tasks[i] = { ...tasks[i], ...task_grade_info[index] };
+
+        // Remove the item from list2
+        task_grade_info.splice(index, 1);
+        console.log(tasks[i]);
+      }
+    }
+  }
+
+  const handleStatusChange = (index, newStatus) => {
+    setSelectedStatuses((prevStatuses) => ({
+      ...prevStatuses,
+      [index]: newStatus,
+    }));
+    tasks[index].STATUS = newStatus;
+    console.log(tasks[index]);
+  };
+
+  const toggleStatusDropdown = (index) => {
+    setSelectedStatuses((prevStatuses) => ({
+      ...prevStatuses,
+      [index]: !prevStatuses[index],
+    }));
+  };
 
   return (
     <div className="main-content">
       <h2 className="bg-white">Selected Subject: {subject}</h2>
+      <h2 className="bg-white text-left">
+        Current Grade: {(task && task.current_Grade) || 0} Target Grade:{" "}
+        {(task && task.target_Grade) || 0}
+      </h2>
       <div className="table-container">
         <table className="table">
           <thead>
             <tr>
               <th>TASKS</th>
+              <th>DUE</th>
+              <th>STATUS</th>
+              <th>GRADE</th>
+              <th>OVERALL GRADE</th>
+              <th>TASK WEIGHTAGE</th>
             </tr>
           </thead>
           <tbody>
             {tasks.map((task, index) => (
               <tr key={index}>
-                <td>{task.SUMMARY}</td>
+                <td style={{ width: "500px" }}>{task.SUMMARY}</td>
+                <td style={{ width: "300px" }}>{formatLocalTime(task.DUE)}</td>
+                <td style={{ width: "150px" }}>
+                  <StatusDropdown
+                    status={selectedStatuses[index] || task.STATUS}
+                    onStatusChange={(newStatus) =>
+                      handleStatusChange(index, newStatus)
+                    }
+                    isOpen={selectedStatuses[index]}
+                    onToggle={() => toggleStatusDropdown(index)}
+                  />
+                </td>
+                <td style={{ width: "50px" }}> {task.current_Grade || 0} </td>
+                <td style={{ width: "50px" }}>
+                  {task.overall_Percentage || 0}
+                </td>
+                <td style={{ width: "50px" }}> {task.task_Weightage || 0} </td>
               </tr>
             ))}
           </tbody>
@@ -48,9 +207,19 @@ const SecondComponent = ({ subject, task }) => {
     </div>
   );
 };
-const Grade_view = () => {
+
+const GradeView = () => {
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (searchTerm) => {
+    setSearchTerm(searchTerm);
+  };
+
+  const filteredSubjects = subjects.filter((subject) =>
+    subject.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const findSubjectByName = (subject_Name) => {
     return subject_list_json.find(
@@ -65,6 +234,11 @@ const Grade_view = () => {
   useEffect(() => {
     async function fetchSubjects() {
       subject_list_json = await listSubjects();
+      task_grade_info = await list_tasks_grade_item();
+      console.log(task_grade_info);
+      subject_list_json.sort(
+        (a, b) => b.Tasks.items.length - a.Tasks.items.length
+      );
       console.log(subject_list_json);
       const subject_list = Array.from(
         subject_list_json,
@@ -75,9 +249,14 @@ const Grade_view = () => {
 
     fetchSubjects();
   }, []);
+
   return (
     <div className="container">
-      <Sidebar subjects={subjects} onClick={handleSubjectClick} />
+      <Sidebar
+        subjects={filteredSubjects}
+        onClick={handleSubjectClick}
+        onSearch={handleSearch}
+      />
       <div className="main-content">
         {selectedSubject && (
           <SecondComponent
@@ -85,10 +264,10 @@ const Grade_view = () => {
             task={findSubjectByName(selectedSubject)}
           />
         )}
-        {/* Render your other component here */}
       </div>
+      {/* <button onClick={RenderCalendar}>Render New Component</button> */}
     </div>
   );
 };
 
-export default Grade_view;
+export default GradeView;
