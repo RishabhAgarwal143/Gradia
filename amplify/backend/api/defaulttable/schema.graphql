@@ -8,8 +8,8 @@ enum StatusValues {
 type Subjects @model @auth(rules: [{allow: private}, {allow: owner}]) {
   id: ID!
   subject_Name: String
-  current_Grade: Int
-  target_Grade: Int
+  current_Grade: Float
+  target_Grade: Float
   Tasks: [Task] @hasMany(indexName: "bySubjects", fields: ["id"])
   Schedules: [Schedule] @hasMany(indexName: "bySubjects", fields: ["id"])
   userinfoID: ID! @index(name: "byUserinfo")
@@ -17,9 +17,9 @@ type Subjects @model @auth(rules: [{allow: private}, {allow: owner}]) {
 
 type TaskGradeInfo @model @auth(rules: [{allow: private}, {allow: owner}]) {
   id: ID!
-  current_Grade: Int
-  task_Weightage: Int
-  overall_Percentage: Int
+  current_Grade: Float
+  task_Weightage: Float
+  overall_Percentage: Float
   extra_Info: String
   time_Taken: AWSTime
   Task: Task @belongsTo
@@ -27,9 +27,9 @@ type TaskGradeInfo @model @auth(rules: [{allow: private}, {allow: owner}]) {
 
 type ScheduleGradeInfo @model @auth(rules: [{allow: private}, {allow: owner}]) {
   id: ID!
-  current_Grade: Int
-  task_Weightage: Int
-  overall_Percentage: Int
+  current_Grade: Float
+  task_Weightage: Float
+  overall_Percentage: Float
   extra_Info: String
   attended: Boolean
   Schedule: Schedule @belongsTo

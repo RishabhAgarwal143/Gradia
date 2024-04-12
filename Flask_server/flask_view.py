@@ -7,8 +7,7 @@ from database_queries import process_add_schedule,process_delete_schedule,proces
 from database_cleaner import check_database
 from Reading_Calendar import Subscribing_to_Calendar
 import markdown
-import multiprocessing
-import time
+from pprint import pp
 
 app = Flask(__name__, template_folder="templates")
 CORS(app)
@@ -63,7 +62,7 @@ def create_task():
 @app.route('/api/updateTask', methods=['POST'])
 def update_task():
     data = request.json 
-
+    pp(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/deleteTask', methods=['POST'])
@@ -127,4 +126,4 @@ if __name__ == '__main__':
     # background_process = multiprocessing.Process(target=check_database)
     # background_process.start()
     thread_info = {}
-    app.run(threaded = False, debug=True)
+    app.run(debug=True)

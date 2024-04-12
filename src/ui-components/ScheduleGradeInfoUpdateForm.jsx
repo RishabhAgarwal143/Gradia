@@ -460,9 +460,9 @@ export default function ScheduleGradeInfoUpdateForm(props) {
         step="any"
         value={current_Grade}
         onChange={(e) => {
-          let value = isNaN(parseInt(e.target.value))
+          let value = isNaN(parseFloat(e.target.value))
             ? e.target.value
-            : parseInt(e.target.value);
+            : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
               current_Grade: value,
@@ -493,9 +493,9 @@ export default function ScheduleGradeInfoUpdateForm(props) {
         step="any"
         value={task_Weightage}
         onChange={(e) => {
-          let value = isNaN(parseInt(e.target.value))
+          let value = isNaN(parseFloat(e.target.value))
             ? e.target.value
-            : parseInt(e.target.value);
+            : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
               current_Grade,
@@ -526,9 +526,9 @@ export default function ScheduleGradeInfoUpdateForm(props) {
         step="any"
         value={overall_Percentage}
         onChange={(e) => {
-          let value = isNaN(parseInt(e.target.value))
+          let value = isNaN(parseFloat(e.target.value))
             ? e.target.value
-            : parseInt(e.target.value);
+            : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
               current_Grade,

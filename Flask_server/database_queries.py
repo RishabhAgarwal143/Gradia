@@ -88,6 +88,8 @@ def process_delete_schedule(schedules):
 
 
 def parse_time(time_str):
+    if(not time_str):
+        return None
     try:
         # Try parsing with seconds
         time_object = datetime.datetime.strptime(time_str, "%H:%M:%S").time()
@@ -127,6 +129,7 @@ def process_add_task(tasks):
         task_grade_info = None
         if(task["TaskGradeInfo"]):
             info = task["TaskGradeInfo"]
+            print(info)
             task_grade_info = Task_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],time_taken= parse_time(info["time_Taken"]),task_id=task["id"])
             add_to_database(task_grade_info)
 

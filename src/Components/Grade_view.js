@@ -1,4 +1,8 @@
-import { listSubjects, list_tasks_grade_item } from "./support_func";
+import {
+  listSubjects,
+  list_tasks_grade_item,
+  update_grade_task,
+} from "./support_func";
 import React, { useState, useEffect } from "react";
 import "./gradeStyles.css";
 
@@ -27,9 +31,9 @@ function formatLocalTime(isoString) {
 const Sidebar = ({ subjects, onClick, onSearch }) => {
   return (
     <div className="sidebar">
-      <h2>
+      <h1>
         <b>Subjects</b>
-      </h2>
+      </h1>
       <input
         type="text"
         className="search-input"
@@ -58,7 +62,7 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
 
   const handleConfirm = () => {
     onStatusChange(selectedStatus);
-    onToggle(); // Close the dropdown after confirming
+    onToggle();
   };
 
   return (
@@ -95,8 +99,58 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
   );
 };
 
+const GradeBox = ({ grade, onStatusChange }) => {
+  const [selectedStatus, setSelectedStatus] = React.useState(grade);
+  const [change, setChange] = React.useState(false);
+
+  const handleConfirm = () => {
+    if (isNaN(selectedStatus)) {
+      setSelectedStatus(grade);
+    }
+    onStatusChange(selectedStatus);
+    setChange(false);
+  };
+
+  const onCancel = () => {
+    setSelectedStatus(grade);
+    setChange(false);
+  };
+
+  return (
+    <>
+      <input
+        type="number"
+        value={selectedStatus}
+        onChange={(e) => {
+          const newGrade = e.target.value;
+          if (newGrade < 0) {
+            setSelectedStatus(0);
+          } else {
+            setSelectedStatus(parseInt(newGrade, 10));
+          }
+          setChange(true);
+        }}
+      />
+      {change && (
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <button
+            style={{ color: "blue ", marginRight: "10px" }}
+            onClick={handleConfirm}
+          >
+            Confirm
+          </button>
+          <button style={{ color: "red" }} onClick={onCancel}>
+            Cancel
+          </button>
+        </div>
+      )}
+    </>
+  );
+};
+
 const SecondComponent = ({ subject, task }) => {
   const [selectedStatuses, setSelectedStatuses] = useState({});
+  const [trigger_refresh, setTrigger] = useState(false);
 
   let tasks = [];
   if (task && task.Tasks) {
@@ -153,6 +207,45 @@ const SecondComponent = ({ subject, task }) => {
     console.log(tasks[index]);
   };
 
+  const Refresh = () => {
+    if (trigger_refresh === false) {
+      setTrigger(true);
+    } else {
+      setTrigger(false);
+    }
+  };
+  const handleGradeChange = async (index, newGrade) => {
+    // tasks[index].current_Grade = newGrade;
+    tasks[index].current_Grade = newGrade;
+    let new_percentage = (newGrade * tasks[index].task_Weightage) / 100;
+    tasks[index].overall_Percentage = new_percentage;
+    Refresh();
+    const updatedValue = await update_grade_task(
+      tasks[index].taskTaskGradeInfoId,
+      tasks[index].id,
+      newGrade,
+      new_percentage,
+      tasks[index].task_Weightage
+    );
+    if (!tasks[index].taskTaskGradeInfoId) {
+      tasks[index].taskTaskGradeInfoId =
+        updatedValue.data.createTaskGradeInfo.id;
+    }
+    console.log(tasks[index]);
+  };
+
+  // const handleOverallChange = (index, newGrade) => {
+  //   tasks[index].overall_Percentage = newGrade;
+  //   Refresh();
+  // };
+
+  const handleTaskWeightageChange = (index, newGrade) => {
+    tasks[index].task_Weightage = newGrade;
+    let new_percentage = (newGrade * tasks[index].task_Weightage) / 100;
+    tasks[index].overall_Percentage = new_percentage;
+    Refresh();
+  };
+
   const toggleStatusDropdown = (index) => {
     setSelectedStatuses((prevStatuses) => ({
       ...prevStatuses,
@@ -184,7 +277,7 @@ const SecondComponent = ({ subject, task }) => {
               <tr key={index}>
                 <td style={{ width: "500px" }}>{task.SUMMARY}</td>
                 <td style={{ width: "300px" }}>{formatLocalTime(task.DUE)}</td>
-                <td style={{ width: "150px" }}>
+                <td style={{ width: "150px", textAlign: "center" }}>
                   <StatusDropdown
                     status={selectedStatuses[index] || task.STATUS}
                     onStatusChange={(newStatus) =>
@@ -194,11 +287,31 @@ const SecondComponent = ({ subject, task }) => {
                     onToggle={() => toggleStatusDropdown(index)}
                   />
                 </td>
-                <td style={{ width: "50px" }}> {task.current_Grade || 0} </td>
-                <td style={{ width: "50px" }}>
-                  {task.overall_Percentage || 0}
+                <td style={{ width: "50px", textAlign: "center" }}>
+                  <GradeBox
+                    grade={task.current_Grade || 0}
+                    onStatusChange={(newStatus) =>
+                      handleGradeChange(index, newStatus)
+                    }
+                  />
                 </td>
-                <td style={{ width: "50px" }}> {task.task_Weightage || 0} </td>
+                <td style={{ width: "50px", textAlign: "center" }}>
+                  {task.overall_Percentage || 0}
+                  {/* <GradeBox
+                    grade={task.overall_Percentage || 0}
+                    onStatusChange={(newStatus) =>
+                      handleOverallChange(index, newStatus)
+                    }
+                  /> */}
+                </td>
+                <td style={{ width: "50px", textAlign: "center" }}>
+                  <GradeBox
+                    grade={task.task_Weightage || 0}
+                    onStatusChange={(newStatus) =>
+                      handleTaskWeightageChange(index, newStatus)
+                    }
+                  />{" "}
+                </td>
               </tr>
             ))}
           </tbody>

@@ -660,9 +660,9 @@ export default function SubjectsUpdateForm(props) {
         step="any"
         value={current_Grade}
         onChange={(e) => {
-          let value = isNaN(parseInt(e.target.value))
+          let value = isNaN(parseFloat(e.target.value))
             ? e.target.value
-            : parseInt(e.target.value);
+            : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
               subject_Name,
@@ -693,9 +693,9 @@ export default function SubjectsUpdateForm(props) {
         step="any"
         value={target_Grade}
         onChange={(e) => {
-          let value = isNaN(parseInt(e.target.value))
+          let value = isNaN(parseFloat(e.target.value))
             ? e.target.value
-            : parseInt(e.target.value);
+            : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
               subject_Name,

@@ -389,3 +389,50 @@ export async function list_tasks_grade_item() {
 
   return items;
 }
+
+export async function update_grade_task(
+  taskgrade_id,
+  taskid,
+  current_Grade,
+  overall_Percentage,
+  task_Weightage,
+  total_subject_grade
+) {
+  let task_query;
+  if (taskgrade_id) {
+    task_query = mutations.updateTaskGradeInfo;
+  } else {
+    task_query = mutations.createTaskGradeInfo;
+  }
+  console.log(current_Grade, task_Weightage, overall_Percentage, taskid);
+  try {
+    const TaskGradeInfo = await client.graphql({
+      query: task_query,
+      variables: {
+        input: {
+          current_Grade: current_Grade,
+          task_Weightage: task_Weightage,
+          overall_Percentage: overall_Percentage,
+          taskGradeInfoTaskId: taskid,
+        },
+      },
+    });
+
+    if (!taskgrade_id) {
+      const updatedTask = await client.graphql({
+        query: mutations.updateTask,
+        variables: {
+          input: {
+            id: taskid,
+            taskTaskGradeInfoId: TaskGradeInfo.data.createTaskGradeInfo.id,
+          },
+        },
+      });
+      console.log(updatedTask);
+    }
+
+    return TaskGradeInfo;
+  } catch (error) {
+    console.error("Error fetching items:", error);
+  }
+}

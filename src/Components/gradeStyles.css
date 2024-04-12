@@ -25,6 +25,7 @@
 .table th {
   background-color: #f2f2f2;
   font-weight: bold;
+  text-align: center;
 }
 
 .table tr:nth-child(even) {
@@ -95,4 +96,11 @@ h2 {
 
 .subject-item:hover {
   background-color: #e0e0e0;
+}
+
+input[type="number"] {
+  width: 60px; /* Adjust the value as needed */
+  text-align: center;
+  background-color: #eee;
+  font-weight: bold;
 }

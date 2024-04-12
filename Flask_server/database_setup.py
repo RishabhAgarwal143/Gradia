@@ -34,7 +34,7 @@ class User(Base):
             session.commit()
             
     def get_timezone(self):
-        if(self.user_timezone):
+        if(not self.user_timezone):
             headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {self.access_Token}'
@@ -72,6 +72,7 @@ class Schedule(Base):
 
     def dict_representation(self) -> dict:
         temp_d = {}
+        temp_d["id"] = self.id
         temp_d["SUMMARY"] = self.SUMMARY
         temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["DTEND"] = self.DTEND.strftime('%Y-%m-%d %H:%M:%S')
@@ -125,6 +126,7 @@ class Task(Base):
 
     def dict_representation(self) -> dict:
         temp_d = {}
+        temp_d["id"] = self.id
         temp_d["SUMMARY"] = self.SUMMARY
         temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["DUE"] = self.DUE.strftime('%Y-%m-%d %H:%M:%S')

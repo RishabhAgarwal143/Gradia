@@ -52,7 +52,7 @@ const Sidebar = () => {
                 <span
                   className="inline-block w-1 h-6 mr-1 bg-blue-900"
                   style={{
-                    backgroundColor: getCategoryColor(schedule.LOCATION),
+                    backgroundColor: getCategoryColor(schedule.subjectsID),
                   }}
                 ></span>
                 {schedule.SUMMARY + ` `}
