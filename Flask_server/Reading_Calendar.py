@@ -8,21 +8,23 @@ import re
 
 import jwt
 
+
 def is_cognito_token_expired(access_token):
     try:
-        decoded_token = jwt.decode(access_token, verify=False)
+        decoded_token = jwt.decode(access_token, algorithms=["RS256"], options={"verify_signature": False})
         expiration_time = datetime.fromtimestamp(decoded_token["exp"])
         current_time = datetime.now()
         if current_time > expiration_time:
+            print("Invalid access token.")
             return True  # Token has expired
         else:
+            print("Valid Token")
             return False  # Token is still valid
     except jwt.ExpiredSignatureError:
         return True
     except jwt.InvalidTokenError:
         print("Invalid access token.")
         return True
-
 
 
 class Subscribing_to_Calendar:
@@ -72,7 +74,7 @@ class Subscribing_to_Calendar:
         listofurl = (returneditems["data"]["listSubscribedCalendars"]["items"])
         add_to_database = True
         for i in listofurl:
-            print(i['Calendar_URL'])
+            # print(i['Calendar_URL'])
             if(self.calendar_URL in i['Calendar_URL']):
                 self.calendar_id = i['id']
                 return
@@ -109,15 +111,15 @@ class Subscribing_to_Calendar:
             'Authorization': 'Bearer %s' % self.token
         }
         nextToken = "null"
+        uid_list = []
+        dtstamp_list = []
+        id_list = []
         while True:
             payload = "{\"query\":\"query ListSchedules {\\r\\n    listSchedules(nextToken: %s) {\\r\\n        nextToken\\r\\n        items {\\r\\n            id\\r\\n            UID\\r\\n            DTSTAMP\\r\\n        }\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" % (nextToken)        
             response2 = requests.request("POST", url, headers=headers, data=payload)
             returneditems =(json.loads(response2.text))
             nextToken = returneditems["data"]["listSchedules"]["nextToken"]
             returneditems = returneditems["data"]["listSchedules"]["items"]
-            uid_list = []
-            dtstamp_list = []
-            id_list = []
             for i in returneditems:
                 uid_list.append(i["UID"])
                 id_list.append(i["id"])
@@ -154,11 +156,12 @@ class Subscribing_to_Calendar:
         
         url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
         listofuid,listofstamps,listofid,task_separator = self.get_current_schedules()
+        print(len(listofuid))
 
         for event in self.calendar.walk('VEVENT'):
-
+            # print((event.get('UID')) )
             if(str(event.get('UID')) in listofuid):
-                if (listofstamps[listofuid.index(event.get('UID'))] and event.get('LAST-MODIFIED') and event.get('LAST-MODIFIED').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z") != listofstamps[listofuid.index(event.get('UID'))]):
+                if (listofstamps[listofuid.index(event.get('UID'))] and event.get('LAST-MODIFIED') and (event.get('LAST-MODIFIED').dt.strftime("%Y-%m-%dT%H:%M:%S.000Z") != listofstamps[listofuid.index(event.get('UID'))])):
                     if(listofuid.index(event.get('UID')) < task_separator):
                         payload = "{\"query\":\"mutation DeleteSchedule {\\r\\n    deleteSchedule(input: { id: \\\"%s\\\" }) {\\r\\n        id\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" % str(listofid[listofuid.index(event.get('UID'))])
                     else:
@@ -175,7 +178,7 @@ class Subscribing_to_Calendar:
                 else:
                     continue
 
-            uid = event.get('UID')
+            uid = str(event.get('UID'))
             userinfoId = self.userinfoid
             if(self.category != "null"):
                 categories = r"\"%s\"" % self.category
@@ -219,7 +222,6 @@ class Subscribing_to_Calendar:
             subject_id = "null"
             if(subject):
                 subject = subject.pop()
-                print(subject)
                 if(subject not in self.subjects_dict):
                     payload = "{\"query\":\"mutation CreateSubjects {\\r\\n    createSubjects(input: { subject_Name: \\\"%s\\\", userinfoID: \\\"%s\\\"}) {\\r\\n        id\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %(subject,self.userinfoid)
                     headers = {
@@ -386,7 +388,7 @@ class Subscribing_to_Calendar:
 
 
 if __name__ == '__main__':
-    Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjJlNGRkZjBmLWE3MmUtNDI5Ni04ZGZmLTBkNTM3Mzk0Y2U1ZiIsImV2ZW50X2lkIjoiN2EzOWI2Y2EtZGUzMi00MWE4LTgzNDgtMDkxNmI1NTc1NjAxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcxMTY4OTEzMSwiZXhwIjoxNzEyMDA3NzM3LCJpYXQiOjE3MTIwMDQxMzcsImp0aSI6IjUzNGMwNzIwLTU1MmYtNDc2OC05ODUyLTkwNjQ1M2E0NzFiYiIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.CtGEbMJKne3JcJQrV2i3hHKAJlH_y5S6xt9D-0KFrDGfy5BE4wxnjISCo-adFZKJ_nbYS5xSIawC7QpwLCUq0O4vdZqWfqnt2tw9YYNAHu86tZyX9hc8v4I4SJsYvr-7TZCS1_7JMJGoyiBkb9F0yTZ75_9q0FbhApTgobHHHCK_kJiX9PCEF_Z2639dTlDy0gmjcXuE4uuS6SUXPLXCRLIXUIMCLbyN3wjSSUO_M8ZSzLFnqIH4WLL90yc31H6ezO_zseoHqgu9aKIA7Iv8-mhp-NIEb1ev42c3IxZsp7ZXkb7bDlybIsT7SqmUvWaRFJR7d847wojV04BqxycvZw'
+    Token = 'eyJraWQiOiJPaHZUYWE3eWhGcnE5OWE5SXd1T1wvNzVGa3VrVDlPSlRzeDBxVmZxQVRUND0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI4MmNmNDQ4ZC1mYzE2LTQwOWMtODJlOS0zMzA0ZDkzN2Y4NDAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9qQnZQVFo4U3IiLCJjbGllbnRfaWQiOiJnb2I1YnQxMGJua2Z1MW52anJzcHBqYmM0Iiwib3JpZ2luX2p0aSI6IjAxYjk0NmM2LTIyOTQtNGNjYy04OThhLTZmZjQ0MTU4YTFiZiIsImV2ZW50X2lkIjoiZGZjMThiZmEtOWViYi00OGVkLWJlMzUtOTI5YjIxOWNhMTA2IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTcxMjgwNDgzNCwiZXhwIjoxNzEyOTA0MTA1LCJpYXQiOjE3MTI5MDA1MDUsImp0aSI6ImEyMzAxZjE1LWQ4MzQtNDAyNi1hMWRhLWYwN2RiZTVmYTcyZiIsInVzZXJuYW1lIjoiODJjZjQ0OGQtZmMxNi00MDljLTgyZTktMzMwNGQ5MzdmODQwIn0.CruRr4-lC6FOUxwZq0xFuf2tYlHVbviF5hn5Wmst9-mhRU2FP5Y4T1YDunObG4MVkP-FA6hvfWqFT76IVBHinsBoVFqR8YUTgOR9MYfGWBW8E4n0xxwAgXh11wJTcwnD4UerbGo_THHRO0QQT8TIkx1qebnZ-yON3QVbOw9BIaPtSrD9b_C6Spt64_F3DihvdvuhrkBQYl7Hx5t9HdAvtD_Ir-b57HS3DMgE-oogkqw0afNfoGxAoC2I67O8j4vw7Q-JXgbvxe0MrADWRVv8tcBroWqzOto_Hc2gdiuE1e51a6LyzKlPjeb8G7CLG7JDG0Rzz1pWUBqhfAxSbCNW9A'
     y = Subscribing_to_Calendar("https://timetable.mypurdue.purdue.edu/Timetabling/export?x=5bqkz1gwruqbr0xfcgr2ks4gdlsnnf4u4",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Purdue TimeTable")
     x = Subscribing_to_Calendar("https://purdue.brightspace.com/d2l/le/calendar/feed/user/feed.ics?token=abm22pjnrmcaxnps38b1d",Token,"82cf448d-fc16-409c-82e9-3304d937f840","Assignments List")
     # print(y.calendar_id)

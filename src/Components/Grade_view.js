@@ -214,6 +214,7 @@ const SecondComponent = ({ subject, task }) => {
       setTrigger(false);
     }
   };
+
   const handleGradeChange = async (index, newGrade) => {
     // tasks[index].current_Grade = newGrade;
     tasks[index].current_Grade = newGrade;
@@ -234,16 +235,26 @@ const SecondComponent = ({ subject, task }) => {
     console.log(tasks[index]);
   };
 
-  // const handleOverallChange = (index, newGrade) => {
-  //   tasks[index].overall_Percentage = newGrade;
-  //   Refresh();
-  // };
-
-  const handleTaskWeightageChange = (index, newGrade) => {
+  const handleTaskWeightageChange = async (index, newGrade) => {
     tasks[index].task_Weightage = newGrade;
-    let new_percentage = (newGrade * tasks[index].task_Weightage) / 100;
+    if (!tasks[index].current_Grade) {
+      tasks[index].current_Grade = 0;
+    }
+    let new_percentage = (newGrade * tasks[index].current_Grade) / 100;
     tasks[index].overall_Percentage = new_percentage;
     Refresh();
+    const updatedValue = await update_grade_task(
+      tasks[index].taskTaskGradeInfoId,
+      tasks[index].id,
+      newGrade,
+      new_percentage,
+      tasks[index].task_Weightage
+    );
+    if (!tasks[index].taskTaskGradeInfoId) {
+      tasks[index].taskTaskGradeInfoId =
+        updatedValue.data.createTaskGradeInfo.id;
+    }
+    console.log(tasks[index]);
   };
 
   const toggleStatusDropdown = (index) => {
@@ -297,12 +308,6 @@ const SecondComponent = ({ subject, task }) => {
                 </td>
                 <td style={{ width: "50px", textAlign: "center" }}>
                   {task.overall_Percentage || 0}
-                  {/* <GradeBox
-                    grade={task.overall_Percentage || 0}
-                    onStatusChange={(newStatus) =>
-                      handleOverallChange(index, newStatus)
-                    }
-                  /> */}
                 </td>
                 <td style={{ width: "50px", textAlign: "center" }}>
                   <GradeBox

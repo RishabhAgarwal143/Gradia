@@ -13,11 +13,10 @@ session = Session()
 
 def check_if_object_exists(obj):
     try:
-        # Query the database to find the object
-        existing_object = session.query(type(obj)).filter_by(id=obj.id).one()
+        session.query(type(obj)).filter_by(id=obj.id).one()
         return True  
     except NoResultFound:
-        return False  # Object does not exist
+        return False
 
 
 def add_to_database(obj):
@@ -37,7 +36,6 @@ def add_to_database(obj):
 
 
 def delete_from_database(obj_class, filter_attr, filter_value):
-    """Delete an object from the database."""
     obj_to_delete = session.query(obj_class).filter(getattr(obj_class, filter_attr) == filter_value).first()
     if obj_to_delete:
         session.delete(obj_to_delete)
@@ -75,7 +73,6 @@ def process_add_schedule(schedules):
             schedule_grade_info = Schedule_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],attended= info["attended"],schedule_id=schedule["id"])
             add_to_database(schedule_grade_info)
         new_schedule = Schedule(id=schedule["id"], SUMMARY=schedule["title"], DTSTART=startTime, DTEND=endTime,DESCRIPTION=schedule["description"], LOCATION=schedule["location"],userinfoID= schedule["userinfoID"],subjectsID=schedule["subject_id"],schedule_grade=schedule_grade_info)
-        # print(new_schedule)
         add_to_database(new_schedule)
     pass
 
@@ -91,10 +88,8 @@ def parse_time(time_str):
     if(not time_str):
         return None
     try:
-        # Try parsing with seconds
         time_object = datetime.datetime.strptime(time_str, "%H:%M:%S").time()
     except ValueError:
-        # If parsing with seconds fails, try parsing without seconds
         time_object = datetime.datetime.strptime(time_str, "%H:%M").time()
     return time_object
 
@@ -144,6 +139,10 @@ def process_delete_task(tasks):
     delete_from_database(Task,"id",task["id"])
     pass
 
+def process_update_task(tasks):
+    task = tasks['onUpdateTask']
+    delete_from_database(Task,"id",task["id"])
+    process_add_task([task])
 
 def process_add_subject(subjects):
 
@@ -170,7 +169,7 @@ def process_delete_subject(subjects):
 def get_schedule_range(userinfo_id, start_date, end_date):
     schedules = session.query(Schedule).\
     filter(Schedule.userinfoID == userinfo_id).\
-    filter(Schedule.DTSTART >= start_date, Schedule.DTEND <= end_date).\
+    filter(Schedule.DTEND >= start_date, Schedule.DTSTART <= end_date).\
     all()
     for schedule in schedules:
         print(schedule)
@@ -221,8 +220,4 @@ def get_user_info(userinfoID):
     
     user = session.query(User).filter_by(userinfoID=userinfoID).first()
     return user
-# get_subject()``
 
-# new_subject = Subjects(id="1", subject_Name="Math", current_Grade=85, target_Grade=90)
-# add_to_database(new_subject)
-# add_to_database(new_schedule)

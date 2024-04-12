@@ -3,7 +3,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CalendarStyle.css";
-import { list_schedule_item } from "./support_func";
+import { cognito_Id, list_schedule_item, access_Token } from "./support_func";
 import AddEventModal from "./AddEventModal";
 import addIcon from "../icons/add.svg";
 import Sidebar from "./Sidebar";
@@ -13,6 +13,7 @@ import ConfirmAddModal from "./ConfirmAddEvent";
 import { create_user, create_schedule, deleteSchedule } from "./support_func";
 import Chatbot from "./Chatbot";
 import axios from "axios";
+
 const localizer = momentLocalizer(moment);
 const create_temp = create_user();
 const MyCalendar = () => {
@@ -225,6 +226,8 @@ const MyCalendar = () => {
       .post("http://127.0.0.1:5000/Subscribe", {
         calendar_url: subscribe_url,
         calendar_name: subscribe_name,
+        userId: cognito_Id,
+        Token: access_Token,
       })
       .then((response) => {
         // Handle success

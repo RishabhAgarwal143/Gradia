@@ -3,9 +3,11 @@ from flask_cors import CORS
 from chatbot_api import openai_manager
 # from api_calls import initialize_payload_user
 # from api_calls import set_schedules, add_schedule_to_payload_schedules, delete_schedule_from_payload_schedules
-from database_queries import process_add_schedule,process_delete_schedule,process_add_task,process_delete_task,process_add_subject,add_user_info
+from database_queries import process_add_schedule,process_delete_schedule,process_update_task
+from database_queries import process_add_task,process_delete_task,process_add_subject,add_user_info
 from database_cleaner import check_database
 from Reading_Calendar import Subscribing_to_Calendar
+import multiprocessing
 import markdown
 from pprint import pp
 
@@ -63,6 +65,7 @@ def create_task():
 def update_task():
     data = request.json 
     pp(data)
+    process_update_task(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/deleteTask', methods=['POST'])
@@ -110,6 +113,7 @@ def chat():
         thread_info[userID] = openai_manager(userID)
     response,outputs =thread_info[userID].sendcall(user_message)
     response = markdown.markdown(response)
+    print(response,outputs)
     return jsonify({'bot_response': response,'events_to_be_managed' : outputs })
 
 @app.route('/Subscribe',methods=['POST'])
@@ -117,13 +121,16 @@ def subscribe_cal():
     data = request.json
     # url = data["URL"]
     # print(data)
-    calendar = Subscribing_to_Calendar(data["calendar_url"],info.Token,info.userID,data["calendar_name"])
-    calendar.add_record_to_database()
+    userID = data["userId"]
+    Token = data["Token"]
+    print(Token)
+    calendar = Subscribing_to_Calendar(data["calendar_url"],Token,userID,data["calendar_name"])
+    # calendar.add_record_to_database()
     return jsonify({'message' : 'Subscribed Successfully'})
 
 if __name__ == '__main__':
     global info
-    # background_process = multiprocessing.Process(target=check_database)
-    # background_process.start()
+    background_process = multiprocessing.Process(target=check_database)
+    background_process.start()
     thread_info = {}
-    app.run(debug=True)
+    app.run(threaded = False,debug=True)

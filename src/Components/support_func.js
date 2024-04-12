@@ -9,6 +9,7 @@ import { fetchUserAttributes } from "aws-amplify/auth";
 import axios from "axios";
 
 export var cognito_Id;
+export var access_Token;
 var CurrentUsersEmail;
 export async function currentAuthenticatedUser() {
   try {
@@ -16,6 +17,7 @@ export async function currentAuthenticatedUser() {
     const { accessToken } = (await fetchAuthSession()).tokens ?? {};
 
     cognito_Id = userId;
+    access_Token = `${accessToken}`;
 
     // console.log(`The username: ${username}`);
     console.log(`The userId: ${cognito_Id}`);
@@ -399,14 +401,24 @@ export async function update_grade_task(
   total_subject_grade
 ) {
   let task_query;
+  let TaskGradeInfo;
   if (taskgrade_id) {
     task_query = mutations.updateTaskGradeInfo;
+    TaskGradeInfo = await client.graphql({
+      query: task_query,
+      variables: {
+        input: {
+          id: taskgrade_id,
+          current_Grade: current_Grade,
+          task_Weightage: task_Weightage,
+          overall_Percentage: overall_Percentage,
+          taskGradeInfoTaskId: taskid,
+        },
+      },
+    });
   } else {
     task_query = mutations.createTaskGradeInfo;
-  }
-  console.log(current_Grade, task_Weightage, overall_Percentage, taskid);
-  try {
-    const TaskGradeInfo = await client.graphql({
+    TaskGradeInfo = await client.graphql({
       query: task_query,
       variables: {
         input: {
@@ -417,7 +429,9 @@ export async function update_grade_task(
         },
       },
     });
-
+  }
+  console.log(current_Grade, task_Weightage, overall_Percentage, taskid);
+  try {
     if (!taskgrade_id) {
       const updatedTask = await client.graphql({
         query: mutations.updateTask,

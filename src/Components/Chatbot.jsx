@@ -49,10 +49,17 @@ const Chatbot = ({ onAddgptevent }) => {
             data.events_to_be_managed[1]["DTEND"] = new Date(
               data.events_to_be_managed[1]["DTEND"]
             );
+
             onAddgptevent(
               data.events_to_be_managed[1],
               data.events_to_be_managed[0]
             );
+            // if (data.events_to_be_managed[2]) {
+            //   onAddgptevent(
+            //     data.events_to_be_managed[2][0],
+            //     data.events_to_be_managed["DELETED"]
+            //   );
+            // }
           } else if (data.events_to_be_managed[0] === "DELETED") {
             for (let i = 0; i < data.events_to_be_managed[1].length; i++) {
               data.events_to_be_managed[1][i]["DTSTART"] = new Date(
