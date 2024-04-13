@@ -43,15 +43,15 @@ This project combines a React frontend with a Flask backend to create a dynamic 
    ```
 
 Frontend Dependencies
-@aws-amplify/ui-react: UI components for building authentication flows in React applications.
-@syncfusion/ej2-react-schedule: React wrapper for Syncfusion's Essential JS 2 Scheduler component.
-axios: Promise-based HTTP client for making requests to external APIs.
-luxon: Library for working with dates and times in JavaScript.
-moment: Library for parsing, validating, manipulating, and formatting dates.
-openai: SDK for interfacing with the OpenAI GPT-3 API.
-react: JavaScript library for building user interfaces.
-react-big-calendar: React component for displaying a calendar with events.
-react-confirm-alert: Library for creating confirmation dialogs in React applications.
+- @aws-amplify/ui-react: UI components for building authentication flows in React applications.
+- @syncfusion/ej2-react-schedule: React wrapper for Syncfusion's Essential JS 2 Scheduler component.
+- axios: Promise-based HTTP client for making requests to external APIs.
+- luxon: Library for working with dates and times in JavaScript.
+- moment: Library for parsing, validating, manipulating, and formatting dates.
+- openai: SDK for interfacing with the OpenAI GPT-3 API.
+- react: JavaScript library for building user interfaces.
+- react-big-calendar: React component for displaying a calendar with events.
+- react-confirm-alert: Library for creating confirmation dialogs in React applications.
 react-dom: Entry point to the React DOM library for web applications.
 react-modal: Accessible modal dialog component for React applications.
 react-scripts: Configuration and scripts for Create React App.
