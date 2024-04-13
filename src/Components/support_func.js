@@ -182,6 +182,23 @@ export async function subscribedScedule() {
     });
   // console.log(UpdateSub);
 
+  const UpdateTaskGrade = client
+    .graphql({ query: subscriptions.onUpdateTaskGradeInfo })
+    .subscribe({
+      next: ({ data }) => {
+        axios
+          .post("http://127.0.0.1:5000/api/updatetaskGrade", data)
+          .then((response) => {
+            console.log("Data sent successfully:");
+          })
+          .catch((error) => {
+            console.error("Error sending data:", error);
+          });
+        console.log(data);
+      },
+      error: (error) => console.warn(error),
+    });
+
   const DeleteSub = client
     .graphql({ query: subscriptions.onDeleteSchedule })
     .subscribe({

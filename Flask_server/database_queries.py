@@ -159,6 +159,13 @@ def process_add_subject(subjects):
     pass
 
 
+def process_update_taskGrade(tasks):
+    info = tasks['onUpdateTaskGradeInfo']
+    delete_from_database(Task_grade_info,"id",info["id"])
+    task_grade_info = Task_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],time_taken= parse_time(info["time_Taken"]),task_id=info["taskGradeInfoTaskId"])
+    add_to_database(task_grade_info)
+    pass
+
 def process_delete_subject(subjects):
     
     subject = subjects['onDeleteSubjects']
