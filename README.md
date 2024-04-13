@@ -42,7 +42,7 @@ This project combines a React frontend with a Flask backend to create a dynamic 
    pip install -r requirements.txt
    ```
 
-Frontend Dependencies
+### Frontend Dependencies
 - @aws-amplify/ui-react: UI components for building authentication flows in React applications.
 - @syncfusion/ej2-react-schedule: React wrapper for Syncfusion's Essential JS 2 Scheduler component.
 - axios: Promise-based HTTP client for making requests to external APIs.
@@ -52,26 +52,26 @@ Frontend Dependencies
 - react: JavaScript library for building user interfaces.
 - react-big-calendar: React component for displaying a calendar with events.
 - react-confirm-alert: Library for creating confirmation dialogs in React applications.
-react-dom: Entry point to the React DOM library for web applications.
-react-modal: Accessible modal dialog component for React applications.
-react-scripts: Configuration and scripts for Create React App.
-rrule: Library for working with recurrence rules for calendar events.
-Backend Dependencies
-flask: Micro web framework for Python.
-flask-cors: Flask extension for handling Cross-Origin Resource Sharing (CORS).
-markdown: Python implementation of Markdown.
-multiprocessing: Package for spawning processes using an API similar to the threading module.
-requests: HTTP library for making requests in Python.
-Scripts
-start: Starts the React frontend development server.
-build: Builds the React application for production deployment.
-test: Runs tests for the React application.
-eject: Removes Create React App build dependency.
-flask_server: Starts the Flask backend server.
-coverage: Runs tests with coverage report.
-all: Runs both frontend and backend servers concurrently.
-Contributing
+- react-dom: Entry point to the React DOM library for web applications.
+- react-modal: Accessible modal dialog component for React applications.
+- react-scripts: Configuration and scripts for Create React App.
+- rrule: Library for working with recurrence rules for calendar events.
+### Backend Dependencies
+- flask: Micro web framework for Python.
+- flask-cors: Flask extension for handling Cross-Origin Resource Sharing (CORS).
+- markdown: Python implementation of Markdown.
+- multiprocessing: Package for spawning processes using an API similar to the threading module.
+- requests: HTTP library for making requests in Python.
+### Scripts
+- start: Starts the React frontend development server.
+- build: Builds the React application for production deployment.
+- test: Runs tests for the React application.
+- eject: Removes Create React App build dependency.
+- flask_server: Starts the Flask backend server.
+- coverage: Runs tests with coverage report.
+- all: Runs both frontend and backend servers concurrently.
+### Contributing
 Contributions are welcome! If you have suggestions, enhancements, or bug fixes, please open an issue or create a pull request.
 
-License
+### License
 This project is licensed under the MIT License - see the LICENSE file for details.
