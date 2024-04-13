@@ -25,7 +25,7 @@ This project combines a React frontend with a Flask backend to create a dynamic 
 1. Clone the repository:
 
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/RishabhAgarwal143/Gradia.git
    ```
 Navigate to the project directory:
 
