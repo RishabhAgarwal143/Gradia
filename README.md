@@ -30,7 +30,7 @@ This project combines a React frontend with a Flask backend to create a dynamic 
 2. Navigate to the project directory:
 
    ```bash
-   cd react-calendar-app
+   cd Gradia
    ```
 3. Install frontend dependencies:
    ```bash
