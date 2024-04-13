@@ -29,18 +29,18 @@ This project combines a React frontend with a Flask backend to create a dynamic 
    ```
 2. Navigate to the project directory:
 
-```bash
-cd react-calendar-app
-```
+   ```bash
+   cd react-calendar-app
+   ```
 3. Install frontend dependencies:
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 4. Install backend dependencies:
 
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 Frontend Dependencies
 @aws-amplify/ui-react: UI components for building authentication flows in React applications.
