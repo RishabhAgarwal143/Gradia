@@ -1,74 +1,87 @@
-# Getting Started with Create React App
+# Gradia
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+Gradia combines a React frontend with a Flask backend to create a dynamic calendar application. The frontend allows users to manage events and tasks, while the backend handles data storage, retrieval, and external calendar subscriptions.
 
-In the project directory, you can run:
+## Features
 
-### `npm i`
+### Frontend (React)
 
-### `amplify pull`
+- **Event Management**: Users can add, view, and delete events on the calendar.
+- **Recurrence Rules**: Supports recurring events using the RRule library.
+- **Subscription**: Users can subscribe to external calendars by providing a URL and a name for the calendar.
+- **Chatbot Integration**: Includes a chatbot feature for interacting with users and adding events based on chat input.
 
-### `npm start`
+### Backend (Flask)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Data Handling**: Receives and processes data from the frontend, including user information, events, tasks, and calendar subscriptions.
+- **Database Interaction**: Interfaces with a database to store and retrieve user data, events, tasks, and subscriptions.
+- **Chatbot Management**: Manages chatbot instances for each user session, handling user interactions and generating responses.
+- **External Calendar Subscription**: Facilitates the subscription to external calendars and stores subscription information in the database.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+1. Clone the repository:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   ```bash
+   git clone https://github.com/RishabhAgarwal143/Gradia.git
+   ```
 
-### `npm run build`
+2. Navigate to the project directory:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```bash
+   cd Gradia
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Install frontend dependencies:
+   ```bash
+   npm install
+   ```
+4. Install backend dependencies:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### `npm run eject`
+### Frontend Dependencies
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- @aws-amplify/ui-react: UI components for building authentication flows in React applications.
+- @syncfusion/ej2-react-schedule: React wrapper for Syncfusion's Essential JS 2 Scheduler component.
+- axios: Promise-based HTTP client for making requests to external APIs.
+- luxon: Library for working with dates and times in JavaScript.
+- moment: Library for parsing, validating, manipulating, and formatting dates.
+- openai: SDK for interfacing with the OpenAI GPT-3 API.
+- react: JavaScript library for building user interfaces.
+- react-big-calendar: React component for displaying a calendar with events.
+- react-confirm-alert: Library for creating confirmation dialogs in React applications.
+- react-dom: Entry point to the React DOM library for web applications.
+- react-modal: Accessible modal dialog component for React applications.
+- react-scripts: Configuration and scripts for Create React App.
+- rrule: Library for working with recurrence rules for calendar events.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Backend Dependencies
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- flask: Micro web framework for Python.
+- flask-cors: Flask extension for handling Cross-Origin Resource Sharing (CORS).
+- markdown: Python implementation of Markdown.
+- multiprocessing: Package for spawning processes using an API similar to the threading module.
+- requests: HTTP library for making requests in Python.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Scripts
 
-## Learn More
+- start: Starts the React frontend development server.
+- build: Builds the React application for production deployment.
+- test: Runs tests for the React application.
+- eject: Removes Create React App build dependency.
+- flask_server: Starts the Flask backend server.
+- coverage: Runs tests with coverage report.
+- all: Runs both frontend and backend servers concurrently.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Contributing
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Contributions are welcome! If you have suggestions, enhancements, or bug fixes, please open an issue or create a pull request.
 
-### Code Splitting
+### License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is licensed under the MIT License - see the LICENSE file for details.
