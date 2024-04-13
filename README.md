@@ -27,16 +27,16 @@ This project combines a React frontend with a Flask backend to create a dynamic 
    ```bash
    git clone https://github.com/RishabhAgarwal143/Gradia.git
    ```
-Navigate to the project directory:
+2. Navigate to the project directory:
 
 ```bash
 cd react-calendar-app
 ```
-Install frontend dependencies:
+3. Install frontend dependencies:
 ```bash
 npm install
 ```
-Install backend dependencies:
+4. Install backend dependencies:
 
 ```bash
 pip install -r requirements.txt
