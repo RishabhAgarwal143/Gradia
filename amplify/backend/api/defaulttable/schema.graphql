@@ -1,3 +1,21 @@
+type UserWorkTim @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  Monday_start: AWSTime
+  Monday_end: AWSTime
+  Tuesday_start: AWSTime
+  Tuesday_end: AWSTime
+  Wednesday_start: AWSTime
+  Wednesday_end: AWSTime
+  Thurday_start: AWSTime
+  Thurday_end: AWSTime
+  Friday_start: AWSTime
+  Friday_end: AWSTime
+  Saturday_start: AWSTime
+  Saturday_end: AWSTime
+  Sunday_start: AWSTime
+  Sunday_end: AWSTime
+}
+
 enum StatusValues {
   NEEDS_ACTION
   COMPLETED
@@ -13,6 +31,7 @@ type Subjects @model @auth(rules: [{allow: private}, {allow: owner}]) {
   Tasks: [Task] @hasMany(indexName: "bySubjects", fields: ["id"])
   Schedules: [Schedule] @hasMany(indexName: "bySubjects", fields: ["id"])
   userinfoID: ID! @index(name: "byUserinfo")
+  subject_Difficulty: Int
 }
 
 type TaskGradeInfo @model @auth(rules: [{allow: private}, {allow: owner}]) {
@@ -71,6 +90,7 @@ type Userinfo @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Adm
   Tasks: [SubscribedCalendar] @hasMany(indexName: "byUserinfo", fields: ["id"])
   SubscribedCalendars: [SubscribedCalendar] @hasMany(indexName: "byUserinfo", fields: ["id"])
   Subjects: [Subjects] @hasMany(indexName: "byUserinfo", fields: ["id"])
+  UserWorkTim: UserWorkTim @hasOne
 }
 
 type Schedule @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"], operations: [create, read, update, delete]}, {allow: public}]) {

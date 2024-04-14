@@ -201,6 +201,7 @@ export default function SubjectsCreateForm(props) {
     Tasks: [],
     Schedules: [],
     userinfoID: undefined,
+    subject_Difficulty: "",
   };
   const [subject_Name, setSubject_Name] = React.useState(
     initialValues.subject_Name
@@ -222,6 +223,9 @@ export default function SubjectsCreateForm(props) {
   const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
   const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
     React.useState([]);
+  const [subject_Difficulty, setSubject_Difficulty] = React.useState(
+    initialValues.subject_Difficulty
+  );
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -237,6 +241,7 @@ export default function SubjectsCreateForm(props) {
     setUserinfoID(initialValues.userinfoID);
     setCurrentUserinfoIDValue(undefined);
     setCurrentUserinfoIDDisplayValue("");
+    setSubject_Difficulty(initialValues.subject_Difficulty);
     setErrors({});
   };
   const [currentTasksDisplayValue, setCurrentTasksDisplayValue] =
@@ -279,6 +284,7 @@ export default function SubjectsCreateForm(props) {
     Tasks: [],
     Schedules: [],
     userinfoID: [{ type: "Required" }],
+    subject_Difficulty: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -402,6 +408,7 @@ export default function SubjectsCreateForm(props) {
           Tasks,
           Schedules,
           userinfoID,
+          subject_Difficulty,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -444,6 +451,7 @@ export default function SubjectsCreateForm(props) {
             current_Grade: modelFields.current_Grade,
             target_Grade: modelFields.target_Grade,
             userinfoID: modelFields.userinfoID,
+            subject_Difficulty: modelFields.subject_Difficulty,
           };
           const subjects = (
             await client.graphql({
@@ -520,6 +528,7 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules,
               userinfoID,
+              subject_Difficulty,
             };
             const result = onChange(modelFields);
             value = result?.subject_Name ?? value;
@@ -553,6 +562,7 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules,
               userinfoID,
+              subject_Difficulty,
             };
             const result = onChange(modelFields);
             value = result?.current_Grade ?? value;
@@ -586,6 +596,7 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules,
               userinfoID,
+              subject_Difficulty,
             };
             const result = onChange(modelFields);
             value = result?.target_Grade ?? value;
@@ -611,6 +622,7 @@ export default function SubjectsCreateForm(props) {
               Tasks: values,
               Schedules,
               userinfoID,
+              subject_Difficulty,
             };
             const result = onChange(modelFields);
             values = result?.Tasks ?? values;
@@ -692,6 +704,7 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules: values,
               userinfoID,
+              subject_Difficulty,
             };
             const result = onChange(modelFields);
             values = result?.Schedules ?? values;
@@ -776,6 +789,7 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules,
               userinfoID: value,
+              subject_Difficulty,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -860,6 +874,42 @@ export default function SubjectsCreateForm(props) {
           {...getOverrideProps(overrides, "userinfoID")}
         ></Autocomplete>
       </ArrayField>
+      <TextField
+        label="Subject difficulty"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={subject_Difficulty}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              subject_Name,
+              current_Grade,
+              target_Grade,
+              Tasks,
+              Schedules,
+              userinfoID,
+              subject_Difficulty: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.subject_Difficulty ?? value;
+          }
+          if (errors.subject_Difficulty?.hasError) {
+            runValidationTasks("subject_Difficulty", value);
+          }
+          setSubject_Difficulty(value);
+        }}
+        onBlur={() =>
+          runValidationTasks("subject_Difficulty", subject_Difficulty)
+        }
+        errorMessage={errors.subject_Difficulty?.errorMessage}
+        hasError={errors.subject_Difficulty?.hasError}
+        {...getOverrideProps(overrides, "subject_Difficulty")}
+      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

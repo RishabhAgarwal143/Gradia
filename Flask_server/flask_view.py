@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from chatbot_api import openai_manager
-# from api_calls import initialize_payload_user
-# from api_calls import set_schedules, add_schedule_to_payload_schedules, delete_schedule_from_payload_schedules
 from database_queries import process_add_schedule,process_delete_schedule,process_update_task,process_update_taskGrade
 from database_queries import process_add_task,process_delete_task,process_add_subject,add_user_info
 from database_cleaner import check_database
@@ -64,14 +62,14 @@ def create_task():
 @app.route('/api/updateTask', methods=['POST'])
 def update_task():
     data = request.json 
-    pp(data)
+
     process_update_task(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/updatetaskGrade', methods=['POST'])
 def update_taskGrade():
     data = request.json 
-    pp(data)
+
     process_update_taskGrade(data)
     return jsonify({'message': 'Data received successfully'})
 
@@ -87,7 +85,6 @@ def delete_task():
 def receive_schedule():
 
     data = request.json
-    print(len(data))
 
     process_add_schedule(data)
             
@@ -130,7 +127,6 @@ def subscribe_cal():
     # print(data)
     userID = data["userId"]
     Token = data["Token"]
-    print(Token)
     calendar = Subscribing_to_Calendar(data["calendar_url"],Token,userID,data["calendar_name"])
     # calendar.add_record_to_database()
     return jsonify({'message' : 'Subscribed Successfully'})

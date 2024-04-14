@@ -1,6 +1,62 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getUserWorkTim = /* GraphQL */ `
+  query GetUserWorkTim($id: ID!) {
+    getUserWorkTim(id: $id) {
+      id
+      Monday_start
+      Monday_end
+      Tuesday_start
+      Tuesday_end
+      Wednesday_start
+      Wednesday_end
+      Thurday_start
+      Thurday_end
+      Friday_start
+      Friday_end
+      Saturday_start
+      Saturday_end
+      Sunday_start
+      Sunday_end
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listUserWorkTims = /* GraphQL */ `
+  query ListUserWorkTims(
+    $filter: ModelUserWorkTimFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUserWorkTims(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        Monday_start
+        Monday_end
+        Tuesday_start
+        Tuesday_end
+        Wednesday_start
+        Wednesday_end
+        Thurday_start
+        Thurday_end
+        Friday_start
+        Friday_end
+        Saturday_start
+        Saturday_end
+        Sunday_start
+        Sunday_end
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getSubjects = /* GraphQL */ `
   query GetSubjects($id: ID!) {
     getSubjects(id: $id) {
@@ -92,6 +148,7 @@ export const getSubjects = /* GraphQL */ `
         __typename
       }
       userinfoID
+      subject_Difficulty
       createdAt
       updatedAt
       owner
@@ -159,6 +216,7 @@ export const listSubjects = /* GraphQL */ `
           __typename
         }
         userinfoID
+        subject_Difficulty
         createdAt
         updatedAt
         owner
@@ -237,6 +295,7 @@ export const subjectsByUserinfoID = /* GraphQL */ `
           __typename
         }
         userinfoID
+        subject_Difficulty
         createdAt
         updatedAt
         owner
@@ -865,6 +924,7 @@ export const getUserinfo = /* GraphQL */ `
             __typename
           }
           userinfoID
+          subject_Difficulty
           createdAt
           updatedAt
           owner
@@ -873,8 +933,29 @@ export const getUserinfo = /* GraphQL */ `
         nextToken
         __typename
       }
+      UserWorkTim {
+        id
+        Monday_start
+        Monday_end
+        Tuesday_start
+        Tuesday_end
+        Wednesday_start
+        Wednesday_end
+        Thurday_start
+        Thurday_end
+        Friday_start
+        Friday_end
+        Saturday_start
+        Saturday_end
+        Sunday_start
+        Sunday_end
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      userinfoUserWorkTimId
       owner
       __typename
     }
@@ -944,6 +1025,7 @@ export const listUserinfos = /* GraphQL */ `
             current_Grade
             target_Grade
             userinfoID
+            subject_Difficulty
             createdAt
             updatedAt
             owner
@@ -952,8 +1034,29 @@ export const listUserinfos = /* GraphQL */ `
           nextToken
           __typename
         }
+        UserWorkTim {
+          id
+          Monday_start
+          Monday_end
+          Tuesday_start
+          Tuesday_end
+          Wednesday_start
+          Wednesday_end
+          Thurday_start
+          Thurday_end
+          Friday_start
+          Friday_end
+          Saturday_start
+          Saturday_end
+          Sunday_start
+          Sunday_end
+          createdAt
+          updatedAt
+          __typename
+        }
         createdAt
         updatedAt
+        userinfoUserWorkTimId
         owner
         __typename
       }

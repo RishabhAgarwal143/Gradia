@@ -1,6 +1,84 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateUserWorkTim = /* GraphQL */ `
+  subscription OnCreateUserWorkTim(
+    $filter: ModelSubscriptionUserWorkTimFilterInput
+  ) {
+    onCreateUserWorkTim(filter: $filter) {
+      id
+      Monday_start
+      Monday_end
+      Tuesday_start
+      Tuesday_end
+      Wednesday_start
+      Wednesday_end
+      Thurday_start
+      Thurday_end
+      Friday_start
+      Friday_end
+      Saturday_start
+      Saturday_end
+      Sunday_start
+      Sunday_end
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateUserWorkTim = /* GraphQL */ `
+  subscription OnUpdateUserWorkTim(
+    $filter: ModelSubscriptionUserWorkTimFilterInput
+  ) {
+    onUpdateUserWorkTim(filter: $filter) {
+      id
+      Monday_start
+      Monday_end
+      Tuesday_start
+      Tuesday_end
+      Wednesday_start
+      Wednesday_end
+      Thurday_start
+      Thurday_end
+      Friday_start
+      Friday_end
+      Saturday_start
+      Saturday_end
+      Sunday_start
+      Sunday_end
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteUserWorkTim = /* GraphQL */ `
+  subscription OnDeleteUserWorkTim(
+    $filter: ModelSubscriptionUserWorkTimFilterInput
+  ) {
+    onDeleteUserWorkTim(filter: $filter) {
+      id
+      Monday_start
+      Monday_end
+      Tuesday_start
+      Tuesday_end
+      Wednesday_start
+      Wednesday_end
+      Thurday_start
+      Thurday_end
+      Friday_start
+      Friday_end
+      Saturday_start
+      Saturday_end
+      Sunday_start
+      Sunday_end
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const onCreateSubjects = /* GraphQL */ `
   subscription OnCreateSubjects(
     $filter: ModelSubscriptionSubjectsFilterInput
@@ -95,6 +173,7 @@ export const onCreateSubjects = /* GraphQL */ `
         __typename
       }
       userinfoID
+      subject_Difficulty
       createdAt
       updatedAt
       owner
@@ -196,6 +275,7 @@ export const onUpdateSubjects = /* GraphQL */ `
         __typename
       }
       userinfoID
+      subject_Difficulty
       createdAt
       updatedAt
       owner
@@ -297,6 +377,7 @@ export const onDeleteSubjects = /* GraphQL */ `
         __typename
       }
       userinfoID
+      subject_Difficulty
       createdAt
       updatedAt
       owner
@@ -1163,6 +1244,7 @@ export const onCreateUserinfo = /* GraphQL */ `
             __typename
           }
           userinfoID
+          subject_Difficulty
           createdAt
           updatedAt
           owner
@@ -1171,8 +1253,29 @@ export const onCreateUserinfo = /* GraphQL */ `
         nextToken
         __typename
       }
+      UserWorkTim {
+        id
+        Monday_start
+        Monday_end
+        Tuesday_start
+        Tuesday_end
+        Wednesday_start
+        Wednesday_end
+        Thurday_start
+        Thurday_end
+        Friday_start
+        Friday_end
+        Saturday_start
+        Saturday_end
+        Sunday_start
+        Sunday_end
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      userinfoUserWorkTimId
       owner
       __typename
     }
@@ -1272,6 +1375,7 @@ export const onUpdateUserinfo = /* GraphQL */ `
             __typename
           }
           userinfoID
+          subject_Difficulty
           createdAt
           updatedAt
           owner
@@ -1280,8 +1384,29 @@ export const onUpdateUserinfo = /* GraphQL */ `
         nextToken
         __typename
       }
+      UserWorkTim {
+        id
+        Monday_start
+        Monday_end
+        Tuesday_start
+        Tuesday_end
+        Wednesday_start
+        Wednesday_end
+        Thurday_start
+        Thurday_end
+        Friday_start
+        Friday_end
+        Saturday_start
+        Saturday_end
+        Sunday_start
+        Sunday_end
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      userinfoUserWorkTimId
       owner
       __typename
     }
@@ -1381,6 +1506,7 @@ export const onDeleteUserinfo = /* GraphQL */ `
             __typename
           }
           userinfoID
+          subject_Difficulty
           createdAt
           updatedAt
           owner
@@ -1389,8 +1515,29 @@ export const onDeleteUserinfo = /* GraphQL */ `
         nextToken
         __typename
       }
+      UserWorkTim {
+        id
+        Monday_start
+        Monday_end
+        Tuesday_start
+        Tuesday_end
+        Wednesday_start
+        Wednesday_end
+        Thurday_start
+        Thurday_end
+        Friday_start
+        Friday_end
+        Saturday_start
+        Saturday_end
+        Sunday_start
+        Sunday_end
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
+      userinfoUserWorkTimId
       owner
       __typename
     }

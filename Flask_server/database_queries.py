@@ -51,18 +51,7 @@ def delete_obj(obj):
 def process_add_schedule(schedules):
 
     if("onCreateSchedule" in schedules):
-        schedule = schedules['onCreateSchedule']
-        startTime = datetime.datetime.fromisoformat(schedule["DTSTART"].replace('Z', '+00:00'))
-        endTime = datetime.datetime.fromisoformat(schedule["DTEND"].replace('Z', '+00:00'))
-        schedule_grade_info = None
-
-        if(schedule["ScheduleGradeInfo"]):
-            info = schedule["ScheduleGradeInfo"]
-            schedule_grade_info = Schedule_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],attended= parse_time(info["attended"]),schedule_id=schedule["id"])
-            add_to_database(schedule_grade_info)
-        new_schedule = Schedule(id=schedule["id"], SUMMARY=schedule["SUMMARY"], DTSTART=startTime, DTEND=endTime,DESCRIPTION=schedule["DESCRIPTION"], LOCATION=schedule["LOCATION"],userinfoID= schedule["userinfoID"],subjectsID=schedule["subjectsID"],schedule_grade=schedule_grade_info)
-        add_to_database(new_schedule)
-        return
+        schedules = [schedules['onCreateSchedule']]
 
     for schedule in schedules:
         startTime = datetime.datetime.fromisoformat(schedule["start"].replace('Z', '+00:00'))
@@ -97,21 +86,7 @@ def parse_time(time_str):
 def process_add_task(tasks):
 
     if("onCreateTask" in tasks):
-        task = tasks['onCreateTask']
-        if(task["DTSTART"]):
-            startTime = datetime.datetime.fromisoformat(task["DTSTART"].replace('Z', '+00:00'))
-        if(task["DUE"]):
-            endTime = datetime.datetime.fromisoformat(task["DUE"].replace('Z', '+00:00'))
-        if(task["COMPLETED"]):
-            completed = datetime.datetime.fromisoformat(task["COMPLETED"].replace('Z', '+00:00'))
-        task_grade_info = None
-        if(task["TaskGradeInfo"]):
-            info = task["TaskGradeInfo"]
-            task_grade_info = Task_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],time_taken= parse_time(info["time_Taken"]),task_id=task["id"])
-            add_to_database(task_grade_info)
-        new_Task = Task(id=task["id"], SUMMARY=task["SUMMARY"], DTSTART=startTime, DUE=endTime,DESCRIPTION=task["DESCRIPTION"], LOCATION=task["LOCATION"],STATUS=task["STATUS"],PRIORITY=task["PRIORITY"],userinfoID= task["userinfoID"],COMPLETED=completed,subjectsID=task["subjectsID"],task_grade = task_grade_info)
-        add_to_database(new_Task)
-        return
+        tasks = [tasks['onCreateTask']]
 
     for task in tasks:
         if(task["DTSTART"]):
@@ -124,7 +99,6 @@ def process_add_task(tasks):
         task_grade_info = None
         if(task["TaskGradeInfo"]):
             info = task["TaskGradeInfo"]
-            print(info)
             task_grade_info = Task_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],time_taken= parse_time(info["time_Taken"]),task_id=task["id"])
             add_to_database(task_grade_info)
 
@@ -147,13 +121,10 @@ def process_update_task(tasks):
 def process_add_subject(subjects):
 
     if("onCreateSubjects" in subjects):
-        subject = subjects['onCreateSubjects']
-        new_subject = Subjects(id=subject["id"], subject_Name=subject["subject_Name"], current_Grade=subject["current_Grade"], target_Grade=subject["target_Grade"],userinfoID= subject["userinfoID"])
-        add_to_database(new_subject)
-        return
+        subjects = [subjects['onCreateSubjects']]
 
     for subject in subjects:
-        new_subject = Subjects(id=subject["id"], subject_Name=subject["subject_Name"], current_Grade=subject["current_Grade"], target_Grade=subject["target_Grade"],userinfoID= subject["userinfoID"])
+        new_subject = Subjects(id=subject["id"], subject_Name=subject["subject_Name"], current_Grade=subject["current_Grade"], target_Grade=subject["target_Grade"],userinfoID= subject["userinfoID"],subject_Difficulty=subject["subject_Difficulty"])
         add_to_database(new_subject)
         
     pass
@@ -197,8 +168,12 @@ def add_user_info(userinfoID,accesstoken):
     user = session.query(User).filter_by(userinfoID=userinfoID).first()
     if(user):
         user.update_access_token(session,accesstoken)
+        user.get_timezone(session)
+        user.get_UserWorkTime(session)
         return
     user = User(userinfoID=userinfoID,access_Token=accesstoken)
+    user.get_timezone(session)
+    user.get_UserWorkTime(session)
     session.add(user)
     session.commit()
 
@@ -226,5 +201,7 @@ def get_subject():
 def get_user_info(userinfoID):
     
     user = session.query(User).filter_by(userinfoID=userinfoID).first()
+    user.get_UserWorkTime(session)
     return user
 
+get_user_info('82cf448d-fc16-409c-82e9-3304d937f840')

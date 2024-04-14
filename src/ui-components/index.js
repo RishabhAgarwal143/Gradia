@@ -24,6 +24,8 @@ export { default as TaskGradeInfoCreateForm } from "./TaskGradeInfoCreateForm";
 export { default as TaskGradeInfoUpdateForm } from "./TaskGradeInfoUpdateForm";
 export { default as TaskUpdateForm } from "./TaskUpdateForm";
 export { default as TaskbarCollection } from "./TaskbarCollection";
+export { default as UserWorkTimCreateForm } from "./UserWorkTimCreateForm";
+export { default as UserWorkTimUpdateForm } from "./UserWorkTimUpdateForm";
 export { default as UserinfoCreateForm } from "./UserinfoCreateForm";
 export { default as UserinfoUpdateForm } from "./UserinfoUpdateForm";
 export { default as studioTheme } from "./studioTheme";

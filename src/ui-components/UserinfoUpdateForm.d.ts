@@ -29,6 +29,7 @@ export declare type UserinfoUpdateFormInputValues = {
     Tasks?: any[];
     SubscribedCalendars?: any[];
     Subjects?: any[];
+    UserWorkTim?: any;
 };
 export declare type UserinfoUpdateFormValidationValues = {
     name?: ValidationFunction<string>;
@@ -38,6 +39,7 @@ export declare type UserinfoUpdateFormValidationValues = {
     Tasks?: ValidationFunction<any>;
     SubscribedCalendars?: ValidationFunction<any>;
     Subjects?: ValidationFunction<any>;
+    UserWorkTim?: ValidationFunction<any>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type UserinfoUpdateFormOverridesProps = {
@@ -49,6 +51,7 @@ export declare type UserinfoUpdateFormOverridesProps = {
     Tasks?: PrimitiveOverrideProps<AutocompleteProps>;
     SubscribedCalendars?: PrimitiveOverrideProps<AutocompleteProps>;
     Subjects?: PrimitiveOverrideProps<AutocompleteProps>;
+    UserWorkTim?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type UserinfoUpdateFormProps = React.PropsWithChildren<{
     overrides?: UserinfoUpdateFormOverridesProps | undefined | null;

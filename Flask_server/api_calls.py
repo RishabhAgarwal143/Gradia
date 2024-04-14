@@ -100,8 +100,8 @@ def delete_schedule_from_payload_schedules(schedule):
 def get_user_time(n,userinfoID):
 
     user = database_queries.get_user_info(userinfoID)
-    if(not user.user_timezone):
-        user.get_timezone()
+    # if(not user.user_timezone):
+    #     user.get_timezone()
     user_timezone = user.user_timezone
     user_time = datetime.now(pytz.timezone(user_timezone))
     user_time_t = user_time.strftime('%Y-%m-%d %H:%M:%S %A')
@@ -123,8 +123,8 @@ def get_sys_time():
 def convert_time_to_utc(time,userinfoID):
     
     user = database_queries.get_user_info(userinfoID)
-    if(not user.user_timezone):
-        user.get_timezone()
+    # if(not user.user_timezone):
+    #     user.get_timezone()
     timezone = pytz.timezone(user.user_timezone)
     time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
     localized_start_time = timezone.localize(time)
