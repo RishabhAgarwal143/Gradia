@@ -417,6 +417,7 @@ export async function update_grade_task(
   task_Weightage,
   total_subject_grade
 ) {
+  console.log("🚀 ~ taskid:", taskid);
   let task_query;
   let TaskGradeInfo;
   if (taskgrade_id) {
@@ -433,6 +434,7 @@ export async function update_grade_task(
         },
       },
     });
+    console.log("🚀 ~ TaskGradeInfo:", TaskGradeInfo);
   } else {
     task_query = mutations.createTaskGradeInfo;
     TaskGradeInfo = await client.graphql({

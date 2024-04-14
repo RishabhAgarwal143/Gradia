@@ -190,7 +190,7 @@ const SecondComponent = ({ subject, task }) => {
       if (index !== -1) {
         // Add the json information from list2 to list1
         tasks[i] = { ...tasks[i], ...task_grade_info[index] };
-
+        tasks[i].id = tasks[i].taskGradeInfoTaskId;
         // Remove the item from list2
         task_grade_info.splice(index, 1);
         console.log(tasks[i]);
@@ -220,6 +220,7 @@ const SecondComponent = ({ subject, task }) => {
     tasks[index].current_Grade = newGrade;
     let new_percentage = (newGrade * tasks[index].task_Weightage) / 100;
     tasks[index].overall_Percentage = new_percentage;
+    console.log("🚀 ~ handleGradeChange ~ tasks[index]:", tasks[index]);
     Refresh();
     const updatedValue = await update_grade_task(
       tasks[index].taskTaskGradeInfoId,
@@ -246,9 +247,9 @@ const SecondComponent = ({ subject, task }) => {
     const updatedValue = await update_grade_task(
       tasks[index].taskTaskGradeInfoId,
       tasks[index].id,
-      newGrade,
+      tasks[index].current_Grade,
       new_percentage,
-      tasks[index].task_Weightage
+      newGrade
     );
     if (!tasks[index].taskTaskGradeInfoId) {
       tasks[index].taskTaskGradeInfoId =

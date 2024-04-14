@@ -133,7 +133,7 @@ def subscribe_cal():
 
 if __name__ == '__main__':
     global info
-    background_process = multiprocessing.Process(target=check_database)
-    background_process.start()
+    # background_process = multiprocessing.Process(target=check_database)
+    # background_process.start()
     thread_info = {}
     app.run(threaded = False,debug=True)
