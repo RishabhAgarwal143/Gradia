@@ -39,8 +39,8 @@ def create_data():
 @app.route('/api/updatesubscribe', methods=['POST'])
 def update_data():
     data = request.json  # Assuming data is sent as JSON
+    process_add_schedule(data)
 
-    print(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/deletesubscribe', methods=['POST'])

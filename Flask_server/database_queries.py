@@ -52,8 +52,33 @@ def delete_obj(obj):
 def process_add_schedule(schedules):
 
     if("onCreateSchedule" in schedules):
-        schedules = [schedules['onCreateSchedule']]
+        schedule = schedules['onCreateSchedule']
+        startTime = datetime.datetime.fromisoformat(schedule["DTSTART"].replace('Z', '+00:00'))
+        endTime = datetime.datetime.fromisoformat(schedule["DTEND"].replace('Z', '+00:00'))
+        schedule_grade_info = None
 
+        if(schedule["ScheduleGradeInfo"]):
+            info = schedule["ScheduleGradeInfo"]
+            schedule_grade_info = Schedule_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],attended= parse_time(info["attended"]),schedule_id=schedule["id"])
+            add_to_database(schedule_grade_info)
+        new_schedule = Schedule(id=schedule["id"], SUMMARY=schedule["SUMMARY"], DTSTART=startTime, DTEND=endTime,DESCRIPTION=schedule["DESCRIPTION"], LOCATION=schedule["LOCATION"],userinfoID= schedule["userinfoID"],subjectsID=schedule["subjectsID"],schedule_grade=schedule_grade_info)
+        add_to_database(new_schedule)
+        return
+
+    if("onUpdateSchedule" in schedules):
+        schedule = schedules['onUpdateSchedule']
+        startTime = datetime.datetime.fromisoformat(schedule["DTSTART"].replace('Z', '+00:00'))
+        endTime = datetime.datetime.fromisoformat(schedule["DTEND"].replace('Z', '+00:00'))
+        schedule_grade_info = None
+
+        if(schedule["ScheduleGradeInfo"]):
+            info = schedule["ScheduleGradeInfo"]
+            schedule_grade_info = Schedule_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],attended= parse_time(info["attended"]),schedule_id=schedule["id"])
+            add_to_database(schedule_grade_info)
+        new_schedule = Schedule(id=schedule["id"], SUMMARY=schedule["SUMMARY"], DTSTART=startTime, DTEND=endTime,DESCRIPTION=schedule["DESCRIPTION"], LOCATION=schedule["LOCATION"],userinfoID= schedule["userinfoID"],subjectsID=schedule["subjectsID"],schedule_grade=schedule_grade_info)
+        add_to_database(new_schedule)
+        return
+    
     for schedule in schedules:
         startTime = datetime.datetime.fromisoformat(schedule["start"].replace('Z', '+00:00'))
         endTime = datetime.datetime.fromisoformat(schedule["end"].replace('Z', '+00:00'))
