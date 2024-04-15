@@ -16,7 +16,7 @@ CORS(app)
 @app.route('/api/data', methods=['POST'])
 def receive_data():
     
-    data = request.json  
+    data = request.json
     userID = data["userId"]
     Token = data["Token"]
     add_user_info(userID,Token)
@@ -130,6 +130,7 @@ def subscribe_cal():
     calendar = Subscribing_to_Calendar(data["calendar_url"],Token,userID,data["calendar_name"])
     # calendar.add_record_to_database()
     return jsonify({'message' : 'Subscribed Successfully'})
+
 
 if __name__ == '__main__':
     global info

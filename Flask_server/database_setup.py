@@ -251,7 +251,6 @@ class Subjects(Base):
         
         session.commit()
                 
-        
 
 class Task_grade_info(Base):
     __tablename__ = "task_grade"
@@ -283,6 +282,7 @@ class Schedule_grade_info(Base):
         if(self.current_Grade and self.task_Weightage):
             self.overall_Percentage = (self.current_Grade * self.task_Weightage) / 100
             session.commit()
+
 
 def create_table(engine):
     """Uses all the Base Metadata in this file to create tables"""

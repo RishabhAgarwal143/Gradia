@@ -48,6 +48,7 @@ def delete_obj(obj):
     session.delete(obj)
     session.commit()
 
+
 def process_add_schedule(schedules):
 
     if("onCreateSchedule" in schedules):
@@ -114,12 +115,23 @@ def process_delete_task(tasks):
     delete_from_database(Task,"id",task["id"])
     pass
 
+
+def update_subject_totals(subjectId):
+    try:
+        subject_object = session.query(Subjects).filter_by(id=subjectId).one()
+        subject_object.calculate_final_grade(session)
+    except NoResultFound:
+        return "Not Found"
+    pass
+
 def process_update_task(tasks):
     task = tasks['onUpdateTask']
     if(task["TaskGradeInfo"]):
         delete_from_database(Task_grade_info,"id",task["TaskGradeInfo"]["id"])
+        update_subject_totals(task["subjectsID"])
     delete_from_database(Task,"id",task["id"])
     process_add_task([task])
+
 
 def process_add_subject(subjects):
 
@@ -138,7 +150,10 @@ def process_update_taskGrade(tasks):
     delete_from_database(Task_grade_info,"id",info["id"])
     task_grade_info = Task_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],time_taken= parse_time(info["time_Taken"]),task_id=info["taskGradeInfoTaskId"])
     add_to_database(task_grade_info)
+    update_subject_totals(info["Task"]["subjectsID"])
+    
     pass
+
 
 def process_delete_subject(subjects):
     
@@ -155,6 +170,7 @@ def get_schedule_range(userinfo_id, start_date, end_date):
     for schedule in schedules:
         print(schedule)
     return schedules
+
 
 def get_task_range(userinfo_id, start_date, end_date):
     tasks = session.query(Task).\

@@ -99,7 +99,7 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
   );
 };
 
-const GradeBox = ({ grade, onStatusChange }) => {
+const GradeBox = ({ index, grade, onStatusChange }) => {
   const [selectedStatus, setSelectedStatus] = React.useState(grade);
   const [change, setChange] = React.useState(false);
 
@@ -116,6 +116,7 @@ const GradeBox = ({ grade, onStatusChange }) => {
     setChange(false);
   };
 
+  // setSelectedStatus(grade);
   return (
     <>
       <input
@@ -219,15 +220,26 @@ const SecondComponent = ({ subject, task }) => {
     // tasks[index].current_Grade = newGrade;
     tasks[index].current_Grade = newGrade;
     let new_percentage = (newGrade * tasks[index].task_Weightage) / 100;
+    let old_percentage = 0;
+    if (tasks[index].overall_Percentage) {
+      old_percentage = tasks[index].overall_Percentage;
+    }
     tasks[index].overall_Percentage = new_percentage;
     console.log("🚀 ~ handleGradeChange ~ tasks[index]:", tasks[index]);
+    if (!task.current_Grade) {
+      task.current_Grade = 0;
+    }
+    task.current_Grade += new_percentage - old_percentage;
+
     Refresh();
     const updatedValue = await update_grade_task(
       tasks[index].taskTaskGradeInfoId,
       tasks[index].id,
       newGrade,
       new_percentage,
-      tasks[index].task_Weightage
+      tasks[index].task_Weightage,
+      task.current_Grade,
+      tasks[index].subjectsID
     );
     if (!tasks[index].taskTaskGradeInfoId) {
       tasks[index].taskTaskGradeInfoId =
@@ -242,14 +254,24 @@ const SecondComponent = ({ subject, task }) => {
       tasks[index].current_Grade = 0;
     }
     let new_percentage = (newGrade * tasks[index].current_Grade) / 100;
+    let old_percentage = 0;
+    if (tasks[index].overall_Percentage) {
+      old_percentage = tasks[index].overall_Percentage;
+    }
     tasks[index].overall_Percentage = new_percentage;
+    if (!task.current_Grade) {
+      task.current_Grade = 0;
+    }
+    task.current_Grade += new_percentage - old_percentage;
     Refresh();
     const updatedValue = await update_grade_task(
       tasks[index].taskTaskGradeInfoId,
       tasks[index].id,
       tasks[index].current_Grade,
       new_percentage,
-      newGrade
+      newGrade,
+      task.current_Grade,
+      tasks[index].subjectsID
     );
     if (!tasks[index].taskTaskGradeInfoId) {
       tasks[index].taskTaskGradeInfoId =
@@ -301,6 +323,7 @@ const SecondComponent = ({ subject, task }) => {
                 </td>
                 <td style={{ width: "50px", textAlign: "center" }}>
                   <GradeBox
+                    key={subject}
                     grade={task.current_Grade || 0}
                     onStatusChange={(newStatus) =>
                       handleGradeChange(index, newStatus)
@@ -312,6 +335,7 @@ const SecondComponent = ({ subject, task }) => {
                 </td>
                 <td style={{ width: "50px", textAlign: "center" }}>
                   <GradeBox
+                    key={subject}
                     grade={task.task_Weightage || 0}
                     onStatusChange={(newStatus) =>
                       handleTaskWeightageChange(index, newStatus)

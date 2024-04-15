@@ -415,9 +415,17 @@ export async function update_grade_task(
   current_Grade,
   overall_Percentage,
   task_Weightage,
-  total_subject_grade
+  total_subject_grade,
+  subjectId
 ) {
+  console.log("🚀 ~ subjectId:", subjectId);
+  console.log("🚀 ~ total_subject_grade:", total_subject_grade);
+  console.log("🚀 ~ task_Weightage:", task_Weightage);
+  console.log("🚀 ~ overall_Percentage:", overall_Percentage);
+  console.log("🚀 ~ current_Grade:", current_Grade);
   console.log("🚀 ~ taskid:", taskid);
+  console.log("🚀 ~ taskgrade_id:", taskgrade_id);
+
   let task_query;
   let TaskGradeInfo;
   if (taskgrade_id) {
@@ -434,7 +442,6 @@ export async function update_grade_task(
         },
       },
     });
-    console.log("🚀 ~ TaskGradeInfo:", TaskGradeInfo);
   } else {
     task_query = mutations.createTaskGradeInfo;
     TaskGradeInfo = await client.graphql({
@@ -463,6 +470,16 @@ export async function update_grade_task(
       });
       console.log(updatedTask);
     }
+
+    const updatedSubjects = await client.graphql({
+      query: mutations.updateSubjects,
+      variables: {
+        input: {
+          id: subjectId,
+          current_Grade: total_subject_grade,
+        },
+      },
+    });
 
     return TaskGradeInfo;
   } catch (error) {
