@@ -11,6 +11,9 @@ from pprint import pp
 from werkzeug.utils import secure_filename
 import os
 
+from pdf_parser.text_parser import PDFParser
+from api_calls import add_syllabus_grades
+
 app = Flask(__name__, template_folder="templates")
 CORS(app)
 
@@ -145,6 +148,7 @@ def upload_file():
     userinfo_id = request.form.get('userinfoID')
     print(f"==>> userinfo_id: {userinfo_id}")
 
+
     if file.filename == '':
         return 'No selected file'
 
@@ -152,6 +156,26 @@ def upload_file():
         filename = secure_filename(file.filename)
         print("Current working directory:", os.getcwd())
         file.save(os.path.join(os.getcwd() + "\Flask_server\syllabus_folder", filename))
+        file_path = os.path.join(os.getcwd() + "\Flask_server\syllabus_folder", filename)
+
+        # Call the parser function here
+        pobj = PDFParser()
+        grade_data = pobj.parser(file_path, subject_id, userinfo_id)
+
+        for subject, value in grade_data.items():
+            values = value.split(',')
+            percent = int(values[0].rstrip("%"))
+            nums = values[1].strip()
+
+            if nums == None or nums == "1":
+                nums = 1
+
+                add_syllabus_grades(subject, percent, subject_id, userinfo_id)
+
+
+
+
+
         return 'File uploaded successfully'
 
 
