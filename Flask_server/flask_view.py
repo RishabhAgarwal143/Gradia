@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from chatbot_api import openai_manager
 from database_queries import process_add_schedule,process_delete_schedule,process_update_task,process_update_taskGrade
-from database_queries import process_add_task,process_delete_task,process_add_subject,add_user_info
+from database_queries import process_add_task,process_delete_task,process_add_subject,add_user_info, process_update_subject
 from database_cleaner import check_database
 from Reading_Calendar import Subscribing_to_Calendar
 import multiprocessing
@@ -107,6 +107,13 @@ def receive_subjects():
 
     data = request.json
     process_add_subject(data)
+    return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/updatesubjects', methods=['POST'])
+def update_subjects():
+
+    data = request.json
+    process_update_subject(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/')

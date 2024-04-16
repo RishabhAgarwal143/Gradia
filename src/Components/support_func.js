@@ -182,22 +182,20 @@ export async function subscribedScedule() {
     });
   // console.log(UpdateSub);
 
-  const UpdateTaskGrade = client
-    .graphql({ query: subscriptions.onUpdateTaskGradeInfo })
-    .subscribe({
-      next: ({ data }) => {
-        axios
-          .post("http://127.0.0.1:5000/api/updatetaskGrade", data)
-          .then((response) => {
-            console.log("Data sent successfully:");
-          })
-          .catch((error) => {
-            console.error("Error sending data:", error);
-          });
-        console.log(data);
-      },
-      error: (error) => console.warn(error),
-    });
+  client.graphql({ query: subscriptions.onUpdateTaskGradeInfo }).subscribe({
+    next: ({ data }) => {
+      axios
+        .post("http://127.0.0.1:5000/api/updatetaskGrade", data)
+        .then((response) => {
+          console.log("Data sent successfully:");
+        })
+        .catch((error) => {
+          console.error("Error sending data:", error);
+        });
+      console.log(data);
+    },
+    error: (error) => console.warn(error),
+  });
 
   const DeleteSub = client
     .graphql({ query: subscriptions.onDeleteSchedule })
@@ -253,23 +251,35 @@ export async function subscribedScedule() {
     });
   console.log(UpdateTask);
 
-  const DeleteTask = client
-    .graphql({ query: subscriptions.onDeleteTask })
-    .subscribe({
-      next: ({ data }) => {
-        axios
-          .post("http://127.0.0.1:5000/api/deleteTask", data)
-          .then((response) => {
-            console.log("Data sent successfully:");
-          })
-          .catch((error) => {
-            console.error("Error sending data:", error);
-          });
-        console.log(data);
-      },
-      error: (error) => console.warn(error),
-    });
-  console.log(DeleteTask);
+  client.graphql({ query: subscriptions.onDeleteTask }).subscribe({
+    next: ({ data }) => {
+      axios
+        .post("http://127.0.0.1:5000/api/deleteTask", data)
+        .then((response) => {
+          console.log("Data sent successfully:");
+        })
+        .catch((error) => {
+          console.error("Error sending data:", error);
+        });
+      console.log(data);
+    },
+    error: (error) => console.warn(error),
+  });
+
+  client.graphql({ query: subscriptions.onUpdateSubjects }).subscribe({
+    next: ({ data }) => {
+      axios
+        .post("http://127.0.0.1:5000/api/updatesubjects", data)
+        .then((response) => {
+          console.log("Data sent successfully:");
+        })
+        .catch((error) => {
+          console.error("Error sending data:", error);
+        });
+      console.log(data);
+    },
+    error: (error) => console.warn(error),
+  });
   return [createSub, UpdateSub, DeleteSub];
 }
 
@@ -418,14 +428,6 @@ export async function update_grade_task(
   total_subject_grade,
   subjectId
 ) {
-  console.log("🚀 ~ subjectId:", subjectId);
-  console.log("🚀 ~ total_subject_grade:", total_subject_grade);
-  console.log("🚀 ~ task_Weightage:", task_Weightage);
-  console.log("🚀 ~ overall_Percentage:", overall_Percentage);
-  console.log("🚀 ~ current_Grade:", current_Grade);
-  console.log("🚀 ~ taskid:", taskid);
-  console.log("🚀 ~ taskgrade_id:", taskgrade_id);
-
   let task_query;
   let TaskGradeInfo;
   if (taskgrade_id) {
@@ -471,7 +473,7 @@ export async function update_grade_task(
       console.log(updatedTask);
     }
 
-    const updatedSubjects = await client.graphql({
+    await client.graphql({
       query: mutations.updateSubjects,
       variables: {
         input: {
@@ -482,6 +484,38 @@ export async function update_grade_task(
     });
 
     return TaskGradeInfo;
+  } catch (error) {
+    console.error("Error fetching items:", error);
+  }
+}
+
+export async function update_status_task(taskid, newStatus) {
+  try {
+    await client.graphql({
+      query: mutations.updateTask,
+      variables: {
+        input: {
+          STATUS: newStatus,
+          id: taskid,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching items:", error);
+  }
+}
+
+export async function update_tagetGrade_subject(subjectid, newStatus) {
+  try {
+    await client.graphql({
+      query: mutations.updateSubjects,
+      variables: {
+        input: {
+          target_Grade: newStatus,
+          id: subjectid,
+        },
+      },
+    });
   } catch (error) {
     console.error("Error fetching items:", error);
   }

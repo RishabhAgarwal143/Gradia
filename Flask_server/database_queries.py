@@ -180,6 +180,13 @@ def process_update_taskGrade(tasks):
     pass
 
 
+def process_update_subject(subjects):
+    
+    subject = subjects['onUpdateSubjects']
+    delete_from_database(Subjects,"id",subject["id"])
+    process_add_subject([subject])
+    pass
+
 def process_delete_subject(subjects):
     
     subject = subjects['onDeleteSubjects']

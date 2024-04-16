@@ -2,6 +2,8 @@ import {
   listSubjects,
   list_tasks_grade_item,
   update_grade_task,
+  update_status_task,
+  update_tagetGrade_subject,
 } from "./support_func";
 import React, { useState, useEffect } from "react";
 import "./gradeStyles.css";
@@ -207,6 +209,7 @@ const SecondComponent = ({ subject, task }) => {
     }));
     tasks[index].STATUS = newStatus;
     console.log(tasks[index]);
+    update_status_task(tasks[index].id, newStatus);
   };
 
   const Refresh = () => {
@@ -226,7 +229,6 @@ const SecondComponent = ({ subject, task }) => {
       old_percentage = tasks[index].overall_Percentage;
     }
     tasks[index].overall_Percentage = new_percentage;
-    console.log("🚀 ~ handleGradeChange ~ tasks[index]:", tasks[index]);
     if (!task.current_Grade) {
       task.current_Grade = 0;
     }
@@ -294,7 +296,6 @@ const SecondComponent = ({ subject, task }) => {
       return;
     }
 
-    console.log("🚀 ~ handleFileUpload ~ selectedFile:", selectedFile);
     const formData = new FormData();
     formData.append("subject_ID", task.id);
     formData.append("file", selectedFile);
@@ -318,12 +319,26 @@ const SecondComponent = ({ subject, task }) => {
     }
   };
 
+  const handleTargetGradeChange = (newTargetGrade) => {
+    console.log("🚀 ~ handleTargetGradeChange ~ tasks:", task);
+    console.log(
+      "🚀 ~ handleTargetGradeChange ~ newTargetGrade:",
+      newTargetGrade
+    );
+    task.target_Grade = newTargetGrade;
+    update_tagetGrade_subject(task.id, newTargetGrade);
+  };
+
   return (
     <div className="main-content">
       <h2 className="bg-white">Selected Subject: {subject}</h2>
       <h2 className="bg-white text-left">
-        Current Grade: {(task && task.current_Grade) || 0} Target Grade:{" "}
-        {(task && task.target_Grade) || 0}
+        Current Grade: {(task && task.current_Grade) || 0} Target Grade:
+        <GradeBox
+          key={subject}
+          grade={(task && task.target_Grade) || 0}
+          onStatusChange={handleTargetGradeChange}
+        />
       </h2>
       <button
         onClick={() => document.getElementById("fileInput").click()}
@@ -365,7 +380,9 @@ const SecondComponent = ({ subject, task }) => {
       <div className="table-container">
         <table className="table">
           <thead>
-            <tr>
+            <tr
+              style={{ position: "sticky", top: "0", backgroundColor: "white" }}
+            >
               <th>TASKS</th>
               <th>DUE</th>
               <th>STATUS</th>
