@@ -245,5 +245,5 @@ def get_subject():
 def get_user_info(userinfoID):
     
     user = session.query(User).filter_by(userinfoID=userinfoID).first()
-    user.get_UserWorkTime(session)
+    # user.get_UserWorkTime(session)
     return user

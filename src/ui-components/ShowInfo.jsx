@@ -15,6 +15,7 @@ import {
   Grid,
   Icon,
   ScrollView,
+  SwitchField,
   Text,
   TextAreaField,
   TextField,
@@ -213,6 +214,7 @@ export default function ShowInfo(props) {
     subscribedcalendarID: undefined,
     subjectsID: undefined,
     ScheduleGradeInfo: undefined,
+    personalized_task: false,
   };
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
   const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
@@ -248,6 +250,9 @@ export default function ShowInfo(props) {
     React.useState(false);
   const [scheduleGradeInfoRecords, setScheduleGradeInfoRecords] =
     React.useState([]);
+  const [personalized_task, setPersonalized_task] = React.useState(
+    initialValues.personalized_task
+  );
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -282,6 +287,7 @@ export default function ShowInfo(props) {
     setScheduleGradeInfo(cleanValues.ScheduleGradeInfo);
     setCurrentScheduleGradeInfoValue(undefined);
     setCurrentScheduleGradeInfoDisplayValue("");
+    setPersonalized_task(cleanValues.personalized_task);
     setErrors({});
   };
   const [scheduleRecord, setScheduleRecord] = React.useState(scheduleModelProp);
@@ -383,6 +389,7 @@ export default function ShowInfo(props) {
     subscribedcalendarID: [],
     subjectsID: [],
     ScheduleGradeInfo: [],
+    personalized_task: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -537,6 +544,7 @@ export default function ShowInfo(props) {
           subscribedcalendarID: subscribedcalendarID ?? null,
           subjectsID: subjectsID ?? null,
           ScheduleGradeInfo: ScheduleGradeInfo ?? null,
+          personalized_task: personalized_task ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -631,6 +639,7 @@ export default function ShowInfo(props) {
             subjectsID: modelFields.subjectsID ?? null,
             scheduleScheduleGradeInfoId:
               modelFields?.ScheduleGradeInfo?.id ?? null,
+            personalized_task: modelFields.personalized_task ?? null,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
@@ -681,6 +690,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -718,6 +728,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -755,6 +766,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -798,6 +810,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -841,6 +854,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -876,6 +890,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -919,6 +934,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -962,6 +978,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.UID ?? value;
@@ -1007,6 +1024,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DTSTAMP ?? value;
@@ -1039,6 +1057,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID: value,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.subscribedcalendarID ?? value;
@@ -1170,6 +1189,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID: value,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.subjectsID ?? value;
@@ -1289,6 +1309,7 @@ export default function ShowInfo(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo: value,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.ScheduleGradeInfo ?? value;
@@ -1387,6 +1408,52 @@ export default function ShowInfo(props) {
           {...getOverrideProps(overrides, "ScheduleGradeInfo")}
         ></Autocomplete>
       </ArrayField>
+      <SwitchField
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Personalized task</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
+        defaultChecked={false}
+        isDisabled={false}
+        isChecked={personalized_task}
+        onChange={(e) => {
+          let value = e.target.checked;
+          if (onChange) {
+            const modelFields = {
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              userinfoID,
+              RRULE,
+              UID,
+              DTSTAMP,
+              subscribedcalendarID,
+              subjectsID,
+              ScheduleGradeInfo,
+              personalized_task: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.personalized_task ?? value;
+          }
+          if (errors.personalized_task?.hasError) {
+            runValidationTasks("personalized_task", value);
+          }
+          setPersonalized_task(value);
+        }}
+        onBlur={() =>
+          runValidationTasks("personalized_task", personalized_task)
+        }
+        errorMessage={errors.personalized_task?.errorMessage}
+        hasError={errors.personalized_task?.hasError}
+        {...getOverrideProps(overrides, "personalized_task")}
+      ></SwitchField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

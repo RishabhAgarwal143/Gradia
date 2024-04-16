@@ -8,6 +8,8 @@ from Reading_Calendar import Subscribing_to_Calendar
 import multiprocessing
 import markdown
 from pprint import pp
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__, template_folder="templates")
 CORS(app)
@@ -130,6 +132,27 @@ def subscribe_cal():
     calendar = Subscribing_to_Calendar(data["calendar_url"],Token,userID,data["calendar_name"])
     # calendar.add_record_to_database()
     return jsonify({'message' : 'Subscribed Successfully'})
+
+
+@app.route('/syllabus', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return 'No file part'
+
+    file = request.files['file']
+    subject_id = request.form.get('subject_ID')
+    print(f"==>> subject_id: {subject_id}")
+    userinfo_id = request.form.get('userinfoID')
+    print(f"==>> userinfo_id: {userinfo_id}")
+
+    if file.filename == '':
+        return 'No selected file'
+
+    if file:
+        filename = secure_filename(file.filename)
+        print("Current working directory:", os.getcwd())
+        file.save(os.path.join(os.getcwd() + "\Flask_server\syllabus_folder", filename))
+        return 'File uploaded successfully'
 
 
 if __name__ == '__main__':

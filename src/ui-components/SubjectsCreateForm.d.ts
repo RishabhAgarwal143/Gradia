@@ -29,6 +29,7 @@ export declare type SubjectsCreateFormInputValues = {
     Schedules?: any[];
     userinfoID?: string;
     subject_Difficulty?: number;
+    SyllabusGradeValues?: any[];
 };
 export declare type SubjectsCreateFormValidationValues = {
     subject_Name?: ValidationFunction<string>;
@@ -38,6 +39,7 @@ export declare type SubjectsCreateFormValidationValues = {
     Schedules?: ValidationFunction<any>;
     userinfoID?: ValidationFunction<string>;
     subject_Difficulty?: ValidationFunction<number>;
+    SyllabusGradeValues?: ValidationFunction<any>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type SubjectsCreateFormOverridesProps = {
@@ -49,6 +51,7 @@ export declare type SubjectsCreateFormOverridesProps = {
     Schedules?: PrimitiveOverrideProps<AutocompleteProps>;
     userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
     subject_Difficulty?: PrimitiveOverrideProps<TextFieldProps>;
+    SyllabusGradeValues?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type SubjectsCreateFormProps = React.PropsWithChildren<{
     overrides?: SubjectsCreateFormOverridesProps | undefined | null;

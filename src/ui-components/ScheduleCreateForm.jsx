@@ -15,6 +15,7 @@ import {
   Grid,
   Icon,
   ScrollView,
+  SwitchField,
   Text,
   TextAreaField,
   TextField,
@@ -212,6 +213,7 @@ export default function ScheduleCreateForm(props) {
     subscribedcalendarID: undefined,
     subjectsID: undefined,
     ScheduleGradeInfo: undefined,
+    personalized_task: false,
   };
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
@@ -247,6 +249,9 @@ export default function ScheduleCreateForm(props) {
     React.useState(false);
   const [scheduleGradeInfoRecords, setScheduleGradeInfoRecords] =
     React.useState([]);
+  const [personalized_task, setPersonalized_task] = React.useState(
+    initialValues.personalized_task
+  );
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -268,6 +273,7 @@ export default function ScheduleCreateForm(props) {
     setScheduleGradeInfo(initialValues.ScheduleGradeInfo);
     setCurrentScheduleGradeInfoValue(undefined);
     setCurrentScheduleGradeInfoDisplayValue("");
+    setPersonalized_task(initialValues.personalized_task);
     setErrors({});
   };
   const [
@@ -320,6 +326,7 @@ export default function ScheduleCreateForm(props) {
     subscribedcalendarID: [],
     subjectsID: [],
     ScheduleGradeInfo: [],
+    personalized_task: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -474,6 +481,7 @@ export default function ScheduleCreateForm(props) {
           subscribedcalendarID,
           subjectsID,
           ScheduleGradeInfo,
+          personalized_task,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -523,6 +531,7 @@ export default function ScheduleCreateForm(props) {
             subscribedcalendarID: modelFields.subscribedcalendarID,
             subjectsID: modelFields.subjectsID,
             scheduleScheduleGradeInfoId: modelFields?.ScheduleGradeInfo?.id,
+            personalized_task: modelFields.personalized_task,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
@@ -609,6 +618,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -649,6 +659,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -691,6 +702,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -733,6 +745,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -768,6 +781,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -803,6 +817,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -837,6 +852,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -872,6 +888,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.UID ?? value;
@@ -909,6 +926,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DTSTAMP ?? value;
@@ -941,6 +959,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID: value,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.subscribedcalendarID ?? value;
@@ -1055,6 +1074,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID: value,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.subjectsID ?? value;
@@ -1157,6 +1177,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo: value,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.ScheduleGradeInfo ?? value;
@@ -1238,6 +1259,44 @@ export default function ScheduleCreateForm(props) {
           {...getOverrideProps(overrides, "ScheduleGradeInfo")}
         ></Autocomplete>
       </ArrayField>
+      <SwitchField
+        label="Personalized task"
+        defaultChecked={false}
+        isDisabled={false}
+        isChecked={personalized_task}
+        onChange={(e) => {
+          let value = e.target.checked;
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID,
+              DTSTAMP,
+              subscribedcalendarID,
+              subjectsID,
+              ScheduleGradeInfo,
+              personalized_task: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.personalized_task ?? value;
+          }
+          if (errors.personalized_task?.hasError) {
+            runValidationTasks("personalized_task", value);
+          }
+          setPersonalized_task(value);
+        }}
+        onBlur={() =>
+          runValidationTasks("personalized_task", personalized_task)
+        }
+        errorMessage={errors.personalized_task?.errorMessage}
+        hasError={errors.personalized_task?.hasError}
+        {...getOverrideProps(overrides, "personalized_task")}
+      ></SwitchField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

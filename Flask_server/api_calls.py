@@ -197,4 +197,24 @@ def delete_events_in_range(start_time, end_time,userinfoID):
         return ["NO_EVENTS", None]
 
 
+def add_syllabus_grades(category_Name,category_Grade,subject_ID,userinfoID):
+    
+    user = database_queries.get_user_info(userinfoID)
+    
+    url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+    payload = "{\"query\":\"mutation CreateSyllabusGradeValues {\\r\\n    createSyllabusGradeValues(\\r\\n        "\
+            "input: {\\r\\n            category_Name: \\\"%s\\\"\\r\\n            "\
+            "category_Grade: %d\\r\\n            Tasks_associated: 0\\r\\n            each_Task_weightage: null\\r\\n            "\
+            "subjectsID: \\\"%s\\\"\\r\\n        }\\r\\n    ) {\\r\\n        id\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" % (category_Name, category_Grade,subject_ID)
+    headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {user.access_Token}'
+            }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    print(response.text)
+
+
+    
 

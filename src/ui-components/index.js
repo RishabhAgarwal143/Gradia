@@ -19,6 +19,8 @@ export { default as SubjectsCreateForm } from "./SubjectsCreateForm";
 export { default as SubjectsUpdateForm } from "./SubjectsUpdateForm";
 export { default as SubscribedCalendarCreateForm } from "./SubscribedCalendarCreateForm";
 export { default as SubscribedCalendarUpdateForm } from "./SubscribedCalendarUpdateForm";
+export { default as SyllabusGradeValuesCreateForm } from "./SyllabusGradeValuesCreateForm";
+export { default as SyllabusGradeValuesUpdateForm } from "./SyllabusGradeValuesUpdateForm";
 export { default as TaskCreateForm } from "./TaskCreateForm";
 export { default as TaskGradeInfoCreateForm } from "./TaskGradeInfoCreateForm";
 export { default as TaskGradeInfoUpdateForm } from "./TaskGradeInfoUpdateForm";

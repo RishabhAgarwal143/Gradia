@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { AutocompleteProps, GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { AutocompleteProps, GridProps, SwitchFieldProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -34,6 +34,7 @@ export declare type ScheduleCreateFormInputValues = {
     subscribedcalendarID?: string;
     subjectsID?: string;
     ScheduleGradeInfo?: any;
+    personalized_task?: boolean;
 };
 export declare type ScheduleCreateFormValidationValues = {
     userinfoID?: ValidationFunction<string>;
@@ -48,6 +49,7 @@ export declare type ScheduleCreateFormValidationValues = {
     subscribedcalendarID?: ValidationFunction<string>;
     subjectsID?: ValidationFunction<string>;
     ScheduleGradeInfo?: ValidationFunction<any>;
+    personalized_task?: ValidationFunction<boolean>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type ScheduleCreateFormOverridesProps = {
@@ -64,6 +66,7 @@ export declare type ScheduleCreateFormOverridesProps = {
     subscribedcalendarID?: PrimitiveOverrideProps<AutocompleteProps>;
     subjectsID?: PrimitiveOverrideProps<AutocompleteProps>;
     ScheduleGradeInfo?: PrimitiveOverrideProps<AutocompleteProps>;
+    personalized_task?: PrimitiveOverrideProps<SwitchFieldProps>;
 } & EscapeHatchProps;
 export declare type ScheduleCreateFormProps = React.PropsWithChildren<{
     overrides?: ScheduleCreateFormOverridesProps | undefined | null;

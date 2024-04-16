@@ -152,6 +152,7 @@ const GradeBox = ({ index, grade, onStatusChange }) => {
 const SecondComponent = ({ subject, task }) => {
   const [selectedStatuses, setSelectedStatuses] = useState({});
   const [trigger_refresh, setTrigger] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   let tasks = [];
   if (task && task.Tasks) {
@@ -287,6 +288,36 @@ const SecondComponent = ({ subject, task }) => {
     }));
   };
 
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      alert("No file selected");
+      return;
+    }
+
+    console.log("🚀 ~ handleFileUpload ~ selectedFile:", selectedFile);
+    const formData = new FormData();
+    formData.append("subject_ID", task.id);
+    formData.append("file", selectedFile);
+    formData.append("userinfoID", task.userinfoID);
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/syllabus", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload file");
+      }
+
+      alert("File uploaded successfully");
+      setSelectedFile(null);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error uploading file");
+    }
+  };
+
   return (
     <div className="main-content">
       <h2 className="bg-white">Selected Subject: {subject}</h2>
@@ -294,6 +325,43 @@ const SecondComponent = ({ subject, task }) => {
         Current Grade: {(task && task.current_Grade) || 0} Target Grade:{" "}
         {(task && task.target_Grade) || 0}
       </h2>
+      <button
+        onClick={() => document.getElementById("fileInput").click()}
+        style={{
+          padding: "10px",
+          margin: "10px",
+          backgroundColor: "#007bff",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Upload File
+      </button>
+      <input
+        type="file"
+        id="fileInput"
+        style={{ display: "none" }}
+        onChange={(event) => setSelectedFile(event.target.files[0])}
+      />
+      <button
+        onClick={handleFileUpload}
+        style={{
+          padding: "10px",
+          margin: "10px",
+          backgroundColor: "#28a745",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Send File to Server
+      </button>
+      {selectedFile && (
+        <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>
+      )}
       <div className="table-container">
         <table className="table">
           <thead>
