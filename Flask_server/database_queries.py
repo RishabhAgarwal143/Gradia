@@ -229,8 +229,8 @@ def add_user_info(userinfoID,accesstoken):
     session.commit()
 
 
-def get_subject():
-    subject_id = "57426fa8-8596-43d1-8a75-bb3bf3ebb51c"
+def get_subject(subject_id):
+    # subject_id = "57426fa8-8596-43d1-8a75-bb3bf3ebb51c"
 
     subject = session.query(Subjects).filter_by(id=subject_id).first()
 
@@ -242,7 +242,7 @@ def get_subject():
             print(schedule)
         print("Tasks")
         tasks = subject.task_list
-        # Print the schedules
+        # Print the tasks
         for task in tasks:
             print(task)
     else:

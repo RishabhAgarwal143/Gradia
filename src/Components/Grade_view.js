@@ -101,7 +101,8 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
   );
 };
 
-const GradeBox = ({ index, grade, onStatusChange }) => {
+const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
+  console.log("🚀 ~ GradeBox ~ syllabus_Grade:", syllabus_Grade);
   const [selectedStatus, setSelectedStatus] = React.useState(grade);
   const [change, setChange] = React.useState(false);
 
@@ -134,6 +135,21 @@ const GradeBox = ({ index, grade, onStatusChange }) => {
           setChange(true);
         }}
       />
+      {syllabus_Grade && (
+        <select
+          value={selectedStatus}
+          onChange={(e) => {
+            setSelectedStatus(e.target.value);
+            setChange(true);
+          }}
+        >
+          {syllabus_Grade.map((category, i) => (
+            <option key={i} value={category.category_Grade}>
+              {category.category_Name + "  " + category.category_Grade}
+            </option>
+          ))}
+        </select>
+      )}
       {change && (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <button
@@ -152,9 +168,11 @@ const GradeBox = ({ index, grade, onStatusChange }) => {
 };
 
 const SecondComponent = ({ subject, task }) => {
+  console.log("🚀 ~ SecondComponent ~ task:", task);
   const [selectedStatuses, setSelectedStatuses] = useState({});
   const [trigger_refresh, setTrigger] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const subject_info = task;
 
   let tasks = [];
   if (task && task.Tasks) {
@@ -422,6 +440,10 @@ const SecondComponent = ({ subject, task }) => {
                   <GradeBox
                     key={subject}
                     grade={task.task_Weightage || 0}
+                    syllabus_Grade={
+                      subject_info.SyllabusGradeValues &&
+                      subject_info.SyllabusGradeValues.items
+                    }
                     onStatusChange={(newStatus) =>
                       handleTaskWeightageChange(index, newStatus)
                     }
