@@ -11,9 +11,9 @@ import json
 import shutil
 
 class PDFParser:
-    def __init__(self):
+    def __init__(self, file_path):
         self.use_gpu = cv2.cuda.getCudaEnabledDeviceCount() > 0
-        self.pdf_path = sys.argv[1] 
+        self.pdf_path = file_path
 
         self.script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
 
@@ -143,7 +143,7 @@ class PDFParser:
 
 
 
-    def parser(self, syllabus_path, subject_id, userinfo_id):
+    def parser(self, subject_id, userinfo_id):
         
 
         combined_text = self.batch_processing(self.totalPages, batch_size=1)

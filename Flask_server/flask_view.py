@@ -11,7 +11,7 @@ from pprint import pp
 from werkzeug.utils import secure_filename
 import os
 
-# from src.pdf_parser.text_parser import PDFParser
+from text_parser import PDFParser
 from api_calls import add_syllabus_grades
 
 app = Flask(__name__, template_folder="templates")
@@ -162,25 +162,28 @@ def upload_file():
     if file:
         filename = secure_filename(file.filename)
         print("Current working directory:", os.getcwd())
+
         file.save(os.path.join(os.getcwd() + "\Flask_server\syllabus_folder", filename))
         file_path = os.path.join(os.getcwd() + "\Flask_server\syllabus_folder", filename)
 
-        # TODO: disabled parser temporarily for fix
-        # pobj = PDFParser()
-        # grade_data = pobj.parser(file_path, subject_id, userinfo_id)
+        pobj = PDFParser(file_path)
+        grade_data = pobj.parser(subject_id, userinfo_id)
+        grade_flag = False
+        for category, value in grade_data.items():
+            if category == "Grades":
+                grade_flag = True
+                break
+                
+            print(f"{category}: {value}")
+            percent = int(value[0].rstrip("%"))
+            nums = value[1]
 
-        # for subject, value in grade_data.items():
-        #     values = value.split(',')
-        #     percent = int(values[0].rstrip("%"))
-        #     nums = values[1].strip()
-
-        #     if nums == None or nums == "1":
-        #         nums = 1
-
-        #         add_syllabus_grades(subject, percent, subject_id, userinfo_id)
+            if nums == None or nums == 1:
+                print("SENDING TO DATABASE ", category, percent, subject_id, userinfo_id)
+                add_syllabus_grades(category, percent, subject_id, userinfo_id)
 
 
-        return 'File uploaded successfully'
+    return 'File uploaded successfully'
 
 
 if __name__ == '__main__':
