@@ -10,6 +10,7 @@ import markdown
 from pprint import pp
 from werkzeug.utils import secure_filename
 import os
+import shutil
 
 from text_parser import PDFParser
 from api_calls import add_syllabus_grades
@@ -163,6 +164,9 @@ def upload_file():
         filename = secure_filename(file.filename)
         print("Current working directory:", os.getcwd())
 
+        if not os.path.exists(os.getcwd() + "\Flask_server\syllabus_folder"):
+            os.makedirs(os.getcwd() + "\Flask_server\syllabus_folder")
+
         file.save(os.path.join(os.getcwd() + "\Flask_server\syllabus_folder", filename))
         file_path = os.path.join(os.getcwd() + "\Flask_server\syllabus_folder", filename)
 
@@ -182,6 +186,7 @@ def upload_file():
                 print("SENDING TO DATABASE ", category, percent, subject_id, userinfo_id)
                 add_syllabus_grades(category, percent, subject_id, userinfo_id)
 
+    shutil.rmtree(os.getcwd() + "\Flask_server\syllabus_folder")
 
     return 'File uploaded successfully'
 
