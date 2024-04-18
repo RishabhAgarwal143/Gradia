@@ -256,7 +256,7 @@ export default function SyllabusGradeValuesUpdateForm(props) {
   const [syllabusGradeValuesRecord, setSyllabusGradeValuesRecord] =
     React.useState(syllabusGradeValuesModelProp);
   const [linkedTaskGradeInfos, setLinkedTaskGradeInfos] = React.useState([]);
-  const canUnlinkTaskGradeInfos = false;
+  const canUnlinkTaskGradeInfos = true;
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp

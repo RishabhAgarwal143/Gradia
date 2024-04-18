@@ -22,14 +22,18 @@ import {
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
 import {
+  listSchedules,
   listSubjects,
   listSubscribedCalendars,
+  listTasks,
   listUserWorkTims,
 } from "../graphql/queries";
 import {
   createUserinfo,
+  updateSchedule,
   updateSubjects,
   updateSubscribedCalendar,
+  updateTask,
 } from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
@@ -314,9 +318,8 @@ export default function UserinfoCreateForm(props) {
       : getIDValue.UserWorkTim?.(UserWorkTim)
   );
   const getDisplayValue = {
-    Schedules: (r) =>
-      `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
-    Tasks: (r) => `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
+    Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
+    Tasks: (r) => `${r?.UID ? r?.UID + " - " : ""}${r?.id}`,
     SubscribedCalendars: (r) =>
       `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
     Subjects: (r) =>
@@ -358,10 +361,7 @@ export default function UserinfoCreateForm(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [
-            { Calendar_Name: { contains: value } },
-            { id: { contains: value } },
-          ],
+          or: [{ SUMMARY: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
@@ -369,10 +369,10 @@ export default function UserinfoCreateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listSubscribedCalendars.replaceAll("__typename", ""),
+          query: listSchedules.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listSubscribedCalendars?.items;
+      )?.data?.listSchedules?.items;
       var loaded = result.filter(
         (item) => !SchedulesIdSet.has(getIDValue.Schedules?.(item))
       );
@@ -390,10 +390,7 @@ export default function UserinfoCreateForm(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [
-            { Calendar_Name: { contains: value } },
-            { id: { contains: value } },
-          ],
+          or: [{ UID: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
@@ -401,10 +398,10 @@ export default function UserinfoCreateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listSubscribedCalendars.replaceAll("__typename", ""),
+          query: listTasks.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listSubscribedCalendars?.items;
+      )?.data?.listTasks?.items;
       var loaded = result.filter(
         (item) => !TasksIdSet.has(getIDValue.Tasks?.(item))
       );
@@ -588,7 +585,7 @@ export default function UserinfoCreateForm(props) {
             ...Schedules.reduce((promises, original) => {
               promises.push(
                 client.graphql({
-                  query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                  query: updateSchedule.replaceAll("__typename", ""),
                   variables: {
                     input: {
                       id: original.id,
@@ -604,7 +601,7 @@ export default function UserinfoCreateForm(props) {
             ...Tasks.reduce((promises, original) => {
               promises.push(
                 client.graphql({
-                  query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                  query: updateTask.replaceAll("__typename", ""),
                   variables: {
                     input: {
                       id: original.id,
@@ -817,7 +814,7 @@ export default function UserinfoCreateForm(props) {
           label="Schedules"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search SubscribedCalendar"
+          placeholder="Search Schedule"
           value={currentSchedulesDisplayValue}
           options={schedulesRecords
             .filter((r) => !SchedulesIdSet.has(getIDValue.Schedules?.(r)))
@@ -910,7 +907,7 @@ export default function UserinfoCreateForm(props) {
           label="Tasks"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search SubscribedCalendar"
+          placeholder="Search Task"
           value={currentTasksDisplayValue}
           options={tasksRecords
             .filter((r) => !TasksIdSet.has(getIDValue.Tasks?.(r)))

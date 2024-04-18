@@ -105,6 +105,7 @@ const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
   console.log("🚀 ~ GradeBox ~ syllabus_Grade:", syllabus_Grade);
   const [selectedStatus, setSelectedStatus] = React.useState(grade);
   const [change, setChange] = React.useState(false);
+  // const [isOpen, SetOpen] = React.useState(false);
 
   const handleConfirm = () => {
     if (isNaN(selectedStatus)) {
@@ -122,34 +123,38 @@ const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
   // setSelectedStatus(grade);
   return (
     <>
-      <input
-        type="number"
-        value={selectedStatus}
-        onChange={(e) => {
-          const newGrade = e.target.value;
-          if (newGrade < 0) {
-            setSelectedStatus(0);
-          } else {
-            setSelectedStatus(parseInt(newGrade, 10));
-          }
-          setChange(true);
-        }}
-      />
-      {syllabus_Grade && (
-        <select
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <input
+          type="number"
           value={selectedStatus}
           onChange={(e) => {
-            setSelectedStatus(e.target.value);
+            const newGrade = e.target.value;
+            if (newGrade < 0) {
+              setSelectedStatus(0);
+            } else {
+              setSelectedStatus(parseInt(newGrade, 10));
+            }
             setChange(true);
           }}
-        >
-          {syllabus_Grade.map((category, i) => (
-            <option key={i} value={category.category_Grade}>
-              {category.category_Name + "  " + category.category_Grade}
-            </option>
-          ))}
-        </select>
-      )}
+        />
+        {syllabus_Grade && (
+          <select
+            className="custom-select"
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+              setChange(true);
+            }}
+          >
+            <option value="" hidden></option>
+            {syllabus_Grade.map((category, i) => (
+              <option key={i} value={category.category_Grade}>
+                {category.category_Name + "  " + category.category_Grade}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
       {change && (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <button

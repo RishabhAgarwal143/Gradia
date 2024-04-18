@@ -358,7 +358,6 @@ export async function listSubjects() {
 
       items = [...items, ...currentItems];
       console.log("events recieved", items.length);
-
       nextToken = newNextToken;
     } catch (error) {
       console.error("Error fetching items:", error);

@@ -23,13 +23,17 @@ import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
 import {
   getUserinfo,
+  listSchedules,
   listSubjects,
   listSubscribedCalendars,
+  listTasks,
   listUserWorkTims,
 } from "../graphql/queries";
 import {
+  updateSchedule,
   updateSubjects,
   updateSubscribedCalendar,
+  updateTask,
   updateUserinfo,
 } from "../graphql/mutations";
 const client = generateClient();
@@ -370,9 +374,8 @@ export default function UserinfoUpdateForm(props) {
       : getIDValue.UserWorkTim?.(UserWorkTim)
   );
   const getDisplayValue = {
-    Schedules: (r) =>
-      `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
-    Tasks: (r) => `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
+    Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
+    Tasks: (r) => `${r?.UID ? r?.UID + " - " : ""}${r?.id}`,
     SubscribedCalendars: (r) =>
       `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
     Subjects: (r) =>
@@ -414,10 +417,7 @@ export default function UserinfoUpdateForm(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [
-            { Calendar_Name: { contains: value } },
-            { id: { contains: value } },
-          ],
+          or: [{ SUMMARY: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
@@ -425,10 +425,10 @@ export default function UserinfoUpdateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listSubscribedCalendars.replaceAll("__typename", ""),
+          query: listSchedules.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listSubscribedCalendars?.items;
+      )?.data?.listSchedules?.items;
       var loaded = result.filter(
         (item) => !SchedulesIdSet.has(getIDValue.Schedules?.(item))
       );
@@ -446,10 +446,7 @@ export default function UserinfoUpdateForm(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [
-            { Calendar_Name: { contains: value } },
-            { id: { contains: value } },
-          ],
+          or: [{ UID: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
@@ -457,10 +454,10 @@ export default function UserinfoUpdateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listSubscribedCalendars.replaceAll("__typename", ""),
+          query: listTasks.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listSubscribedCalendars?.items;
+      )?.data?.listTasks?.items;
       var loaded = result.filter(
         (item) => !TasksIdSet.has(getIDValue.Tasks?.(item))
       );
@@ -645,12 +642,12 @@ export default function UserinfoUpdateForm(props) {
           schedulesToUnLink.forEach((original) => {
             if (!canUnlinkSchedules) {
               throw Error(
-                `SubscribedCalendar ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
+                `Schedule ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
               );
             }
             promises.push(
               client.graphql({
-                query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                query: updateSchedule.replaceAll("__typename", ""),
                 variables: {
                   input: {
                     id: original.id,
@@ -663,7 +660,7 @@ export default function UserinfoUpdateForm(props) {
           schedulesToLink.forEach((original) => {
             promises.push(
               client.graphql({
-                query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                query: updateSchedule.replaceAll("__typename", ""),
                 variables: {
                   input: {
                     id: original.id,
@@ -692,12 +689,12 @@ export default function UserinfoUpdateForm(props) {
           tasksToUnLink.forEach((original) => {
             if (!canUnlinkTasks) {
               throw Error(
-                `SubscribedCalendar ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
+                `Task ${original.id} cannot be unlinked from Userinfo because userinfoID is a required field.`
               );
             }
             promises.push(
               client.graphql({
-                query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                query: updateTask.replaceAll("__typename", ""),
                 variables: {
                   input: {
                     id: original.id,
@@ -710,7 +707,7 @@ export default function UserinfoUpdateForm(props) {
           tasksToLink.forEach((original) => {
             promises.push(
               client.graphql({
-                query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                query: updateTask.replaceAll("__typename", ""),
                 variables: {
                   input: {
                     id: original.id,
@@ -995,7 +992,7 @@ export default function UserinfoUpdateForm(props) {
           label="Schedules"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search SubscribedCalendar"
+          placeholder="Search Schedule"
           value={currentSchedulesDisplayValue}
           options={schedulesRecords
             .filter((r) => !SchedulesIdSet.has(getIDValue.Schedules?.(r)))
@@ -1080,7 +1077,7 @@ export default function UserinfoUpdateForm(props) {
           label="Tasks"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search SubscribedCalendar"
+          placeholder="Search Task"
           value={currentTasksDisplayValue}
           options={tasksRecords
             .filter((r) => !TasksIdSet.has(getIDValue.Tasks?.(r)))

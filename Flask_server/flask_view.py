@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from chatbot_api import openai_manager
-from database_queries import process_add_schedule,process_delete_schedule,process_update_task,process_update_taskGrade
-from database_queries import process_add_task,process_delete_task,process_add_subject,add_user_info, process_update_subject
+from database_queries import *
+from database_setup import create_table
 from database_cleaner import check_database
 from Reading_Calendar import Subscribing_to_Calendar
 import multiprocessing
@@ -25,10 +25,11 @@ def receive_data():
     data = request.json
     userID = data["userId"]
     Token = data["Token"]
-    add_user_info(userID,Token)
+    create_table(userID)
     chat_obj = openai_manager(userID)
     if(userID not in thread_info):
         thread_info[userID] = chat_obj
+    add_user_info(userID,Token)
         
     return jsonify({'message': 'Data received successfully'})
 
@@ -38,8 +39,6 @@ def create_data():
     data = request.json  # Assuming data is sent as JSON
 
     process_add_schedule(data)
-    # print(data)
-
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/updatesubscribe', methods=['POST'])

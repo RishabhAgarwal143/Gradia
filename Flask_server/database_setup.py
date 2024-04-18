@@ -3,11 +3,13 @@
 While User and Address is a modern example showing Foreign Keys and how to connect tables,
 the Simple class should be enough to complete your Prelab"""
 
+from sqlalchemy import create_engine
 from typing import Optional,List
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,relationship
 from sqlalchemy import ForeignKey
 import datetime
 import requests
+import os
 import pytz
 
 def aws_string(str):
@@ -334,13 +336,17 @@ class Schedule_grade_info(Base):
             session.commit()
 
 
-def create_table(engine):
+def create_table(userinfoId):
     """Uses all the Base Metadata in this file to create tables"""
-    Base.metadata.create_all(engine)
+    file_path = f"./Flask_server/database/userdata_{userinfoId}.db"
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db", echo=True)
     
+    Base.metadata.create_all(engine)
+    engine.dispose()
 
 if __name__ == "__main__":
-    from sqlalchemy import create_engine
-    engine = create_engine("sqlite:///Flask_server/database/userdata.db", echo=True)
-    create_table(engine)
+    create_table("")
     

@@ -54,7 +54,7 @@ export declare type ScheduleCreateFormValidationValues = {
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type ScheduleCreateFormOverridesProps = {
     ScheduleCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    userinfoID?: PrimitiveOverrideProps<TextFieldProps>;
+    userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
     SUMMARY?: PrimitiveOverrideProps<TextFieldProps>;
     DTSTART?: PrimitiveOverrideProps<TextFieldProps>;
     DTEND?: PrimitiveOverrideProps<TextFieldProps>;

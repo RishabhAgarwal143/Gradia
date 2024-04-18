@@ -59,7 +59,7 @@ export declare type ScheduleUpdateFormOverridesProps = {
     DTEND?: PrimitiveOverrideProps<TextFieldProps>;
     DESCRIPTION?: PrimitiveOverrideProps<TextFieldProps>;
     LOCATION?: PrimitiveOverrideProps<TextFieldProps>;
-    userinfoID?: PrimitiveOverrideProps<TextFieldProps>;
+    userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
     RRULE?: PrimitiveOverrideProps<TextAreaFieldProps>;
     UID?: PrimitiveOverrideProps<TextFieldProps>;
     DTSTAMP?: PrimitiveOverrideProps<TextFieldProps>;

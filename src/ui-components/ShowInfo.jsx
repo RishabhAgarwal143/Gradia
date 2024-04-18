@@ -27,9 +27,11 @@ import {
   getSchedule,
   getSubjects,
   getSubscribedCalendar,
+  getUserinfo,
   listScheduleGradeInfos,
   listSubjects,
   listSubscribedCalendars,
+  listUserinfos,
 } from "../graphql/queries";
 import { updateSchedule, updateScheduleGradeInfo } from "../graphql/mutations";
 const client = generateClient();
@@ -207,7 +209,7 @@ export default function ShowInfo(props) {
     DTEND: "",
     DESCRIPTION: "",
     LOCATION: "",
-    userinfoID: "",
+    userinfoID: undefined,
     RRULE: "",
     UID: "",
     DTSTAMP: "",
@@ -224,6 +226,10 @@ export default function ShowInfo(props) {
   );
   const [LOCATION, setLOCATION] = React.useState(initialValues.LOCATION);
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
+  const [userinfoIDLoading, setUserinfoIDLoading] = React.useState(false);
+  const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
+  const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
+    React.useState([]);
   const [RRULE, setRRULE] = React.useState(initialValues.RRULE);
   const [UID, setUID] = React.useState(initialValues.UID);
   const [DTSTAMP, setDTSTAMP] = React.useState(initialValues.DTSTAMP);
@@ -260,6 +266,7 @@ export default function ShowInfo(props) {
       ? {
           ...initialValues,
           ...scheduleRecord,
+          userinfoID,
           subscribedcalendarID,
           subjectsID,
           ScheduleGradeInfo,
@@ -271,6 +278,8 @@ export default function ShowInfo(props) {
     setDESCRIPTION(cleanValues.DESCRIPTION);
     setLOCATION(cleanValues.LOCATION);
     setUserinfoID(cleanValues.userinfoID);
+    setCurrentUserinfoIDValue(undefined);
+    setCurrentUserinfoIDDisplayValue("");
     setRRULE(
       typeof cleanValues.RRULE === "string" || cleanValues.RRULE === null
         ? cleanValues.RRULE
@@ -301,6 +310,17 @@ export default function ShowInfo(props) {
             })
           )?.data?.getSchedule
         : scheduleModelProp;
+      const userinfoIDRecord = record ? record.userinfoID : undefined;
+      const userinfoRecord = userinfoIDRecord
+        ? (
+            await client.graphql({
+              query: getUserinfo.replaceAll("__typename", ""),
+              variables: { id: userinfoIDRecord },
+            })
+          )?.data?.getUserinfo
+        : undefined;
+      setUserinfoID(userinfoIDRecord);
+      setSelectedUserinfoIDRecords([userinfoRecord]);
       const subscribedcalendarIDRecord = record
         ? record.subscribedcalendarID
         : undefined;
@@ -335,10 +355,16 @@ export default function ShowInfo(props) {
   }, [idProp, scheduleModelProp]);
   React.useEffect(resetStateValues, [
     scheduleRecord,
+    userinfoID,
     subscribedcalendarID,
     subjectsID,
     ScheduleGradeInfo,
   ]);
+  const [currentUserinfoIDDisplayValue, setCurrentUserinfoIDDisplayValue] =
+    React.useState("");
+  const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
+    React.useState(undefined);
+  const userinfoIDRef = React.createRef();
   const [
     currentSubscribedcalendarIDDisplayValue,
     setCurrentSubscribedcalendarIDDisplayValue,
@@ -369,6 +395,7 @@ export default function ShowInfo(props) {
       : getIDValue.ScheduleGradeInfo?.(ScheduleGradeInfo)
   );
   const getDisplayValue = {
+    userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
     subscribedcalendarID: (r) =>
       `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
     subjectsID: (r) =>
@@ -424,6 +451,33 @@ export default function ShowInfo(props) {
       return acc;
     }, {});
     return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+  };
+  const fetchUserinfoIDRecords = async (value) => {
+    setUserinfoIDLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ name: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listUserinfos.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listUserinfos?.items;
+      var loaded = result.filter((item) => userinfoID !== item.id);
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
+    setUserinfoIDLoading(false);
   };
   const fetchSubscribedcalendarIDRecords = async (value) => {
     setSubscribedcalendarIDLoading(true);
@@ -519,6 +573,7 @@ export default function ShowInfo(props) {
     setScheduleGradeInfoLoading(false);
   };
   React.useEffect(() => {
+    fetchUserinfoIDRecords("");
     fetchSubscribedcalendarIDRecords("");
     fetchSubjectsIDRecords("");
     fetchScheduleGradeInfoRecords("");
@@ -869,13 +924,10 @@ export default function ShowInfo(props) {
         hasError={errors.LOCATION?.hasError}
         {...getOverrideProps(overrides, "LOCATION")}
       ></TextField>
-      <TextField
-        label="Userinfo id"
-        isRequired={true}
-        isReadOnly={false}
-        value={userinfoID}
-        onChange={(e) => {
-          let { value } = e.target;
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
           if (onChange) {
             const modelFields = {
               SUMMARY,
@@ -895,16 +947,87 @@ export default function ShowInfo(props) {
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
           }
-          if (errors.userinfoID?.hasError) {
-            runValidationTasks("userinfoID", value);
-          }
           setUserinfoID(value);
+          setCurrentUserinfoIDValue(undefined);
         }}
-        onBlur={() => runValidationTasks("userinfoID", userinfoID)}
-        errorMessage={errors.userinfoID?.errorMessage}
-        hasError={errors.userinfoID?.hasError}
-        {...getOverrideProps(overrides, "userinfoID")}
-      ></TextField>
+        currentFieldValue={currentUserinfoIDValue}
+        label={"Userinfo id"}
+        items={userinfoID ? [userinfoID] : []}
+        hasError={errors?.userinfoID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("userinfoID", currentUserinfoIDValue)
+        }
+        errorMessage={errors?.userinfoID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.userinfoID(
+                userinfoIDRecords.find((r) => r.id === value) ??
+                  selectedUserinfoIDRecords.find((r) => r.id === value)
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentUserinfoIDDisplayValue(
+            value
+              ? getDisplayValue.userinfoID(
+                  userinfoIDRecords.find((r) => r.id === value) ??
+                    selectedUserinfoIDRecords.find((r) => r.id === value)
+                )
+              : ""
+          );
+          setCurrentUserinfoIDValue(value);
+          const selectedRecord = userinfoIDRecords.find((r) => r.id === value);
+          if (selectedRecord) {
+            setSelectedUserinfoIDRecords([selectedRecord]);
+          }
+        }}
+        inputFieldRef={userinfoIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Userinfo id"
+          isRequired={true}
+          isReadOnly={false}
+          placeholder="Search Userinfo"
+          value={currentUserinfoIDDisplayValue}
+          options={userinfoIDRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.userinfoID?.(r),
+            }))}
+          isLoading={userinfoIDLoading}
+          onSelect={({ id, label }) => {
+            setCurrentUserinfoIDValue(id);
+            setCurrentUserinfoIDDisplayValue(label);
+            runValidationTasks("userinfoID", label);
+          }}
+          onClear={() => {
+            setCurrentUserinfoIDDisplayValue("");
+          }}
+          defaultValue={userinfoID}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchUserinfoIDRecords(value);
+            if (errors.userinfoID?.hasError) {
+              runValidationTasks("userinfoID", value);
+            }
+            setCurrentUserinfoIDDisplayValue(value);
+            setCurrentUserinfoIDValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("userinfoID", currentUserinfoIDValue)
+          }
+          errorMessage={errors.userinfoID?.errorMessage}
+          hasError={errors.userinfoID?.hasError}
+          ref={userinfoIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "userinfoID")}
+        ></Autocomplete>
+      </ArrayField>
       <TextAreaField
         label={
           <span style={{ display: "inline-flex" }}>

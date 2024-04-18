@@ -277,7 +277,7 @@ export default function TaskGradeInfoCreateForm(props) {
     extra_Info: [],
     time_Taken: [],
     Task: [],
-    syllabusgradevaluesID: [{ type: "Required" }],
+    syllabusgradevaluesID: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -788,7 +788,7 @@ export default function TaskGradeInfoCreateForm(props) {
       >
         <Autocomplete
           label="Syllabusgradevalues id"
-          isRequired={true}
+          isRequired={false}
           isReadOnly={false}
           placeholder="Search SyllabusGradeValues"
           value={currentSyllabusgradevaluesIDDisplayValue}

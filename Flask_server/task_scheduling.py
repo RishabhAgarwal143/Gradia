@@ -99,5 +99,5 @@ def assign_task(user: User):
 
 
 # get_user_free_time("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))
-assign_task(get_user_info("82cf448d-fc16-409c-82e9-3304d937f840"))
+# assign_task(get_user_info("82cf448d-fc16-409c-82e9-3304d937f840"))
     

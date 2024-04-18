@@ -324,7 +324,7 @@ export default function TaskGradeInfoUpdateForm(props) {
     extra_Info: [],
     time_Taken: [],
     Task: [],
-    syllabusgradevaluesID: [{ type: "Required" }],
+    syllabusgradevaluesID: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -421,7 +421,7 @@ export default function TaskGradeInfoUpdateForm(props) {
           extra_Info: extra_Info ?? null,
           time_Taken: time_Taken ?? null,
           Task: Task ?? null,
-          syllabusgradevaluesID,
+          syllabusgradevaluesID: syllabusgradevaluesID ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -509,7 +509,7 @@ export default function TaskGradeInfoUpdateForm(props) {
             extra_Info: modelFields.extra_Info ?? null,
             time_Taken: modelFields.time_Taken ?? null,
             taskGradeInfoTaskId: modelFields?.Task?.id ?? null,
-            syllabusgradevaluesID: modelFields.syllabusgradevaluesID,
+            syllabusgradevaluesID: modelFields.syllabusgradevaluesID ?? null,
           };
           promises.push(
             client.graphql({
@@ -848,7 +848,7 @@ export default function TaskGradeInfoUpdateForm(props) {
       >
         <Autocomplete
           label="Syllabusgradevalues id"
-          isRequired={true}
+          isRequired={false}
           isReadOnly={false}
           placeholder="Search SyllabusGradeValues"
           value={currentSyllabusgradevaluesIDDisplayValue}

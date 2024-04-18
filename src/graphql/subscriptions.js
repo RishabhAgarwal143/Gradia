@@ -1265,20 +1265,43 @@ export const onCreateUserinfo = /* GraphQL */ `
       Schedules {
         items {
           id
-          Calendar_Name
-          Calendar_URL
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
           userinfoID
-          Schedules {
-            nextToken
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
             __typename
           }
-          Tasks {
-            nextToken
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
             __typename
           }
-          LAST_MODIFIED
+          personalized_task
           createdAt
           updatedAt
+          scheduleScheduleGradeInfoId
           owner
           __typename
         }
@@ -1288,20 +1311,36 @@ export const onCreateUserinfo = /* GraphQL */ `
       Tasks {
         items {
           id
-          Calendar_Name
-          Calendar_URL
+          UID
+          DTSTART
+          DUE
+          SUMMARY
           userinfoID
-          Schedules {
-            nextToken
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            syllabusgradevaluesID
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
             __typename
           }
-          Tasks {
-            nextToken
-            __typename
-          }
-          LAST_MODIFIED
+          LOCATION
           createdAt
           updatedAt
+          taskTaskGradeInfoId
           owner
           __typename
         }
@@ -1377,6 +1416,7 @@ export const onCreateUserinfo = /* GraphQL */ `
         Sunday_end
         createdAt
         updatedAt
+        owner
         __typename
       }
       createdAt
@@ -1400,20 +1440,43 @@ export const onUpdateUserinfo = /* GraphQL */ `
       Schedules {
         items {
           id
-          Calendar_Name
-          Calendar_URL
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
           userinfoID
-          Schedules {
-            nextToken
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
             __typename
           }
-          Tasks {
-            nextToken
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
             __typename
           }
-          LAST_MODIFIED
+          personalized_task
           createdAt
           updatedAt
+          scheduleScheduleGradeInfoId
           owner
           __typename
         }
@@ -1423,20 +1486,36 @@ export const onUpdateUserinfo = /* GraphQL */ `
       Tasks {
         items {
           id
-          Calendar_Name
-          Calendar_URL
+          UID
+          DTSTART
+          DUE
+          SUMMARY
           userinfoID
-          Schedules {
-            nextToken
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            syllabusgradevaluesID
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
             __typename
           }
-          Tasks {
-            nextToken
-            __typename
-          }
-          LAST_MODIFIED
+          LOCATION
           createdAt
           updatedAt
+          taskTaskGradeInfoId
           owner
           __typename
         }
@@ -1512,6 +1591,7 @@ export const onUpdateUserinfo = /* GraphQL */ `
         Sunday_end
         createdAt
         updatedAt
+        owner
         __typename
       }
       createdAt
@@ -1535,20 +1615,43 @@ export const onDeleteUserinfo = /* GraphQL */ `
       Schedules {
         items {
           id
-          Calendar_Name
-          Calendar_URL
+          SUMMARY
+          DTSTART
+          DTEND
+          DESCRIPTION
+          LOCATION
           userinfoID
-          Schedules {
-            nextToken
+          RRULE {
+            FREQ
+            INTERVALS
+            UNTIL
+            WKST
+            BYDAYS
+            BYMONTH
+            COUNT
             __typename
           }
-          Tasks {
-            nextToken
+          UID
+          DTSTAMP
+          subscribedcalendarID
+          subjectsID
+          ScheduleGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            attended
+            createdAt
+            updatedAt
+            scheduleGradeInfoScheduleId
+            owner
             __typename
           }
-          LAST_MODIFIED
+          personalized_task
           createdAt
           updatedAt
+          scheduleScheduleGradeInfoId
           owner
           __typename
         }
@@ -1558,20 +1661,36 @@ export const onDeleteUserinfo = /* GraphQL */ `
       Tasks {
         items {
           id
-          Calendar_Name
-          Calendar_URL
+          UID
+          DTSTART
+          DUE
+          SUMMARY
           userinfoID
-          Schedules {
-            nextToken
+          COMPLETED
+          STATUS
+          PRIORITY
+          DTSTAMP
+          subscribedcalendarID
+          DESCRIPTION
+          subjectsID
+          TaskGradeInfo {
+            id
+            current_Grade
+            task_Weightage
+            overall_Percentage
+            extra_Info
+            time_Taken
+            syllabusgradevaluesID
+            createdAt
+            updatedAt
+            taskGradeInfoTaskId
+            owner
             __typename
           }
-          Tasks {
-            nextToken
-            __typename
-          }
-          LAST_MODIFIED
+          LOCATION
           createdAt
           updatedAt
+          taskTaskGradeInfoId
           owner
           __typename
         }
@@ -1647,6 +1766,7 @@ export const onDeleteUserinfo = /* GraphQL */ `
         Sunday_end
         createdAt
         updatedAt
+        owner
         __typename
       }
       createdAt
@@ -1933,8 +2053,9 @@ export const onDeleteSchedule = /* GraphQL */ `
 export const onCreateUserWorkTim = /* GraphQL */ `
   subscription OnCreateUserWorkTim(
     $filter: ModelSubscriptionUserWorkTimFilterInput
+    $owner: String
   ) {
-    onCreateUserWorkTim(filter: $filter) {
+    onCreateUserWorkTim(filter: $filter, owner: $owner) {
       id
       Monday_start
       Monday_end
@@ -1952,6 +2073,7 @@ export const onCreateUserWorkTim = /* GraphQL */ `
       Sunday_end
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -1959,8 +2081,9 @@ export const onCreateUserWorkTim = /* GraphQL */ `
 export const onUpdateUserWorkTim = /* GraphQL */ `
   subscription OnUpdateUserWorkTim(
     $filter: ModelSubscriptionUserWorkTimFilterInput
+    $owner: String
   ) {
-    onUpdateUserWorkTim(filter: $filter) {
+    onUpdateUserWorkTim(filter: $filter, owner: $owner) {
       id
       Monday_start
       Monday_end
@@ -1978,6 +2101,7 @@ export const onUpdateUserWorkTim = /* GraphQL */ `
       Sunday_end
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -1985,8 +2109,9 @@ export const onUpdateUserWorkTim = /* GraphQL */ `
 export const onDeleteUserWorkTim = /* GraphQL */ `
   subscription OnDeleteUserWorkTim(
     $filter: ModelSubscriptionUserWorkTimFilterInput
+    $owner: String
   ) {
-    onDeleteUserWorkTim(filter: $filter) {
+    onDeleteUserWorkTim(filter: $filter, owner: $owner) {
       id
       Monday_start
       Monday_end
@@ -2004,6 +2129,7 @@ export const onDeleteUserWorkTim = /* GraphQL */ `
       Sunday_end
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
