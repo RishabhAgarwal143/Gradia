@@ -19,6 +19,7 @@
 .env.production.local
 .env
 Flask_server/__pycache__
+Flask_server/database/userdata.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
