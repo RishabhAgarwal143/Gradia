@@ -6,7 +6,8 @@
 .pnp.js
 
 # testing
-/coverage
+/coverage 
+
 
 # production
 /build
@@ -19,7 +20,7 @@
 .env.production.local
 .env
 Flask_server/__pycache__
-Flask_server/database/userdata.db
+Flask_server/database/userdata_*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

@@ -342,7 +342,7 @@ def create_table(userinfoId):
     if os.path.exists(file_path):
         os.remove(file_path)
 
-    engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db", echo=True)
+    engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
     
     Base.metadata.create_all(engine)
     engine.dispose()
