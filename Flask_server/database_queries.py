@@ -50,6 +50,15 @@ def delete_obj(obj):
 
 
 def process_add_schedule(schedules):
+    """
+    Process and add schedules to the database.
+
+    Args:
+        schedules (list): A list of schedules to be processed and added.
+
+    Returns:
+        None
+    """
 
     if("onCreateSchedule" in schedules):
         schedule = schedules['onCreateSchedule']
@@ -83,11 +92,11 @@ def process_add_schedule(schedules):
         startTime = datetime.datetime.fromisoformat(schedule["start"].replace('Z', '+00:00'))
         endTime = datetime.datetime.fromisoformat(schedule["end"].replace('Z', '+00:00'))
         schedule_grade_info = None
-        if(schedule["ScheduleGradeInfo"]):
+        if schedule["ScheduleGradeInfo"]:
             info = schedule["ScheduleGradeInfo"]
-            schedule_grade_info = Schedule_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],attended= info["attended"],schedule_id=schedule["id"])
+            schedule_grade_info = Schedule_grade_info(id=info["id"], current_Grade=info["current_Grade"], task_Weightage=info["task_Weightage"], overall_Percentage=info["overall_Percentage"], extra_info=info["extra_Info"], attended=info["attended"], schedule_id=schedule["id"])
             add_to_database(schedule_grade_info)
-        new_schedule = Schedule(id=schedule["id"], SUMMARY=schedule["title"], DTSTART=startTime, DTEND=endTime,DESCRIPTION=schedule["description"], LOCATION=schedule["location"],userinfoID= schedule["userinfoID"],subjectsID=schedule["subject_id"],schedule_grade=schedule_grade_info)
+        new_schedule = Schedule(id=schedule["id"], SUMMARY=schedule["title"], DTSTART=startTime, DTEND=endTime, DESCRIPTION=schedule["description"], LOCATION=schedule["location"], userinfoID=schedule["userinfoID"], subjectsID=schedule["subject_id"], schedule_grade=schedule_grade_info)
         add_to_database(new_schedule)
     pass
 
@@ -200,7 +209,8 @@ def get_schedule_range(userinfo_id, start_date, end_date):
     filter(Schedule.DTEND >= start_date, Schedule.DTSTART <= end_date).\
     all()
     for schedule in schedules:
-        print(schedule)
+        pass
+        # print(schedule)
     return schedules
 
 
@@ -254,3 +264,72 @@ def get_user_info(userinfoID):
     user = session.query(User).filter_by(userinfoID=userinfoID).first()
     # user.get_UserWorkTime(session)
     return user
+# def rank_tasks(user : User):
+#     # Get all the tasks
+
+#     # Rank the tasks
+#     rank = []
+#     for subject in user.subjects_list:
+#         for task in subject.task_list:
+#             if task.STATUS == "COMPLETED":
+#                 continue
+#             # get the deadline of the task
+#             deadline = task.DUE
+#             # get the current time
+#             current_time = datetime.datetime.now()
+#             # calculate the difference in time
+#             time_remaining = (deadline - current_time).total_seconds() / 3600
+#             print(time_remaining)
+#             if task.task_grade == None:
+#                 task.PRIORITY = int(1 / int(time_remaining))
+#                 rank.append(task)
+#                 continue
+#             # get the time taken to complete the task
+            
+#             # calculate the weightage of the task
+#             weightage = task.task_grade.task_Weightage
+#             # calculate the current grade of the user
+#             current_grade = task.task_grade.current_Grade
+#             # get the subject of the task
+#             target_grade = subject.target_Grade
+#             # calculate the overall percentage of the task
+#             overall_percentage = task.task_grade.overall_Percentage
+
+#             # calculate the rank of the task
+#             task.PRIORITY  = (1/(time_remaining)) * weightage * (target_grade - current_grade)
+#             rank.append(task)
+#     # sort the tasks based on the rank
+
+def assign_priority(user: User):
+    tasks = []
+    for subject in user.subjects_list:
+        for task in subject.task_list:
+
+            # print(task.STATUS)
+            if task.STATUS == "COMPLETED" or not(task.task_grade):
+                continue
+            # priorities[task] = {3600/(task.DUE - datetime.datetime.now()).total_seconds() , task.task_grade.task_Weightage, subject.target_Grade - subject.current_Grade, task.task_grade.difficulty}
+            subject.calculate_final_grade(session)
+            # calculate the number of days left for the task by subtracting the current time from the deadline
+            time_remaining = (task.DUE - datetime.datetime.now()).days
+            if time_remaining < 0:
+                task.STATUS = "OVERDUE"
+                continue
+            elif time_remaining == 0:
+                time_remaining = 1
+
+            task_weightage = task.task_grade.task_Weightage/ 100
+          
+            grade_left = (93 - subject.current_Grade)/100
+            
+
+            task.PRIORITY = 0.7 * (1/time_remaining) + 0.2 * (task_weightage) + 0.1 * (grade_left)
+            
+            tasks.append(task)
+    tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
+    for task in tasks:
+        print(task.SUMMARY, task.DUE,  task.PRIORITY)
+    return tasks
+
+# get_schedule_range("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))
+assign_priority(get_user_info("82cf448d-fc16-409c-82e9-3304d937f840"))

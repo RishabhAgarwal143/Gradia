@@ -2,8 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
-from database_queries import get_task_data
-from database_queries import get_user_info
+from database_queries import *
 def train_model(user):
     # Get task data
     priorities = get_task_data(user)
@@ -26,10 +25,16 @@ def train_model(user):
     
     # Evaluate the model
     val_predictions = model.predict(X_val)
-    mse = mean_squared_error(y_val, val_predictions)
-    print("Mean Squared Error:", mse)
+    for task, priority in zip(df.index, val_predictions):
+        # Assign priority to the task (you may need to adjust this based on your data model)
+         # Assuming you have a function to retrieve a task by its ID
+        task.priority = priority
     
-    return model
+    # mse = mean_squared_error(y_val, val_predictions)
+    # print("Mean Squared Error:", mse)
+    
+    # return model
 
 # Example usage:
 trained_model = train_model(get_user_info('82cf448d-fc16-409c-82e9-3304d937f840'))
+

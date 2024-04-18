@@ -10,6 +10,20 @@ import datetime
 import requests
 import pytz
 
+def aws_string(str):
+    if(not str):
+        return "null"
+    return r"\"%s\"" % str
+
+def aws_bool(bool):
+    if(bool == None):
+        return "null"
+    return str(bool).lower()
+
+def aws_datetime(dt):
+    if(not dt):
+        return "null"
+    return r"\"%s\"" % dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 def parse_time(time_str):
     if(not time_str):
@@ -111,6 +125,23 @@ class UserWorkTime(Base):
 
     def __repr__(self) -> str:
         return super().__repr__()
+    def get_work_time(self,day):
+        if(day == 0):
+            return [self.Monday_start,self.Monday_end]
+        elif(day == 1):
+            return [self.Tuesday_start,self.Tuesday_end]
+        elif(day == 2):
+            return [self.Wednesday_start,self.Wednesday_end]
+        elif(day == 3):
+            return [self.Thurday_start,self.Thurday_end]
+        elif(day == 4):
+            return [self.Friday_start,self.Friday_end]
+        elif(day == 5):
+            return [self.Saturday_start,self.Saturday_end]
+        elif(day == 6):
+            return [self.Sunday_start,self.Sunday_end]
+        else:
+            return None
 
 class Schedule(Base):
     """An example using regular Columns and no type annotation. 
@@ -123,10 +154,10 @@ class Schedule(Base):
     DTEND: Mapped[Optional[datetime.datetime]]
     DESCRIPTION: Mapped[Optional[str]]
     LOCATION: Mapped[Optional[str]]
+    personalized_task: Mapped[Optional[bool]]
     userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
     schedule_grade: Mapped[Optional["Schedule_grade_info"]] = relationship()
-    
     def __repr__(self):
         
         return (f"Schedule(id={self.id!r},SUMMARY={self.SUMMARY!r}, DTSTART={self.DTSTART!r}, DTEND={self.DTEND!r}, DESCRIPTION={self.DESCRIPTION!r},LOCATION={self.LOCATION!r})")
@@ -163,7 +194,26 @@ class Schedule(Base):
         dt_new_timezone = self.DTEND.astimezone(new_timezone)
         return dt_new_timezone
 
-
+    def add_to_cloud(self,user: User):
+        payload = "{\"query\":\"mutation CreateSchedule {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            "\
+                    "SUMMARY: %s\\r\\n            "\
+                    "DTSTART: %s\\r\\n            "\
+                    "DTEND: %s\\r\\n            "\
+                    "DESCRIPTION: %s\\r\\n            "\
+                    "LOCATION: %s\\r\\n            "\
+                    "userinfoID: \\\"%s\\\"\\r\\n            "\
+                    "personalized_task: %s\\r\\n            "\
+                    "subjectsID: %s\\r\\n        }\\r\\n    ) "\
+                    "{\\r\\n        id\\r\\n        SUMMARY\\r\\n    "\
+                    "}\\r\\n}\\r\\n\",\"variables\":{}}" % (aws_string(self.SUMMARY),aws_datetime(self.DTSTART),aws_datetime(self.DTEND),aws_string(self.DESCRIPTION),aws_string(self.LOCATION),user.userinfoID,aws_bool(self.personalized_task),aws_string(self.subjectsID))
+                    
+        url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+        headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer %s' % user.access_Token
+        }
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response.text)
 class Task(Base):
     """An example using regular Columns and no type annotation. 
         Enough for prelab, no foreign key usage. Similar effect but old convention.
@@ -181,7 +231,7 @@ class Task(Base):
     userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
     task_grade: Mapped[Optional["Task_grade_info"]] = relationship()
-    
+    # difficulty: Mapped[Optional[int]]
     def __repr__(self) -> str:
         return f"Task(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
 
