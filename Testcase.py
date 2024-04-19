@@ -31,6 +31,7 @@ class Testing_DB(unittest.TestCase):
 
         response2 = requests.request("POST", url, headers=headers, data=payload)
         returneditems =(json.loads(response2.text))
+        print(returneditems)
         returneditems = returneditems["data"]["listSchedules"]["items"][0]
 
         self.assertTrue(returneditems["id"] == id)
