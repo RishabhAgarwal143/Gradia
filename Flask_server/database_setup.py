@@ -3,12 +3,38 @@
 While User and Address is a modern example showing Foreign Keys and how to connect tables,
 the Simple class should be enough to complete your Prelab"""
 
+from sqlalchemy import create_engine
 from typing import Optional,List
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,relationship
 from sqlalchemy import ForeignKey
 import datetime
 import requests
+import os
 import pytz
+
+def aws_string(str):
+    if(not str):
+        return "null"
+    return r"\"%s\"" % str
+
+def aws_bool(bool):
+    if(bool == None):
+        return "null"
+    return str(bool).lower()
+
+def aws_datetime(dt):
+    if(not dt):
+        return "null"
+    return r"\"%s\"" % dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
+def parse_time(time_str):
+    if(not time_str):
+        return None
+    try:
+        time_object = datetime.datetime.strptime(time_str, "%H:%M:%S").time()
+    except ValueError:
+        time_object = datetime.datetime.strptime(time_str, "%H:%M").time()
+    return time_object
 
 
 class Base(DeclarativeBase):
@@ -21,6 +47,7 @@ class User(Base):
     userinfoID : Mapped[str]= mapped_column(primary_key=True)
     access_Token : Mapped[str]
     user_timezone : Mapped[Optional[str]]
+    UserWorkTime : Mapped[Optional["UserWorkTime"]] = relationship()
     schedule_list : Mapped[List["Schedule"]] = relationship()
     task_list : Mapped[List["Task"]] = relationship()
     subjects_list : Mapped[List["Subjects"]] = relationship()
@@ -33,7 +60,7 @@ class User(Base):
             self.access_Token = new_access_token
             session.commit()
             
-    def get_timezone(self):
+    def get_timezone(self,session):
         if(not self.user_timezone):
             headers = {
             'Content-Type': 'application/json',
@@ -47,9 +74,76 @@ class User(Base):
             json_response = response.json()
             print(json_response)
             self.user_timezone = json_response['data']['getUserinfo']['Timezone']
-        
+            session.commit()
+
         return self.user_timezone
 
+    def get_UserWorkTime(self,session):
+        
+        if(not self.UserWorkTime):
+            headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {self.access_Token}'
+            }
+            url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+            payload = "{\"query\":\"query GetUserinfo {\\r\\n    getUserinfo(id: \\\"%s\\\") {\\r\\n        UserWorkTim {\\r\\n            id\\r\\n            Monday_start\\r\\n            Monday_end\\r\\n            Tuesday_start\\r\\n            Tuesday_end\\r\\n            Wednesday_start\\r\\n            Wednesday_end\\r\\n            Thurday_start\\r\\n            Thurday_end\\r\\n            Friday_start\\r\\n            Friday_end\\r\\n            Saturday_start\\r\\n            Saturday_end\\r\\n            Sunday_start\\r\\n            Sunday_end\\r\\n            createdAt\\r\\n            updatedAt\\r\\n        }\\r\\n    }\\r\\n}\",\"variables\":{}}" % self.userinfoID
+            response = requests.request("POST", url, headers=headers, data=payload)
+            json_response = response.json()
+            info = json_response['data']['getUserinfo']['UserWorkTim']
+            self.UserWorkTime = UserWorkTime(id=info["id"],Monday_start=parse_time(info["Monday_start"]),Monday_end=parse_time(info["Monday_end"]),
+                                             Tuesday_start=parse_time(info["Tuesday_start"]),Tuesday_end=parse_time(info["Monday_end"]),
+                                             Wednesday_start=parse_time(info["Wednesday_start"]),Wednesday_end=parse_time(info["Monday_end"]),
+                                             Thurday_start=parse_time(info["Thurday_start"]),Thurday_end=parse_time(info["Monday_end"]),
+                                             Friday_start=parse_time(info["Friday_start"]),Friday_end=parse_time(info["Monday_end"]),
+                                             Saturday_start=parse_time(info["Saturday_start"]),Saturday_end=parse_time(info["Monday_end"]),
+                                             Sunday_start=parse_time(info["Sunday_start"]),Sunday_end=parse_time(info["Monday_end"]))
+            session.add(self.UserWorkTime)
+            session.commit()
+            
+        return self.UserWorkTime
+            
+
+
+class UserWorkTime(Base):
+    __tablename__ = "userworktime"
+    
+    id: Mapped[str] = mapped_column(primary_key=True)
+    Monday_start : Mapped[Optional[datetime.time]]
+    Monday_end : Mapped[Optional[datetime.time]]
+    Tuesday_start : Mapped[Optional[datetime.time]]
+    Tuesday_end : Mapped[Optional[datetime.time]]
+    Wednesday_start : Mapped[Optional[datetime.time]]
+    Wednesday_end : Mapped[Optional[datetime.time]]
+    Thurday_start : Mapped[Optional[datetime.time]]
+    Thurday_end : Mapped[Optional[datetime.time]]
+    Friday_start : Mapped[Optional[datetime.time]]
+    Friday_end : Mapped[Optional[datetime.time]]
+    Saturday_start : Mapped[Optional[datetime.time]]
+    Saturday_end : Mapped[Optional[datetime.time]]
+    Sunday_start : Mapped[Optional[datetime.time]]
+    Sunday_end : Mapped[Optional[datetime.time]] 
+    userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
+
+
+    def __repr__(self) -> str:
+        return super().__repr__()
+    def get_work_time(self,day):
+        if(day == 0):
+            return [self.Monday_start,self.Monday_end]
+        elif(day == 1):
+            return [self.Tuesday_start,self.Tuesday_end]
+        elif(day == 2):
+            return [self.Wednesday_start,self.Wednesday_end]
+        elif(day == 3):
+            return [self.Thurday_start,self.Thurday_end]
+        elif(day == 4):
+            return [self.Friday_start,self.Friday_end]
+        elif(day == 5):
+            return [self.Saturday_start,self.Saturday_end]
+        elif(day == 6):
+            return [self.Sunday_start,self.Sunday_end]
+        else:
+            return None
 
 class Schedule(Base):
     """An example using regular Columns and no type annotation. 
@@ -62,10 +156,10 @@ class Schedule(Base):
     DTEND: Mapped[Optional[datetime.datetime]]
     DESCRIPTION: Mapped[Optional[str]]
     LOCATION: Mapped[Optional[str]]
+    personalized_task: Mapped[Optional[bool]]
     userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
     schedule_grade: Mapped[Optional["Schedule_grade_info"]] = relationship()
-    
     def __repr__(self):
         
         return (f"Schedule(id={self.id!r},SUMMARY={self.SUMMARY!r}, DTSTART={self.DTSTART!r}, DTEND={self.DTEND!r}, DESCRIPTION={self.DESCRIPTION!r},LOCATION={self.LOCATION!r})")
@@ -89,7 +183,7 @@ class Schedule(Base):
     def start_time_userTimezone(self,session):
         user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
         if(not user.user_timezone):
-            user.get_timezone()
+            user.get_timezone(session)
         new_timezone = pytz.timezone(user.user_timezone)
         dt_new_timezone = self.DTSTART.astimezone(new_timezone)
         return dt_new_timezone
@@ -97,12 +191,31 @@ class Schedule(Base):
     def end_time_userTimezone(self,session):
         user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
         if(not user.user_timezone):
-            user.get_timezone()
+            user.get_timezone(session)
         new_timezone = pytz.timezone(user.user_timezone)
         dt_new_timezone = self.DTEND.astimezone(new_timezone)
         return dt_new_timezone
 
-
+    def add_to_cloud(self,user: User):
+        payload = "{\"query\":\"mutation CreateSchedule {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            "\
+                    "SUMMARY: %s\\r\\n            "\
+                    "DTSTART: %s\\r\\n            "\
+                    "DTEND: %s\\r\\n            "\
+                    "DESCRIPTION: %s\\r\\n            "\
+                    "LOCATION: %s\\r\\n            "\
+                    "userinfoID: \\\"%s\\\"\\r\\n            "\
+                    "personalized_task: %s\\r\\n            "\
+                    "subjectsID: %s\\r\\n        }\\r\\n    ) "\
+                    "{\\r\\n        id\\r\\n        SUMMARY\\r\\n    "\
+                    "}\\r\\n}\\r\\n\",\"variables\":{}}" % (aws_string(self.SUMMARY),aws_datetime(self.DTSTART),aws_datetime(self.DTEND),aws_string(self.DESCRIPTION),aws_string(self.LOCATION),user.userinfoID,aws_bool(self.personalized_task),aws_string(self.subjectsID))
+                    
+        url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+        headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer %s' % user.access_Token
+        }
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response.text)
 class Task(Base):
     """An example using regular Columns and no type annotation. 
         Enough for prelab, no foreign key usage. Similar effect but old convention.
@@ -120,7 +233,7 @@ class Task(Base):
     userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
     task_grade: Mapped[Optional["Task_grade_info"]] = relationship()
-    
+    # difficulty: Mapped[Optional[int]]
     def __repr__(self) -> str:
         return f"Task(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
 
@@ -144,7 +257,7 @@ class Task(Base):
     def start_time_userTimezone(self,session):
         user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
         if(not user.user_timezone):
-            user.get_timezone()
+            user.get_timezone(session)
         new_timezone = pytz.timezone(user.user_timezone)
         dt_new_timezone = self.DTSTART.astimezone(new_timezone)
         return dt_new_timezone
@@ -152,7 +265,7 @@ class Task(Base):
     def end_time_userTimezone(self,session):
         user = session.query(User).filter(User.userinfoID == self.userinfoID).first()
         if(not user.user_timezone):
-            user.get_timezone()
+            user.get_timezone(session)
         new_timezone = pytz.timezone(user.user_timezone)
         dt_new_timezone = self.DUE.astimezone(new_timezone)
         return dt_new_timezone
@@ -164,6 +277,7 @@ class Subjects(Base):
     subject_Name: Mapped[Optional[str]]
     current_Grade: Mapped[Optional[int]]
     target_Grade: Mapped[Optional[int]]
+    subject_Difficulty: Mapped[Optional[int]]
     userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     schedule_list : Mapped[List["Schedule"]] = relationship()
     task_list : Mapped[List["Task"]] = relationship()
@@ -189,7 +303,6 @@ class Subjects(Base):
         
         session.commit()
                 
-        
 
 class Task_grade_info(Base):
     __tablename__ = "task_grade"
@@ -222,13 +335,18 @@ class Schedule_grade_info(Base):
             self.overall_Percentage = (self.current_Grade * self.task_Weightage) / 100
             session.commit()
 
-def create_table(engine):
+
+def create_table(userinfoId):
     """Uses all the Base Metadata in this file to create tables"""
-    Base.metadata.create_all(engine)
+    file_path = f"./Flask_server/database/userdata_{userinfoId}.db"
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
     
+    Base.metadata.create_all(engine)
+    engine.dispose()
 
 if __name__ == "__main__":
-    from sqlalchemy import create_engine
-    engine = create_engine("sqlite:///Flask_server/database/userdata.db", echo=True)
-    create_table(engine)
+    create_table("")
     

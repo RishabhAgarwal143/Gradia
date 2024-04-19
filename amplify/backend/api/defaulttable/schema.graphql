@@ -1,31 +1,15 @@
-enum StatusValues {
-  NEEDS_ACTION
-  COMPLETED
-  IN_PROCESS
-  CANCELLED
-}
-
-type Subjects @model @auth(rules: [{allow: private}, {allow: owner}]) {
+type SyllabusGradeValues @model @auth(rules: [{ allow: owner }]) {
   id: ID!
-  subject_Name: String
-  current_Grade: Float
-  target_Grade: Float
-  Tasks: [Task] @hasMany(indexName: "bySubjects", fields: ["id"])
-  Schedules: [Schedule] @hasMany(indexName: "bySubjects", fields: ["id"])
-  userinfoID: ID! @index(name: "byUserinfo")
+  category_Name: String
+  category_Grade: Float
+  Tasks_associated: Int
+  each_Task_weightage: Float
+  subjectsID: ID! @index(name: "bySubjects")
+  TaskGradeInfos: [TaskGradeInfo]
+    @hasMany(indexName: "bySyllabusGradeValues", fields: ["id"])
 }
 
-type TaskGradeInfo @model @auth(rules: [{allow: private}, {allow: owner}]) {
-  id: ID!
-  current_Grade: Float
-  task_Weightage: Float
-  overall_Percentage: Float
-  extra_Info: String
-  time_Taken: AWSTime
-  Task: Task @belongsTo
-}
-
-type ScheduleGradeInfo @model @auth(rules: [{allow: private}, {allow: owner}]) {
+type ScheduleGradeInfo @model @auth(rules: [{ allow: owner }]) {
   id: ID!
   current_Grade: Float
   task_Weightage: Float
@@ -35,61 +19,32 @@ type ScheduleGradeInfo @model @auth(rules: [{allow: private}, {allow: owner}]) {
   Schedule: Schedule @belongsTo
 }
 
-type SubscribedCalendar @model @auth(rules: [{allow: private}, {allow: owner}, {allow: public}]) {
+type Subjects @model @auth(rules: [{ allow: owner }]) {
   id: ID!
-  Calendar_Name: String
-  Calendar_URL: AWSURL
+  subject_Name: String
+  current_Grade: Float
+  target_Grade: Float
+  Tasks: [Task] @hasMany(indexName: "bySubjects", fields: ["id"])
+  Schedules: [Schedule] @hasMany(indexName: "bySubjects", fields: ["id"])
   userinfoID: ID! @index(name: "byUserinfo")
-  Schedules: [Schedule] @hasMany(indexName: "bySubscribedCalendar", fields: ["id"])
-  Tasks: [Task] @hasMany(indexName: "bySubscribedCalendar", fields: ["id"])
-  LAST_MODIFIED: String
+  subject_Difficulty: Int
+  SyllabusGradeValues: [SyllabusGradeValues]
+    @hasMany(indexName: "bySubjects", fields: ["id"])
 }
 
-enum Frequencytype {
-  DAILY
-  WEEKLY
-  MONTHLY
-  YEARLY
-}
-
-type Repeatdata {
-  FREQ: Frequencytype!
-  INTERVALS: Int!
-  UNTIL: AWSDateTime
-  WKST: String
-  BYDAYS: String
-  BYMONTH: String
-  COUNT: Int
-}
-
-type Userinfo @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"], operations: [create, read, update, delete]}, {allow: public}]) {
-  id: ID!
-  name: String!
-  email: AWSEmail!
-  Timezone: String
-  Schedules: [SubscribedCalendar] @hasMany(indexName: "byUserinfo", fields: ["id"])
-  Tasks: [SubscribedCalendar] @hasMany(indexName: "byUserinfo", fields: ["id"])
-  SubscribedCalendars: [SubscribedCalendar] @hasMany(indexName: "byUserinfo", fields: ["id"])
-  Subjects: [Subjects] @hasMany(indexName: "byUserinfo", fields: ["id"])
-}
-
-type Schedule @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"], operations: [create, read, update, delete]}, {allow: public}]) {
-  id: ID!
-  SUMMARY: String!
-  DTSTART: AWSDateTime!
-  DTEND: AWSDateTime!
-  DESCRIPTION: String
-  LOCATION: String
-  userinfoID: ID! @index(name: "byUserinfo")
-  RRULE: Repeatdata
-  UID: String
-  DTSTAMP: AWSDateTime
-  subscribedcalendarID: ID @index(name: "bySubscribedCalendar")
-  subjectsID: ID @index(name: "bySubjects")
-  ScheduleGradeInfo: ScheduleGradeInfo @hasOne
-}
-
-type Task @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"], operations: [create, read, update, delete]}, {allow: public}]) {
+type Task
+  @model
+  @auth(
+    rules: [
+      { allow: owner }
+      {
+        allow: groups
+        groups: ["Admins"]
+        operations: [create, read, update, delete]
+      }
+      { allow: public }
+    ]
+  ) {
   id: ID!
   UID: String
   DTSTART: AWSDateTime
@@ -106,4 +61,123 @@ type Task @model @auth(rules: [{allow: owner}, {allow: groups, groups: ["Admins"
   TaskGradeInfo: TaskGradeInfo @hasOne
   LOCATION: String
 }
- 
+
+type TaskGradeInfo @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  current_Grade: Float
+  task_Weightage: Float
+  overall_Percentage: Float
+  extra_Info: String
+  time_Taken: AWSTime
+  Task: Task @belongsTo
+  syllabusgradevaluesID: ID @index(name: "bySyllabusGradeValues")
+}
+
+type Userinfo
+  @model
+  @auth(
+    rules: [
+      { allow: owner }
+      {
+        allow: groups
+        groups: ["Admins"]
+        operations: [create, read, update, delete]
+      }
+      { allow: public }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  email: AWSEmail!
+  Timezone: String
+  Schedules: [Schedule] @hasMany(indexName: "byUserinfo", fields: ["id"])
+  Tasks: [Task] @hasMany(indexName: "byUserinfo", fields: ["id"])
+  SubscribedCalendars: [SubscribedCalendar]
+    @hasMany(indexName: "byUserinfo", fields: ["id"])
+  Subjects: [Subjects] @hasMany(indexName: "byUserinfo", fields: ["id"])
+  UserWorkTim: UserWorkTim @hasOne
+}
+
+type Schedule
+  @model
+  @auth(
+    rules: [
+      { allow: owner }
+      {
+        allow: groups
+        groups: ["Admins"]
+        operations: [create, read, update, delete]
+      }
+      { allow: public }
+    ]
+  ) {
+  id: ID!
+  SUMMARY: String!
+  DTSTART: AWSDateTime!
+  DTEND: AWSDateTime!
+  DESCRIPTION: String
+  LOCATION: String
+  userinfoID: ID! @index(name: "byUserinfo")
+  RRULE: Repeatdata
+  UID: String
+  DTSTAMP: AWSDateTime
+  subscribedcalendarID: ID @index(name: "bySubscribedCalendar")
+  subjectsID: ID @index(name: "bySubjects")
+  ScheduleGradeInfo: ScheduleGradeInfo @hasOne
+  personalized_task: Boolean
+}
+
+type UserWorkTim @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  Monday_start: AWSTime
+  Monday_end: AWSTime
+  Tuesday_start: AWSTime
+  Tuesday_end: AWSTime
+  Wednesday_start: AWSTime
+  Wednesday_end: AWSTime
+  Thurday_start: AWSTime
+  Thurday_end: AWSTime
+  Friday_start: AWSTime
+  Friday_end: AWSTime
+  Saturday_start: AWSTime
+  Saturday_end: AWSTime
+  Sunday_start: AWSTime
+  Sunday_end: AWSTime
+}
+
+type SubscribedCalendar
+  @model
+  @auth(rules: [{ allow: owner }, { allow: public }]) {
+  id: ID!
+  Calendar_Name: String
+  Calendar_URL: AWSURL
+  userinfoID: ID! @index(name: "byUserinfo")
+  Schedules: [Schedule]
+    @hasMany(indexName: "bySubscribedCalendar", fields: ["id"])
+  Tasks: [Task] @hasMany(indexName: "bySubscribedCalendar", fields: ["id"])
+  LAST_MODIFIED: String
+}
+
+enum StatusValues {
+  NEEDS_ACTION
+  COMPLETED
+  IN_PROCESS
+  CANCELLED
+}
+
+type Repeatdata {
+  FREQ: Frequencytype!
+  INTERVALS: Int!
+  UNTIL: AWSDateTime
+  WKST: String
+  BYDAYS: String
+  BYMONTH: String
+  COUNT: Int
+}
+
+enum Frequencytype {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}

@@ -59,7 +59,16 @@ def check_database():
 
         time.sleep(60)
 
+
+def manual_clean():
+
+    session = Session()
+    for user in session.query(User).all():
+        delete_user_data(user,session)
+
+    session.close()
+
 # check_database()
 
 if __name__ == "__main__":
-    check_database()
+    manual_clean()

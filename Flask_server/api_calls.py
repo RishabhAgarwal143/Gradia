@@ -100,8 +100,8 @@ def delete_schedule_from_payload_schedules(schedule):
 def get_user_time(n,userinfoID):
 
     user = database_queries.get_user_info(userinfoID)
-    if(not user.user_timezone):
-        user.get_timezone()
+    # if(not user.user_timezone):
+    #     user.get_timezone()
     user_timezone = user.user_timezone
     user_time = datetime.now(pytz.timezone(user_timezone))
     user_time_t = user_time.strftime('%Y-%m-%d %H:%M:%S %A')
@@ -123,8 +123,8 @@ def get_sys_time():
 def convert_time_to_utc(time,userinfoID):
     
     user = database_queries.get_user_info(userinfoID)
-    if(not user.user_timezone):
-        user.get_timezone()
+    # if(not user.user_timezone):
+    #     user.get_timezone()
     timezone = pytz.timezone(user.user_timezone)
     time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
     localized_start_time = timezone.localize(time)
@@ -197,4 +197,24 @@ def delete_events_in_range(start_time, end_time,userinfoID):
         return ["NO_EVENTS", None]
 
 
+def add_syllabus_grades(category_Name,category_Grade,subject_ID,userinfoID):
+    
+    user = database_queries.get_user_info(userinfoID)
+    
+    url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+    payload = "{\"query\":\"mutation CreateSyllabusGradeValues {\\r\\n    createSyllabusGradeValues(\\r\\n        "\
+            "input: {\\r\\n            category_Name: \\\"%s\\\"\\r\\n            "\
+            "category_Grade: %d\\r\\n            Tasks_associated: 0\\r\\n            each_Task_weightage: null\\r\\n            "\
+            "subjectsID: \\\"%s\\\"\\r\\n        }\\r\\n    ) {\\r\\n        id\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" % (category_Name, category_Grade,subject_ID)
+    headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {user.access_Token}'
+            }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    print(response.text)
+
+
+    
 

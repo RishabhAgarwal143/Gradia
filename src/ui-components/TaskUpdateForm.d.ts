@@ -60,7 +60,7 @@ export declare type TaskUpdateFormOverridesProps = {
     DTSTART?: PrimitiveOverrideProps<TextFieldProps>;
     DUE?: PrimitiveOverrideProps<TextFieldProps>;
     SUMMARY?: PrimitiveOverrideProps<TextFieldProps>;
-    userinfoID?: PrimitiveOverrideProps<TextFieldProps>;
+    userinfoID?: PrimitiveOverrideProps<AutocompleteProps>;
     COMPLETED?: PrimitiveOverrideProps<TextFieldProps>;
     STATUS?: PrimitiveOverrideProps<SelectFieldProps>;
     PRIORITY?: PrimitiveOverrideProps<TextFieldProps>;

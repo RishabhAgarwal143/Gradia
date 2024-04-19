@@ -21,11 +21,19 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listSubjects, listSubscribedCalendars } from "../graphql/queries";
+import {
+  listSchedules,
+  listSubjects,
+  listSubscribedCalendars,
+  listTasks,
+  listUserWorkTims,
+} from "../graphql/queries";
 import {
   createUserinfo,
+  updateSchedule,
   updateSubjects,
   updateSubscribedCalendar,
+  updateTask,
 } from "../graphql/mutations";
 const client = generateClient();
 function ArrayField({
@@ -202,6 +210,7 @@ export default function UserinfoCreateForm(props) {
     Tasks: [],
     SubscribedCalendars: [],
     Subjects: [],
+    UserWorkTim: undefined,
   };
   const [name, setName] = React.useState(initialValues.name);
   const [email, setEmail] = React.useState(initialValues.email);
@@ -222,6 +231,11 @@ export default function UserinfoCreateForm(props) {
   const [Subjects, setSubjects] = React.useState(initialValues.Subjects);
   const [SubjectsLoading, setSubjectsLoading] = React.useState(false);
   const [subjectsRecords, setSubjectsRecords] = React.useState([]);
+  const [UserWorkTim, setUserWorkTim] = React.useState(
+    initialValues.UserWorkTim
+  );
+  const [UserWorkTimLoading, setUserWorkTimLoading] = React.useState(false);
+  const [userWorkTimRecords, setUserWorkTimRecords] = React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -240,6 +254,9 @@ export default function UserinfoCreateForm(props) {
     setSubjects(initialValues.Subjects);
     setCurrentSubjectsValue(undefined);
     setCurrentSubjectsDisplayValue("");
+    setUserWorkTim(initialValues.UserWorkTim);
+    setCurrentUserWorkTimValue(undefined);
+    setCurrentUserWorkTimDisplayValue("");
     setErrors({});
   };
   const [currentSchedulesDisplayValue, setCurrentSchedulesDisplayValue] =
@@ -263,11 +280,17 @@ export default function UserinfoCreateForm(props) {
   const [currentSubjectsValue, setCurrentSubjectsValue] =
     React.useState(undefined);
   const SubjectsRef = React.createRef();
+  const [currentUserWorkTimDisplayValue, setCurrentUserWorkTimDisplayValue] =
+    React.useState("");
+  const [currentUserWorkTimValue, setCurrentUserWorkTimValue] =
+    React.useState(undefined);
+  const UserWorkTimRef = React.createRef();
   const getIDValue = {
     Schedules: (r) => JSON.stringify({ id: r?.id }),
     Tasks: (r) => JSON.stringify({ id: r?.id }),
     SubscribedCalendars: (r) => JSON.stringify({ id: r?.id }),
     Subjects: (r) => JSON.stringify({ id: r?.id }),
+    UserWorkTim: (r) => JSON.stringify({ id: r?.id }),
   };
   const SchedulesIdSet = new Set(
     Array.isArray(Schedules)
@@ -289,14 +312,19 @@ export default function UserinfoCreateForm(props) {
       ? Subjects.map((r) => getIDValue.Subjects?.(r))
       : getIDValue.Subjects?.(Subjects)
   );
+  const UserWorkTimIdSet = new Set(
+    Array.isArray(UserWorkTim)
+      ? UserWorkTim.map((r) => getIDValue.UserWorkTim?.(r))
+      : getIDValue.UserWorkTim?.(UserWorkTim)
+  );
   const getDisplayValue = {
-    Schedules: (r) =>
-      `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
-    Tasks: (r) => `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
+    Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
+    Tasks: (r) => `${r?.UID ? r?.UID + " - " : ""}${r?.id}`,
     SubscribedCalendars: (r) =>
       `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
     Subjects: (r) =>
       `${r?.subject_Name ? r?.subject_Name + " - " : ""}${r?.id}`,
+    UserWorkTim: (r) => r?.id,
   };
   const validations = {
     name: [{ type: "Required" }],
@@ -306,6 +334,7 @@ export default function UserinfoCreateForm(props) {
     Tasks: [],
     SubscribedCalendars: [],
     Subjects: [],
+    UserWorkTim: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -332,10 +361,7 @@ export default function UserinfoCreateForm(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [
-            { Calendar_Name: { contains: value } },
-            { id: { contains: value } },
-          ],
+          or: [{ SUMMARY: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
@@ -343,10 +369,10 @@ export default function UserinfoCreateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listSubscribedCalendars.replaceAll("__typename", ""),
+          query: listSchedules.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listSubscribedCalendars?.items;
+      )?.data?.listSchedules?.items;
       var loaded = result.filter(
         (item) => !SchedulesIdSet.has(getIDValue.Schedules?.(item))
       );
@@ -364,10 +390,7 @@ export default function UserinfoCreateForm(props) {
       const variables = {
         limit: autocompleteLength * 5,
         filter: {
-          or: [
-            { Calendar_Name: { contains: value } },
-            { id: { contains: value } },
-          ],
+          or: [{ UID: { contains: value } }, { id: { contains: value } }],
         },
       };
       if (newNext) {
@@ -375,10 +398,10 @@ export default function UserinfoCreateForm(props) {
       }
       const result = (
         await client.graphql({
-          query: listSubscribedCalendars.replaceAll("__typename", ""),
+          query: listTasks.replaceAll("__typename", ""),
           variables,
         })
-      )?.data?.listSubscribedCalendars?.items;
+      )?.data?.listTasks?.items;
       var loaded = result.filter(
         (item) => !TasksIdSet.has(getIDValue.Tasks?.(item))
       );
@@ -453,11 +476,39 @@ export default function UserinfoCreateForm(props) {
     setSubjectsRecords(newOptions.slice(0, autocompleteLength));
     setSubjectsLoading(false);
   };
+  const fetchUserWorkTimRecords = async (value) => {
+    setUserWorkTimLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: { or: [{ id: { contains: value } }] },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listUserWorkTims.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listUserWorkTims?.items;
+      var loaded = result.filter(
+        (item) => !UserWorkTimIdSet.has(getIDValue.UserWorkTim?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setUserWorkTimRecords(newOptions.slice(0, autocompleteLength));
+    setUserWorkTimLoading(false);
+  };
   React.useEffect(() => {
     fetchSchedulesRecords("");
     fetchTasksRecords("");
     fetchSubscribedCalendarsRecords("");
     fetchSubjectsRecords("");
+    fetchUserWorkTimRecords("");
   }, []);
   return (
     <Grid
@@ -475,6 +526,7 @@ export default function UserinfoCreateForm(props) {
           Tasks,
           SubscribedCalendars,
           Subjects,
+          UserWorkTim,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -516,6 +568,7 @@ export default function UserinfoCreateForm(props) {
             name: modelFields.name,
             email: modelFields.email,
             Timezone: modelFields.Timezone,
+            userinfoUserWorkTimId: modelFields?.UserWorkTim?.id,
           };
           const userinfo = (
             await client.graphql({
@@ -532,7 +585,7 @@ export default function UserinfoCreateForm(props) {
             ...Schedules.reduce((promises, original) => {
               promises.push(
                 client.graphql({
-                  query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                  query: updateSchedule.replaceAll("__typename", ""),
                   variables: {
                     input: {
                       id: original.id,
@@ -548,7 +601,7 @@ export default function UserinfoCreateForm(props) {
             ...Tasks.reduce((promises, original) => {
               promises.push(
                 client.graphql({
-                  query: updateSubscribedCalendar.replaceAll("__typename", ""),
+                  query: updateTask.replaceAll("__typename", ""),
                   variables: {
                     input: {
                       id: original.id,
@@ -625,6 +678,7 @@ export default function UserinfoCreateForm(props) {
               Tasks,
               SubscribedCalendars,
               Subjects,
+              UserWorkTim,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -655,6 +709,7 @@ export default function UserinfoCreateForm(props) {
               Tasks,
               SubscribedCalendars,
               Subjects,
+              UserWorkTim,
             };
             const result = onChange(modelFields);
             value = result?.email ?? value;
@@ -693,6 +748,7 @@ export default function UserinfoCreateForm(props) {
               Tasks,
               SubscribedCalendars,
               Subjects,
+              UserWorkTim,
             };
             const result = onChange(modelFields);
             value = result?.Timezone ?? value;
@@ -719,6 +775,7 @@ export default function UserinfoCreateForm(props) {
               Tasks,
               SubscribedCalendars,
               Subjects,
+              UserWorkTim,
             };
             const result = onChange(modelFields);
             values = result?.Schedules ?? values;
@@ -757,7 +814,7 @@ export default function UserinfoCreateForm(props) {
           label="Schedules"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search SubscribedCalendar"
+          placeholder="Search Schedule"
           value={currentSchedulesDisplayValue}
           options={schedulesRecords
             .filter((r) => !SchedulesIdSet.has(getIDValue.Schedules?.(r)))
@@ -811,6 +868,7 @@ export default function UserinfoCreateForm(props) {
               Tasks: values,
               SubscribedCalendars,
               Subjects,
+              UserWorkTim,
             };
             const result = onChange(modelFields);
             values = result?.Tasks ?? values;
@@ -849,7 +907,7 @@ export default function UserinfoCreateForm(props) {
           label="Tasks"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search SubscribedCalendar"
+          placeholder="Search Task"
           value={currentTasksDisplayValue}
           options={tasksRecords
             .filter((r) => !TasksIdSet.has(getIDValue.Tasks?.(r)))
@@ -901,6 +959,7 @@ export default function UserinfoCreateForm(props) {
               Tasks,
               SubscribedCalendars: values,
               Subjects,
+              UserWorkTim,
             };
             const result = onChange(modelFields);
             values = result?.SubscribedCalendars ?? values;
@@ -1004,6 +1063,7 @@ export default function UserinfoCreateForm(props) {
               Tasks,
               SubscribedCalendars,
               Subjects: values,
+              UserWorkTim,
             };
             const result = onChange(modelFields);
             values = result?.Subjects ?? values;
@@ -1082,6 +1142,108 @@ export default function UserinfoCreateForm(props) {
           ref={SubjectsRef}
           labelHidden={true}
           {...getOverrideProps(overrides, "Subjects")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              Timezone,
+              Schedules,
+              Tasks,
+              SubscribedCalendars,
+              Subjects,
+              UserWorkTim: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.UserWorkTim ?? value;
+          }
+          setUserWorkTim(value);
+          setCurrentUserWorkTimValue(undefined);
+          setCurrentUserWorkTimDisplayValue("");
+        }}
+        currentFieldValue={currentUserWorkTimValue}
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>User work tim</span>
+            <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+              {" "}
+              - optional
+            </span>
+          </span>
+        }
+        items={UserWorkTim ? [UserWorkTim] : []}
+        hasError={errors?.UserWorkTim?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("UserWorkTim", currentUserWorkTimValue)
+        }
+        errorMessage={errors?.UserWorkTim?.errorMessage}
+        getBadgeText={getDisplayValue.UserWorkTim}
+        setFieldValue={(model) => {
+          setCurrentUserWorkTimDisplayValue(
+            model ? getDisplayValue.UserWorkTim(model) : ""
+          );
+          setCurrentUserWorkTimValue(model);
+        }}
+        inputFieldRef={UserWorkTimRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label={
+            <span style={{ display: "inline-flex" }}>
+              <span>User work tim</span>
+              <span style={{ whiteSpace: "pre", fontStyle: "italic" }}>
+                {" "}
+                - optional
+              </span>
+            </span>
+          }
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search UserWorkTim"
+          value={currentUserWorkTimDisplayValue}
+          options={userWorkTimRecords
+            .filter((r) => !UserWorkTimIdSet.has(getIDValue.UserWorkTim?.(r)))
+            .map((r) => ({
+              id: getIDValue.UserWorkTim?.(r),
+              label: getDisplayValue.UserWorkTim?.(r),
+            }))}
+          isLoading={UserWorkTimLoading}
+          onSelect={({ id, label }) => {
+            setCurrentUserWorkTimValue(
+              userWorkTimRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentUserWorkTimDisplayValue(label);
+            runValidationTasks("UserWorkTim", label);
+          }}
+          onClear={() => {
+            setCurrentUserWorkTimDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchUserWorkTimRecords(value);
+            if (errors.UserWorkTim?.hasError) {
+              runValidationTasks("UserWorkTim", value);
+            }
+            setCurrentUserWorkTimDisplayValue(value);
+            setCurrentUserWorkTimValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("UserWorkTim", currentUserWorkTimDisplayValue)
+          }
+          errorMessage={errors.UserWorkTim?.errorMessage}
+          hasError={errors.UserWorkTim?.hasError}
+          ref={UserWorkTimRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "UserWorkTim")}
         ></Autocomplete>
       </ArrayField>
       <Flex

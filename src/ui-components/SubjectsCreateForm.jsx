@@ -21,10 +21,16 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { listSchedules, listTasks, listUserinfos } from "../graphql/queries";
+import {
+  listSchedules,
+  listSyllabusGradeValues,
+  listTasks,
+  listUserinfos,
+} from "../graphql/queries";
 import {
   createSubjects,
   updateSchedule,
+  updateSyllabusGradeValues,
   updateTask,
 } from "../graphql/mutations";
 const client = generateClient();
@@ -201,6 +207,8 @@ export default function SubjectsCreateForm(props) {
     Tasks: [],
     Schedules: [],
     userinfoID: undefined,
+    subject_Difficulty: "",
+    SyllabusGradeValues: [],
   };
   const [subject_Name, setSubject_Name] = React.useState(
     initialValues.subject_Name
@@ -222,6 +230,16 @@ export default function SubjectsCreateForm(props) {
   const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
   const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
     React.useState([]);
+  const [subject_Difficulty, setSubject_Difficulty] = React.useState(
+    initialValues.subject_Difficulty
+  );
+  const [SyllabusGradeValues, setSyllabusGradeValues] = React.useState(
+    initialValues.SyllabusGradeValues
+  );
+  const [SyllabusGradeValuesLoading, setSyllabusGradeValuesLoading] =
+    React.useState(false);
+  const [syllabusGradeValuesRecords, setSyllabusGradeValuesRecords] =
+    React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -237,6 +255,10 @@ export default function SubjectsCreateForm(props) {
     setUserinfoID(initialValues.userinfoID);
     setCurrentUserinfoIDValue(undefined);
     setCurrentUserinfoIDDisplayValue("");
+    setSubject_Difficulty(initialValues.subject_Difficulty);
+    setSyllabusGradeValues(initialValues.SyllabusGradeValues);
+    setCurrentSyllabusGradeValuesValue(undefined);
+    setCurrentSyllabusGradeValuesDisplayValue("");
     setErrors({});
   };
   const [currentTasksDisplayValue, setCurrentTasksDisplayValue] =
@@ -253,9 +275,17 @@ export default function SubjectsCreateForm(props) {
   const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
     React.useState(undefined);
   const userinfoIDRef = React.createRef();
+  const [
+    currentSyllabusGradeValuesDisplayValue,
+    setCurrentSyllabusGradeValuesDisplayValue,
+  ] = React.useState("");
+  const [currentSyllabusGradeValuesValue, setCurrentSyllabusGradeValuesValue] =
+    React.useState(undefined);
+  const SyllabusGradeValuesRef = React.createRef();
   const getIDValue = {
     Tasks: (r) => JSON.stringify({ id: r?.id }),
     Schedules: (r) => JSON.stringify({ id: r?.id }),
+    SyllabusGradeValues: (r) => JSON.stringify({ id: r?.id }),
   };
   const TasksIdSet = new Set(
     Array.isArray(Tasks)
@@ -267,10 +297,17 @@ export default function SubjectsCreateForm(props) {
       ? Schedules.map((r) => getIDValue.Schedules?.(r))
       : getIDValue.Schedules?.(Schedules)
   );
+  const SyllabusGradeValuesIdSet = new Set(
+    Array.isArray(SyllabusGradeValues)
+      ? SyllabusGradeValues.map((r) => getIDValue.SyllabusGradeValues?.(r))
+      : getIDValue.SyllabusGradeValues?.(SyllabusGradeValues)
+  );
   const getDisplayValue = {
     Tasks: (r) => `${r?.UID ? r?.UID + " - " : ""}${r?.id}`,
     Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
     userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
+    SyllabusGradeValues: (r) =>
+      `${r?.category_Name ? r?.category_Name + " - " : ""}${r?.id}`,
   };
   const validations = {
     subject_Name: [],
@@ -279,6 +316,8 @@ export default function SubjectsCreateForm(props) {
     Tasks: [],
     Schedules: [],
     userinfoID: [{ type: "Required" }],
+    subject_Difficulty: [],
+    SyllabusGradeValues: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -382,10 +421,44 @@ export default function SubjectsCreateForm(props) {
     setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
     setUserinfoIDLoading(false);
   };
+  const fetchSyllabusGradeValuesRecords = async (value) => {
+    setSyllabusGradeValuesLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { category_Name: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listSyllabusGradeValues.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listSyllabusGradeValues?.items;
+      var loaded = result.filter(
+        (item) =>
+          !SyllabusGradeValuesIdSet.has(getIDValue.SyllabusGradeValues?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setSyllabusGradeValuesRecords(newOptions.slice(0, autocompleteLength));
+    setSyllabusGradeValuesLoading(false);
+  };
   React.useEffect(() => {
     fetchTasksRecords("");
     fetchSchedulesRecords("");
     fetchUserinfoIDRecords("");
+    fetchSyllabusGradeValuesRecords("");
   }, []);
   return (
     <Grid
@@ -402,6 +475,8 @@ export default function SubjectsCreateForm(props) {
           Tasks,
           Schedules,
           userinfoID,
+          subject_Difficulty,
+          SyllabusGradeValues,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -444,6 +519,7 @@ export default function SubjectsCreateForm(props) {
             current_Grade: modelFields.current_Grade,
             target_Grade: modelFields.target_Grade,
             userinfoID: modelFields.userinfoID,
+            subject_Difficulty: modelFields.subject_Difficulty,
           };
           const subjects = (
             await client.graphql({
@@ -488,6 +564,22 @@ export default function SubjectsCreateForm(props) {
               return promises;
             }, [])
           );
+          promises.push(
+            ...SyllabusGradeValues.reduce((promises, original) => {
+              promises.push(
+                client.graphql({
+                  query: updateSyllabusGradeValues.replaceAll("__typename", ""),
+                  variables: {
+                    input: {
+                      id: original.id,
+                      subjectsID: subjects.id,
+                    },
+                  },
+                })
+              );
+              return promises;
+            }, [])
+          );
           await Promise.all(promises);
           if (onSuccess) {
             onSuccess(modelFields);
@@ -520,6 +612,8 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules,
               userinfoID,
+              subject_Difficulty,
+              SyllabusGradeValues,
             };
             const result = onChange(modelFields);
             value = result?.subject_Name ?? value;
@@ -553,6 +647,8 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules,
               userinfoID,
+              subject_Difficulty,
+              SyllabusGradeValues,
             };
             const result = onChange(modelFields);
             value = result?.current_Grade ?? value;
@@ -586,6 +682,8 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules,
               userinfoID,
+              subject_Difficulty,
+              SyllabusGradeValues,
             };
             const result = onChange(modelFields);
             value = result?.target_Grade ?? value;
@@ -611,6 +709,8 @@ export default function SubjectsCreateForm(props) {
               Tasks: values,
               Schedules,
               userinfoID,
+              subject_Difficulty,
+              SyllabusGradeValues,
             };
             const result = onChange(modelFields);
             values = result?.Tasks ?? values;
@@ -692,6 +792,8 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules: values,
               userinfoID,
+              subject_Difficulty,
+              SyllabusGradeValues,
             };
             const result = onChange(modelFields);
             values = result?.Schedules ?? values;
@@ -776,6 +878,8 @@ export default function SubjectsCreateForm(props) {
               Tasks,
               Schedules,
               userinfoID: value,
+              subject_Difficulty,
+              SyllabusGradeValues,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -858,6 +962,139 @@ export default function SubjectsCreateForm(props) {
           ref={userinfoIDRef}
           labelHidden={true}
           {...getOverrideProps(overrides, "userinfoID")}
+        ></Autocomplete>
+      </ArrayField>
+      <TextField
+        label="Subject difficulty"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={subject_Difficulty}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              subject_Name,
+              current_Grade,
+              target_Grade,
+              Tasks,
+              Schedules,
+              userinfoID,
+              subject_Difficulty: value,
+              SyllabusGradeValues,
+            };
+            const result = onChange(modelFields);
+            value = result?.subject_Difficulty ?? value;
+          }
+          if (errors.subject_Difficulty?.hasError) {
+            runValidationTasks("subject_Difficulty", value);
+          }
+          setSubject_Difficulty(value);
+        }}
+        onBlur={() =>
+          runValidationTasks("subject_Difficulty", subject_Difficulty)
+        }
+        errorMessage={errors.subject_Difficulty?.errorMessage}
+        hasError={errors.subject_Difficulty?.hasError}
+        {...getOverrideProps(overrides, "subject_Difficulty")}
+      ></TextField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              subject_Name,
+              current_Grade,
+              target_Grade,
+              Tasks,
+              Schedules,
+              userinfoID,
+              subject_Difficulty,
+              SyllabusGradeValues: values,
+            };
+            const result = onChange(modelFields);
+            values = result?.SyllabusGradeValues ?? values;
+          }
+          setSyllabusGradeValues(values);
+          setCurrentSyllabusGradeValuesValue(undefined);
+          setCurrentSyllabusGradeValuesDisplayValue("");
+        }}
+        currentFieldValue={currentSyllabusGradeValuesValue}
+        label={"Syllabus grade values"}
+        items={SyllabusGradeValues}
+        hasError={errors?.SyllabusGradeValues?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks(
+            "SyllabusGradeValues",
+            currentSyllabusGradeValuesValue
+          )
+        }
+        errorMessage={errors?.SyllabusGradeValues?.errorMessage}
+        getBadgeText={getDisplayValue.SyllabusGradeValues}
+        setFieldValue={(model) => {
+          setCurrentSyllabusGradeValuesDisplayValue(
+            model ? getDisplayValue.SyllabusGradeValues(model) : ""
+          );
+          setCurrentSyllabusGradeValuesValue(model);
+        }}
+        inputFieldRef={SyllabusGradeValuesRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Syllabus grade values"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search SyllabusGradeValues"
+          value={currentSyllabusGradeValuesDisplayValue}
+          options={syllabusGradeValuesRecords
+            .filter(
+              (r) =>
+                !SyllabusGradeValuesIdSet.has(
+                  getIDValue.SyllabusGradeValues?.(r)
+                )
+            )
+            .map((r) => ({
+              id: getIDValue.SyllabusGradeValues?.(r),
+              label: getDisplayValue.SyllabusGradeValues?.(r),
+            }))}
+          isLoading={SyllabusGradeValuesLoading}
+          onSelect={({ id, label }) => {
+            setCurrentSyllabusGradeValuesValue(
+              syllabusGradeValuesRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentSyllabusGradeValuesDisplayValue(label);
+            runValidationTasks("SyllabusGradeValues", label);
+          }}
+          onClear={() => {
+            setCurrentSyllabusGradeValuesDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchSyllabusGradeValuesRecords(value);
+            if (errors.SyllabusGradeValues?.hasError) {
+              runValidationTasks("SyllabusGradeValues", value);
+            }
+            setCurrentSyllabusGradeValuesDisplayValue(value);
+            setCurrentSyllabusGradeValuesValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks(
+              "SyllabusGradeValues",
+              currentSyllabusGradeValuesDisplayValue
+            )
+          }
+          errorMessage={errors.SyllabusGradeValues?.errorMessage}
+          hasError={errors.SyllabusGradeValues?.hasError}
+          ref={SyllabusGradeValuesRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "SyllabusGradeValues")}
         ></Autocomplete>
       </ArrayField>
       <Flex

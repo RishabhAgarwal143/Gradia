@@ -28,6 +28,7 @@ export declare type TaskGradeInfoUpdateFormInputValues = {
     extra_Info?: string;
     time_Taken?: string;
     Task?: any;
+    syllabusgradevaluesID?: string;
 };
 export declare type TaskGradeInfoUpdateFormValidationValues = {
     current_Grade?: ValidationFunction<number>;
@@ -36,6 +37,7 @@ export declare type TaskGradeInfoUpdateFormValidationValues = {
     extra_Info?: ValidationFunction<string>;
     time_Taken?: ValidationFunction<string>;
     Task?: ValidationFunction<any>;
+    syllabusgradevaluesID?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TaskGradeInfoUpdateFormOverridesProps = {
@@ -46,6 +48,7 @@ export declare type TaskGradeInfoUpdateFormOverridesProps = {
     extra_Info?: PrimitiveOverrideProps<TextFieldProps>;
     time_Taken?: PrimitiveOverrideProps<TextFieldProps>;
     Task?: PrimitiveOverrideProps<AutocompleteProps>;
+    syllabusgradevaluesID?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type TaskGradeInfoUpdateFormProps = React.PropsWithChildren<{
     overrides?: TaskGradeInfoUpdateFormOverridesProps | undefined | null;

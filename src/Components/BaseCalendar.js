@@ -115,6 +115,7 @@ const MyCalendar = () => {
     subject_id: event.subjectsID,
     userinfoID: event.userinfoID,
     ScheduleGradeInfo: event.ScheduleGradeInfo,
+    personalized_task: event.personalized_task,
   }));
 
   const handleAddEvent = async (newEvent) => {

@@ -2,6 +2,8 @@ import {
   listSubjects,
   list_tasks_grade_item,
   update_grade_task,
+  update_status_task,
+  update_tagetGrade_subject,
 } from "./support_func";
 import React, { useState, useEffect } from "react";
 import "./gradeStyles.css";
@@ -99,9 +101,11 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
   );
 };
 
-const GradeBox = ({ grade, onStatusChange }) => {
+const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
+  console.log("🚀 ~ GradeBox ~ syllabus_Grade:", syllabus_Grade);
   const [selectedStatus, setSelectedStatus] = React.useState(grade);
   const [change, setChange] = React.useState(false);
+  // const [isOpen, SetOpen] = React.useState(false);
 
   const handleConfirm = () => {
     if (isNaN(selectedStatus)) {
@@ -116,21 +120,41 @@ const GradeBox = ({ grade, onStatusChange }) => {
     setChange(false);
   };
 
+  // setSelectedStatus(grade);
   return (
     <>
-      <input
-        type="number"
-        value={selectedStatus}
-        onChange={(e) => {
-          const newGrade = e.target.value;
-          if (newGrade < 0) {
-            setSelectedStatus(0);
-          } else {
-            setSelectedStatus(parseInt(newGrade, 10));
-          }
-          setChange(true);
-        }}
-      />
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <input
+          type="number"
+          value={selectedStatus}
+          onChange={(e) => {
+            const newGrade = e.target.value;
+            if (newGrade < 0) {
+              setSelectedStatus(0);
+            } else {
+              setSelectedStatus(parseInt(newGrade, 10));
+            }
+            setChange(true);
+          }}
+        />
+        {syllabus_Grade && (
+          <select
+            className="custom-select"
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+              setChange(true);
+            }}
+          >
+            <option value="" hidden></option>
+            {syllabus_Grade.map((category, i) => (
+              <option key={i} value={category.category_Grade}>
+                {category.category_Name + "  " + category.category_Grade}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
       {change && (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <button
@@ -149,8 +173,11 @@ const GradeBox = ({ grade, onStatusChange }) => {
 };
 
 const SecondComponent = ({ subject, task }) => {
+  console.log("🚀 ~ SecondComponent ~ task:", task);
   const [selectedStatuses, setSelectedStatuses] = useState({});
   const [trigger_refresh, setTrigger] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const subject_info = task;
 
   let tasks = [];
   if (task && task.Tasks) {
@@ -190,7 +217,7 @@ const SecondComponent = ({ subject, task }) => {
       if (index !== -1) {
         // Add the json information from list2 to list1
         tasks[i] = { ...tasks[i], ...task_grade_info[index] };
-
+        tasks[i].id = tasks[i].taskGradeInfoTaskId;
         // Remove the item from list2
         task_grade_info.splice(index, 1);
         console.log(tasks[i]);
@@ -205,6 +232,7 @@ const SecondComponent = ({ subject, task }) => {
     }));
     tasks[index].STATUS = newStatus;
     console.log(tasks[index]);
+    update_status_task(tasks[index].id, newStatus);
   };
 
   const Refresh = () => {
@@ -219,14 +247,25 @@ const SecondComponent = ({ subject, task }) => {
     // tasks[index].current_Grade = newGrade;
     tasks[index].current_Grade = newGrade;
     let new_percentage = (newGrade * tasks[index].task_Weightage) / 100;
+    let old_percentage = 0;
+    if (tasks[index].overall_Percentage) {
+      old_percentage = tasks[index].overall_Percentage;
+    }
     tasks[index].overall_Percentage = new_percentage;
+    if (!task.current_Grade) {
+      task.current_Grade = 0;
+    }
+    task.current_Grade += new_percentage - old_percentage;
+
     Refresh();
     const updatedValue = await update_grade_task(
       tasks[index].taskTaskGradeInfoId,
       tasks[index].id,
       newGrade,
       new_percentage,
-      tasks[index].task_Weightage
+      tasks[index].task_Weightage,
+      task.current_Grade,
+      tasks[index].subjectsID
     );
     if (!tasks[index].taskTaskGradeInfoId) {
       tasks[index].taskTaskGradeInfoId =
@@ -241,14 +280,24 @@ const SecondComponent = ({ subject, task }) => {
       tasks[index].current_Grade = 0;
     }
     let new_percentage = (newGrade * tasks[index].current_Grade) / 100;
+    let old_percentage = 0;
+    if (tasks[index].overall_Percentage) {
+      old_percentage = tasks[index].overall_Percentage;
+    }
     tasks[index].overall_Percentage = new_percentage;
+    if (!task.current_Grade) {
+      task.current_Grade = 0;
+    }
+    task.current_Grade += new_percentage - old_percentage;
     Refresh();
     const updatedValue = await update_grade_task(
       tasks[index].taskTaskGradeInfoId,
       tasks[index].id,
-      newGrade,
+      tasks[index].current_Grade,
       new_percentage,
-      tasks[index].task_Weightage
+      newGrade,
+      task.current_Grade,
+      tasks[index].subjectsID
     );
     if (!tasks[index].taskTaskGradeInfoId) {
       tasks[index].taskTaskGradeInfoId =
@@ -264,17 +313,99 @@ const SecondComponent = ({ subject, task }) => {
     }));
   };
 
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      alert("No file selected");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("subject_ID", task.id);
+    formData.append("file", selectedFile);
+    formData.append("userinfoID", task.userinfoID);
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/syllabus", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload file");
+      }
+
+      alert("File uploaded successfully");
+      setSelectedFile(null);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error uploading file");
+    }
+  };
+
+  const handleTargetGradeChange = (newTargetGrade) => {
+    console.log("🚀 ~ handleTargetGradeChange ~ tasks:", task);
+    console.log(
+      "🚀 ~ handleTargetGradeChange ~ newTargetGrade:",
+      newTargetGrade
+    );
+    task.target_Grade = newTargetGrade;
+    update_tagetGrade_subject(task.id, newTargetGrade);
+  };
+
   return (
     <div className="main-content">
       <h2 className="bg-white">Selected Subject: {subject}</h2>
       <h2 className="bg-white text-left">
-        Current Grade: {(task && task.current_Grade) || 0} Target Grade:{" "}
-        {(task && task.target_Grade) || 0}
+        Current Grade: {(task && task.current_Grade) || 0} Target Grade:
+        <GradeBox
+          key={subject}
+          grade={(task && task.target_Grade) || 0}
+          onStatusChange={handleTargetGradeChange}
+        />
       </h2>
+      <button
+        onClick={() => document.getElementById("fileInput").click()}
+        style={{
+          padding: "10px",
+          margin: "10px",
+          backgroundColor: "#007bff",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Upload File
+      </button>
+      <input
+        type="file"
+        id="fileInput"
+        style={{ display: "none" }}
+        onChange={(event) => setSelectedFile(event.target.files[0])}
+      />
+      <button
+        onClick={handleFileUpload}
+        style={{
+          padding: "10px",
+          margin: "10px",
+          backgroundColor: "#28a745",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Send File to Server
+      </button>
+      {selectedFile && (
+        <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>
+      )}
       <div className="table-container">
         <table className="table">
           <thead>
-            <tr>
+            <tr
+              style={{ position: "sticky", top: "0", backgroundColor: "white" }}
+            >
               <th>TASKS</th>
               <th>DUE</th>
               <th>STATUS</th>
@@ -300,6 +431,7 @@ const SecondComponent = ({ subject, task }) => {
                 </td>
                 <td style={{ width: "50px", textAlign: "center" }}>
                   <GradeBox
+                    key={subject}
                     grade={task.current_Grade || 0}
                     onStatusChange={(newStatus) =>
                       handleGradeChange(index, newStatus)
@@ -311,7 +443,12 @@ const SecondComponent = ({ subject, task }) => {
                 </td>
                 <td style={{ width: "50px", textAlign: "center" }}>
                   <GradeBox
+                    key={subject}
                     grade={task.task_Weightage || 0}
+                    syllabus_Grade={
+                      subject_info.SyllabusGradeValues &&
+                      subject_info.SyllabusGradeValues.items
+                    }
                     onStatusChange={(newStatus) =>
                       handleTaskWeightageChange(index, newStatus)
                     }

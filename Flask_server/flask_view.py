@@ -1,15 +1,19 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from chatbot_api import openai_manager
-# from api_calls import initialize_payload_user
-# from api_calls import set_schedules, add_schedule_to_payload_schedules, delete_schedule_from_payload_schedules
-from database_queries import process_add_schedule,process_delete_schedule,process_update_task,process_update_taskGrade
-from database_queries import process_add_task,process_delete_task,process_add_subject,add_user_info
+from database_queries import *
+from database_setup import create_table
 from database_cleaner import check_database
 from Reading_Calendar import Subscribing_to_Calendar
 import multiprocessing
 import markdown
 from pprint import pp
+from werkzeug.utils import secure_filename
+import os
+import shutil
+
+from text_parser import PDFParser
+from api_calls import add_syllabus_grades
 
 app = Flask(__name__, template_folder="templates")
 CORS(app)
@@ -18,13 +22,14 @@ CORS(app)
 @app.route('/api/data', methods=['POST'])
 def receive_data():
     
-    data = request.json  
+    data = request.json
     userID = data["userId"]
     Token = data["Token"]
-    add_user_info(userID,Token)
+    create_table(userID)
     chat_obj = openai_manager(userID)
     if(userID not in thread_info):
         thread_info[userID] = chat_obj
+    add_user_info(userID,Token)
         
     return jsonify({'message': 'Data received successfully'})
 
@@ -34,15 +39,13 @@ def create_data():
     data = request.json  # Assuming data is sent as JSON
 
     process_add_schedule(data)
-    # print(data)
-
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/updatesubscribe', methods=['POST'])
 def update_data():
     data = request.json  # Assuming data is sent as JSON
+    process_add_schedule(data)
 
-    print(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/deletesubscribe', methods=['POST'])
@@ -64,14 +67,14 @@ def create_task():
 @app.route('/api/updateTask', methods=['POST'])
 def update_task():
     data = request.json 
-    pp(data)
+
     process_update_task(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/api/updatetaskGrade', methods=['POST'])
 def update_taskGrade():
     data = request.json 
-    pp(data)
+
     process_update_taskGrade(data)
     return jsonify({'message': 'Data received successfully'})
 
@@ -87,7 +90,6 @@ def delete_task():
 def receive_schedule():
 
     data = request.json
-    print(len(data))
 
     process_add_schedule(data)
             
@@ -105,6 +107,13 @@ def receive_subjects():
 
     data = request.json
     process_add_subject(data)
+    return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/updatesubjects', methods=['POST'])
+def update_subjects():
+
+    data = request.json
+    process_update_subject(data)
     return jsonify({'message': 'Data received successfully'})
 
 @app.route('/')
@@ -130,14 +139,60 @@ def subscribe_cal():
     # print(data)
     userID = data["userId"]
     Token = data["Token"]
-    print(Token)
     calendar = Subscribing_to_Calendar(data["calendar_url"],Token,userID,data["calendar_name"])
     # calendar.add_record_to_database()
     return jsonify({'message' : 'Subscribed Successfully'})
 
+
+@app.route('/syllabus', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return 'No file part'
+
+    file = request.files['file']
+    subject_id = request.form.get('subject_ID')
+    print(f"==>> subject_id: {subject_id}")
+    userinfo_id = request.form.get('userinfoID')
+    print(f"==>> userinfo_id: {userinfo_id}")
+
+
+    if file.filename == '':
+        return 'No selected file'
+
+    if file:
+        filename = secure_filename(file.filename)
+        print("Current working directory:", os.getcwd())
+
+        if not os.path.exists(os.getcwd() + "\Flask_server\syllabus_folder"):
+            os.makedirs(os.getcwd() + "\Flask_server\syllabus_folder")
+
+        file.save(os.path.join(os.getcwd() + "\Flask_server\syllabus_folder", filename))
+        file_path = os.path.join(os.getcwd() + "\Flask_server\syllabus_folder", filename)
+
+        pobj = PDFParser(file_path)
+        grade_data = pobj.parser(subject_id, userinfo_id)
+        grade_flag = False
+        for category, value in grade_data.items():
+            if category == "Grades":
+                grade_flag = True
+                break
+                
+            print(f"{category}: {value}")
+            percent = int(value[0].rstrip("%"))
+            nums = value[1]
+
+            if nums == None or nums == 1:
+                print("SENDING TO DATABASE ", category, percent, subject_id, userinfo_id)
+                add_syllabus_grades(category, percent, subject_id, userinfo_id)
+
+    shutil.rmtree(os.getcwd() + "\Flask_server\syllabus_folder")
+
+    return 'File uploaded successfully'
+
+
 if __name__ == '__main__':
     global info
-    background_process = multiprocessing.Process(target=check_database)
-    background_process.start()
+    # background_process = multiprocessing.Process(target=check_database)
+    # background_process.start()
     thread_info = {}
     app.run(threaded = False,debug=True)

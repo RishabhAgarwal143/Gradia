@@ -15,6 +15,7 @@ import {
   Grid,
   Icon,
   ScrollView,
+  SwitchField,
   Text,
   TextAreaField,
   TextField,
@@ -26,6 +27,7 @@ import {
   listScheduleGradeInfos,
   listSubjects,
   listSubscribedCalendars,
+  listUserinfos,
 } from "../graphql/queries";
 import {
   createSchedule,
@@ -200,7 +202,7 @@ export default function ScheduleCreateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    userinfoID: "",
+    userinfoID: undefined,
     SUMMARY: "",
     DTSTART: "",
     DTEND: "",
@@ -212,8 +214,13 @@ export default function ScheduleCreateForm(props) {
     subscribedcalendarID: undefined,
     subjectsID: undefined,
     ScheduleGradeInfo: undefined,
+    personalized_task: false,
   };
   const [userinfoID, setUserinfoID] = React.useState(initialValues.userinfoID);
+  const [userinfoIDLoading, setUserinfoIDLoading] = React.useState(false);
+  const [userinfoIDRecords, setUserinfoIDRecords] = React.useState([]);
+  const [selectedUserinfoIDRecords, setSelectedUserinfoIDRecords] =
+    React.useState([]);
   const [SUMMARY, setSUMMARY] = React.useState(initialValues.SUMMARY);
   const [DTSTART, setDTSTART] = React.useState(initialValues.DTSTART);
   const [DTEND, setDTEND] = React.useState(initialValues.DTEND);
@@ -247,10 +254,15 @@ export default function ScheduleCreateForm(props) {
     React.useState(false);
   const [scheduleGradeInfoRecords, setScheduleGradeInfoRecords] =
     React.useState([]);
+  const [personalized_task, setPersonalized_task] = React.useState(
+    initialValues.personalized_task
+  );
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setUserinfoID(initialValues.userinfoID);
+    setCurrentUserinfoIDValue(undefined);
+    setCurrentUserinfoIDDisplayValue("");
     setSUMMARY(initialValues.SUMMARY);
     setDTSTART(initialValues.DTSTART);
     setDTEND(initialValues.DTEND);
@@ -268,8 +280,14 @@ export default function ScheduleCreateForm(props) {
     setScheduleGradeInfo(initialValues.ScheduleGradeInfo);
     setCurrentScheduleGradeInfoValue(undefined);
     setCurrentScheduleGradeInfoDisplayValue("");
+    setPersonalized_task(initialValues.personalized_task);
     setErrors({});
   };
+  const [currentUserinfoIDDisplayValue, setCurrentUserinfoIDDisplayValue] =
+    React.useState("");
+  const [currentUserinfoIDValue, setCurrentUserinfoIDValue] =
+    React.useState(undefined);
+  const userinfoIDRef = React.createRef();
   const [
     currentSubscribedcalendarIDDisplayValue,
     setCurrentSubscribedcalendarIDDisplayValue,
@@ -300,6 +318,7 @@ export default function ScheduleCreateForm(props) {
       : getIDValue.ScheduleGradeInfo?.(ScheduleGradeInfo)
   );
   const getDisplayValue = {
+    userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
     subscribedcalendarID: (r) =>
       `${r?.Calendar_Name ? r?.Calendar_Name + " - " : ""}${r?.id}`,
     subjectsID: (r) =>
@@ -320,6 +339,7 @@ export default function ScheduleCreateForm(props) {
     subscribedcalendarID: [],
     subjectsID: [],
     ScheduleGradeInfo: [],
+    personalized_task: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -354,6 +374,33 @@ export default function ScheduleCreateForm(props) {
       return acc;
     }, {});
     return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+  };
+  const fetchUserinfoIDRecords = async (value) => {
+    setUserinfoIDLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [{ name: { contains: value } }, { id: { contains: value } }],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listUserinfos.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listUserinfos?.items;
+      var loaded = result.filter((item) => userinfoID !== item.id);
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setUserinfoIDRecords(newOptions.slice(0, autocompleteLength));
+    setUserinfoIDLoading(false);
   };
   const fetchSubscribedcalendarIDRecords = async (value) => {
     setSubscribedcalendarIDLoading(true);
@@ -449,6 +496,7 @@ export default function ScheduleCreateForm(props) {
     setScheduleGradeInfoLoading(false);
   };
   React.useEffect(() => {
+    fetchUserinfoIDRecords("");
     fetchSubscribedcalendarIDRecords("");
     fetchSubjectsIDRecords("");
     fetchScheduleGradeInfoRecords("");
@@ -474,6 +522,7 @@ export default function ScheduleCreateForm(props) {
           subscribedcalendarID,
           subjectsID,
           ScheduleGradeInfo,
+          personalized_task,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -523,6 +572,7 @@ export default function ScheduleCreateForm(props) {
             subscribedcalendarID: modelFields.subscribedcalendarID,
             subjectsID: modelFields.subjectsID,
             scheduleScheduleGradeInfoId: modelFields?.ScheduleGradeInfo?.id,
+            personalized_task: modelFields.personalized_task,
             RRULE: modelFields.RRULE
               ? JSON.parse(modelFields.RRULE)
               : modelFields.RRULE,
@@ -583,18 +633,10 @@ export default function ScheduleCreateForm(props) {
       {...getOverrideProps(overrides, "ScheduleCreateForm")}
       {...rest}
     >
-      <TextField
-        label={
-          <span style={{ display: "inline-flex" }}>
-            <span>Userinfo id</span>
-            <span style={{ color: "red" }}>*</span>
-          </span>
-        }
-        isRequired={true}
-        isReadOnly={false}
-        value={userinfoID}
-        onChange={(e) => {
-          let { value } = e.target;
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
           if (onChange) {
             const modelFields = {
               userinfoID: value,
@@ -609,20 +651,101 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
           }
-          if (errors.userinfoID?.hasError) {
-            runValidationTasks("userinfoID", value);
-          }
           setUserinfoID(value);
+          setCurrentUserinfoIDValue(undefined);
         }}
-        onBlur={() => runValidationTasks("userinfoID", userinfoID)}
-        errorMessage={errors.userinfoID?.errorMessage}
-        hasError={errors.userinfoID?.hasError}
-        {...getOverrideProps(overrides, "userinfoID")}
-      ></TextField>
+        currentFieldValue={currentUserinfoIDValue}
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Userinfo id</span>
+            <span style={{ color: "red" }}>*</span>
+          </span>
+        }
+        items={userinfoID ? [userinfoID] : []}
+        hasError={errors?.userinfoID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("userinfoID", currentUserinfoIDValue)
+        }
+        errorMessage={errors?.userinfoID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.userinfoID(
+                userinfoIDRecords.find((r) => r.id === value) ??
+                  selectedUserinfoIDRecords.find((r) => r.id === value)
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentUserinfoIDDisplayValue(
+            value
+              ? getDisplayValue.userinfoID(
+                  userinfoIDRecords.find((r) => r.id === value) ??
+                    selectedUserinfoIDRecords.find((r) => r.id === value)
+                )
+              : ""
+          );
+          setCurrentUserinfoIDValue(value);
+          const selectedRecord = userinfoIDRecords.find((r) => r.id === value);
+          if (selectedRecord) {
+            setSelectedUserinfoIDRecords([selectedRecord]);
+          }
+        }}
+        inputFieldRef={userinfoIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label={
+            <span style={{ display: "inline-flex" }}>
+              <span>Userinfo id</span>
+              <span style={{ color: "red" }}>*</span>
+            </span>
+          }
+          isRequired={true}
+          isReadOnly={false}
+          placeholder="Search Userinfo"
+          value={currentUserinfoIDDisplayValue}
+          options={userinfoIDRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.userinfoID?.(r),
+            }))}
+          isLoading={userinfoIDLoading}
+          onSelect={({ id, label }) => {
+            setCurrentUserinfoIDValue(id);
+            setCurrentUserinfoIDDisplayValue(label);
+            runValidationTasks("userinfoID", label);
+          }}
+          onClear={() => {
+            setCurrentUserinfoIDDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchUserinfoIDRecords(value);
+            if (errors.userinfoID?.hasError) {
+              runValidationTasks("userinfoID", value);
+            }
+            setCurrentUserinfoIDDisplayValue(value);
+            setCurrentUserinfoIDValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("userinfoID", currentUserinfoIDValue)
+          }
+          errorMessage={errors.userinfoID?.errorMessage}
+          hasError={errors.userinfoID?.hasError}
+          ref={userinfoIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "userinfoID")}
+        ></Autocomplete>
+      </ArrayField>
       <TextField
         label={
           <span style={{ display: "inline-flex" }}>
@@ -649,6 +772,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.SUMMARY ?? value;
@@ -691,6 +815,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DTSTART ?? value;
@@ -733,6 +858,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DTEND ?? value;
@@ -768,6 +894,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DESCRIPTION ?? value;
@@ -803,6 +930,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.LOCATION ?? value;
@@ -837,6 +965,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.RRULE ?? value;
@@ -872,6 +1001,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.UID ?? value;
@@ -909,6 +1039,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.DTSTAMP ?? value;
@@ -941,6 +1072,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID: value,
               subjectsID,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.subscribedcalendarID ?? value;
@@ -1055,6 +1187,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID: value,
               ScheduleGradeInfo,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.subjectsID ?? value;
@@ -1157,6 +1290,7 @@ export default function ScheduleCreateForm(props) {
               subscribedcalendarID,
               subjectsID,
               ScheduleGradeInfo: value,
+              personalized_task,
             };
             const result = onChange(modelFields);
             value = result?.ScheduleGradeInfo ?? value;
@@ -1238,6 +1372,44 @@ export default function ScheduleCreateForm(props) {
           {...getOverrideProps(overrides, "ScheduleGradeInfo")}
         ></Autocomplete>
       </ArrayField>
+      <SwitchField
+        label="Personalized task"
+        defaultChecked={false}
+        isDisabled={false}
+        isChecked={personalized_task}
+        onChange={(e) => {
+          let value = e.target.checked;
+          if (onChange) {
+            const modelFields = {
+              userinfoID,
+              SUMMARY,
+              DTSTART,
+              DTEND,
+              DESCRIPTION,
+              LOCATION,
+              RRULE,
+              UID,
+              DTSTAMP,
+              subscribedcalendarID,
+              subjectsID,
+              ScheduleGradeInfo,
+              personalized_task: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.personalized_task ?? value;
+          }
+          if (errors.personalized_task?.hasError) {
+            runValidationTasks("personalized_task", value);
+          }
+          setPersonalized_task(value);
+        }}
+        onBlur={() =>
+          runValidationTasks("personalized_task", personalized_task)
+        }
+        errorMessage={errors.personalized_task?.errorMessage}
+        hasError={errors.personalized_task?.hasError}
+        {...getOverrideProps(overrides, "personalized_task")}
+      ></SwitchField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}
