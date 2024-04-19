@@ -227,10 +227,6 @@ def get_schedule_range(userinfo_id, start_date, end_date):
     filter(Schedule.userinfoID == userinfo_id).\
     filter(Schedule.DTEND >= start_date, Schedule.DTSTART <= end_date).\
     all()
-    for schedule in schedules:
-        pass
-        print(schedule)
-    
     session.close()
     
     return schedules
