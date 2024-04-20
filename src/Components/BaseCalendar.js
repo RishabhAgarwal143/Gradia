@@ -10,17 +10,25 @@ import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 import ConfirmAddModal from "./ConfirmAddEvent";
-import { create_user, create_schedule, deleteSchedule } from "./support_func";
+import {
+  create_user,
+  currentAuthenticatedUser,
+  create_schedule,
+  deleteSchedule,
+  send_data_backend,
+} from "./support_func";
 import Chatbot from "./Chatbot";
 import axios from "axios";
-
 const localizer = momentLocalizer(moment);
 const create_temp = create_user();
 const MyCalendar = () => {
+  currentAuthenticatedUser();
+  send_data_backend();
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [pendingEvent, setPendingEvent] = useState(null);
+  const [chatbotpendingEvent, setchatbotpendingEvent] = useState([]);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [gpttask, setGptTask] = useState("");
   // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -113,10 +121,9 @@ const MyCalendar = () => {
     id: event.id,
     isNew: event.isNew ? event.isNew : false,
     subject_id: event.subjectsID,
-    userinfoID: event.userinfoID,
-    ScheduleGradeInfo: event.ScheduleGradeInfo,
-    personalized_task: event.personalized_task,
-    event_color: event.event_color,
+    ScheduleGradeInfo: event.ScheduleGradeInfo || null,
+    personalized_task: event.personalized_task || null,
+    color: event.color || null,
   }));
 
   const handleAddEvent = async (newEvent) => {
@@ -134,16 +141,25 @@ const MyCalendar = () => {
     setAllEvents(myEvents.filter((event) => event.id !== newEvent.id));
   };
 
-  function handleGPTevent(newEvent, tasktype) {
+  function handleGPTevent(addEvents, deletedEvents, tasktype) {
     // Highlight the new event by adding a special property
 
-    setGptTask(tasktype);
-    const highlightedNewEvent = { ...newEvent, isNew: true, event_color: "green" };
-    console.log("GPT EVENT", highlightedNewEvent);
-    setPendingEvent(highlightedNewEvent);
-    console.log("PENDING", pendingEvent);
-    setSelectedEvent(pendingEvent);
-    setIsConfirmationModalOpen(true);
+    addEvents.forEach((newEvent) => {
+      // setGptTask(tasktype);
+      newEvent.color = "green";
+    });
+    deletedEvents.forEach((newEvent) => {
+      // setGptTask(tasktype);
+      newEvent.color = "red";
+    });
+
+    setAllEvents([...myEvents, ...addEvents, ...deletedEvents]);
+    setchatbotpendingEvent([...addEvents, ...deletedEvents]);
+    console.log(
+      "🚀 ~ handleGPTevent ~ chatbotpendingEvent:",
+      chatbotpendingEvent
+    );
+    //...
   }
 
   const handleEventClick = (clickedEvent, e) => {
@@ -152,11 +168,6 @@ const MyCalendar = () => {
     console.log(rect);
     setModalPosition({ top: rect.top, left: rect.left });
     console.log("rect", modalPosition);
-    // if (clickedEvent.isNew) {
-    //   // If yes, open a confirmation pop-up
-    //   console.log("clickedEvent", clickedEvent);
-    //   setIsConfirmationModalOpen(true);
-    // }
   };
 
   const handleConfirmation = async (confirmed) => {
@@ -252,16 +263,19 @@ const MyCalendar = () => {
     setSubscribe_url("");
     setSubscribe_name("");
   };
-  const eventStyleGetter = (event, start, end, isSelected) => {
-    const color = event.event_color; // Access the color property
 
-    const style = {
-      backgroundColor: color, // Use 'blue' as default color if not specified
-      borderRadius: '5px',
-      opacity: 0.8,
-      color: 'white',
-      border: '0px',
-      display: 'block',
+  const eventStyleGetter = (event, start, end, isSelected) => {
+    let color = event.color || "#002148e4";
+    let style = {
+      backgroundColor: color,
+      color: "#fff", // Text color
+      borderRadius: "0.5rem", // Border radius for rounded corners
+      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Subtle box shadow
+      overflow: "hidden", // Ensure content doesn't overflow
+      textOverflow: "ellipsis", // Add ellipsis for overflow text
+      width: "10rem", // Width of the event
+      right: "0%", // Positioning
+      border: "none", // Remove border
     };
 
     return {
@@ -293,7 +307,6 @@ const MyCalendar = () => {
             />
           }
           <Calendar
-
             localizer={localizer}
             events={transformedEvents}
             eventPropGetter={eventStyleGetter}
@@ -418,7 +431,10 @@ const MyCalendar = () => {
         >
           <div className="text-white text-sm font-bold py-2">CHATBOT</div>
 
-          <Chatbot onAddgptevent={handleGPTevent} />
+          {!chatbotpendingEvent.length && (
+            <Chatbot onAddgptevent={handleGPTevent} />
+          )}
+          {chatbotpendingEvent.length !== 0 && <p>HI</p>}
         </div>
       </div>
 

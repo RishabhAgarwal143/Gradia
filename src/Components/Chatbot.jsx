@@ -39,10 +39,7 @@ const Chatbot = ({ onAddgptevent }) => {
           botMessageDiv.innerHTML = data.bot_response;
           document.getElementById("chat-messages").appendChild(botMessageDiv);
         } else {
-          if (
-            data.events_to_be_managed[0] === "CONFLICT" ||
-            data.events_to_be_managed[0] === "ADD"
-          ) {
+          if (data.events_to_be_managed[0] === "ADD") {
             data.events_to_be_managed[1]["DTSTART"] = new Date(
               data.events_to_be_managed[1]["DTSTART"]
             );
@@ -52,31 +49,21 @@ const Chatbot = ({ onAddgptevent }) => {
 
             onAddgptevent(
               data.events_to_be_managed[1],
+              [],
               data.events_to_be_managed[0]
             );
-            // if (data.events_to_be_managed[2]) {
-            //   onAddgptevent(
-            //     data.events_to_be_managed[2][0],
-            //     data.events_to_be_managed["DELETED"]
-            //   );
-            // }
           } else if (data.events_to_be_managed[0] === "DELETED") {
-            for (let i = 0; i < data.events_to_be_managed[1].length; i++) {
-              data.events_to_be_managed[1][i]["DTSTART"] = new Date(
-                data.events_to_be_managed[1][i]["DTSTART"]
-              );
-              data.events_to_be_managed[1][i]["DTEND"] = new Date(
-                data.events_to_be_managed[1][i]["DTEND"]
-              );
-              console.log(
-                "Trying to delete event",
-                data.events_to_be_managed[1][i]
-              );
-              onAddgptevent(
-                data.events_to_be_managed[1][i],
-                data.events_to_be_managed[0]
-              );
-            }
+            onAddgptevent(
+              [],
+              data.events_to_be_managed[1],
+              data.events_to_be_managed[0]
+            );
+          } else if (data.events_to_be_managed[0] === "CONFLICT") {
+            onAddgptevent(
+              data.events_to_be_managed[1],
+              data.events_to_be_managed[2],
+              data.events_to_be_managed[0]
+            );
           }
         }
       })

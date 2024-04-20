@@ -10,7 +10,7 @@ REACTCONFIG="{\
 \"SourceDir\":\"src\",\
 \"DistributionDir\":\"build\",\
 \"BuildCommand\":\"npm run-script build\",\
-\"StartCommand\":\"npm run-script start\"\
+\"StartCommand\":\"npm run all\"\
 }"
 AWSCLOUDFORMATIONCONFIG="{\
 \"configLevel\":\"project\",\

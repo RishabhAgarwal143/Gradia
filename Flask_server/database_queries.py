@@ -100,6 +100,8 @@ def process_add_schedule(schedules):
         return
     
     for schedule in schedules:
+        if("id" not in schedule):
+            continue
         startTime = datetime.datetime.fromisoformat(schedule["start"].replace('Z', '+00:00'))
         endTime = datetime.datetime.fromisoformat(schedule["end"].replace('Z', '+00:00'))
         schedule_grade_info = None
@@ -240,6 +242,7 @@ def get_task_range(userinfo_id, start_date, end_date):
     all()
     for task in tasks:
         print(task)
+    # session.close()
     # session.close()
     return tasks
 

@@ -66,7 +66,7 @@ export async function get_item() {
 }
 
 async function create_temp_user(transformedEvents) {
-  await currentAuthenticatedUser(transformedEvents);
+  // await currentAuthenticatedUser();
   await handleFetchUserAttributes();
   axios
     .post("http://127.0.0.1:5000/api/schedule", transformedEvents)
@@ -76,7 +76,9 @@ async function create_temp_user(transformedEvents) {
     .catch((error) => {
       console.error("Error sending data:", error);
     });
+}
 
+export async function send_data_backend() {
   let tasks = await list_tasks_item();
   axios
     .post("http://127.0.0.1:5000/api/task", tasks)

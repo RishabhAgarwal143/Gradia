@@ -67,10 +67,7 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
 
   return (
     <>
-      <button
-        className="text-black"
-        onClick={onToggle}
-      >
+      <button className="text-black" onClick={onToggle}>
         {status}
       </button>
       {isOpen && (
@@ -87,16 +84,10 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
             ))}
           </select>
           <div className="flex justify-between mt-3">
-            <button
-              className="text-blue-500 mr-2"
-              onClick={handleConfirm}
-            >
+            <button className="text-blue-500 mr-2" onClick={handleConfirm}>
               Confirm
             </button>
-            <button
-              className="text-red-500"
-              onClick={onToggle}
-            >
+            <button className="text-red-500" onClick={onToggle}>
               Cancel
             </button>
           </div>
@@ -142,7 +133,6 @@ const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
             }
             setChange(true);
           }}
-
         />
         {syllabus_Grade && (
           <select
@@ -180,7 +170,6 @@ const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
       )}
     </div>
   );
-
 };
 
 const SecondComponent = ({ subject, task }) => {
@@ -388,7 +377,6 @@ const SecondComponent = ({ subject, task }) => {
         </h2>
       </div>
 
-
       <button
         onClick={() => document.getElementById("fileInput").click()}
         className="px-4 py-2 mt-4 mr-4 mb-4 rounded bg-blue-500 font-bold"
@@ -401,8 +389,19 @@ const SecondComponent = ({ subject, task }) => {
         className="hidden"
         onChange={(event) => setSelectedFile(event.target.files[0])}
       />
-      <button onClick={handleFileUpload} className="px-4 py-2 mt-4 mr-4 mb-4 rounded bg-green-500 font-bold">
-        <span className="text-white font-bold "> Send File to Server </span>
+      <button
+        onClick={handleFileUpload}
+        style={{
+          padding: "10px",
+          margin: "10px",
+          backgroundColor: "#28a745",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Send File to Server
       </button>
       {selectedFile && (
         <p className="text-blue-500 mt-4">Selected file: {selectedFile.name}</p>
@@ -466,8 +465,6 @@ const SecondComponent = ({ subject, task }) => {
       </div>
     </div>
   );
-
-
 };
 
 const GradeView = () => {
@@ -530,7 +527,6 @@ const GradeView = () => {
       {/* <button onClick={RenderCalendar}>Render New Component</button> */}
     </div>
   );
-
 };
 
 export default GradeView;
