@@ -213,6 +213,49 @@ def delete_events_in_range(start_time, end_time, userinfoID):
         return ["NO_EVENTS", None]
 
 
+def update_event(event_id, new_start_time, new_end_time, userinfoID, event_description=None, event_location=None):
+
+    to_update = database_queries.get_schedule_by_id(event_id)
+    existing_events = _get_schedule_range_df(new_start_time, new_end_time, userinfoID)
+
+    temp_d = dict()
+    temp_d["id"] = event_id
+    temp_d["DTSTART"] = new_start_time
+    temp_d["DTEND"] = new_end_time
+    temp_d["userinfoID"] = userinfoID
+    temp_d["DESCRIPTION"] = event_description
+    temp_d["LOCATION"] = event_location
+
+    if existing_events:
+        return ["CONFLICT", to_update, temp_d, existing_events]
+    else:
+        return ["UPDATE", to_update, temp_d, None]
+
+def delete_event_id(event_id):
+    database_queries.delete_schedule_by_id(event_id)
+    return ["DELETED", event_id]
+
+
+def create_task():
+    # ref to Task class and then return task dict repr, hw, labs etc
+    return 0
+    
+def update_task():
+    # todo
+    return 0
+
+def analyze_grade():
+    # todo
+    return 0
+
+def rework_caendar():
+    # TODO:
+    return 0
+
+
+
+
+
 def add_syllabus_grades(category_Name,category_Grade,subject_ID,userinfoID):
     
     user = database_queries.get_user_info(userinfoID)
@@ -230,7 +273,4 @@ def add_syllabus_grades(category_Name,category_Grade,subject_ID,userinfoID):
     response = requests.request("POST", url, headers=headers, data=payload)
 
     print(response.text)
-
-
-    
 

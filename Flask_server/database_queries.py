@@ -227,7 +227,7 @@ def get_schedule_range(userinfo_id, start_date, end_date):
     filter(Schedule.userinfoID == userinfo_id).\
     filter(Schedule.DTEND >= start_date, Schedule.DTSTART <= end_date).\
     all()
-    session.close()
+    # session.close()
     
     return schedules
 
@@ -240,7 +240,7 @@ def get_task_range(userinfo_id, start_date, end_date):
     all()
     for task in tasks:
         print(task)
-    session.close()
+    # session.close()
     return tasks
 
 
