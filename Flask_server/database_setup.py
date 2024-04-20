@@ -339,8 +339,11 @@ class Schedule_grade_info(Base):
 def create_table(userinfoId):
     """Uses all the Base Metadata in this file to create tables"""
     file_path = f"./Flask_server/database/userdata_{userinfoId}.db"
-    if os.path.exists(file_path):
-        os.remove(file_path)
+    # flag = False
+    # if os.path.exists(file_path):
+    #     flag = True
+    # if(flag):    
+    # os.remove(file_path)
 
     engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
     

@@ -37,6 +37,7 @@ def set_schedules(schedules):
     df_sorted = df.sort_values(by='start', ascending=False)
     payload.schedules = df_sorted
 
+
 def add_schedule_to_payload_schedules(schedule):
     global payload
     global time_converter
@@ -51,7 +52,6 @@ def add_schedule_to_payload_schedules(schedule):
     if id in ids:
         return
 
-
     data_dicts.append(out_dict)
     print("ADDING:", data_dicts)
     df = pd.DataFrame(data_dicts)
@@ -59,9 +59,6 @@ def add_schedule_to_payload_schedules(schedule):
 
     df.drop(columns=['RRULE', 'UID', 'CATEGORIES', 'DTSTAMP','Importance', '__typename', 'scheduleImportanceId'], inplace=True)
     df.rename(columns={'DTSTART': 'start', 'DTEND': 'end', 'SUMMARY': 'title', 'DESCRIPTION': 'description', 'LOCATION': 'location'}, inplace=True)
-
-    # print("COLUMNS:", df.columns)
-    # print(df.head())
 
     df['start'] = pd.to_datetime(df['start'])
     df['end'] = pd.to_datetime(df['end'])
@@ -77,6 +74,7 @@ def add_schedule_to_payload_schedules(schedule):
     print("AFTER ADDING", payload.schedules)
 
     print("ADDED")
+
 
 def delete_schedule_from_payload_schedules(schedule):
     global payload
@@ -140,9 +138,10 @@ def _get_schedule_range_df(start_time, end_time,userinfoID):
     utc_end_time = convert_time_to_utc(end_time,userinfoID)
     schedules = database_queries.get_schedule_range(userinfoID,utc_start_time,utc_end_time)
     result = []
+    # session = database_queries.create_session(userinfoID)
     for schedule in schedules:
         result.append(schedule.dict_representation())
-    
+    # session.close()
     return result
 
 
@@ -164,7 +163,6 @@ def get_schedule_range(start_time, end_time,userinfoID):
 
 def add_event_to_calendar(start_time, end_time, event_name, userinfoID,event_description=None, event_location=None):
     
-    
     existing_events = _get_schedule_range_df(start_time, end_time,userinfoID)
     temp_d = dict()
     
@@ -179,10 +177,10 @@ def add_event_to_calendar(start_time, end_time, event_name, userinfoID,event_des
     
     if existing_events:
         # print("CONFLICT", event_add)
-        return ["CONFLICT", temp_d, existing_events]
+        return ["CONFLICT", [temp_d], existing_events]
     else:
         # print("ADD_EVENT", event_add)
-        return ["ADD", temp_d, None]
+        return ["ADD", [temp_d], None]
     
 
 def delete_events_in_range(start_time, end_time,userinfoID):

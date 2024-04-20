@@ -356,7 +356,7 @@ const SecondComponent = ({ subject, task }) => {
     <div className="main-content">
       <h2 className="bg-white">Selected Subject: {subject}</h2>
       <h2 className="bg-white text-left">
-        Current Grade: {(task && task.current_Grade) || 0} Target Grade:
+        Current Grade: {(task && task.current_Grade) || 0} Target Grade:{" "}
         <GradeBox
           key={subject}
           grade={(task && task.target_Grade) || 0}
