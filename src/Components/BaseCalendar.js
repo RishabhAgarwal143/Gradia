@@ -116,6 +116,7 @@ const MyCalendar = () => {
     userinfoID: event.userinfoID,
     ScheduleGradeInfo: event.ScheduleGradeInfo,
     personalized_task: event.personalized_task,
+    event_color: event.event_color,
   }));
 
   const handleAddEvent = async (newEvent) => {
@@ -137,7 +138,7 @@ const MyCalendar = () => {
     // Highlight the new event by adding a special property
 
     setGptTask(tasktype);
-    const highlightedNewEvent = { ...newEvent, isNew: true };
+    const highlightedNewEvent = { ...newEvent, isNew: true, event_color: "green" };
     console.log("GPT EVENT", highlightedNewEvent);
     setPendingEvent(highlightedNewEvent);
     console.log("PENDING", pendingEvent);
@@ -251,6 +252,22 @@ const MyCalendar = () => {
     setSubscribe_url("");
     setSubscribe_name("");
   };
+  const eventStyleGetter = (event, start, end, isSelected) => {
+    const color = event.event_color; // Access the color property
+
+    const style = {
+      backgroundColor: color, // Use 'blue' as default color if not specified
+      borderRadius: '5px',
+      opacity: 0.8,
+      color: 'white',
+      border: '0px',
+      display: 'block',
+    };
+
+    return {
+      style: style,
+    };
+  };
 
   create_temp(transformedEvents);
   return (
@@ -276,8 +293,10 @@ const MyCalendar = () => {
             />
           }
           <Calendar
+
             localizer={localizer}
             events={transformedEvents}
+            eventPropGetter={eventStyleGetter}
             startAccessor="start"
             endAccessor="end"
             onSelectEvent={handleEventClick}

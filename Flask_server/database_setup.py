@@ -164,7 +164,7 @@ class Schedule(Base):
         
         return (f"Schedule(id={self.id!r},SUMMARY={self.SUMMARY!r}, DTSTART={self.DTSTART!r}, DTEND={self.DTEND!r}, DESCRIPTION={self.DESCRIPTION!r},LOCATION={self.LOCATION!r})")
 
-    def dict_representation(self) -> dict:
+    def dict_representation(self,session) -> dict:
         temp_d = {}
         temp_d["id"] = self.id
         temp_d["SUMMARY"] = self.SUMMARY
