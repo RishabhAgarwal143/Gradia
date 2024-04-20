@@ -19,6 +19,8 @@ import {
 } from "./support_func";
 import Chatbot from "./Chatbot";
 import axios from "axios";
+import ChatbotConfirmModel from "./ChatbotConfirmModel";
+
 const localizer = momentLocalizer(moment);
 const create_temp = create_user();
 const MyCalendar = () => {
@@ -134,10 +136,10 @@ const MyCalendar = () => {
     setIsAddModalOpen(false); // Close the form after adding event
   };
 
-  const handleDelEvent = (newEvent) => {
+  const handleDelEvent = async (newEvent) => {
     // const result = await create_schedule(newEvent);
     console.log("In del", newEvent);
-
+    const deletedSchedule = await deleteSchedule(newEvent.id);
     setAllEvents(myEvents.filter((event) => event.id !== newEvent.id));
   };
 
@@ -155,11 +157,43 @@ const MyCalendar = () => {
 
     setAllEvents([...myEvents, ...addEvents, ...deletedEvents]);
     setchatbotpendingEvent([...addEvents, ...deletedEvents]);
-    console.log(
-      "🚀 ~ handleGPTevent ~ chatbotpendingEvent:",
-      chatbotpendingEvent
-    );
+
     //...
+  }
+
+  function handleConfirmGptEvent() {
+    chatbotpendingEvent.forEach((element) => {
+      const index = myEvents.indexOf(element);
+      if (index > -1) {
+        myEvents.splice(index, 1);
+      }
+      if (element.color === "green") {
+        console.log("Trying to Add via Chatbot");
+        delete element.color;
+        element.DTSTART = new Date(element.DTSTART);
+        element.DTEND = new Date(element.DTEND);
+        handleAddEvent(element);
+      } else if (element.color === "red") {
+        console.log("Trying to Delete via Chatbot");
+        delete element.color;
+        element.DTSTART = new Date(element.DTSTART);
+        element.DTEND = new Date(element.DTEND);
+        handleDelEvent(element);
+      }
+    });
+
+    setchatbotpendingEvent([]);
+  }
+
+  function handleCancelGptEvent() {
+    chatbotpendingEvent.forEach((element) => {
+      const index = myEvents.indexOf(element);
+      if (index > -1) {
+        myEvents.splice(index, 1);
+      }
+    });
+
+    setchatbotpendingEvent([]);
   }
 
   const handleEventClick = (clickedEvent, e) => {
@@ -434,7 +468,12 @@ const MyCalendar = () => {
           {!chatbotpendingEvent.length && (
             <Chatbot onAddgptevent={handleGPTevent} />
           )}
-          {chatbotpendingEvent.length !== 0 && <p>HI</p>}
+          {chatbotpendingEvent.length !== 0 && (
+            <ChatbotConfirmModel
+              onConfirm={handleConfirmGptEvent}
+              onCancel={handleCancelGptEvent}
+            />
+          )}
         </div>
       </div>
 

@@ -164,7 +164,7 @@ class Schedule(Base):
         
         return (f"Schedule(id={self.id!r},SUMMARY={self.SUMMARY!r}, DTSTART={self.DTSTART!r}, DTEND={self.DTEND!r}, DESCRIPTION={self.DESCRIPTION!r},LOCATION={self.LOCATION!r})")
 
-    def dict_representation(self,session) -> dict:
+    def dict_representation(self) -> dict:
         temp_d = {}
         temp_d["id"] = self.id
         temp_d["SUMMARY"] = self.SUMMARY
@@ -338,12 +338,9 @@ class Schedule_grade_info(Base):
 
 def create_table(userinfoId):
     """Uses all the Base Metadata in this file to create tables"""
-    file_path = f"./Flask_server/database/userdata_{userinfoId}.db"
-    # flag = False
+    # file_path = f"./Flask_server/database/userdata_{userinfoId}.db"
     # if os.path.exists(file_path):
-    #     flag = True
-    # if(flag):    
-    # os.remove(file_path)
+    #     os.remove(file_path)
 
     engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
     
