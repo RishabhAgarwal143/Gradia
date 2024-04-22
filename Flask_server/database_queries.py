@@ -25,6 +25,11 @@ def check_if_object_exists(obj,session):
     except NoResultFound:
         return False
 
+def get_event_by_id(event_id, session):
+    try:
+        return session.query(Schedule).filter_by(id=event_id).one()
+    except NoResultFound:
+        return None
 
 def add_to_database(obj,session):
     

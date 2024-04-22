@@ -229,9 +229,16 @@ def update_event(event_id, new_start_time, new_end_time, userinfoID, event_descr
     else:
         return ["UPDATE", to_update, temp_d, None]
 
-def delete_event_id(event_id):
-    database_queries.delete_schedule_by_id(event_id)
-    return ["DELETED", event_id]
+def delete_event_id(event_id, userinfoID):
+
+    session = database_queries.create_session(userinfoID)
+    event = database_queries.get_event_by_id(event_id, session)
+
+    event_dict = event.dict_representation()
+
+    session.close()
+
+    return ["DELETE", event_dict]
 
 
 def create_task():
