@@ -3,9 +3,12 @@ import pandas as pd
 import math
 
 
-def get_user_free_time(user, DTSTART : datetime, DTEND: datetime):
+def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slots = []):
     schedules =  get_schedule_range(user, DTSTART, DTEND)
     schedules.sort(key=lambda x: x.DTSTART)
+    for schedule in schedules:
+        if(schedule.personalized_task and schedule.personalized_task == True):
+            schedules.remove(schedule)
     busySlots = []
     freeSlots = []  
     # for schedule in schedules:
@@ -20,9 +23,9 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime):
         
         currday = DTSTART + datetime.timedelta(days=i)
         prevDay = DTSTART + datetime.timedelta(days=i-1)
-
         workTimeForDay = workTime.get_work_time(currday.weekday())
         workTimeForprevDay = workTime.get_work_time(prevDay.weekday())
+        slots_per_day = []
         flag = 0
         if(len(busySlots) > 0 ):
             if(busySlots[-1][-1] > prevDay.replace(hour=workTimeForprevDay[1].hour, minute=workTimeForprevDay[1].minute, second=workTimeForprevDay[1].second)):
@@ -31,12 +34,19 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime):
                 flag = 1
         if flag == 0:
             busySlots.append([prevDay.replace(hour=workTimeForprevDay[1].hour, minute=workTimeForprevDay[1].minute, second=workTimeForprevDay[1].second), currday.replace(hour=workTimeForDay[0].hour, minute=workTimeForDay[0].minute, second=workTimeForDay[0].second)])
+        for slots in extra_time_slots:
+            if slots[0] == currday.date():
+                slots_per_day.append([slots[0], slots[1]])
        
         for schedule in schedules:
-            if schedule.DTSTART.day == currday.day:
-                busySlots.append([schedule.DTSTART, schedule.DTEND])
-        
-                
+            if schedule.DTSTART.date() == currday.date():
+                 slots_per_day.append([schedule.DTSTART, schedule.DTEND])
+        slots_per_day.sort()
+        for slots in slots_per_day:
+            if len(busySlots) > 0 and slots[0] < busySlots[-1][-1]:
+                busySlots.append([busySlots[-1][-1], max(slots[1], busySlots[-1][-1])])
+            else:
+                busySlots.append(slots)
     for i in range(0, len(busySlots)):
         if busySlots[i][0] > currentDayStart:
             freeSlots.append([currentDayStart, busySlots[i][0]])
@@ -47,14 +57,14 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime):
 
     return freeSlots
 
-def assign_task(user: User, session):
+def assign_task(user: User, session, extra_time_slots = []):
     tasks  = assign_priority(user)
     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
     # avg_priority = sum([task.PRIORITY for task in tasks])/len(tasks)
     # max_priority = max([task.PRIORITY for task in tasks])
     currday = 0
     while(tasks):
-        freeSlots = get_user_free_time(user.userinfoID, (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 0, minute = 0, second= 0), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59))
+        freeSlots = get_user_free_time(user.userinfoID, (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 0, minute = 0, second= 0), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
         # if the user has continuous free time slot of 2hrs, assign the task to that slot
         for task in tasks:
             time_estimated  = calculate_time_ratio(user, task.get_subject(session))
