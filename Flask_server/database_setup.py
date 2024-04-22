@@ -233,7 +233,7 @@ class Task(Base):
     userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
     task_grade: Mapped[Optional["Task_grade_info"]] = relationship()
-    # difficulty: Mapped[Optional[int]]
+    difficulty: Mapped[Optional[int]]
     def __repr__(self) -> str:
         return f"Task(id={self.id!r}, SUMMARY={self.SUMMARY!r}, subject={self.subjectsID!r})"
 
@@ -269,7 +269,8 @@ class Task(Base):
         new_timezone = pytz.timezone(user.user_timezone)
         dt_new_timezone = self.DUE.astimezone(new_timezone)
         return dt_new_timezone
-        
+    def get_subject(self,session):
+        return session.query(Subjects).filter(Subjects.id == self.subjectsID).first()
 
 class Subjects(Base):
     __tablename__ = "subjects"
