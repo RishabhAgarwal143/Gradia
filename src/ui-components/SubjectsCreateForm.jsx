@@ -22,6 +22,7 @@ import {
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
 import {
+  listLetterGrades,
   listSchedules,
   listSyllabusGradeValues,
   listTasks,
@@ -29,6 +30,7 @@ import {
 } from "../graphql/queries";
 import {
   createSubjects,
+  updateLetterGrade,
   updateSchedule,
   updateSyllabusGradeValues,
   updateTask,
@@ -209,6 +211,7 @@ export default function SubjectsCreateForm(props) {
     userinfoID: undefined,
     subject_Difficulty: "",
     SyllabusGradeValues: [],
+    LetterGrades: [],
   };
   const [subject_Name, setSubject_Name] = React.useState(
     initialValues.subject_Name
@@ -240,6 +243,11 @@ export default function SubjectsCreateForm(props) {
     React.useState(false);
   const [syllabusGradeValuesRecords, setSyllabusGradeValuesRecords] =
     React.useState([]);
+  const [LetterGrades, setLetterGrades] = React.useState(
+    initialValues.LetterGrades
+  );
+  const [LetterGradesLoading, setLetterGradesLoading] = React.useState(false);
+  const [letterGradesRecords, setLetterGradesRecords] = React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -259,6 +267,9 @@ export default function SubjectsCreateForm(props) {
     setSyllabusGradeValues(initialValues.SyllabusGradeValues);
     setCurrentSyllabusGradeValuesValue(undefined);
     setCurrentSyllabusGradeValuesDisplayValue("");
+    setLetterGrades(initialValues.LetterGrades);
+    setCurrentLetterGradesValue(undefined);
+    setCurrentLetterGradesDisplayValue("");
     setErrors({});
   };
   const [currentTasksDisplayValue, setCurrentTasksDisplayValue] =
@@ -282,10 +293,16 @@ export default function SubjectsCreateForm(props) {
   const [currentSyllabusGradeValuesValue, setCurrentSyllabusGradeValuesValue] =
     React.useState(undefined);
   const SyllabusGradeValuesRef = React.createRef();
+  const [currentLetterGradesDisplayValue, setCurrentLetterGradesDisplayValue] =
+    React.useState("");
+  const [currentLetterGradesValue, setCurrentLetterGradesValue] =
+    React.useState(undefined);
+  const LetterGradesRef = React.createRef();
   const getIDValue = {
     Tasks: (r) => JSON.stringify({ id: r?.id }),
     Schedules: (r) => JSON.stringify({ id: r?.id }),
     SyllabusGradeValues: (r) => JSON.stringify({ id: r?.id }),
+    LetterGrades: (r) => JSON.stringify({ id: r?.id }),
   };
   const TasksIdSet = new Set(
     Array.isArray(Tasks)
@@ -302,12 +319,19 @@ export default function SubjectsCreateForm(props) {
       ? SyllabusGradeValues.map((r) => getIDValue.SyllabusGradeValues?.(r))
       : getIDValue.SyllabusGradeValues?.(SyllabusGradeValues)
   );
+  const LetterGradesIdSet = new Set(
+    Array.isArray(LetterGrades)
+      ? LetterGrades.map((r) => getIDValue.LetterGrades?.(r))
+      : getIDValue.LetterGrades?.(LetterGrades)
+  );
   const getDisplayValue = {
     Tasks: (r) => `${r?.UID ? r?.UID + " - " : ""}${r?.id}`,
     Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
     userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
     SyllabusGradeValues: (r) =>
       `${r?.category_Name ? r?.category_Name + " - " : ""}${r?.id}`,
+    LetterGrades: (r) =>
+      `${r?.LetterValue ? r?.LetterValue + " - " : ""}${r?.id}`,
   };
   const validations = {
     subject_Name: [],
@@ -318,6 +342,7 @@ export default function SubjectsCreateForm(props) {
     userinfoID: [{ type: "Required" }],
     subject_Difficulty: [],
     SyllabusGradeValues: [],
+    LetterGrades: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -454,11 +479,44 @@ export default function SubjectsCreateForm(props) {
     setSyllabusGradeValuesRecords(newOptions.slice(0, autocompleteLength));
     setSyllabusGradeValuesLoading(false);
   };
+  const fetchLetterGradesRecords = async (value) => {
+    setLetterGradesLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { LetterValue: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listLetterGrades.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listLetterGrades?.items;
+      var loaded = result.filter(
+        (item) => !LetterGradesIdSet.has(getIDValue.LetterGrades?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setLetterGradesRecords(newOptions.slice(0, autocompleteLength));
+    setLetterGradesLoading(false);
+  };
   React.useEffect(() => {
     fetchTasksRecords("");
     fetchSchedulesRecords("");
     fetchUserinfoIDRecords("");
     fetchSyllabusGradeValuesRecords("");
+    fetchLetterGradesRecords("");
   }, []);
   return (
     <Grid
@@ -477,6 +535,7 @@ export default function SubjectsCreateForm(props) {
           userinfoID,
           subject_Difficulty,
           SyllabusGradeValues,
+          LetterGrades,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -580,6 +639,22 @@ export default function SubjectsCreateForm(props) {
               return promises;
             }, [])
           );
+          promises.push(
+            ...LetterGrades.reduce((promises, original) => {
+              promises.push(
+                client.graphql({
+                  query: updateLetterGrade.replaceAll("__typename", ""),
+                  variables: {
+                    input: {
+                      id: original.id,
+                      subjectsID: subjects.id,
+                    },
+                  },
+                })
+              );
+              return promises;
+            }, [])
+          );
           await Promise.all(promises);
           if (onSuccess) {
             onSuccess(modelFields);
@@ -614,6 +689,7 @@ export default function SubjectsCreateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.subject_Name ?? value;
@@ -649,6 +725,7 @@ export default function SubjectsCreateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.current_Grade ?? value;
@@ -684,6 +761,7 @@ export default function SubjectsCreateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.target_Grade ?? value;
@@ -711,6 +789,7 @@ export default function SubjectsCreateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             values = result?.Tasks ?? values;
@@ -794,6 +873,7 @@ export default function SubjectsCreateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             values = result?.Schedules ?? values;
@@ -880,6 +960,7 @@ export default function SubjectsCreateForm(props) {
               userinfoID: value,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -985,6 +1066,7 @@ export default function SubjectsCreateForm(props) {
               userinfoID,
               subject_Difficulty: value,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.subject_Difficulty ?? value;
@@ -1014,6 +1096,7 @@ export default function SubjectsCreateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues: values,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             values = result?.SyllabusGradeValues ?? values;
@@ -1095,6 +1178,92 @@ export default function SubjectsCreateForm(props) {
           ref={SyllabusGradeValuesRef}
           labelHidden={true}
           {...getOverrideProps(overrides, "SyllabusGradeValues")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              subject_Name,
+              current_Grade,
+              target_Grade,
+              Tasks,
+              Schedules,
+              userinfoID,
+              subject_Difficulty,
+              SyllabusGradeValues,
+              LetterGrades: values,
+            };
+            const result = onChange(modelFields);
+            values = result?.LetterGrades ?? values;
+          }
+          setLetterGrades(values);
+          setCurrentLetterGradesValue(undefined);
+          setCurrentLetterGradesDisplayValue("");
+        }}
+        currentFieldValue={currentLetterGradesValue}
+        label={"Letter grades"}
+        items={LetterGrades}
+        hasError={errors?.LetterGrades?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("LetterGrades", currentLetterGradesValue)
+        }
+        errorMessage={errors?.LetterGrades?.errorMessage}
+        getBadgeText={getDisplayValue.LetterGrades}
+        setFieldValue={(model) => {
+          setCurrentLetterGradesDisplayValue(
+            model ? getDisplayValue.LetterGrades(model) : ""
+          );
+          setCurrentLetterGradesValue(model);
+        }}
+        inputFieldRef={LetterGradesRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Letter grades"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search LetterGrade"
+          value={currentLetterGradesDisplayValue}
+          options={letterGradesRecords
+            .filter((r) => !LetterGradesIdSet.has(getIDValue.LetterGrades?.(r)))
+            .map((r) => ({
+              id: getIDValue.LetterGrades?.(r),
+              label: getDisplayValue.LetterGrades?.(r),
+            }))}
+          isLoading={LetterGradesLoading}
+          onSelect={({ id, label }) => {
+            setCurrentLetterGradesValue(
+              letterGradesRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentLetterGradesDisplayValue(label);
+            runValidationTasks("LetterGrades", label);
+          }}
+          onClear={() => {
+            setCurrentLetterGradesDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchLetterGradesRecords(value);
+            if (errors.LetterGrades?.hasError) {
+              runValidationTasks("LetterGrades", value);
+            }
+            setCurrentLetterGradesDisplayValue(value);
+            setCurrentLetterGradesValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("LetterGrades", currentLetterGradesDisplayValue)
+          }
+          errorMessage={errors.LetterGrades?.errorMessage}
+          hasError={errors.LetterGrades?.hasError}
+          ref={LetterGradesRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "LetterGrades")}
         ></Autocomplete>
       </ArrayField>
       <Flex

@@ -24,12 +24,14 @@ import { generateClient } from "aws-amplify/api";
 import {
   getSubjects,
   getUserinfo,
+  listLetterGrades,
   listSchedules,
   listSyllabusGradeValues,
   listTasks,
   listUserinfos,
 } from "../graphql/queries";
 import {
+  updateLetterGrade,
   updateSchedule,
   updateSubjects,
   updateSyllabusGradeValues,
@@ -212,6 +214,7 @@ export default function SubjectsUpdateForm(props) {
     userinfoID: undefined,
     subject_Difficulty: "",
     SyllabusGradeValues: [],
+    LetterGrades: [],
   };
   const [subject_Name, setSubject_Name] = React.useState(
     initialValues.subject_Name
@@ -243,6 +246,11 @@ export default function SubjectsUpdateForm(props) {
     React.useState(false);
   const [syllabusGradeValuesRecords, setSyllabusGradeValuesRecords] =
     React.useState([]);
+  const [LetterGrades, setLetterGrades] = React.useState(
+    initialValues.LetterGrades
+  );
+  const [LetterGradesLoading, setLetterGradesLoading] = React.useState(false);
+  const [letterGradesRecords, setLetterGradesRecords] = React.useState([]);
   const autocompleteLength = 10;
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -254,6 +262,7 @@ export default function SubjectsUpdateForm(props) {
           Schedules: linkedSchedules,
           userinfoID,
           SyllabusGradeValues: linkedSyllabusGradeValues,
+          LetterGrades: linkedLetterGrades,
         }
       : initialValues;
     setSubject_Name(cleanValues.subject_Name);
@@ -272,6 +281,9 @@ export default function SubjectsUpdateForm(props) {
     setSyllabusGradeValues(cleanValues.SyllabusGradeValues ?? []);
     setCurrentSyllabusGradeValuesValue(undefined);
     setCurrentSyllabusGradeValuesDisplayValue("");
+    setLetterGrades(cleanValues.LetterGrades ?? []);
+    setCurrentLetterGradesValue(undefined);
+    setCurrentLetterGradesDisplayValue("");
     setErrors({});
   };
   const [subjectsRecord, setSubjectsRecord] = React.useState(subjectsModelProp);
@@ -282,6 +294,8 @@ export default function SubjectsUpdateForm(props) {
   const [linkedSyllabusGradeValues, setLinkedSyllabusGradeValues] =
     React.useState([]);
   const canUnlinkSyllabusGradeValues = false;
+  const [linkedLetterGrades, setLinkedLetterGrades] = React.useState([]);
+  const canUnlinkLetterGrades = false;
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
@@ -310,6 +324,8 @@ export default function SubjectsUpdateForm(props) {
       const linkedSyllabusGradeValues =
         record?.SyllabusGradeValues?.items ?? [];
       setLinkedSyllabusGradeValues(linkedSyllabusGradeValues);
+      const linkedLetterGrades = record?.LetterGrades?.items ?? [];
+      setLinkedLetterGrades(linkedLetterGrades);
       setSubjectsRecord(record);
     };
     queryData();
@@ -320,6 +336,7 @@ export default function SubjectsUpdateForm(props) {
     linkedSchedules,
     userinfoID,
     linkedSyllabusGradeValues,
+    linkedLetterGrades,
   ]);
   const [currentTasksDisplayValue, setCurrentTasksDisplayValue] =
     React.useState("");
@@ -342,10 +359,16 @@ export default function SubjectsUpdateForm(props) {
   const [currentSyllabusGradeValuesValue, setCurrentSyllabusGradeValuesValue] =
     React.useState(undefined);
   const SyllabusGradeValuesRef = React.createRef();
+  const [currentLetterGradesDisplayValue, setCurrentLetterGradesDisplayValue] =
+    React.useState("");
+  const [currentLetterGradesValue, setCurrentLetterGradesValue] =
+    React.useState(undefined);
+  const LetterGradesRef = React.createRef();
   const getIDValue = {
     Tasks: (r) => JSON.stringify({ id: r?.id }),
     Schedules: (r) => JSON.stringify({ id: r?.id }),
     SyllabusGradeValues: (r) => JSON.stringify({ id: r?.id }),
+    LetterGrades: (r) => JSON.stringify({ id: r?.id }),
   };
   const TasksIdSet = new Set(
     Array.isArray(Tasks)
@@ -362,12 +385,19 @@ export default function SubjectsUpdateForm(props) {
       ? SyllabusGradeValues.map((r) => getIDValue.SyllabusGradeValues?.(r))
       : getIDValue.SyllabusGradeValues?.(SyllabusGradeValues)
   );
+  const LetterGradesIdSet = new Set(
+    Array.isArray(LetterGrades)
+      ? LetterGrades.map((r) => getIDValue.LetterGrades?.(r))
+      : getIDValue.LetterGrades?.(LetterGrades)
+  );
   const getDisplayValue = {
     Tasks: (r) => `${r?.UID ? r?.UID + " - " : ""}${r?.id}`,
     Schedules: (r) => `${r?.SUMMARY ? r?.SUMMARY + " - " : ""}${r?.id}`,
     userinfoID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
     SyllabusGradeValues: (r) =>
       `${r?.category_Name ? r?.category_Name + " - " : ""}${r?.id}`,
+    LetterGrades: (r) =>
+      `${r?.LetterValue ? r?.LetterValue + " - " : ""}${r?.id}`,
   };
   const validations = {
     subject_Name: [],
@@ -378,6 +408,7 @@ export default function SubjectsUpdateForm(props) {
     userinfoID: [{ type: "Required" }],
     subject_Difficulty: [],
     SyllabusGradeValues: [],
+    LetterGrades: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -514,11 +545,44 @@ export default function SubjectsUpdateForm(props) {
     setSyllabusGradeValuesRecords(newOptions.slice(0, autocompleteLength));
     setSyllabusGradeValuesLoading(false);
   };
+  const fetchLetterGradesRecords = async (value) => {
+    setLetterGradesLoading(true);
+    const newOptions = [];
+    let newNext = "";
+    while (newOptions.length < autocompleteLength && newNext != null) {
+      const variables = {
+        limit: autocompleteLength * 5,
+        filter: {
+          or: [
+            { LetterValue: { contains: value } },
+            { id: { contains: value } },
+          ],
+        },
+      };
+      if (newNext) {
+        variables["nextToken"] = newNext;
+      }
+      const result = (
+        await client.graphql({
+          query: listLetterGrades.replaceAll("__typename", ""),
+          variables,
+        })
+      )?.data?.listLetterGrades?.items;
+      var loaded = result.filter(
+        (item) => !LetterGradesIdSet.has(getIDValue.LetterGrades?.(item))
+      );
+      newOptions.push(...loaded);
+      newNext = result.nextToken;
+    }
+    setLetterGradesRecords(newOptions.slice(0, autocompleteLength));
+    setLetterGradesLoading(false);
+  };
   React.useEffect(() => {
     fetchTasksRecords("");
     fetchSchedulesRecords("");
     fetchUserinfoIDRecords("");
     fetchSyllabusGradeValuesRecords("");
+    fetchLetterGradesRecords("");
   }, []);
   return (
     <Grid
@@ -537,6 +601,7 @@ export default function SubjectsUpdateForm(props) {
           userinfoID,
           subject_Difficulty: subject_Difficulty ?? null,
           SyllabusGradeValues: SyllabusGradeValues ?? null,
+          LetterGrades: LetterGrades ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -730,6 +795,57 @@ export default function SubjectsUpdateForm(props) {
               })
             );
           });
+          const letterGradesToLink = [];
+          const letterGradesToUnLink = [];
+          const letterGradesSet = new Set();
+          const linkedLetterGradesSet = new Set();
+          LetterGrades.forEach((r) =>
+            letterGradesSet.add(getIDValue.LetterGrades?.(r))
+          );
+          linkedLetterGrades.forEach((r) =>
+            linkedLetterGradesSet.add(getIDValue.LetterGrades?.(r))
+          );
+          linkedLetterGrades.forEach((r) => {
+            if (!letterGradesSet.has(getIDValue.LetterGrades?.(r))) {
+              letterGradesToUnLink.push(r);
+            }
+          });
+          LetterGrades.forEach((r) => {
+            if (!linkedLetterGradesSet.has(getIDValue.LetterGrades?.(r))) {
+              letterGradesToLink.push(r);
+            }
+          });
+          letterGradesToUnLink.forEach((original) => {
+            if (!canUnlinkLetterGrades) {
+              throw Error(
+                `LetterGrade ${original.id} cannot be unlinked from Subjects because subjectsID is a required field.`
+              );
+            }
+            promises.push(
+              client.graphql({
+                query: updateLetterGrade.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    subjectsID: null,
+                  },
+                },
+              })
+            );
+          });
+          letterGradesToLink.forEach((original) => {
+            promises.push(
+              client.graphql({
+                query: updateLetterGrade.replaceAll("__typename", ""),
+                variables: {
+                  input: {
+                    id: original.id,
+                    subjectsID: subjectsRecord.id,
+                  },
+                },
+              })
+            );
+          });
           const modelFieldsToSave = {
             subject_Name: modelFields.subject_Name ?? null,
             current_Grade: modelFields.current_Grade ?? null,
@@ -779,6 +895,7 @@ export default function SubjectsUpdateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.subject_Name ?? value;
@@ -814,6 +931,7 @@ export default function SubjectsUpdateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.current_Grade ?? value;
@@ -849,6 +967,7 @@ export default function SubjectsUpdateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.target_Grade ?? value;
@@ -876,6 +995,7 @@ export default function SubjectsUpdateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             values = result?.Tasks ?? values;
@@ -959,6 +1079,7 @@ export default function SubjectsUpdateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             values = result?.Schedules ?? values;
@@ -1045,6 +1166,7 @@ export default function SubjectsUpdateForm(props) {
               userinfoID: value,
               subject_Difficulty,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.userinfoID ?? value;
@@ -1151,6 +1273,7 @@ export default function SubjectsUpdateForm(props) {
               userinfoID,
               subject_Difficulty: value,
               SyllabusGradeValues,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             value = result?.subject_Difficulty ?? value;
@@ -1180,6 +1303,7 @@ export default function SubjectsUpdateForm(props) {
               userinfoID,
               subject_Difficulty,
               SyllabusGradeValues: values,
+              LetterGrades,
             };
             const result = onChange(modelFields);
             values = result?.SyllabusGradeValues ?? values;
@@ -1261,6 +1385,92 @@ export default function SubjectsUpdateForm(props) {
           ref={SyllabusGradeValuesRef}
           labelHidden={true}
           {...getOverrideProps(overrides, "SyllabusGradeValues")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              subject_Name,
+              current_Grade,
+              target_Grade,
+              Tasks,
+              Schedules,
+              userinfoID,
+              subject_Difficulty,
+              SyllabusGradeValues,
+              LetterGrades: values,
+            };
+            const result = onChange(modelFields);
+            values = result?.LetterGrades ?? values;
+          }
+          setLetterGrades(values);
+          setCurrentLetterGradesValue(undefined);
+          setCurrentLetterGradesDisplayValue("");
+        }}
+        currentFieldValue={currentLetterGradesValue}
+        label={"Letter grades"}
+        items={LetterGrades}
+        hasError={errors?.LetterGrades?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("LetterGrades", currentLetterGradesValue)
+        }
+        errorMessage={errors?.LetterGrades?.errorMessage}
+        getBadgeText={getDisplayValue.LetterGrades}
+        setFieldValue={(model) => {
+          setCurrentLetterGradesDisplayValue(
+            model ? getDisplayValue.LetterGrades(model) : ""
+          );
+          setCurrentLetterGradesValue(model);
+        }}
+        inputFieldRef={LetterGradesRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Letter grades"
+          isRequired={false}
+          isReadOnly={false}
+          placeholder="Search LetterGrade"
+          value={currentLetterGradesDisplayValue}
+          options={letterGradesRecords
+            .filter((r) => !LetterGradesIdSet.has(getIDValue.LetterGrades?.(r)))
+            .map((r) => ({
+              id: getIDValue.LetterGrades?.(r),
+              label: getDisplayValue.LetterGrades?.(r),
+            }))}
+          isLoading={LetterGradesLoading}
+          onSelect={({ id, label }) => {
+            setCurrentLetterGradesValue(
+              letterGradesRecords.find((r) =>
+                Object.entries(JSON.parse(id)).every(
+                  ([key, value]) => r[key] === value
+                )
+              )
+            );
+            setCurrentLetterGradesDisplayValue(label);
+            runValidationTasks("LetterGrades", label);
+          }}
+          onClear={() => {
+            setCurrentLetterGradesDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            fetchLetterGradesRecords(value);
+            if (errors.LetterGrades?.hasError) {
+              runValidationTasks("LetterGrades", value);
+            }
+            setCurrentLetterGradesDisplayValue(value);
+            setCurrentLetterGradesValue(undefined);
+          }}
+          onBlur={() =>
+            runValidationTasks("LetterGrades", currentLetterGradesDisplayValue)
+          }
+          errorMessage={errors.LetterGrades?.errorMessage}
+          hasError={errors.LetterGrades?.hasError}
+          ref={LetterGradesRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "LetterGrades")}
         ></Autocomplete>
       </ArrayField>
       <Flex

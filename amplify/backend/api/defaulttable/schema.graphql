@@ -1,3 +1,10 @@
+type LetterGrade @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  LetterValue: String
+  GradeCutoff: Float
+  subjectsID: ID! @index(name: "bySubjects")
+}
+
 type SyllabusGradeValues @model @auth(rules: [{ allow: owner }]) {
   id: ID!
   category_Name: String
@@ -30,6 +37,7 @@ type Subjects @model @auth(rules: [{ allow: owner }]) {
   subject_Difficulty: Int
   SyllabusGradeValues: [SyllabusGradeValues]
     @hasMany(indexName: "bySubjects", fields: ["id"])
+  LetterGrades: [LetterGrade] @hasMany(indexName: "bySubjects", fields: ["id"])
 }
 
 type Task

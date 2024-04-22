@@ -24,8 +24,8 @@ import ChatbotConfirmModel from "./ChatbotConfirmModel";
 const localizer = momentLocalizer(moment);
 const create_temp = create_user();
 const MyCalendar = () => {
-  currentAuthenticatedUser();
-  send_data_backend();
+  // currentAuthenticatedUser();
+  // send_data_backend();
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -299,22 +299,24 @@ const MyCalendar = () => {
   };
 
   const eventStyleGetter = (event, start, end, isSelected) => {
-    let color = event.color || "#002148e4";
-    let style = {
-      backgroundColor: color,
-      color: "#fff", // Text color
-      borderRadius: "0.5rem", // Border radius for rounded corners
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Subtle box shadow
-      overflow: "hidden", // Ensure content doesn't overflow
-      textOverflow: "ellipsis", // Add ellipsis for overflow text
-      width: "10rem", // Width of the event
-      right: "0%", // Positioning
-      border: "none", // Remove border
-    };
+    let color = event.color;
+    if (color) {
+      let style = {
+        backgroundColor: color,
+        color: "#fff", // Text color
+        borderRadius: "0.5rem", // Border radius for rounded corners
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Subtle box shadow
+        overflow: "hidden", // Ensure content doesn't overflow
+        textOverflow: "ellipsis", // Add ellipsis for overflow text
+        width: "10rem", // Width of the event
+        right: "0%", // Positioning
+        border: "none", // Remove border
+      };
 
-    return {
-      style: style,
-    };
+      return {
+        style: style,
+      };
+    }
   };
 
   create_temp(transformedEvents);

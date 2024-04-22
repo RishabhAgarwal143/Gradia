@@ -200,7 +200,8 @@ def process_add_subject(subjects):
 
 def process_update_taskGrade(tasks):
     info = tasks['onUpdateTaskGradeInfo']
-    session = create_session(info["userinfoID"])
+    
+    session = create_session(tasks["userinfoID"])
     delete_from_database(Task_grade_info,"id",info["id"],session)
     task_grade_info = Task_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],time_taken= parse_time(info["time_Taken"]),task_id=info["taskGradeInfoTaskId"])
     add_to_database(task_grade_info,session)

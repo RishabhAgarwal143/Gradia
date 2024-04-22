@@ -13,7 +13,7 @@ import os
 import shutil
 
 from text_parser import PDFParser
-from api_calls import add_syllabus_grades
+from api_calls import add_syllabus_grades,add_letter_grades
 
 app = Flask(__name__, template_folder="templates")
 CORS(app)
@@ -73,7 +73,8 @@ def update_task():
 
 @app.route('/api/updatetaskGrade', methods=['POST'])
 def update_taskGrade():
-    data = request.json 
+    data = request.json
+    print(f"==>> data: {data}")
 
     process_update_taskGrade(data)
     return jsonify({'message': 'Data received successfully'})
@@ -175,15 +176,26 @@ def upload_file():
         for category, value in grade_data.items():
             if category == "Grades":
                 grade_flag = True
+                for pair in value.split(","):
+                    key, val = pair.strip().split(": ")
+                    if val.startswith("<"):
+                        val = 0
+                    else:
+                        val = float(val.strip())
+                    add_letter_grades(key,val,subject_id,userinfo_id)
                 break
                 
             print(f"{category}: {value}")
-            percent = int(value[0].rstrip("%"))
+            percent = float(value[0].rstrip("%"))
             nums = value[1]
 
             if nums == None or nums == 1:
                 print("SENDING TO DATABASE ", category, percent, subject_id, userinfo_id)
                 add_syllabus_grades(category, percent, subject_id, userinfo_id)
+            else:
+                for i in range(1,nums+1):
+                    print("SENDING TO DATABASE ", category + " " + str(i), float(percent/nums), subject_id, userinfo_id)
+                    add_syllabus_grades(category + " " + str(i), float(percent/nums), subject_id, userinfo_id)
 
     shutil.rmtree(os.getcwd() + "\Flask_server\syllabus_folder")
 

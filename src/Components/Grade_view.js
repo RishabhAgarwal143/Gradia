@@ -97,8 +97,14 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
   );
 };
 
-const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
-  console.log("🚀 ~ GradeBox ~ syllabus_Grade:", syllabus_Grade);
+const GradeBox = ({
+  index,
+  grade,
+  syllabus_Grade,
+  letter_Grade,
+  onStatusChange,
+}) => {
+  // console.log("🚀 ~ GradeBox ~ syllabus_Grade:", syllabus_Grade);
   const [selectedStatus, setSelectedStatus] = React.useState(grade);
   const [change, setChange] = React.useState(false);
   // const [isOpen, SetOpen] = React.useState(false);
@@ -151,6 +157,23 @@ const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
             ))}
           </select>
         )}
+        {letter_Grade && (
+          <select
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+              setChange(true);
+            }}
+            className="custom-select text-white ml-2 p-2 border border-gray-300 rounded"
+          >
+            <option value="" hidden></option>
+            {letter_Grade.map((category, i) => (
+              <option key={i} value={category.GradeCutoff}>
+                {`${category.LetterValue} ${category.GradeCutoff}`}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
       {change && (
         <div className="flex items-center ml-2">
@@ -172,7 +195,7 @@ const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
   );
 };
 
-const SecondComponent = ({ subject, task }) => {
+const SecondComponent = ({ subject, task, refreshSubjects }) => {
   console.log("🚀 ~ SecondComponent ~ task:", task);
   const [selectedStatuses, setSelectedStatuses] = useState({});
   const [trigger_refresh, setTrigger] = useState(false);
@@ -220,7 +243,6 @@ const SecondComponent = ({ subject, task }) => {
         tasks[i].id = tasks[i].taskGradeInfoTaskId;
         // Remove the item from list2
         task_grade_info.splice(index, 1);
-        console.log(tasks[i]);
       }
     }
   }
@@ -336,6 +358,7 @@ const SecondComponent = ({ subject, task }) => {
 
       alert("File uploaded successfully");
       setSelectedFile(null);
+      refreshSubjects();
     } catch (error) {
       console.error("Error:", error);
       alert("Error uploading file");
@@ -372,6 +395,9 @@ const SecondComponent = ({ subject, task }) => {
             key={subject}
             grade={(task && task.target_Grade) || 0}
             onStatusChange={handleTargetGradeChange}
+            letter_Grade={
+              subject_info.LetterGrades && subject_info.LetterGrades.items
+            }
             // className="bg-green-500 text-white px-2 py-1 rounded-md font-bold"
           />
         </h2>
@@ -471,7 +497,7 @@ const GradeView = () => {
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [forcedRefresh, setforcedRefresh] = useState(false);
   const handleSearch = (searchTerm) => {
     setSearchTerm(searchTerm);
   };
@@ -507,7 +533,7 @@ const GradeView = () => {
     }
 
     fetchSubjects();
-  }, []);
+  }, [forcedRefresh]);
 
   return (
     <div className="flex h-screen">
@@ -521,6 +547,7 @@ const GradeView = () => {
           <SecondComponent
             subject={selectedSubject}
             task={findSubjectByName(selectedSubject)}
+            refreshSubjects={setforcedRefresh}
           />
         )}
       </div>
