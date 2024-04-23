@@ -232,10 +232,10 @@ def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, e
 
     temp_d = dict()
     temp_d["id"] = event_id
-    temp_d["DTSTART"] = new_start_time if new_start_time else to_update_dict["DTSTART"]
-    temp_d["DTEND"] = new_end_time if new_end_time else to_update_dict["DTEND"]
-    temp_d["DESCRIPTION"] = event_description if event_description else to_update_dict["DESCRIPTION"]
-    temp_d["LOCATION"] = event_location if event_location else to_update_dict["LOCATION"]
+    temp_d["DTSTART"] = new_start_time if not new_start_time else to_update_dict["DTSTART"]
+    temp_d["DTEND"] = new_end_time if not new_end_time else to_update_dict["DTEND"]
+    temp_d["DESCRIPTION"] = event_description if not event_description else to_update_dict["DESCRIPTION"]
+    temp_d["LOCATION"] = event_location if not event_location else to_update_dict["LOCATION"]
     temp_d["userinfoID"] = userinfoID
 
     if existing_events:
