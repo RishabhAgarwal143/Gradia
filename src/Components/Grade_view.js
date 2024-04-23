@@ -152,7 +152,7 @@ const GradeBox = ({
             <option value="" hidden></option>
             {syllabus_Grade.map((category, i) => (
               <option key={i} value={category.category_Grade}>
-                {`${category.category_Name} ${category.category_Grade}`}
+                {`${category.category_Name} - ${category.category_Grade}`}
               </option>
             ))}
           </select>
@@ -196,7 +196,6 @@ const GradeBox = ({
 };
 
 const SecondComponent = ({ subject, task, refreshSubjects }) => {
-  console.log("🚀 ~ SecondComponent ~ task:", task);
   const [selectedStatuses, setSelectedStatuses] = useState({});
   const [trigger_refresh, setTrigger] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -247,7 +246,7 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
     }
   }
 
-  const handleStatusChange = (index, newStatus) => {
+  const handleStatusChange = async (index, newStatus) => {
     setSelectedStatuses((prevStatuses) => ({
       ...prevStatuses,
       [index]: newStatus,
@@ -255,6 +254,18 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
     tasks[index].STATUS = newStatus;
     console.log(tasks[index]);
     update_status_task(tasks[index].id, newStatus);
+    if (newStatus === statusOrder[3]) {
+      task.current_Grade = update_grade();
+      await update_grade_task(
+        tasks[index].taskTaskGradeInfoId,
+        tasks[index].id,
+        tasks[index].current_Grade,
+        tasks[index].overall_Percentage,
+        tasks[index].task_Weightage,
+        task.current_Grade,
+        tasks[index].subjectsID
+      );
+    }
   };
 
   const Refresh = () => {
@@ -269,15 +280,12 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
     // tasks[index].current_Grade = newGrade;
     tasks[index].current_Grade = newGrade;
     let new_percentage = (newGrade * tasks[index].task_Weightage) / 100;
-    let old_percentage = 0;
-    if (tasks[index].overall_Percentage) {
-      old_percentage = tasks[index].overall_Percentage;
-    }
+
     tasks[index].overall_Percentage = new_percentage;
     if (!task.current_Grade) {
       task.current_Grade = 0;
     }
-    task.current_Grade += new_percentage - old_percentage;
+    task.current_Grade = update_grade();
 
     Refresh();
     const updatedValue = await update_grade_task(
@@ -296,21 +304,29 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
     console.log(tasks[index]);
   };
 
+  function update_grade() {
+    let temp_current_Grade = 0;
+    tasks.forEach((task) => {
+      if (task.overall_Percentage && task.STATUS !== statusOrder[3]) {
+        temp_current_Grade += task.overall_Percentage;
+      }
+    });
+    return temp_current_Grade;
+  }
+
   const handleTaskWeightageChange = async (index, newGrade) => {
     tasks[index].task_Weightage = newGrade;
     if (!tasks[index].current_Grade) {
       tasks[index].current_Grade = 0;
     }
     let new_percentage = (newGrade * tasks[index].current_Grade) / 100;
-    let old_percentage = 0;
-    if (tasks[index].overall_Percentage) {
-      old_percentage = tasks[index].overall_Percentage;
-    }
+
     tasks[index].overall_Percentage = new_percentage;
     if (!task.current_Grade) {
       task.current_Grade = 0;
     }
-    task.current_Grade += new_percentage - old_percentage;
+    // console.log(update_grade());
+    task.current_Grade = update_grade();
     Refresh();
     const updatedValue = await update_grade_task(
       tasks[index].taskTaskGradeInfoId,
@@ -366,31 +382,24 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
   };
 
   const handleTargetGradeChange = (newTargetGrade) => {
-    console.log("🚀 ~ handleTargetGradeChange ~ tasks:", task);
-    console.log(
-      "🚀 ~ handleTargetGradeChange ~ newTargetGrade:",
-      newTargetGrade
-    );
     task.target_Grade = newTargetGrade;
     update_tagetGrade_subject(task.id, newTargetGrade);
   };
 
+  console.log("🚀 ~ SecondComponent ~ subject_info:", subject_info);
   return (
     <div className="main-content h-screen overflow-y-auto">
       <h2 className="text-center text-white text-2xl font-bold">{subject}</h2>
 
       <div className="flex justify-center items-center text-white p-4 w-50%">
-        <h2>
+        <h1>
           Current Grade:{" "}
           <span className="bg-blue-500 text-white px-2 py-1  mr-4 rounded-md">
             {(task && task.current_Grade) || 0}
           </span>
-        </h2>
-        <h2 className="text-white ml-4">
+        </h1>
+        <h1 className="text-white ml-4">
           Target Grade:{" "}
-          {/* <span className="bg-blue-500 text-white px-2 py-1  mr-4 rounded-md">
-            {(task && task.target_Grade) || 0}{" "}
-          </span> */}
           <GradeBox
             key={subject}
             grade={(task && task.target_Grade) || 0}
@@ -398,9 +407,8 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
             letter_Grade={
               subject_info.LetterGrades && subject_info.LetterGrades.items
             }
-            // className="bg-green-500 text-white px-2 py-1 rounded-md font-bold"
           />
-        </h2>
+        </h1>
       </div>
 
       <button

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select, text, create_engine
 from sqlalchemy.exc import IntegrityError,NoResultFound
-from database_setup import Schedule,Task,Subjects,Task_grade_info,Schedule_grade_info,User
+from database_setup import Schedule,Task,Subjects,Task_grade_info,Schedule_grade_info,User,UserWorkTime
 import datetime
 from pprint import pp
 
@@ -24,8 +24,14 @@ def check_if_object_exists(obj,session):
         return True  
     except NoResultFound:
         return False
+    
+def get_task_by_id(task_id, session):
+    try:
+        return session.query(Task).filter_by(id=task_id).one()
+    except NoResultFound:
+        return None
 
-def get_event_by_id(event_id, session):
+def get_schedule_by_id(event_id, session):
     try:
         return session.query(Schedule).filter_by(id=event_id).one()
     except NoResultFound:
@@ -239,15 +245,20 @@ def get_schedule_range(userinfo_id, start_date, end_date):
     
     return schedules
 
+def get_task_from_id(userinfo_id, task_id):
+    session = create_session(userinfo_id)
+    task = session.query(Task).filter_by(id=task_id).first()
+    # session.close()
+    return task
 
-def get_task_range(userinfo_id, start_date, end_date):
+def get_task_range(userinfo_id, start_date, due_date):
     session = create_session(userinfo_id)
     tasks = session.query(Task).\
     filter(Task.userinfoID == userinfo_id).\
-    filter(Task.DTSTART >= start_date, Task.DTEND <= end_date).\
+    filter(Task.DUE <= due_date, Task.DUE >= start_date).\
     all()
-    for task in tasks:
-        print(task)
+    # for task in tasks:
+    #     print(task)
     # session.close()
     # session.close()
     return tasks

@@ -6,11 +6,38 @@ the Simple class should be enough to complete your Prelab"""
 from sqlalchemy import create_engine
 from typing import Optional,List
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,relationship
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import ForeignKey
 import datetime
+
 import requests
 import os
+import jwt
 import pytz
+
+
+def is_cognito_token_expired(access_token):
+    try:
+        decoded_token = jwt.decode(access_token, algorithms=["RS256"], options={"verify_signature": False})
+        expiration_time = datetime.datetime.fromtimestamp(decoded_token["exp"])
+        current_time = datetime.datetime.now()
+        if current_time > expiration_time:
+            print("Invalid access token.")
+            return True  # Token has expired
+        else:
+            print("Valid Token")
+            return False  # Token is still valid
+    except jwt.ExpiredSignatureError:
+        return True
+    except jwt.InvalidTokenError:
+        print("Invalid access token.")
+        return True
+
+def create_session(userinfoId):
+    engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session
 
 def aws_string(str):
     if(not str):
@@ -339,14 +366,26 @@ class Schedule_grade_info(Base):
 
 def create_table(userinfoId):
     """Uses all the Base Metadata in this file to create tables"""
-    # file_path = f"./Flask_server/database/userdata_{userinfoId}.db"
-    # if os.path.exists(file_path):
-    #     os.remove(file_path)
-
-    engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
-    
-    Base.metadata.create_all(engine)
-    engine.dispose()
+    file_path = f"./Flask_server/database/userdata_{userinfoId}.db"
+    if os.path.exists(file_path):
+        session = create_session(userinfoId)
+        user = session.query(User).filter_by(userinfoID=userinfoId).first()
+        if(is_cognito_token_expired(user.access_Token)):
+            session.query(Schedule).delete()
+            session.query(Task).delete()
+            session.query(Subjects).delete()
+            session.query(UserWorkTime).delete()
+            session.query(Task_grade_info).delete()
+            session.query(Schedule_grade_info).delete()
+            session.query(User).delete()
+            session.commit()
+        session.close()
+        pass
+    else:    
+        engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
+        
+        Base.metadata.create_all(engine)
+        engine.dispose()
 
 if __name__ == "__main__":
     create_table("")
