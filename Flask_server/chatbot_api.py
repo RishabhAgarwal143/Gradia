@@ -22,7 +22,7 @@ functions = {
     'update_event': ac.update_event,
     'create_task': ac.create_task,
     'update_task': ac.update_task,
-    'delete_event_id': ac.delete_task
+    'delete_event_id': ac.delete_event_id
 
     # 'schedule_new_event': ac.schedule_new_event,
     # 'modify_event_in_calendar': ac.modify_event_in_calendar,
