@@ -15,9 +15,15 @@ pop_up_flag = False
 functions = {
     # 'initialize_payload_user': ac.initialize_payload_user,
     'get_user_time': ac.get_user_time,
-    'get_schedule_range': ac.get_schedule_range,
     'add_event_to_calendar': ac.add_event_to_calendar,
-    'delete_events_in_range': ac.delete_events_in_range
+    'get_schedule_range': ac.get_schedule_range,
+    'delete_events_in_range': ac.delete_events_in_range,
+    'get_tasks_range':ac.get_tasks_range,
+    'update_event': ac.update_event,
+    'create_task': ac.create_task,
+    'update_task': ac.update_task,
+    'delete_event_id': ac.delete_task
+
     # 'schedule_new_event': ac.schedule_new_event,
     # 'modify_event_in_calendar': ac.modify_event_in_calendar,
 }

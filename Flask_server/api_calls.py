@@ -115,6 +115,17 @@ def get_user_time(n,userinfoID):
     
     return user_time_t, user_timezone
 
+def get_time_offset(days, userinfoID):
+    user = database_queries.get_user_info(userinfoID)
+    user_timezone = user.user_timezone
+    user_timezone_tz = pytz.timezone(user_timezone)
+    tz_offset = user_timezone_tz.utcoffset(datetime.datetime.now()).total_seconds()
+    time_delta = datetime.timedelta(seconds=tz_offset)
+    time = datetime.datetime.now(pytz.timezone(user_timezone)) + datetime.timedelta(days=days)
+    time = time + time_delta
+    time_str = time.strftime('%Y-%m-%d %H:%M:%S')
+    return time_str, user_timezone
+
 
 def get_sys_time():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -211,23 +222,26 @@ def delete_events_in_range(start_time, end_time, userinfoID):
         return ["NO_EVENTS", None]
 
 
-def update_event(event_id, new_start_time, new_end_time, userinfoID, event_description=None, event_location=None):
+def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, event_description=None, event_location=None):
 
-    to_update = database_queries.get_schedule_by_id(event_id)
+    session = database_queries.create_session(userinfoID)
+
+    to_update = database_queries.get_schedule_by_id(event_id, session) 
+    to_update_dict = to_update.dict_representation()
     existing_events = _get_schedule_range_df(new_start_time, new_end_time, userinfoID)
 
     temp_d = dict()
     temp_d["id"] = event_id
-    temp_d["DTSTART"] = new_start_time
-    temp_d["DTEND"] = new_end_time
+    temp_d["DTSTART"] = new_start_time if new_start_time else to_update_dict["DTSTART"]
+    temp_d["DTEND"] = new_end_time if new_end_time else to_update_dict["DTEND"]
+    temp_d["DESCRIPTION"] = event_description if event_description else to_update_dict["DESCRIPTION"]
+    temp_d["LOCATION"] = event_location if event_location else to_update_dict["LOCATION"]
     temp_d["userinfoID"] = userinfoID
-    temp_d["DESCRIPTION"] = event_description
-    temp_d["LOCATION"] = event_location
 
     if existing_events:
-        return ["CONFLICT", to_update, temp_d, existing_events]
+        return ["CONFLICT", to_update_dict, temp_d, existing_events]
     else:
-        return ["UPDATE", to_update, temp_d, None]
+        return ["UPDATE", to_update_dict, temp_d, None]
 
 def delete_event_id(event_id, userinfoID):
 
@@ -241,13 +255,64 @@ def delete_event_id(event_id, userinfoID):
     return ["DELETE", event_dict]
 
 
-def create_task():
-    # ref to Task class and then return task dict repr, hw, labs etc
-    return 0
+def create_task(end_time, task_name, userinfoID, task_description=None, task_location=None):
+    # when the user asks for a reminder, and a task has only a end time/date, then we create a task
+
+    temp_d = dict()
+    temp_d["SUMMARY"] = task_name
+    temp_d["DTEND"] = end_time
+    temp_d["LOCATION"] = task_location
+    temp_d["DESCRIPTION"] = task_description
+    temp_d["userinfoID"] = userinfoID
+
+    return ["ADD_TASK", [temp_d], None]
+
     
-def update_task():
+
+def get_tasks_range(start_time, end_time, userinfoID):
     # todo
-    return 0
+    session = database_queries.create_session(userinfoID)
+    user_data = database_queries.get_user_info(userinfoID)
+    user_timezone = user_data.user_timezone
+
+    user_timezone_tz = pytz.timezone(user_timezone)
+    tz_offset = user_timezone_tz.utcoffset(datetime.datetime.now()).total_seconds()
+    time_delta = datetime.timedelta(seconds=tz_offset)
+
+    start_date_utc = _convert_usertime_str_to_utc_str(userinfoID, start_time)
+    end_date_utc = _convert_usertime_str_to_utc_str(userinfoID, end_time)
+
+    tasks = database_queries.get_task_range(userinfoID, start_date_utc, end_date_utc)
+        
+    result = ""
+    for task in tasks:
+        start_time_usertime = task.DUE + time_delta
+        end_time_usertime = task.DUE + time_delta
+
+        task.DUE = start_time_usertime
+        task.DUE = end_time_usertime
+
+        result += task.__repr__()
+        result += "\n"
+ 
+    return result
+    
+
+def update_task(task_id, end_time, task_name, userinfoID, task_description=None, task_location=None):
+    # todo
+    session = database_queries.create_session(userinfoID)
+    to_update = database_queries.get_task_by_id(task_id, session)
+    to_update_dict = to_update.dict_representation()
+
+    temp_d = dict()
+    temp_d["SUMMARY"] = task_name
+    temp_d["DTEND"] = end_time
+    temp_d["LOCATION"] = task_location
+    temp_d["DESCRIPTION"] = task_description
+    temp_d["userinfoID"] = userinfoID
+
+    return ["UPDATE_TASK", to_update_dict, temp_d, None]
+
 
 def analyze_grade():
     # todo
