@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select, text, create_engine
 from sqlalchemy.exc import IntegrityError,NoResultFound
-from database_setup import Schedule,Task,Subjects,Task_grade_info,Schedule_grade_info,User
+from database_setup import Schedule,Task,Subjects,Task_grade_info,Schedule_grade_info,User,UserWorkTime
 import datetime
 from pprint import pp
 
