@@ -37,11 +37,33 @@ def _convert_usertime_str_to_utc_str(userinfo_id, user_time_str):
     return utc_time_str
 
 
-def _convert_utc_str_to_usertime_str(userinfo_id, utc_time, timezone):
+def _convert_utc_str_to_usertime_str(userinfo_id, utc_time, timezone_str):
 
     utc_time_obj = _convert_str_to_dt(utc_time)
-    user_time_obj = utc_time_obj.astimezone(datetime.timezone(timezone))
+
+    utc_timezone = pytz.utc
+
+
+    user_time_obj  = utc_timezone.localize(utc_time_obj).astimezone(pytz.timezone(timezone_str))
     user_time_str = user_time_obj.strftime("%Y-%m-%d %H:%M:%S")
+
+
+    # # convert to user's timezone
+    # timezone = pytz.timezone(timezone_str)
+    # user_time_obj = utc_time_obj.astimezone(timezone)
+    # print("USER TIME OBJ", user_time_obj)
+    # user_time_str = user_time_obj.strftime("%Y-%m-%d %H:%M:%S")
+
+    return user_time_str
+
+    # timezone should be datetime.timedelta
+    # timezone = pytz.timezone(timezone_str)
+    # timezone_dt = timezone.utcoffset(datetime.datetime.now())
+
+    # timezone = pytz.timezone(timezone_str)
+    
+    # user_time_obj = utc_time_obj.astimezone(datetime.timezone(timezone_dt))
+    # user_time_str = user_time_obj.strftime("%Y-%m-%d %H:%M:%S")
 
     return user_time_str
 
@@ -143,6 +165,8 @@ def convert_time_to_utc(time,userinfoID):
     return utc_str
 
 
+
+
 def _get_schedule_range_df(start_time, end_time, userinfoID):
 
     # Convert localized time to UTC
@@ -155,6 +179,27 @@ def _get_schedule_range_df(start_time, end_time, userinfoID):
         result.append(schedule.dict_representation())
     # session.close()
     return result
+
+def _get_schedule_range_usertime(start_time, end_time, userinfoID):
+    schedules = _get_schedule_range_df(start_time, end_time, userinfoID)
+
+    # convert schedules to user's timezone
+    user_data = database_queries.get_user_info(userinfoID)
+    user_timezone = user_data.user_timezone
+
+    user_timezone_tz = pytz.timezone(user_timezone)
+    tz_offset = user_timezone_tz.utcoffset(datetime.datetime.now()).total_seconds()
+
+    time_delta = datetime.timedelta(seconds=tz_offset)
+
+    for sidx in range(len(schedules)):
+        # convert to dt object
+        schedules[sidx]["DTSTART"] = _convert_utc_str_to_usertime_str(userinfoID, schedules[sidx]["DTSTART"], user_timezone)
+        schedules[sidx]["DTEND"] = _convert_utc_str_to_usertime_str(userinfoID, schedules[sidx]["DTEND"], user_timezone)
+
+
+    return schedules
+    
 
 
 def get_schedule_range(start_time, end_time, userinfoID):
@@ -213,7 +258,10 @@ def add_event_to_calendar(start_time, end_time, event_name, userinfoID, event_de
 
 def delete_events_in_range(start_time, end_time, userinfoID):
     
-    existing_events = _get_schedule_range_df(start_time, end_time,userinfoID)
+    # existing_events = _get_schedule_range_df(start_time, end_time,userinfoID)
+
+    existing_events = _get_schedule_range_usertime(start_time, end_time, userinfoID)
+
     if existing_events:
         print("DELETED", existing_events)
         return ["DELETED", existing_events]
@@ -222,37 +270,59 @@ def delete_events_in_range(start_time, end_time, userinfoID):
         return ["NO_EVENTS", None]
 
 
-def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, event_description=None, event_location=None):
+def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, event_description=None, event_name=None, event_location=None):
 
     session = database_queries.create_session(userinfoID)
+    user_data = database_queries.get_user_info(userinfoID)
 
     to_update = database_queries.get_schedule_by_id(event_id, session) 
     to_update_dict = to_update.dict_representation()
-    existing_events = _get_schedule_range_df(new_start_time, new_end_time, userinfoID)
+
+    event_name = event_name if event_name else to_update_dict["SUMMARY"]
+
+    if not new_start_time:
+        new_start_time = _convert_utc_str_to_usertime_str(userinfoID, to_update_dict["DTSTART"], user_data.user_timezone)
+        
+    if not new_end_time:
+        new_end_time = _convert_utc_str_to_usertime_str(userinfoID, to_update_dict["DTEND"], user_data.user_timezone)
+
+
+    # print("NEW START TIME", new_start_time)
+    # print("NEW END TIME", new_end_time)
+
+
+    event_description = event_description if event_description else to_update_dict["DESCRIPTION"]
+    event_location = event_location if event_location else to_update_dict["LOCATION"]
 
     temp_d = dict()
     temp_d["id"] = event_id
-    temp_d["DTSTART"] = new_start_time if not new_start_time else to_update_dict["DTSTART"]
-    temp_d["DTEND"] = new_end_time if not new_end_time else to_update_dict["DTEND"]
-    temp_d["DESCRIPTION"] = event_description if not event_description else to_update_dict["DESCRIPTION"]
-    temp_d["LOCATION"] = event_location if not event_location else to_update_dict["LOCATION"]
+    temp_d["SUMMARY"] = event_name
+    temp_d["DTSTART"] = new_start_time
+    temp_d["DTEND"] = new_end_time
+    temp_d["DESCRIPTION"] = event_description
+    temp_d["LOCATION"] = event_location
     temp_d["userinfoID"] = userinfoID
 
-    if existing_events:
-        return ["CONFLICT", to_update_dict, temp_d, existing_events]
-    else:
-        return ["UPDATE", to_update_dict, temp_d, None]
+
+    # if existing_events:
+    #     return ["CONFLICT", [temp_d], [to_update_dict], existing_events]
+    # else:
+    # print("UPDATE", temp_d, to_update_dict)
+    return ["UPDATE", [temp_d], [to_update_dict], None]
 
 def delete_event_id(event_id, userinfoID):
 
     session = database_queries.create_session(userinfoID)
-    event = database_queries.get_event_by_id(event_id, session)
+    event = database_queries.get_schedule_by_id(event_id, session)
 
     event_dict = event.dict_representation()
+    # convert to user's timezone
+    user_data = database_queries.get_user_info(userinfoID)
+    user_timezone = user_data.user_timezone
 
     session.close()
 
-    return ["DELETE", event_dict]
+    return ["DELETED", [event_dict]]
 
 
 def create_task(end_time, task_name, userinfoID, task_description=None, task_location=None):
@@ -311,7 +381,7 @@ def update_task(task_id, end_time, task_name, userinfoID, task_description=None,
     temp_d["DESCRIPTION"] = task_description
     temp_d["userinfoID"] = userinfoID
 
-    return ["UPDATE_TASK", to_update_dict, temp_d, None]
+    return ["UPDATE_TASK", [temp_d], [to_update_dict], None]
 
 
 def analyze_grade():
