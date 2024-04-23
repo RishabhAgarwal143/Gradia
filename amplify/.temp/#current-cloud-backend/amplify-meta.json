@@ -1,0 +1,108 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-quantumcalendarv1-staging-23806-authRole",
+      "UnauthRoleArn": "arn:aws:iam::811989838510:role/amplify-quantumcalendarv1-staging-23806-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::811989838510:role/amplify-quantumcalendarv1-staging-23806-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-quantumcalendarv1-staging-23806-deployment",
+      "UnauthRoleName": "amplify-quantumcalendarv1-staging-23806-unauthRole",
+      "StackName": "amplify-quantumcalendarv1-staging-23806",
+      "StackId": "arn:aws:cloudformation:us-east-2:811989838510:stack/amplify-quantumcalendarv1-staging-23806/ce852800-9ee0-11ee-9fa0-06b6f9c515fb",
+      "AmplifyAppId": "d3405h1te0fsy7"
+    }
+  },
+  "api": {
+    "defaulttable": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "quantumcalendarporfi3ea2cfbb"
+        }
+      ],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            },
+            {
+              "authenticationType": "API_KEY",
+              "apiKeyConfig": {
+                "apiKeyExpirationDays": 30,
+                "description": "api key description"
+              }
+            }
+          ],
+          "defaultAuthentication": {
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authquantumcalendarporfi3ea2cfbb"
+            }
+          }
+        },
+        "GraphQLAPIIdOutput": "natuky3575f4xhrw3xokwfl3t4",
+        "GraphQLAPIEndpointOutput": "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-6xzoripdmfajdlx65xtbhsiofi"
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync",
+      "lastPushTimeStamp": "2024-04-21T22:01:16.802Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-quantumcalendarv1-staging-23806-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apidefaulttable"
+      },
+      "lastPushDirHash": "X0uw+6pV4qCnAwvgJ/dFLKxTrq8="
+    }
+  },
+  "auth": {
+    "quantumcalendarporfi3ea2cfbb": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [
+          "GOOGLE"
+        ],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "output": {
+        "UserPoolId": "us-east-2_jBvPTZ8Sr",
+        "AppClientIDWeb": "gob5bt10bnkfu1nvjrsppjbc4",
+        "AppClientID": "1kse2fi40gagtvhlnumabbsp92",
+        "HostedUIDomain": "quantumcalendarporfi3ea2cfbb-3ea2cfbb-staging",
+        "IdentityPoolId": "us-east-2:c4876a19-db2f-4cba-a41b-3e72134efaed",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-2:811989838510:userpool/us-east-2_jBvPTZ8Sr",
+        "IdentityPoolName": "quantumcalendarporfi3ea2cfbb_identitypool_3ea2cfbb__staging",
+        "OAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\"],\"LogoutURLs\":[\"http://localhost:3000/\"]}",
+        "UserPoolName": "quantumcalendarporfi3ea2cfbb_userpool_3ea2cfbb"
+      },
+      "lastPushTimeStamp": "2024-04-21T22:01:11.832Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-quantumcalendarv1-staging-23806-deployment/amplify-cfn-templates/auth/quantumcalendarporfi3ea2cfbb-cloudformation-template.json",
+        "logicalId": "authquantumcalendarporfi3ea2cfbb"
+      }
+    }
+  },
+  "function": {}
+}

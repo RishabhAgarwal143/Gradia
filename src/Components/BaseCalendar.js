@@ -364,6 +364,7 @@ const MyCalendar = () => {
           background: "#171717",
           // fontFamily: "cursive",
           color: "white",
+          zIndex: 10,
         }}
       >
         <div className="flex">
@@ -440,14 +441,13 @@ const MyCalendar = () => {
             )}
           </div>
         </div>
-
         <div
           className="flex flex-col items-center justify-start overflow-y-auto"
           style={{
             background: "#171717",
             // fontFamily: "proxima-nova",
             color: "white",
-            height: "55%",
+            height: "50vh",
             width: "100%",
           }}
         >
@@ -461,7 +461,7 @@ const MyCalendar = () => {
             background: "#171717",
             // fontFamily: "cursive",
             color: "white",
-            height: "50%",
+            height: "45vh",
             width: "100%",
           }}
         >

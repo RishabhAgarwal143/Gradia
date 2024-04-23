@@ -5,7 +5,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import * as commands from "./Components/support_func.js";
 import BasicCalendar from "./Components/BaseCalendar.js";
 import GradeView from "./Components/Grade_view.js";
-
+import Navbar from "./Components/Navigation_bar.jsx";
 function App() {
   commands.currentAuthenticatedUser();
   commands.send_data_backend();
@@ -16,16 +16,16 @@ function App() {
 
   return (
     <div className="App">
-      <button
-        className=" px-4 py-2 m-4 bg-blue-500 text-white rounded font-bold"
-        onClick={toggleComponent}
-      >
-        <span className="text-white font-bold">
-          {showBasicCalendar ? "Show GradeView" : "Show BasicCalendar"}{" "}
-        </span>
-      </button>
+      <Navbar
+        toggleComponent={toggleComponent}
+        handleSignOut={commands.handleSignOut}
+        showBasicCalendar={showBasicCalendar}
+        className="fixed top-0"
+      />
+
+
       {showBasicCalendar ? <BasicCalendar /> : <GradeView />}
-      <button onClick={commands.handleSignOut}>Sign out</button>
+
     </div>
   );
 }
