@@ -1,6 +1,57 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateLetterGrade = /* GraphQL */ `
+  subscription OnCreateLetterGrade(
+    $filter: ModelSubscriptionLetterGradeFilterInput
+    $owner: String
+  ) {
+    onCreateLetterGrade(filter: $filter, owner: $owner) {
+      id
+      LetterValue
+      GradeCutoff
+      subjectsID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateLetterGrade = /* GraphQL */ `
+  subscription OnUpdateLetterGrade(
+    $filter: ModelSubscriptionLetterGradeFilterInput
+    $owner: String
+  ) {
+    onUpdateLetterGrade(filter: $filter, owner: $owner) {
+      id
+      LetterValue
+      GradeCutoff
+      subjectsID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteLetterGrade = /* GraphQL */ `
+  subscription OnDeleteLetterGrade(
+    $filter: ModelSubscriptionLetterGradeFilterInput
+    $owner: String
+  ) {
+    onDeleteLetterGrade(filter: $filter, owner: $owner) {
+      id
+      LetterValue
+      GradeCutoff
+      subjectsID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
 export const onCreateSyllabusGradeValues = /* GraphQL */ `
   subscription OnCreateSyllabusGradeValues(
     $filter: ModelSubscriptionSyllabusGradeValuesFilterInput
@@ -535,6 +586,20 @@ export const onCreateSubjects = /* GraphQL */ `
         nextToken
         __typename
       }
+      LetterGrades {
+        items {
+          id
+          LetterValue
+          GradeCutoff
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -659,6 +724,20 @@ export const onUpdateSubjects = /* GraphQL */ `
         nextToken
         __typename
       }
+      LetterGrades {
+        items {
+          id
+          LetterValue
+          GradeCutoff
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -775,6 +854,20 @@ export const onDeleteSubjects = /* GraphQL */ `
             nextToken
             __typename
           }
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      LetterGrades {
+        items {
+          id
+          LetterValue
+          GradeCutoff
+          subjectsID
           createdAt
           updatedAt
           owner
@@ -1390,6 +1483,10 @@ export const onCreateUserinfo = /* GraphQL */ `
             nextToken
             __typename
           }
+          LetterGrades {
+            nextToken
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -1565,6 +1662,10 @@ export const onUpdateUserinfo = /* GraphQL */ `
             nextToken
             __typename
           }
+          LetterGrades {
+            nextToken
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -1737,6 +1838,10 @@ export const onDeleteUserinfo = /* GraphQL */ `
           userinfoID
           subject_Difficulty
           SyllabusGradeValues {
+            nextToken
+            __typename
+          }
+          LetterGrades {
             nextToken
             __typename
           }

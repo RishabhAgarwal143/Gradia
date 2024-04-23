@@ -1,6 +1,57 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const createLetterGrade = /* GraphQL */ `
+  mutation CreateLetterGrade(
+    $input: CreateLetterGradeInput!
+    $condition: ModelLetterGradeConditionInput
+  ) {
+    createLetterGrade(input: $input, condition: $condition) {
+      id
+      LetterValue
+      GradeCutoff
+      subjectsID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updateLetterGrade = /* GraphQL */ `
+  mutation UpdateLetterGrade(
+    $input: UpdateLetterGradeInput!
+    $condition: ModelLetterGradeConditionInput
+  ) {
+    updateLetterGrade(input: $input, condition: $condition) {
+      id
+      LetterValue
+      GradeCutoff
+      subjectsID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteLetterGrade = /* GraphQL */ `
+  mutation DeleteLetterGrade(
+    $input: DeleteLetterGradeInput!
+    $condition: ModelLetterGradeConditionInput
+  ) {
+    deleteLetterGrade(input: $input, condition: $condition) {
+      id
+      LetterValue
+      GradeCutoff
+      subjectsID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
 export const createSyllabusGradeValues = /* GraphQL */ `
   mutation CreateSyllabusGradeValues(
     $input: CreateSyllabusGradeValuesInput!
@@ -535,6 +586,20 @@ export const createSubjects = /* GraphQL */ `
         nextToken
         __typename
       }
+      LetterGrades {
+        items {
+          id
+          LetterValue
+          GradeCutoff
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -659,6 +724,20 @@ export const updateSubjects = /* GraphQL */ `
         nextToken
         __typename
       }
+      LetterGrades {
+        items {
+          id
+          LetterValue
+          GradeCutoff
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -775,6 +854,20 @@ export const deleteSubjects = /* GraphQL */ `
             nextToken
             __typename
           }
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      LetterGrades {
+        items {
+          id
+          LetterValue
+          GradeCutoff
+          subjectsID
           createdAt
           updatedAt
           owner
@@ -1390,6 +1483,10 @@ export const createUserinfo = /* GraphQL */ `
             nextToken
             __typename
           }
+          LetterGrades {
+            nextToken
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -1565,6 +1662,10 @@ export const updateUserinfo = /* GraphQL */ `
             nextToken
             __typename
           }
+          LetterGrades {
+            nextToken
+            __typename
+          }
           createdAt
           updatedAt
           owner
@@ -1737,6 +1838,10 @@ export const deleteUserinfo = /* GraphQL */ `
           userinfoID
           subject_Difficulty
           SyllabusGradeValues {
+            nextToken
+            __typename
+          }
+          LetterGrades {
             nextToken
             __typename
           }

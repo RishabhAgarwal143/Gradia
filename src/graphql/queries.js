@@ -1,6 +1,72 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getLetterGrade = /* GraphQL */ `
+  query GetLetterGrade($id: ID!) {
+    getLetterGrade(id: $id) {
+      id
+      LetterValue
+      GradeCutoff
+      subjectsID
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const listLetterGrades = /* GraphQL */ `
+  query ListLetterGrades(
+    $filter: ModelLetterGradeFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listLetterGrades(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        LetterValue
+        GradeCutoff
+        subjectsID
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const letterGradesBySubjectsID = /* GraphQL */ `
+  query LetterGradesBySubjectsID(
+    $subjectsID: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelLetterGradeFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    letterGradesBySubjectsID(
+      subjectsID: $subjectsID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        LetterValue
+        GradeCutoff
+        subjectsID
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getSyllabusGradeValues = /* GraphQL */ `
   query GetSyllabusGradeValues($id: ID!) {
     getSyllabusGradeValues(id: $id) {
@@ -415,6 +481,20 @@ export const getSubjects = /* GraphQL */ `
         nextToken
         __typename
       }
+      LetterGrades {
+        items {
+          id
+          LetterValue
+          GradeCutoff
+          subjectsID
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       owner
@@ -491,6 +571,20 @@ export const listSubjects = /* GraphQL */ `
             category_Grade
             Tasks_associated
             each_Task_weightage
+            subjectsID
+            createdAt
+            updatedAt
+            owner
+            __typename
+          }
+          nextToken
+          __typename
+        }
+        LetterGrades {
+          items {
+            id
+            LetterValue
+            GradeCutoff
             subjectsID
             createdAt
             updatedAt
@@ -587,6 +681,20 @@ export const subjectsByUserinfoID = /* GraphQL */ `
             category_Grade
             Tasks_associated
             each_Task_weightage
+            subjectsID
+            createdAt
+            updatedAt
+            owner
+            __typename
+          }
+          nextToken
+          __typename
+        }
+        LetterGrades {
+          items {
+            id
+            LetterValue
+            GradeCutoff
             subjectsID
             createdAt
             updatedAt
@@ -1312,6 +1420,10 @@ export const getUserinfo = /* GraphQL */ `
           userinfoID
           subject_Difficulty
           SyllabusGradeValues {
+            nextToken
+            __typename
+          }
+          LetterGrades {
             nextToken
             __typename
           }

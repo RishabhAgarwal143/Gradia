@@ -28,7 +28,7 @@ def train_model(user):
     for task, priority in zip(df.index, val_predictions):
         # Assign priority to the task (you may need to adjust this based on your data model)
          # Assuming you have a function to retrieve a task by its ID
-        task.priority = priority
+        task.PRIORITY = priority
     
     # mse = mean_squared_error(y_val, val_predictions)
     # print("Mean Squared Error:", mse)

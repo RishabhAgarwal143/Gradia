@@ -1,0 +1,12 @@
+{
+  "AppSyncApiName": "defaulttable",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authquantumcalendarporfi3ea2cfbb",
+      "Outputs.UserPoolId"
+    ]
+  },
+  "AuthModeLastUpdated": "2024-02-08T01:37:37.502Z"
+}

@@ -6,7 +6,7 @@ import {
   update_tagetGrade_subject,
 } from "./support_func";
 import React, { useState, useEffect } from "react";
-import "./gradeStyles.css";
+// import "./gradeStyles.css";
 
 let subject_list_json = [];
 let task_grade_info = [];
@@ -32,22 +32,20 @@ function formatLocalTime(isoString) {
 
 const Sidebar = ({ subjects, onClick, onSearch }) => {
   return (
-    <div className="sidebar">
-      <h1>
-        <b>Subjects</b>
-      </h1>
+    <div className="w-1/5 p-5 shadow-md overflow-y-auto h-screen">
+      <h1 className="mb-3 text-lg font-bold text-white">Subjects</h1>
       <input
         type="text"
-        className="search-input"
+        className="w-full p-2 mb-3 border rounded"
         placeholder="Search..."
         onChange={(e) => onSearch(e.target.value)}
       />
-      <ul className="subject-list">
+      <ul className="list-none p-0 m-0">
         {subjects.map((subject, index) => (
           <li
             key={index}
             onClick={() => onClick(subject)}
-            className="subject-item"
+            className="p-2 cursor-pointer transition duration-300 hover:bg-gray-200 text-white"
           >
             {subject}
           </li>
@@ -69,12 +67,13 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
 
   return (
     <>
-      <button style={{ color: "black " }} onClick={onToggle}>
+      <button className="text-black" onClick={onToggle}>
         {status}
       </button>
       {isOpen && (
         <div>
           <select
+            className="block mt-1 w-full p-2 border border-gray-300 rounded"
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
@@ -84,14 +83,11 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
               </option>
             ))}
           </select>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <button
-              style={{ color: "blue ", marginRight: "10px" }}
-              onClick={handleConfirm}
-            >
+          <div className="flex justify-between mt-3">
+            <button className="text-blue-500 mr-2" onClick={handleConfirm}>
               Confirm
             </button>
-            <button style={{ color: "red" }} onClick={onToggle}>
+            <button className="text-red-500" onClick={onToggle}>
               Cancel
             </button>
           </div>
@@ -101,8 +97,14 @@ const StatusDropdown = ({ status, onStatusChange, isOpen, onToggle }) => {
   );
 };
 
-const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
-  console.log("🚀 ~ GradeBox ~ syllabus_Grade:", syllabus_Grade);
+const GradeBox = ({
+  index,
+  grade,
+  syllabus_Grade,
+  letter_Grade,
+  onStatusChange,
+}) => {
+  // console.log("🚀 ~ GradeBox ~ syllabus_Grade:", syllabus_Grade);
   const [selectedStatus, setSelectedStatus] = React.useState(grade);
   const [change, setChange] = React.useState(false);
   // const [isOpen, SetOpen] = React.useState(false);
@@ -122,10 +124,11 @@ const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
 
   // setSelectedStatus(grade);
   return (
-    <>
-      <div style={{ display: "flex", alignItems: "center" }}>
+    <div className="inline-flex">
+      <div className="flex">
         <input
           type="number"
+          className=" text-white font-bold px-2 py-1 mr-4 rounded w-16"
           value={selectedStatus}
           onChange={(e) => {
             const newGrade = e.target.value;
@@ -139,40 +142,60 @@ const GradeBox = ({ index, grade, syllabus_Grade, onStatusChange }) => {
         />
         {syllabus_Grade && (
           <select
-            className="custom-select"
             value={selectedStatus}
             onChange={(e) => {
               setSelectedStatus(e.target.value);
               setChange(true);
             }}
+            className="custom-select text-white ml-2 p-2 border border-gray-300 rounded"
           >
             <option value="" hidden></option>
             {syllabus_Grade.map((category, i) => (
               <option key={i} value={category.category_Grade}>
-                {category.category_Name + "  " + category.category_Grade}
+                {`${category.category_Name} ${category.category_Grade}`}
+              </option>
+            ))}
+          </select>
+        )}
+        {letter_Grade && (
+          <select
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+              setChange(true);
+            }}
+            className="custom-select text-white ml-2 p-2 border border-gray-300 rounded"
+          >
+            <option value="" hidden></option>
+            {letter_Grade.map((category, i) => (
+              <option key={i} value={category.GradeCutoff}>
+                {`${category.LetterValue} ${category.GradeCutoff}`}
               </option>
             ))}
           </select>
         )}
       </div>
       {change && (
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="flex items-center ml-2">
           <button
-            style={{ color: "blue ", marginRight: "10px" }}
+            className="px-4 py-2 mx-3 rounded bg-blue-500 font-bold"
             onClick={handleConfirm}
           >
-            Confirm
+            <span className="text-white font-bold">Confirm</span>
           </button>
-          <button style={{ color: "red" }} onClick={onCancel}>
-            Cancel
+          <button
+            className="px-4 py-2 mx-3 rounded bg-red-500 font-bold"
+            onClick={onCancel}
+          >
+            <span className="text-white font-bold">Cancel</span>
           </button>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
-const SecondComponent = ({ subject, task }) => {
+const SecondComponent = ({ subject, task, refreshSubjects }) => {
   console.log("🚀 ~ SecondComponent ~ task:", task);
   const [selectedStatuses, setSelectedStatuses] = useState({});
   const [trigger_refresh, setTrigger] = useState(false);
@@ -220,7 +243,6 @@ const SecondComponent = ({ subject, task }) => {
         tasks[i].id = tasks[i].taskGradeInfoTaskId;
         // Remove the item from list2
         task_grade_info.splice(index, 1);
-        console.log(tasks[i]);
       }
     }
   }
@@ -336,6 +358,7 @@ const SecondComponent = ({ subject, task }) => {
 
       alert("File uploaded successfully");
       setSelectedFile(null);
+      refreshSubjects();
     } catch (error) {
       console.error("Error:", error);
       alert("Error uploading file");
@@ -353,34 +376,43 @@ const SecondComponent = ({ subject, task }) => {
   };
 
   return (
-    <div className="main-content">
-      <h2 className="bg-white">Selected Subject: {subject}</h2>
-      <h2 className="bg-white text-left">
-        Current Grade: {(task && task.current_Grade) || 0} Target Grade:
-        <GradeBox
-          key={subject}
-          grade={(task && task.target_Grade) || 0}
-          onStatusChange={handleTargetGradeChange}
-        />
-      </h2>
+    <div className="main-content h-screen overflow-y-auto">
+      <h2 className="text-center text-white text-2xl font-bold">{subject}</h2>
+
+      <div className="flex justify-center items-center text-white p-4 w-50%">
+        <h2>
+          Current Grade:{" "}
+          <span className="bg-blue-500 text-white px-2 py-1  mr-4 rounded-md">
+            {(task && task.current_Grade) || 0}
+          </span>
+        </h2>
+        <h2 className="text-white ml-4">
+          Target Grade:{" "}
+          {/* <span className="bg-blue-500 text-white px-2 py-1  mr-4 rounded-md">
+            {(task && task.target_Grade) || 0}{" "}
+          </span> */}
+          <GradeBox
+            key={subject}
+            grade={(task && task.target_Grade) || 0}
+            onStatusChange={handleTargetGradeChange}
+            letter_Grade={
+              subject_info.LetterGrades && subject_info.LetterGrades.items
+            }
+            // className="bg-green-500 text-white px-2 py-1 rounded-md font-bold"
+          />
+        </h2>
+      </div>
+
       <button
         onClick={() => document.getElementById("fileInput").click()}
-        style={{
-          padding: "10px",
-          margin: "10px",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
+        className="px-4 py-2 mt-4 mr-4 mb-4 rounded bg-blue-500 font-bold"
       >
-        Upload File
+        <span className="text-white font-bold">Upload File </span>
       </button>
       <input
         type="file"
         id="fileInput"
-        style={{ display: "none" }}
+        className="hidden"
         onChange={(event) => setSelectedFile(event.target.files[0])}
       />
       <button
@@ -398,14 +430,12 @@ const SecondComponent = ({ subject, task }) => {
         Send File to Server
       </button>
       {selectedFile && (
-        <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>
+        <p className="text-blue-500 mt-4">Selected file: {selectedFile.name}</p>
       )}
-      <div className="table-container">
+      <div className="table-container h-[calc(100%-3rem)] overflow-y-auto item-center">
         <table className="table">
           <thead>
-            <tr
-              style={{ position: "sticky", top: "0", backgroundColor: "white" }}
-            >
+            <tr className="sticky top-0 bg-white">
               <th>TASKS</th>
               <th>DUE</th>
               <th>STATUS</th>
@@ -416,10 +446,10 @@ const SecondComponent = ({ subject, task }) => {
           </thead>
           <tbody>
             {tasks.map((task, index) => (
-              <tr key={index}>
-                <td style={{ width: "500px" }}>{task.SUMMARY}</td>
-                <td style={{ width: "300px" }}>{formatLocalTime(task.DUE)}</td>
-                <td style={{ width: "150px", textAlign: "center" }}>
+              <tr key={index} className="text-white">
+                <td className="w-500 p-4">{task.SUMMARY}</td>
+                <td className="w-300 p-4">{formatLocalTime(task.DUE)}</td>
+                <td className="w-150 p-4 text-center">
                   <StatusDropdown
                     status={selectedStatuses[index] || task.STATUS}
                     onStatusChange={(newStatus) =>
@@ -429,7 +459,7 @@ const SecondComponent = ({ subject, task }) => {
                     onToggle={() => toggleStatusDropdown(index)}
                   />
                 </td>
-                <td style={{ width: "50px", textAlign: "center" }}>
+                <td className="w-50 p-4 text-center">
                   <GradeBox
                     key={subject}
                     grade={task.current_Grade || 0}
@@ -438,10 +468,10 @@ const SecondComponent = ({ subject, task }) => {
                     }
                   />
                 </td>
-                <td style={{ width: "50px", textAlign: "center" }}>
+                <td className="w-50 p-4 text-center">
                   {task.overall_Percentage || 0}
                 </td>
-                <td style={{ width: "50px", textAlign: "center" }}>
+                <td className="w-50 p-4 text-center">
                   <GradeBox
                     key={subject}
                     grade={task.task_Weightage || 0}
@@ -467,7 +497,7 @@ const GradeView = () => {
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [forcedRefresh, setforcedRefresh] = useState(false);
   const handleSearch = (searchTerm) => {
     setSearchTerm(searchTerm);
   };
@@ -503,20 +533,21 @@ const GradeView = () => {
     }
 
     fetchSubjects();
-  }, []);
+  }, [forcedRefresh]);
 
   return (
-    <div className="container">
+    <div className="flex h-screen">
       <Sidebar
         subjects={filteredSubjects}
         onClick={handleSubjectClick}
         onSearch={handleSearch}
       />
-      <div className="main-content">
+      <div className="main-content flex-center">
         {selectedSubject && (
           <SecondComponent
             subject={selectedSubject}
             task={findSubjectByName(selectedSubject)}
+            refreshSubjects={setforcedRefresh}
           />
         )}
       </div>

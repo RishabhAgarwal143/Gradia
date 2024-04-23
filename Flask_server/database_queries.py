@@ -25,6 +25,11 @@ def check_if_object_exists(obj,session):
     except NoResultFound:
         return False
 
+def get_event_by_id(event_id, session):
+    try:
+        return session.query(Schedule).filter_by(id=event_id).one()
+    except NoResultFound:
+        return None
 
 def add_to_database(obj,session):
     
@@ -100,6 +105,8 @@ def process_add_schedule(schedules):
         return
     
     for schedule in schedules:
+        if("id" not in schedule):
+            continue
         startTime = datetime.datetime.fromisoformat(schedule["start"].replace('Z', '+00:00'))
         endTime = datetime.datetime.fromisoformat(schedule["end"].replace('Z', '+00:00'))
         schedule_grade_info = None
@@ -198,7 +205,8 @@ def process_add_subject(subjects):
 
 def process_update_taskGrade(tasks):
     info = tasks['onUpdateTaskGradeInfo']
-    session = create_session(info["userinfoID"])
+    
+    session = create_session(tasks["userinfoID"])
     delete_from_database(Task_grade_info,"id",info["id"],session)
     task_grade_info = Task_grade_info(id=info["id"],current_Grade=info["current_Grade"],task_Weightage=info["task_Weightage"],overall_Percentage=info["overall_Percentage"],extra_info=info["extra_Info"],time_taken= parse_time(info["time_Taken"]),task_id=info["taskGradeInfoTaskId"])
     add_to_database(task_grade_info,session)
@@ -227,11 +235,7 @@ def get_schedule_range(userinfo_id, start_date, end_date):
     filter(Schedule.userinfoID == userinfo_id).\
     filter(Schedule.DTEND >= start_date, Schedule.DTSTART <= end_date).\
     all()
-    for schedule in schedules:
-        pass
-        print(schedule)
-    
-    session.close()
+    # session.close()
     
     return schedules
 
@@ -244,7 +248,8 @@ def get_task_range(userinfo_id, start_date, end_date):
     all()
     for task in tasks:
         print(task)
-    session.close()
+    # session.close()
+    # session.close()
     return tasks
 
 
@@ -298,15 +303,20 @@ def get_user_info(userinfoID):
 def assign_priority(user: User):
     session = create_session(user.userinfoID)
     tasks = []
-    for subject in user.subjects_list:
-        for task in subject.task_list:
 
-            # print(task.STATUS)
-            if task.STATUS == "COMPLETED" or not(task.task_grade):
+    for subject in user.subjects_list:
+        completed_grade = 0
+        for task in subject.task_list:
+            if task.STATUS == "COMPLETED" and task.task_grade:
+                completed_grade += task.task_grade.task_Weightage
                 continue
-            # priorities[task] = {3600/(task.DUE - datetime.datetime.now()).total_seconds() , task.task_grade.task_Weightage, subject.target_Grade - subject.current_Grade, task.task_grade.difficulty}
+        if completed_grade > 0 :
+            subject.subject_Difficulty = 1 - (subject.current_Grade/ completed_grade)
+        else:
+            subject.subject_Difficulty = 0.5
+        for task in subject.task_list:
+           
             subject.calculate_final_grade(session)
-            # calculate the number of days left for the task by subtracting the current time from the deadline
             time_remaining = (task.DUE - datetime.datetime.now()).days
             if time_remaining < 0:
                 task.STATUS = "OVERDUE"
@@ -314,13 +324,18 @@ def assign_priority(user: User):
             elif time_remaining == 0:
                 time_remaining = 1
 
+            if task.STATUS == "COMPLETED":
+                continue
+            elif not task.task_grade:
+                task.PRIORITY = 0.8 * (1/time_remaining) + 0.2 * (subject.subject_Difficulty) 
+                tasks.append(task)
+                continue
             task_weightage = task.task_grade.task_Weightage/ 100
-          
-            grade_left = (93 - subject.current_Grade)/100
+            target_grade = subject.target_Grade if subject.target_Grade else 93
+            grade_left = (target_grade - subject.current_Grade)/100
             
 
-            task.PRIORITY = 0.7 * (1/time_remaining) + 0.2 * (task_weightage) + 0.1 * (grade_left)
-            
+            task.PRIORITY = 0.5 * (1/time_remaining) + 0.2 * (task_weightage) + 0.1 * (grade_left) + 0.2 * (subject.subject_Difficulty)
             tasks.append(task)
     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
     for task in tasks:
