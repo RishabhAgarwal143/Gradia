@@ -357,10 +357,10 @@ def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, e
         
             rescheduled_events = assign_task(userinfoID, timeslots, True)
             rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
-        return ["CONFLICT", [temp_d], existing_events, rescheduled_events]
+        return ["CONFLICT", [temp_d], [to_update_dict].extend(existing_events), rescheduled_events]
     # else:
     # print("UPDATE", temp_d, to_update_dict)
-    return ["UPDATE", [temp_d], []]
+    return ["UPDATE", [temp_d], [to_update_dict], []]
 
 def delete_event_id(event_id, userinfoID):
 
