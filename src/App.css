@@ -10,7 +10,7 @@
 @import "../node_modules/@syncfusion/ej2-react-schedule/styles/material.css";
 .App {
   text-align: center;
-  background-color: #1f1f1f;
+  background-color: #171717;
 }
 
 .App-logo {
@@ -46,4 +46,9 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Path: src/index.css */
+body {
+  background: #000;
 }

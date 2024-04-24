@@ -1,17 +1,13 @@
 import { useEffect } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import { deleteSchedule } from "./support_func";
+// import { deleteSchedule } from "./support_func";
 
 const ConfirmationModal = ({ event, isOpen, isClose, onDel }) => {
   const handleDelete = async () => {
     try {
-      // Call the delete function to delete the event
-      // console.log("Event:", event);
-      const deletedSchedule = await deleteSchedule(event.id);
       isOpen = false;
       isClose();
-      console.log("Event deleted:", deletedSchedule);
       onDel(event);
     } catch (error) {
       console.error("Error deleting event:", error);

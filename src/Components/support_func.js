@@ -186,6 +186,8 @@ export async function subscribedScedule() {
 
   client.graphql({ query: subscriptions.onUpdateTaskGradeInfo }).subscribe({
     next: ({ data }) => {
+      data.userinfoID = cognito_Id;
+      console.log("🚀 ~ client.graphql ~ data:", data);
       axios
         .post("http://127.0.0.1:5000/api/updatetaskGrade", data)
         .then((response) => {

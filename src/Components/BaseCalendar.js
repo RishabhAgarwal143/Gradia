@@ -9,28 +9,24 @@ import addIcon from "../icons/add.svg";
 import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
-import ConfirmAddModal from "./ConfirmAddEvent";
-import {
-  create_user,
-  currentAuthenticatedUser,
-  create_schedule,
-  deleteSchedule,
-  send_data_backend,
-} from "./support_func";
+// import ConfirmAddModal from "./ConfirmAddEvent";
+import { create_user, create_schedule, deleteSchedule } from "./support_func";
 import Chatbot from "./Chatbot";
 import axios from "axios";
+import ChatbotConfirmModel from "./ChatbotConfirmModel";
+
 const localizer = momentLocalizer(moment);
 const create_temp = create_user();
 const MyCalendar = () => {
-  currentAuthenticatedUser();
-  send_data_backend();
+  // currentAuthenticatedUser();
+  // send_data_backend();
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
-  const [pendingEvent, setPendingEvent] = useState(null);
+  // const [pendingEvent, setPendingEvent] = useState(null);
   const [chatbotpendingEvent, setchatbotpendingEvent] = useState([]);
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-  const [gpttask, setGptTask] = useState("");
+  // const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  // const [gpttask, setGptTask] = useState("");
   // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -134,10 +130,10 @@ const MyCalendar = () => {
     setIsAddModalOpen(false); // Close the form after adding event
   };
 
-  const handleDelEvent = (newEvent) => {
+  const handleDelEvent = async (newEvent) => {
     // const result = await create_schedule(newEvent);
     console.log("In del", newEvent);
-
+    await deleteSchedule(newEvent.id);
     setAllEvents(myEvents.filter((event) => event.id !== newEvent.id));
   };
 
@@ -155,11 +151,43 @@ const MyCalendar = () => {
 
     setAllEvents([...myEvents, ...addEvents, ...deletedEvents]);
     setchatbotpendingEvent([...addEvents, ...deletedEvents]);
-    console.log(
-      "🚀 ~ handleGPTevent ~ chatbotpendingEvent:",
-      chatbotpendingEvent
-    );
+
     //...
+  }
+
+  function handleConfirmGptEvent() {
+    chatbotpendingEvent.forEach((element) => {
+      const index = myEvents.indexOf(element);
+      if (index > -1) {
+        myEvents.splice(index, 1);
+      }
+      if (element.color === "green") {
+        console.log("Trying to Add via Chatbot");
+        delete element.color;
+        element.DTSTART = new Date(element.DTSTART);
+        element.DTEND = new Date(element.DTEND);
+        handleAddEvent(element);
+      } else if (element.color === "red") {
+        console.log("Trying to Delete via Chatbot");
+        delete element.color;
+        element.DTSTART = new Date(element.DTSTART);
+        element.DTEND = new Date(element.DTEND);
+        handleDelEvent(element);
+      }
+    });
+
+    setchatbotpendingEvent([]);
+  }
+
+  function handleCancelGptEvent() {
+    chatbotpendingEvent.forEach((element) => {
+      const index = myEvents.indexOf(element);
+      if (index > -1) {
+        myEvents.splice(index, 1);
+      }
+    });
+
+    setchatbotpendingEvent([]);
   }
 
   const handleEventClick = (clickedEvent, e) => {
@@ -170,28 +198,28 @@ const MyCalendar = () => {
     console.log("rect", modalPosition);
   };
 
-  const handleConfirmation = async (confirmed) => {
-    // Close the confirmation pop-up
-    setIsConfirmationModalOpen(false);
-    if (confirmed) {
-      // If the user confirms, remove the 'isNew' property from the pending event
-      const confirmedEvent = { ...pendingEvent };
-      delete confirmedEvent.isNew;
-      console.log("confirmedEvent", confirmedEvent);
-      // Add the confirmed event to the list of events
-      // setAllEvents(myEvents.filter((event) => event !== confirmedEvent));
-      if (gpttask === "CONFLICT" || gpttask === "ADD") {
-        const result = await create_schedule(confirmedEvent);
-        setAllEvents([...myEvents, result.data.createSchedule]);
-      } else if (gpttask === "DELETED") {
-        await deleteSchedule(confirmedEvent.id);
-        console.log(confirmedEvent);
-        setAllEvents(
-          myEvents.filter((event) => event.id !== confirmedEvent.id)
-        );
-      }
-    }
-  };
+  // const handleConfirmation = async (confirmed) => {
+  //   // Close the confirmation pop-up
+  //   setIsConfirmationModalOpen(false);
+  //   if (confirmed) {
+  //     // If the user confirms, remove the 'isNew' property from the pending event
+  //     const confirmedEvent = { ...pendingEvent };
+  //     delete confirmedEvent.isNew;
+  //     console.log("confirmedEvent", confirmedEvent);
+  //     // Add the confirmed event to the list of events
+  //     // setAllEvents(myEvents.filter((event) => event !== confirmedEvent));
+  //     if (gpttask === "CONFLICT" || gpttask === "ADD") {
+  //       const result = await create_schedule(confirmedEvent);
+  //       setAllEvents([...myEvents, result.data.createSchedule]);
+  //     } else if (gpttask === "DELETED") {
+  //       await deleteSchedule(confirmedEvent.id);
+  //       console.log(confirmedEvent);
+  //       setAllEvents(
+  //         myEvents.filter((event) => event.id !== confirmedEvent.id)
+  //       );
+  //     }
+  //   }
+  // };
 
   const handleDoubleClickEvent = (event) => {
     setSelectedEvent(event);
@@ -265,22 +293,24 @@ const MyCalendar = () => {
   };
 
   const eventStyleGetter = (event, start, end, isSelected) => {
-    let color = event.color || "#002148e4";
-    let style = {
-      backgroundColor: color,
-      color: "#fff", // Text color
-      borderRadius: "0.5rem", // Border radius for rounded corners
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Subtle box shadow
-      overflow: "hidden", // Ensure content doesn't overflow
-      textOverflow: "ellipsis", // Add ellipsis for overflow text
-      width: "10rem", // Width of the event
-      right: "0%", // Positioning
-      border: "none", // Remove border
-    };
+    let color = event.color;
+    if (color) {
+      let style = {
+        backgroundColor: color,
+        color: "#fff", // Text color
+        borderRadius: "0.5rem", // Border radius for rounded corners
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Subtle box shadow
+        overflow: "hidden", // Ensure content doesn't overflow
+        textOverflow: "ellipsis", // Add ellipsis for overflow text
+        width: "10rem", // Width of the event
+        right: "0%", // Positioning
+        border: "none", // Remove border
+      };
 
-    return {
-      style: style,
-    };
+      return {
+        style: style,
+      };
+    }
   };
 
   create_temp(transformedEvents);
@@ -297,7 +327,7 @@ const MyCalendar = () => {
               onDel={handleDelEvent}
             />
           )}
-          {
+          {/* {
             <ConfirmAddModal
               event={pendingEvent}
               isOpen={isConfirmationModalOpen}
@@ -305,7 +335,7 @@ const MyCalendar = () => {
               onCancel={() => setIsConfirmationModalOpen(false)}
               position={modalPosition}
             />
-          }
+          } */}
           <Calendar
             localizer={localizer}
             events={transformedEvents}
@@ -328,6 +358,7 @@ const MyCalendar = () => {
           background: "#171717",
           // fontFamily: "cursive",
           color: "white",
+          zIndex: 10,
         }}
       >
         <div className="flex">
@@ -404,14 +435,13 @@ const MyCalendar = () => {
             )}
           </div>
         </div>
-
         <div
           className="flex flex-col items-center justify-start overflow-y-auto"
           style={{
             background: "#171717",
             // fontFamily: "proxima-nova",
             color: "white",
-            height: "55%",
+            height: "50vh",
             width: "100%",
           }}
         >
@@ -425,7 +455,7 @@ const MyCalendar = () => {
             background: "#171717",
             // fontFamily: "cursive",
             color: "white",
-            height: "50%",
+            height: "45vh",
             width: "100%",
           }}
         >
@@ -434,7 +464,12 @@ const MyCalendar = () => {
           {!chatbotpendingEvent.length && (
             <Chatbot onAddgptevent={handleGPTevent} />
           )}
-          {chatbotpendingEvent.length !== 0 && <p>HI</p>}
+          {chatbotpendingEvent.length !== 0 && (
+            <ChatbotConfirmModel
+              onConfirm={handleConfirmGptEvent}
+              onCancel={handleCancelGptEvent}
+            />
+          )}
         </div>
       </div>
 

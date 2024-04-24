@@ -9,6 +9,8 @@ export { default as EventDesc } from "./EventDesc";
 export { default as Icondelete } from "./Icondelete";
 export { default as Iconeditalt } from "./Iconeditalt";
 export { default as InfoBox } from "./InfoBox";
+export { default as LetterGradeCreateForm } from "./LetterGradeCreateForm";
+export { default as LetterGradeUpdateForm } from "./LetterGradeUpdateForm";
 export { default as Rectangle3 } from "./Rectangle3";
 export { default as ScheduleCreateForm } from "./ScheduleCreateForm";
 export { default as ScheduleGradeInfoCreateForm } from "./ScheduleGradeInfoCreateForm";
