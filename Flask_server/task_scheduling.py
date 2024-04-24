@@ -62,7 +62,7 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slo
         print(freeSlots[i][0].day, freeSlots[i][0].hour, freeSlots[i][0].minute, "-",  freeSlots[i][1].day, freeSlots[i][1].hour, freeSlots[i][1].minute)
     return freeSlots
 
-def assign_task(userinfoID, extra_time_slots = []):
+def assign_task(userinfoID, extra_time_slots = [], flag=False):
     tasks  = assign_priority(userinfoID)
     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
     currday = 0
@@ -74,6 +74,7 @@ def assign_task(userinfoID, extra_time_slots = []):
         user = session.query(User).filter_by(userinfoID=userinfoID).first()
         user_timezone = pytz.timezone(user.user_timezone)
         utc_timezone = pytz.utc
+        task_list = []
         for task in tasks:
             if(freeSlots == []):
                 break
@@ -87,8 +88,9 @@ def assign_task(userinfoID, extra_time_slots = []):
                 for slot in freeSlots:
                     if slot[1] - slot[0] >= datetime.timedelta(hours = time + 1):
                         newSchedule = Schedule(SUMMARY=task.SUMMARY, DTSTART =  slot[0], DTEND = slot[0] + datetime.timedelta(hours=time),subjectsID=task.subjectsID,userinfoID=user.userinfoID,personalized_task=True)
-                        
-                        print(newSchedule.DTSTART.day, newSchedule.DTSTART.hour, newSchedule.DTSTART.minute, "-",  newSchedule.DTEND.day, newSchedule.DTEND.hour, newSchedule.DTEND.minute)
+
+
+                        # print(newSchedule.DTSTART.day, newSchedule.DTSTART.hour, newSchedule.DTSTART.minute, "-",  newSchedule.DTEND.day, newSchedule.DTEND.hour, newSchedule.DTEND.minute)
                         local_start_time = newSchedule.DTSTART
                         local_end_time_utc = newSchedule.DTEND
 
@@ -98,7 +100,10 @@ def assign_task(userinfoID, extra_time_slots = []):
                         newSchedule.DTSTART = start_time_utc
                         newSchedule.DTEND = end_time_utc
 
-                        # newSchedule.add_to_cloud(user)
+                        if not flag:
+                            newSchedule.add_to_cloud(user)
+                        else:
+                            task_list.append(newSchedule)
                         
                         # print(newSchedule)
                         slot[0] += datetime.timedelta(hours=time + 1)
@@ -107,6 +112,10 @@ def assign_task(userinfoID, extra_time_slots = []):
                         tasks.remove(task)
                         break
         currday += 1
+    
+    if flag:
+        return task_list
+    return 0
 
 
 # get_user_free_time("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))

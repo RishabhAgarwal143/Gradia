@@ -10,6 +10,7 @@ from function_payloads import TimeConverter
 from function_payloads import UserInfo
 import pandas as pd
 import database_queries
+from task_scheduling import assign_task
 
 global user_info
 global payload
@@ -261,13 +262,26 @@ def delete_events_in_range(start_time, end_time, userinfoID):
     # existing_events = _get_schedule_range_df(start_time, end_time,userinfoID)
 
     existing_events = _get_schedule_range_usertime(start_time, end_time, userinfoID)
+    is_personalized = False
+    for event in existing_events:
+        if event["personalized_task"]:
+            is_personalized = True
+            break
+                
+    if is_personalized:
+        timeslots = [start_time, end_time]
+    else:
+        timeslots = []
+
+
+    rescheduled_events = assign_task(userinfoID, timeslots, True)
 
     if existing_events:
         print("DELETED", existing_events)
-        return ["DELETED", existing_events]
+        return ["DELETED", rescheduled_events, existing_events]
     else:
         print("NO_EVENTS")
-        return ["NO_EVENTS", None]
+        return ["NO_EVENTS", None, None]
 
 
 def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, event_description=None, event_name=None, event_location=None):
