@@ -9,4 +9,5 @@ fi
 if [ -e ".env" ]; then
         export $(grep -v '^#' .env | xargs)
 fi
+# npm run flask_server
 npm run all

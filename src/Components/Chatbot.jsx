@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { cognito_Id } from "./support_func";
 import axios from "axios";
+
 const Chatbot = ({ onAddgptevent }) => {
-  const sendMessage = () => {
+  const [loading, setLoading] = useState(false);
+
+  const sendMessage = async () => {
     const userInput = document.getElementById("user-input").value;
 
     const userMessageDiv = document.createElement("div");
@@ -17,59 +20,63 @@ const Chatbot = ({ onAddgptevent }) => {
       userId: cognito_Id,
       user_message: userInput,
     };
-    // Make POST request to Flask server
-    // fetch("http://127.0.0.1:5000/chat", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/x-www-form-urlencoded",
-    //   },
-    //   body: "user_message=" + encodeURIComponent(userInput),
-    // })
-    axios
-      .post("http://127.0.0.1:5000/chat", dataToSend)
-      // .then((response) => response.json())
-      .then((response) => {
-        // Display bot response
-        let data = response.data;
-        console.log(data.events_to_be_managed);
-        if (!data.events_to_be_managed) {
-          const botMessageDiv = document.createElement("div");
-          botMessageDiv.className =
-            "bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs ml-auto";
-          botMessageDiv.innerHTML = data.bot_response;
-          document.getElementById("chat-messages").appendChild(botMessageDiv);
-        } else {
-          if (data.events_to_be_managed[0] === "ADD") {
-            data.events_to_be_managed[1]["DTSTART"] = new Date(
-              data.events_to_be_managed[1]["DTSTART"]
-            );
-            data.events_to_be_managed[1]["DTEND"] = new Date(
-              data.events_to_be_managed[1]["DTEND"]
-            );
 
-            onAddgptevent(
-              data.events_to_be_managed[1],
-              [],
-              data.events_to_be_managed[0]
-            );
-          } else if (data.events_to_be_managed[0] === "DELETED") {
-            onAddgptevent(
-              [],
-              data.events_to_be_managed[1],
-              data.events_to_be_managed[0]
-            );
-          } else if (data.events_to_be_managed[0] === "CONFLICT") {
-            onAddgptevent(
-              data.events_to_be_managed[1],
-              data.events_to_be_managed[2],
-              data.events_to_be_managed[0]
-            );
-          }
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:5000/chat",
+        dataToSend
+      );
+
+      setLoading(false);
+
+      let data = response.data;
+      console.log(data.events_to_be_managed);
+      if (!data.events_to_be_managed) {
+        const botMessageDiv = document.createElement("div");
+        botMessageDiv.className =
+          "bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs ml-auto";
+        botMessageDiv.innerHTML = data.bot_response;
+        document.getElementById("chat-messages").appendChild(botMessageDiv);
+      } else {
+        if (data.events_to_be_managed[0] === "ADD") {
+          data.events_to_be_managed[1]["DTSTART"] = new Date(
+            data.events_to_be_managed[1]["DTSTART"]
+          );
+          data.events_to_be_managed[1]["DTEND"] = new Date(
+            data.events_to_be_managed[1]["DTEND"]
+          );
+
+          onAddgptevent(
+            data.events_to_be_managed[1],
+            data.events_to_be_managed[2],
+            data.events_to_be_managed[0]
+          );
+        } else if (data.events_to_be_managed[0] === "DELETED") {
+          onAddgptevent(
+            data.events_to_be_managed[1],
+            data.events_to_be_managed[2],
+            data.events_to_be_managed[0]
+          );
+        } else if (data.events_to_be_managed[0] === "CONFLICT") {
+          onAddgptevent(
+            data.events_to_be_managed[1],
+            data.events_to_be_managed[2],
+            data.events_to_be_managed[0]
+          );
+        } else if (data.events_to_be_managed[0] === "UPDATE") {
+          onAddgptevent(
+            data.events_to_be_managed[1],
+            data.events_to_be_managed[2],
+            data.events_to_be_managed[0]
+          );
         }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -91,7 +98,14 @@ const Chatbot = ({ onAddgptevent }) => {
             onClick={sendMessage}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
           >
-            Send
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 mr-3 border-white border-t-2 border-r-2 rounded-full"
+                viewBox="0 0 24 24"
+              ></svg>
+            ) : (
+              "Send"
+            )}
           </button>
         </div>
       </div>

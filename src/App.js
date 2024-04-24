@@ -20,7 +20,6 @@ function App() {
         toggleComponent={toggleComponent}
         handleSignOut={commands.handleSignOut}
         showBasicCalendar={showBasicCalendar}
-        className="fixed top-0"
       />
 
 

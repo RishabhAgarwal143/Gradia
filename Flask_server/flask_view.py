@@ -34,6 +34,20 @@ def receive_data():
     return jsonify({'message': 'Data received successfully'})
 
 
+@app.route('/api/personalization', methods=['POST'])
+def personalize():
+    data = request.json
+    personalise_user_schedule(data["data"]["getUserinfo"])
+    return jsonify({'message': 'Data received successfully'})
+
+@app.route('/api/update_calendars', methods=['POST'])
+def update_calendars():
+    data = request.json
+    User_Calendar(data["data"]["getUserinfo"])
+    return jsonify({'message': 'Data received successfully'})
+    
+
+
 @app.route('/api/createsubscribe', methods=['POST'])
 def create_data():
     data = request.json  # Assuming data is sent as JSON
@@ -207,4 +221,4 @@ if __name__ == '__main__':
     # background_process = multiprocessing.Process(target=check_database)
     # background_process.start()
     thread_info = {}
-    app.run(threaded = False,debug=True)
+    app.run(host="0.0.0.0",port= 5000, threaded = False,debug=True)

@@ -22,8 +22,11 @@ functions = {
     'update_event': ac.update_event,
     'create_task': ac.create_task,
     'update_task': ac.update_task,
-    'delete_event_id': ac.delete_event_id
-
+    'delete_event_id': ac.delete_event_id,
+    'get_all_subjects': ac.get_all_subjects,
+    'get_subject_from_id': ac.get_subject_from_id,
+    'get_task_subject_range': ac.get_task_subject_range,
+    'get_schedule_subject_range': ac.get_schedule_subject_range
     # 'schedule_new_event': ac.schedule_new_event,
     # 'modify_event_in_calendar': ac.modify_event_in_calendar,
 }
@@ -32,6 +35,7 @@ functions = {
 # Function to call the assistant required functions and return their outputs as JSON strings
 def execute_required_functions(required_actions,userID):
     tool_outputs = []
+    result = None
     for tool_call in required_actions.submit_tool_outputs.tool_calls:
         func_name = tool_call.function.name
         args = json.loads(tool_call.function.arguments)

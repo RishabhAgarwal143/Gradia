@@ -10,7 +10,12 @@ import Sidebar from "./Sidebar";
 import EventDescModal from "./EventDescModal";
 import { RRule } from "rrule";
 // import ConfirmAddModal from "./ConfirmAddEvent";
-import { create_user, create_schedule, deleteSchedule } from "./support_func";
+import {
+  create_user,
+  create_schedule,
+  deleteSchedule,
+  subscribedScedule,
+} from "./support_func";
 import Chatbot from "./Chatbot";
 import axios from "axios";
 import ChatbotConfirmModel from "./ChatbotConfirmModel";
@@ -23,11 +28,7 @@ const MyCalendar = () => {
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
-  // const [pendingEvent, setPendingEvent] = useState(null);
   const [chatbotpendingEvent, setchatbotpendingEvent] = useState([]);
-  // const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-  // const [gpttask, setGptTask] = useState("");
-  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -61,7 +62,7 @@ const MyCalendar = () => {
     }
     fetchData();
     // eslint-disable-next-line
-  }, []);
+  }, [subscribedScedule]);
 
   let counter = 0;
   const update_counter = () => {
@@ -119,7 +120,7 @@ const MyCalendar = () => {
     subject_id: event.subjectsID,
     ScheduleGradeInfo: event.ScheduleGradeInfo || null,
     personalized_task: event.personalized_task || null,
-    color: event.color || null,
+    color: event.personalized_task ? "black" : null,
   }));
 
   const handleAddEvent = async (newEvent) => {
@@ -144,13 +145,16 @@ const MyCalendar = () => {
       // setGptTask(tasktype);
       newEvent.color = "green";
     });
-    deletedEvents.forEach((newEvent) => {
-      // setGptTask(tasktype);
-      newEvent.color = "red";
+    myEvents.forEach((myEvent) => {
+      deletedEvents.forEach((deletedEvent) => {
+        if (myEvent.id === deletedEvent.id) {
+          myEvent.color = "red";
+        }
+      });
     });
 
     setAllEvents([...myEvents, ...addEvents, ...deletedEvents]);
-    setchatbotpendingEvent([...addEvents, ...deletedEvents]);
+    setchatbotpendingEvent([...deletedEvents, ...addEvents]);
 
     //...
   }
@@ -197,29 +201,6 @@ const MyCalendar = () => {
     setModalPosition({ top: rect.top, left: rect.left });
     console.log("rect", modalPosition);
   };
-
-  // const handleConfirmation = async (confirmed) => {
-  //   // Close the confirmation pop-up
-  //   setIsConfirmationModalOpen(false);
-  //   if (confirmed) {
-  //     // If the user confirms, remove the 'isNew' property from the pending event
-  //     const confirmedEvent = { ...pendingEvent };
-  //     delete confirmedEvent.isNew;
-  //     console.log("confirmedEvent", confirmedEvent);
-  //     // Add the confirmed event to the list of events
-  //     // setAllEvents(myEvents.filter((event) => event !== confirmedEvent));
-  //     if (gpttask === "CONFLICT" || gpttask === "ADD") {
-  //       const result = await create_schedule(confirmedEvent);
-  //       setAllEvents([...myEvents, result.data.createSchedule]);
-  //     } else if (gpttask === "DELETED") {
-  //       await deleteSchedule(confirmedEvent.id);
-  //       console.log(confirmedEvent);
-  //       setAllEvents(
-  //         myEvents.filter((event) => event.id !== confirmedEvent.id)
-  //       );
-  //     }
-  //   }
-  // };
 
   const handleDoubleClickEvent = (event) => {
     setSelectedEvent(event);

@@ -76,6 +76,30 @@ async function create_temp_user(transformedEvents) {
     .catch((error) => {
       console.error("Error sending data:", error);
     });
+  if (transformedEvents.length !== 0) {
+    const oneTodo = await client.graphql({
+      query: queries.getUserinfo,
+      variables: { id: cognito_Id },
+    });
+
+    axios
+      .post("http://127.0.0.1:5000/api/update_calendars", oneTodo)
+      .then((response) => {
+        console.log("Data sent successfully:");
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
+
+    axios
+      .post("http://127.0.0.1:5000/api/personalization", oneTodo)
+      .then((response) => {
+        console.log("Data sent successfully:");
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
+  }
 }
 
 export async function send_data_backend() {
@@ -114,6 +138,7 @@ export async function send_data_backend() {
         email: CurrentUsersEmail,
         id: cognito_Id,
         Timezone: dt.zoneName,
+        Last_updated: dt.now(),
       };
 
       await client.graphql({
@@ -521,5 +546,49 @@ export async function update_tagetGrade_subject(subjectid, newStatus) {
     });
   } catch (error) {
     console.error("Error fetching items:", error);
+  }
+}
+
+export async function createNewTask(taskData) {
+  try {
+    console.log(taskData.STATUS);
+    const newTask = await client.graphql({
+      query: mutations.createTask,
+      variables: {
+        input: {
+          DUE: taskData.DUE,
+          SUMMARY: taskData.SUMMARY,
+          userinfoID: cognito_Id,
+          STATUS: taskData.STATUS,
+          subjectsID: taskData.subjectsID,
+          TaskGradeInfo: taskData.TaskGradeInfo,
+        },
+      },
+    });
+    console.log("New task created:", newTask);
+    return newTask;
+  } catch (error) {
+    console.error("Error creating new task:", error);
+    throw error;
+  }
+}
+
+export async function create_taskGradeInfo(taskData) {
+  try {
+    const newTask = await client.graphql({
+      query: mutations.createTaskGradeInfo,
+      variables: {
+        input: {
+          current_Grade: taskData.current_Grade,
+          overall_Percentage: taskData.overall_Percentage,
+          task_Weightage: taskData.task_Weightage,
+          taskGradeInfoTaskId: taskData.taskId,
+        },
+      },
+    });
+    return newTask;
+  } catch (error) {
+    console.error("Error creating new task:", error);
+    throw error;
   }
 }

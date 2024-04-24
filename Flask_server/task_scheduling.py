@@ -1,7 +1,7 @@
 from database_queries import *
 import pandas as pd
 import math
-
+import pytz
 
 def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slots = []):
     schedules =  get_schedule_range(user, DTSTART, DTEND)
@@ -47,47 +47,77 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slo
                 busySlots.append([busySlots[-1][-1], max(slots[1], busySlots[-1][-1])])
             else:
                 busySlots.append(slots)
+    print("busy slots:")
+    for i in range(0, len(busySlots)):
+        print(busySlots[i][0].day, busySlots[i][0].hour, busySlots[i][0].minute, "-",  busySlots[i][1].day, busySlots[i][1].hour, busySlots[i][1].minute)
+    
     for i in range(0, len(busySlots)):
         if busySlots[i][0] > currentDayStart:
             freeSlots.append([currentDayStart, busySlots[i][0]])
         currentDayStart = busySlots[i][1]
     if busySlots[-1][1] < currentDayEnd:
         freeSlots.append([busySlots[-1][1], currentDayEnd])
-  
-
+    print("free slots:")
+    for i in range(0, len(freeSlots)):
+        print(freeSlots[i][0].day, freeSlots[i][0].hour, freeSlots[i][0].minute, "-",  freeSlots[i][1].day, freeSlots[i][1].hour, freeSlots[i][1].minute)
     return freeSlots
 
-def assign_task(user: User, session, extra_time_slots = []):
-    tasks  = assign_priority(user)
+def assign_task(userinfoID, extra_time_slots = [], flag=False):
+    tasks  = assign_priority(userinfoID)
     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
-    # avg_priority = sum([task.PRIORITY for task in tasks])/len(tasks)
-    # max_priority = max([task.PRIORITY for task in tasks])
     currday = 0
     while(tasks):
-        freeSlots = get_user_free_time(user.userinfoID, (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 0, minute = 0, second= 0), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
+        print(currday)
+        freeSlots = get_user_free_time(userinfoID, (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 0, minute = 0, second= 0), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
         # if the user has continuous free time slot of 2hrs, assign the task to that slot
+        session = create_session(userinfoID)
+        user = session.query(User).filter_by(userinfoID=userinfoID).first()
+        user_timezone = pytz.timezone(user.user_timezone)
+        utc_timezone = pytz.utc
+        task_list = []
         for task in tasks:
+            if(freeSlots == []):
+                break
             time_estimated  = calculate_time_ratio(user, task.get_subject(session))
             time_step = []
-           
             while(time_estimated > 3):
                 time_step.append(time_estimated -3)
                 time_estimated -= 3
             time_step.append(time_estimated)
             for time in time_step:
                 for slot in freeSlots:
-                    if slot[1] - slot[0] >= time:
-                        newSchedule = Schedule(SUMMARY=task.SUMMARY, DTSTART =  slot[0], DTEND = slot[0] + datetime.timedelta(hours=time + 1),subjectsID=task.subjectsID,userinfoID=user.userinfoID,personalized_task=True)
-                        newSchedule.add_to_cloud(user)
-                        # add_to_database(newSchedule)
+                    if slot[1] - slot[0] >= datetime.timedelta(hours = time + 1):
+                        newSchedule = Schedule(SUMMARY=task.SUMMARY, DTSTART =  slot[0], DTEND = slot[0] + datetime.timedelta(hours=time),subjectsID=task.subjectsID,userinfoID=user.userinfoID,personalized_task=True)
+
+
                         # print(newSchedule.DTSTART.day, newSchedule.DTSTART.hour, newSchedule.DTSTART.minute, "-",  newSchedule.DTEND.day, newSchedule.DTEND.hour, newSchedule.DTEND.minute)
-                        print(newSchedule)
+                        local_start_time = newSchedule.DTSTART
+                        local_end_time_utc = newSchedule.DTEND
+
+                        start_time_utc = user_timezone.localize(local_start_time).astimezone(pytz.utc)
+                        end_time_utc = user_timezone.localize(local_end_time_utc).astimezone(pytz.utc)
+                        
+                        newSchedule.DTSTART = start_time_utc
+                        newSchedule.DTEND = end_time_utc
+
+                        if not flag:
+                            newSchedule.add_to_cloud(user)
+                            session.add(newSchedule)
+                            session.commit()
+                        else:
+                            task_list.append(newSchedule)
+                        
+                        # print(newSchedule)
                         slot[0] += datetime.timedelta(hours=time + 1)
-                        if(slot[0] >= slot[1] or slot[1] - slot[0] < time):
+                        if(slot[0] >= slot[1] or slot[1] - slot[0] < datetime.timedelta(hours = 2)):
                             freeSlots.remove(slot)     
                         tasks.remove(task)
                         break
-    currday += 1
+        currday += 1
+    
+    if flag:
+        return task_list
+    return 0
 
 
 # get_user_free_time("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))
@@ -110,6 +140,9 @@ def calculate_time_ratio(user: User, subject: Subjects):
         for task in subject.task_list:
             if task.STATUS == "COMPLETED" and task.task_grade:
                 task_time = task.task_grade.time_taken
+                if(task_time == None):
+                    # set it to 1 hour
+                    task_time = 1
                 avg_time_per_weightage += task_time/task.task_grade.task_Weightage
     avg_time_per_weightage /= len(user.subjects_list)
     if(avg_time_per_weightage == 0):
@@ -123,4 +156,4 @@ def calculate_time_ratio(user: User, subject: Subjects):
 
     
         
-
+# assign_task("82cf448d-fc16-409c-82e9-3304d937f840", [[datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 12, 0, 0)], [datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 15, 0, 0)]])

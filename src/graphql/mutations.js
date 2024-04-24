@@ -1355,6 +1355,7 @@ export const createUserinfo = /* GraphQL */ `
       name
       email
       Timezone
+      Last_updated
       Schedules {
         items {
           id
@@ -1534,6 +1535,7 @@ export const updateUserinfo = /* GraphQL */ `
       name
       email
       Timezone
+      Last_updated
       Schedules {
         items {
           id
@@ -1713,6 +1715,7 @@ export const deleteUserinfo = /* GraphQL */ `
       name
       email
       Timezone
+      Last_updated
       Schedules {
         items {
           id
