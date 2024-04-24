@@ -332,15 +332,16 @@ def add_user_info(userinfoID,accesstoken):
 
 def personalise_user_schedule(userinfo,Force_refresh = False):
     # print(userinfo)
-    temp = userinfo["Last_updated"]
-    
-    if(not temp):
-        Last_modified =  datetime.datetime.now(datetime.timezone.utc)
-        Force_refresh = True
-    else:
-        Last_modified = datetime.datetime.fromisoformat(temp.replace('Z', '+00:00'))
-    modified_plus_24_hours = Last_modified + datetime.timedelta(hours=12)
-    if((modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc)) or Force_refresh):
+    if(not Force_refresh):
+        temp = userinfo["Last_updated"]
+        
+        if(not temp):
+            Last_modified =  datetime.datetime.now(datetime.timezone.utc)
+            Force_refresh = True
+        else:
+            Last_modified = datetime.datetime.fromisoformat(temp.replace('Z', '+00:00'))
+        modified_plus_24_hours = Last_modified + datetime.timedelta(hours=12)
+    if(Force_refresh or (modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc))):
         session = create_session(userinfo["id"])
         user = session.query(User).filter_by(userinfoID=userinfo["id"]).first()
         user.Last_modified = datetime.datetime.now(datetime.timezone.utc)
@@ -432,3 +433,7 @@ def assign_priority(userinfoID):
 # get_schedule_range("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))
 # assign_priority(get_user_info("82cf448d-fc16-409c-82e9-3304d937f840"))
 # clear_personalization("82cf448d-fc16-409c-82e9-3304d937f840")
+if __name__ == "__main__":
+    from task_scheduling import assign_task
+    
+    personalise_user_schedule({"id":"82cf448d-fc16-409c-82e9-3304d937f840"}, Force_refresh=True)
