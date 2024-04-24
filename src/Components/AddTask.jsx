@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const AddTaskForm = ({ onSubmit, onCancel }) => {
+const AddTaskForm = ({ subjectsID, onSubmit, onCancel }) => {
     const [summary, setSummary] = useState("");
     const [dateTime, setDateTime] = useState("");
     const [status, setStatus] = useState("IN-PROGRESS");
@@ -9,7 +9,8 @@ const AddTaskForm = ({ onSubmit, onCancel }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({ summary, dateTime, status, grade, weightage });
+
+        onSubmit({ "subjectsID": subjectsID, "SUMMARY": summary, "DUE": dateTime, "STATUS": status, "current_Grade": grade, "task_Weightage": weightage, "taskID": subjectsID });
         setSummary("");
         setDateTime("");
         setStatus("IN-PROGRESS");

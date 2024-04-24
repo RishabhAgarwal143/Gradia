@@ -523,3 +523,47 @@ export async function update_tagetGrade_subject(subjectid, newStatus) {
     console.error("Error fetching items:", error);
   }
 }
+
+export async function createNewTask(taskData) {
+  try {
+    const newTask = await client.graphql({
+      query: mutations.createTask,
+      variables: {
+        input: {
+          DUE: taskData.DUE,
+          SUMMARY: taskData.SUMMARY,
+          userinfoID: cognito_Id,
+          STATUS: taskData.STATUS,
+          subjectsID: taskData.subjectsID,
+          TaskGradeInfo: taskData.TaskGradeInfo,
+        },
+      },
+    });
+    console.log("New task created:", newTask);
+    return newTask;
+  } catch (error) {
+    console.error("Error creating new task:", error);
+    throw error;
+  }
+}
+
+export async function create_taskGradeInfo(taskData) {
+  try {
+    const newTask = await client.graphql({
+      query: mutations.createTaskGradeInfo,
+      variables: {
+        input: {
+          current_Grade: taskData.current_Grade,
+          overall_Percentage: taskData.overall_Percentage,
+          task_Weightage: taskData.task_Weightage,
+          taskGradeInfoTaskId: taskData.taskId,
+        },
+      },
+    });
+    return newTask;
+  }
+  catch (error) {
+    console.error("Error creating new task:", error);
+    throw error;
+  }
+}
