@@ -198,7 +198,7 @@ class Schedule(Base):
     DTEND: Mapped[Optional[datetime.datetime]]
     DESCRIPTION: Mapped[Optional[str]]
     LOCATION: Mapped[Optional[str]]
-    personalized_task: Mapped[Optional[bool]]
+    personalized_task: Mapped[bool] = mapped_column(default=False)
     userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
     schedule_grade: Mapped[Optional["Schedule_grade_info"]] = relationship()
@@ -216,6 +216,7 @@ class Schedule(Base):
         temp_d["DESCRIPTION"] = self.DESCRIPTION
         temp_d["userinfoID"] = self.userinfoID
         temp_d["subjectsID"] = self.subjectsID
+        temp_d["personalized_task"] = aws_bool(self.personalized_task)
         if(self.schedule_grade):
             temp_d["scheduleScheduleGradeInfoId"] = self.schedule_grade.id
         

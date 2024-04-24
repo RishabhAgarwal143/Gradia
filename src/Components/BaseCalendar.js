@@ -145,9 +145,12 @@ const MyCalendar = () => {
       // setGptTask(tasktype);
       newEvent.color = "green";
     });
-    deletedEvents.forEach((newEvent) => {
-      // setGptTask(tasktype);
-      newEvent.color = "red";
+    myEvents.forEach((myEvent) => {
+      deletedEvents.forEach((deletedEvent) => {
+        if (myEvent.id === deletedEvent.id) {
+          myEvent.color = "red";
+        }
+      });
     });
 
     setAllEvents([...myEvents, ...addEvents, ...deletedEvents]);

@@ -264,7 +264,8 @@ def delete_events_in_range(start_time, end_time, userinfoID):
     existing_events = _get_schedule_range_usertime(start_time, end_time, userinfoID)
     is_personalized = False
     for event in existing_events:
-        if event["personalized_task"]:
+        print(event)
+        if event["personalized_task"] == "true":
             is_personalized = True
             break
                 
@@ -367,7 +368,7 @@ def get_tasks_range(start_time, end_time, userinfoID):
     end_date_utc = _convert_usertime_str_to_utc_str(userinfoID, end_time)
 
     tasks = database_queries.get_task_range(userinfoID, start_date_utc, end_date_utc)
-    print("TASKS HERE: ", tasks)
+        
     result = ""
     for task in tasks:
         start_time_usertime = task.DUE + time_delta

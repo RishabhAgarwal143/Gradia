@@ -296,17 +296,17 @@ def add_user_info(userinfoID,accesstoken):
     session.commit()
     session.close()
 
-def personalise_user_schedule(userinfo):
+def personalise_user_schedule(userinfo,Force_refresh = False):
     # print(userinfo)
     temp = userinfo["Last_updated"]
-    just_created = False
+    
     if(not temp):
         Last_modified =  datetime.datetime.now(datetime.timezone.utc)
-        just_created = True
+        Force_refresh = True
     else:
         Last_modified = datetime.datetime.fromisoformat(temp.replace('Z', '+00:00'))
-    modified_plus_24_hours = Last_modified + datetime.timedelta(hours=24)
-    if((modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc)) or just_created):
+    modified_plus_24_hours = Last_modified + datetime.timedelta(hours=12)
+    if((modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc)) or Force_refresh):
         session = create_session(userinfo["id"])
         user = session.query(User).filter_by(userinfoID=userinfo["id"]).first()
         user.Last_modified = datetime.datetime.now(datetime.timezone.utc)
@@ -319,17 +319,16 @@ def personalise_user_schedule(userinfo):
 
     
 
-def User_Calendar(userinfo):
+def User_Calendar(userinfo,Force_refresh = False):
 
     temp = userinfo["Last_updated"]
-    just_created = False
     if(not temp):
         Last_modified =  datetime.datetime.now(datetime.timezone.utc)
-        just_created = True
+        Force_refresh = True
     else:
         Last_modified = datetime.datetime.fromisoformat(temp.replace('Z', '+00:00'))
-    modified_plus_24_hours = Last_modified + datetime.timedelta(hours=24)
-    if((modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc)) or just_created):
+    modified_plus_24_hours = Last_modified + datetime.timedelta(hours=12)
+    if((modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc)) or Force_refresh):
         session = create_session(userinfo["id"])
         user = session.query(User).filter_by(userinfoID=userinfo["id"]).first()
         user.Last_modified = datetime.datetime.now(datetime.timezone.utc)
