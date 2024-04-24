@@ -5,6 +5,7 @@ from sqlalchemy import select, text, create_engine
 from sqlalchemy.exc import IntegrityError,NoResultFound
 from database_setup import Schedule,Task,Subjects,Task_grade_info,Schedule_grade_info,User,UserWorkTime
 import datetime
+import pytz
 from pprint import pp
 
 # engine = create_engine("sqlite:///Flask_server/database/userdata.db")
@@ -45,8 +46,9 @@ def clear_personalization(userinfoID):
 
     personalized_tasks = session.query(Schedule).filter_by(personalized_task=True).all()
     for task in personalized_tasks:
-        print(task)
+        # print(task)
         task.delete_from_cloud(user)
+        delete_obj(task,session)
 
     session.close()
 
@@ -79,7 +81,7 @@ def delete_from_database(obj_class, filter_attr, filter_value,session):
 def delete_obj(obj,session):
     session.delete(obj)
     session.commit()
-    session.close()
+    # session.close()
     
 
 
@@ -294,27 +296,49 @@ def add_user_info(userinfoID,accesstoken):
     session.commit()
     session.close()
 
-
-# def get_subject(subject_id):
-#     # subject_id = "57426fa8-8596-43d1-8a75-bb3bf3ebb51c"
-#     session = create_session(userinfoID)
+def personalise_user_schedule(userinfo,Force_refresh = False):
+    # print(userinfo)
+    temp = userinfo["Last_updated"]
     
-#     subject = session.query(Subjects).filter_by(id=subject_id).first()
-
-#     if subject:
-#         # Get all the schedules associated with the subject
-#         schedules = subject.schedule_list
-#         # Print the schedules
-#         for schedule in schedules:
-#             print(schedule)
-#         print("Tasks")
-#         tasks = subject.task_list
-#         # Print the tasks
-#         for task in tasks:
-#             print(task)
-#     else:
-#         print("Subject not found.")
+    if(not temp):
+        Last_modified =  datetime.datetime.now(datetime.timezone.utc)
+        Force_refresh = True
+    else:
+        Last_modified = datetime.datetime.fromisoformat(temp.replace('Z', '+00:00'))
+    modified_plus_24_hours = Last_modified + datetime.timedelta(hours=12)
+    if((modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc)) or Force_refresh):
+        session = create_session(userinfo["id"])
+        user = session.query(User).filter_by(userinfoID=userinfo["id"]).first()
+        user.Last_modified = datetime.datetime.now(datetime.timezone.utc)
+        user.update_last_modified(session)
+        clear_personalization(user.userinfoID)
+        from task_scheduling import assign_task
+        assign_task(user.userinfoID)
         
+
+
+    
+
+def User_Calendar(userinfo,Force_refresh = False):
+
+    temp = userinfo["Last_updated"]
+    if(not temp):
+        Last_modified =  datetime.datetime.now(datetime.timezone.utc)
+        Force_refresh = True
+    else:
+        Last_modified = datetime.datetime.fromisoformat(temp.replace('Z', '+00:00'))
+    modified_plus_24_hours = Last_modified + datetime.timedelta(hours=12)
+    if((modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc)) or Force_refresh):
+        session = create_session(userinfo["id"])
+        user = session.query(User).filter_by(userinfoID=userinfo["id"]).first()
+        user.Last_modified = datetime.datetime.now(datetime.timezone.utc)
+        user.update_last_modified(session)
+        for calendar in userinfo["SubscribedCalendars"]["items"]:
+            print(calendar["Calendar_URL"])
+            from Reading_Calendar import Subscribing_to_Calendar
+            Subscribing_to_Calendar(calendar["Calendar_URL"],user.access_Token,user.userinfoID,calendar["Calendar_Name"])
+
+
 
 def get_user_info(userinfoID):
     session = create_session(userinfoID)
@@ -330,9 +354,7 @@ def assign_priority(userinfoID):
     tasks = []
     session = create_session(userinfoID)
     user = session.query(User).filter_by(userinfoID=userinfoID).first()
-    print("Before loop")
     for subject in user.subjects_list:
-        print(subject.subject_Name)
         completed_grade = 0
         for task in subject.task_list:
             if task.STATUS == "COMPLETED" and task.task_grade:
@@ -343,7 +365,6 @@ def assign_priority(userinfoID):
         else:
             subject.subject_Difficulty = 0.5
         for task in subject.task_list:
-            print(task.SUMMARY)
             subject.calculate_final_grade(session)
             time_remaining = (task.DUE - datetime.datetime.now()).days
             if time_remaining < 0:
@@ -369,7 +390,6 @@ def assign_priority(userinfoID):
     for task in tasks:
         print(task.SUMMARY, task.DUE,  task.PRIORITY)
     session.close()
-    print("After loop")
     return tasks
 
 # get_schedule_range("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))

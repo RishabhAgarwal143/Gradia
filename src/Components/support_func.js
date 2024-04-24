@@ -76,6 +76,30 @@ async function create_temp_user(transformedEvents) {
     .catch((error) => {
       console.error("Error sending data:", error);
     });
+  if (transformedEvents.length !== 0) {
+    const oneTodo = await client.graphql({
+      query: queries.getUserinfo,
+      variables: { id: cognito_Id },
+    });
+
+    axios
+      .post("http://127.0.0.1:5000/api/update_calendars", oneTodo)
+      .then((response) => {
+        console.log("Data sent successfully:");
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
+
+    axios
+      .post("http://127.0.0.1:5000/api/personalization", oneTodo)
+      .then((response) => {
+        console.log("Data sent successfully:");
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
+  }
 }
 
 export async function send_data_backend() {
@@ -114,6 +138,7 @@ export async function send_data_backend() {
         email: CurrentUsersEmail,
         id: cognito_Id,
         Timezone: dt.zoneName,
+        Last_updated: dt.now(),
       };
 
       await client.graphql({
