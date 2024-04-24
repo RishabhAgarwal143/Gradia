@@ -37,6 +37,20 @@ def get_schedule_by_id(event_id, session):
     except NoResultFound:
         return None
 
+
+def clear_personalization(userinfoID):
+    # get list of all personalized tasks
+    user = get_user_info(userinfoID)
+    session = create_session(userinfoID)
+
+    personalized_tasks = session.query(Schedule).filter_by(personalized_task=True).all()
+    for task in personalized_tasks:
+        print(task)
+        task.delete_from_cloud(user)
+
+    session.close()
+
+
 def add_to_database(obj,session):
     
     if(check_if_object_exists(obj,session)):
@@ -357,3 +371,4 @@ def assign_priority(user: User):
 
 # get_schedule_range("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))
 # assign_priority(get_user_info("82cf448d-fc16-409c-82e9-3304d937f840"))
+# clear_personalization("82cf448d-fc16-409c-82e9-3304d937f840")

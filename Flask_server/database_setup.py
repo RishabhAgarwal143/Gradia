@@ -223,6 +223,7 @@ class Schedule(Base):
         dt_new_timezone = self.DTEND.astimezone(new_timezone)
         return dt_new_timezone
 
+
     def add_to_cloud(self,user: User):
         payload = "{\"query\":\"mutation CreateSchedule {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            "\
                     "SUMMARY: %s\\r\\n            "\
@@ -243,6 +244,22 @@ class Schedule(Base):
         }
         response = requests.request("POST", url, headers=headers, data=payload)
         print(response.text)
+
+    
+    def delete_from_cloud(self, user: User):
+        
+        payload = "{\"query\":\"\\r\\nmutation MyMutation {\\r\\n  \
+                    deleteSchedule(input: {id: \\\"%s\\\"}) {\\r\\n    \
+                    id\\r\\n  }\\r\\n}\",\"variables\":{}}" % self.id
+
+        url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+        headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer %s' % user.access_Token
+        }
+        response = requests.request("POST", url, headers=headers, data=payload)
+        return response.text
+
 class Task(Base):
     """An example using regular Columns and no type annotation. 
         Enough for prelab, no foreign key usage. Similar effect but old convention.
@@ -381,11 +398,10 @@ def create_table(userinfoId):
             session.commit()
         session.close()
         pass
-    else:    
-        engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
-        
-        Base.metadata.create_all(engine)
-        engine.dispose()
+    
+    engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
+    Base.metadata.create_all(engine)
+    # engine.dispose()
 
 if __name__ == "__main__":
     create_table("")
