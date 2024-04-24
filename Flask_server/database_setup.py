@@ -74,6 +74,7 @@ class User(Base):
     userinfoID : Mapped[str]= mapped_column(primary_key=True)
     access_Token : Mapped[str]
     user_timezone : Mapped[Optional[str]]
+    Last_modified : Mapped[Optional[datetime.datetime]]
     UserWorkTime : Mapped[Optional["UserWorkTime"]] = relationship()
     schedule_list : Mapped[List["Schedule"]] = relationship()
     task_list : Mapped[List["Task"]] = relationship()
@@ -128,6 +129,20 @@ class User(Base):
             session.commit()
             
         return self.UserWorkTime
+    
+    def update_last_modified(self,session):
+        
+        headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {self.access_Token}'
+        }
+        url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+        payload = "{\"query\":\"mutation UpdateUserinfo {\\r\\n    updateUserinfo(input: { id: \\\"%s\\\", Last_updated: %s }) {\\r\\n        id\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %(self.userinfoID,aws_datetime(self.Last_modified))
+        response = requests.request("POST", url, headers=headers, data=payload)
+        # print(response.text)
+        json_response = response.json()
+        print(json_response)
+
             
 
 
@@ -243,7 +258,9 @@ class Schedule(Base):
         'Authorization': 'Bearer %s' % user.access_Token
         }
         response = requests.request("POST", url, headers=headers, data=payload)
-        print(response.text)
+        json_response = response.json()
+        self.id = json_response["data"]["createSchedule"]["id"]
+        print(json_response)
 
     
     def delete_from_cloud(self, user: User):

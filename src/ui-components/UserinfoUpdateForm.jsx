@@ -208,6 +208,7 @@ export default function UserinfoUpdateForm(props) {
     name: "",
     email: "",
     Timezone: "",
+    Last_updated: "",
     Schedules: [],
     Tasks: [],
     SubscribedCalendars: [],
@@ -217,6 +218,9 @@ export default function UserinfoUpdateForm(props) {
   const [name, setName] = React.useState(initialValues.name);
   const [email, setEmail] = React.useState(initialValues.email);
   const [Timezone, setTimezone] = React.useState(initialValues.Timezone);
+  const [Last_updated, setLast_updated] = React.useState(
+    initialValues.Last_updated
+  );
   const [Schedules, setSchedules] = React.useState(initialValues.Schedules);
   const [SchedulesLoading, setSchedulesLoading] = React.useState(false);
   const [schedulesRecords, setSchedulesRecords] = React.useState([]);
@@ -255,6 +259,7 @@ export default function UserinfoUpdateForm(props) {
     setName(cleanValues.name);
     setEmail(cleanValues.email);
     setTimezone(cleanValues.Timezone);
+    setLast_updated(cleanValues.Last_updated);
     setSchedules(cleanValues.Schedules ?? []);
     setCurrentSchedulesValue(undefined);
     setCurrentSchedulesDisplayValue("");
@@ -386,6 +391,7 @@ export default function UserinfoUpdateForm(props) {
     name: [{ type: "Required" }],
     email: [{ type: "Required" }, { type: "Email" }],
     Timezone: [],
+    Last_updated: [],
     Schedules: [],
     Tasks: [],
     SubscribedCalendars: [],
@@ -408,6 +414,23 @@ export default function UserinfoUpdateForm(props) {
     }
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
+  };
+  const convertToLocal = (date) => {
+    const df = new Intl.DateTimeFormat("default", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      calendar: "iso8601",
+      numberingSystem: "latn",
+      hourCycle: "h23",
+    });
+    const parts = df.formatToParts(date).reduce((acc, part) => {
+      acc[part.type] = part.value;
+      return acc;
+    }, {});
+    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
   };
   const fetchSchedulesRecords = async (value) => {
     setSchedulesLoading(true);
@@ -578,6 +601,7 @@ export default function UserinfoUpdateForm(props) {
           name,
           email,
           Timezone: Timezone ?? null,
+          Last_updated: Last_updated ?? null,
           Schedules: Schedules ?? null,
           Tasks: Tasks ?? null,
           SubscribedCalendars: SubscribedCalendars ?? null,
@@ -829,6 +853,7 @@ export default function UserinfoUpdateForm(props) {
             name: modelFields.name,
             email: modelFields.email,
             Timezone: modelFields.Timezone ?? null,
+            Last_updated: modelFields.Last_updated ?? null,
             userinfoUserWorkTimId: modelFields?.UserWorkTim?.id ?? null,
           };
           promises.push(
@@ -868,6 +893,7 @@ export default function UserinfoUpdateForm(props) {
               name: value,
               email,
               Timezone,
+              Last_updated,
               Schedules,
               Tasks,
               SubscribedCalendars,
@@ -899,6 +925,7 @@ export default function UserinfoUpdateForm(props) {
               name,
               email: value,
               Timezone,
+              Last_updated,
               Schedules,
               Tasks,
               SubscribedCalendars,
@@ -930,6 +957,7 @@ export default function UserinfoUpdateForm(props) {
               name,
               email,
               Timezone: value,
+              Last_updated,
               Schedules,
               Tasks,
               SubscribedCalendars,
@@ -949,6 +977,40 @@ export default function UserinfoUpdateForm(props) {
         hasError={errors.Timezone?.hasError}
         {...getOverrideProps(overrides, "Timezone")}
       ></TextField>
+      <TextField
+        label="Last updated"
+        isRequired={false}
+        isReadOnly={false}
+        type="datetime-local"
+        value={Last_updated && convertToLocal(new Date(Last_updated))}
+        onChange={(e) => {
+          let value =
+            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              Timezone,
+              Last_updated: value,
+              Schedules,
+              Tasks,
+              SubscribedCalendars,
+              Subjects,
+              UserWorkTim,
+            };
+            const result = onChange(modelFields);
+            value = result?.Last_updated ?? value;
+          }
+          if (errors.Last_updated?.hasError) {
+            runValidationTasks("Last_updated", value);
+          }
+          setLast_updated(value);
+        }}
+        onBlur={() => runValidationTasks("Last_updated", Last_updated)}
+        errorMessage={errors.Last_updated?.errorMessage}
+        hasError={errors.Last_updated?.hasError}
+        {...getOverrideProps(overrides, "Last_updated")}
+      ></TextField>
       <ArrayField
         onChange={async (items) => {
           let values = items;
@@ -957,6 +1019,7 @@ export default function UserinfoUpdateForm(props) {
               name,
               email,
               Timezone,
+              Last_updated,
               Schedules: values,
               Tasks,
               SubscribedCalendars,
@@ -1042,6 +1105,7 @@ export default function UserinfoUpdateForm(props) {
               name,
               email,
               Timezone,
+              Last_updated,
               Schedules,
               Tasks: values,
               SubscribedCalendars,
@@ -1125,6 +1189,7 @@ export default function UserinfoUpdateForm(props) {
               name,
               email,
               Timezone,
+              Last_updated,
               Schedules,
               Tasks,
               SubscribedCalendars: values,
@@ -1221,6 +1286,7 @@ export default function UserinfoUpdateForm(props) {
               name,
               email,
               Timezone,
+              Last_updated,
               Schedules,
               Tasks,
               SubscribedCalendars,
@@ -1307,6 +1373,7 @@ export default function UserinfoUpdateForm(props) {
               name,
               email,
               Timezone,
+              Last_updated,
               Schedules,
               Tasks,
               SubscribedCalendars,

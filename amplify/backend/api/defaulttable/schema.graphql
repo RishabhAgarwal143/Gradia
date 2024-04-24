@@ -98,6 +98,7 @@ type Userinfo
   name: String!
   email: AWSEmail!
   Timezone: String
+  Last_updated: AWSDateTime
   Schedules: [Schedule] @hasMany(indexName: "byUserinfo", fields: ["id"])
   Tasks: [Task] @hasMany(indexName: "byUserinfo", fields: ["id"])
   SubscribedCalendars: [SubscribedCalendar]

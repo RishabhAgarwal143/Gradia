@@ -102,6 +102,8 @@ def assign_task(userinfoID, extra_time_slots = [], flag=False):
 
                         if not flag:
                             newSchedule.add_to_cloud(user)
+                            session.add(newSchedule)
+                            session.commit()
                         else:
                             task_list.append(newSchedule)
                         
@@ -155,4 +157,4 @@ def calculate_time_ratio(user: User, subject: Subjects):
     
         
 
-assign_task("82cf448d-fc16-409c-82e9-3304d937f840", [[datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 12, 0, 0)], [datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 15, 0, 0)]])
+# assign_task("82cf448d-fc16-409c-82e9-3304d937f840", [[datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 12, 0, 0)], [datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 15, 0, 0)]])
