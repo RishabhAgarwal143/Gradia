@@ -592,3 +592,32 @@ export async function create_taskGradeInfo(taskData) {
     throw error;
   }
 }
+export async function createUserWorkTim(workTimes) {
+  try {
+    const newUserWorkTim = await client.graphql({
+      query: mutations.createUserWorkTim,
+      variables: {
+        input: {
+          Monday_start: workTimes.Monday_start,
+          Monday_end: workTimes.Monday_end,
+          Tuesday_start: workTimes.Tuesday_start,
+          Tuesday_end: workTimes.Tuesday_end,
+          Wednesday_start: workTimes.Wednesday_start,
+          Wednesday_end: workTimes.Wednesday_end,
+          Thursday_start: workTimes.Thursday_start,
+          Thursday_end: workTimes.Thursday_end,
+          Friday_start: workTimes.Friday_start,
+          Friday_end: workTimes.Friday_end,
+          Saturday_start: workTimes.Saturday_start,
+          Saturday_end: workTimes.Saturday_end,
+          Sunday_start: workTimes.Sunday_start,
+          Sunday_end: workTimes.Sunday_end,
+        },
+      },
+    });
+    return newUserWorkTim;
+  } catch (error) {
+    console.error("Error creating user work times:", error);
+    throw error;
+  }
+}

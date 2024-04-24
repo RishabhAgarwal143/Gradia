@@ -66,14 +66,14 @@ def assign_task(userinfoID, extra_time_slots = [], flag=False):
     tasks  = assign_priority(userinfoID)
     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
     currday = 0
+    session = create_session(userinfoID)
+    user = session.query(User).filter_by(userinfoID=userinfoID).first()
+    user_timezone = pytz.timezone(user.user_timezone)
+    utc_timezone = pytz.utc
     while(tasks):
         print(currday)
         freeSlots = get_user_free_time(userinfoID, (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 0, minute = 0, second= 0), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
         # if the user has continuous free time slot of 2hrs, assign the task to that slot
-        session = create_session(userinfoID)
-        user = session.query(User).filter_by(userinfoID=userinfoID).first()
-        user_timezone = pytz.timezone(user.user_timezone)
-        utc_timezone = pytz.utc
         task_list = []
         for task in tasks:
             if(freeSlots == []):
