@@ -296,6 +296,7 @@ def delete_events_in_range(start_time, end_time, userinfoID):
         rescheduled_events = []
 
     if existing_events or len(rescheduled_events) >=1:
+        rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
         print("DELETED", existing_events)
         return ["DELETED", [], existing_events, rescheduled_events]
     else:
@@ -355,7 +356,7 @@ def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, e
             timeslots = [new_start_time, new_end_time]
         
             rescheduled_events = assign_task(userinfoID, timeslots, True)
-
+            rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
         return ["CONFLICT", [temp_d], existing_events, rescheduled_events]
     # else:
     # print("UPDATE", temp_d, to_update_dict)
@@ -371,7 +372,7 @@ def delete_event_id(event_id, userinfoID):
     if event_dict["personalized_task"]:
         timeslots = [event_dict["DTSTART"], event_dict["DTEND"]]
         rescheduled_events = assign_task(userinfoID, timeslots, True)
-
+        rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
     else:
         rescheduled_events = []
 
