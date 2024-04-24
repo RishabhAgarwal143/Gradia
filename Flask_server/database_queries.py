@@ -261,6 +261,29 @@ def get_schedule_range(userinfo_id, start_date, end_date):
     
     return schedules
 
+def get_schedule_subject_range(userinfo_id, subject_id, start_date, end_date):
+    session = create_session(userinfo_id)
+    schedules = session.query(Schedule).\
+    filter(Schedule.userinfoID == userinfo_id).\
+    filter(Schedule.subjectsID == subject_id).\
+    filter(Schedule.DTEND >= start_date, Schedule.DTSTART <= end_date).\
+    all()
+    # session.close()
+    
+    return schedules
+
+def get_subject_from_id(userinfo_id, subject_id):
+    session = create_session(userinfo_id)
+    subject = session.query(Subjects).filter_by(id=subject_id).first()
+    # session.close()
+    return subject
+
+def get_all_subjects(userinfo_id):
+    session = create_session(userinfo_id)
+    subjects = session.query(Subjects).filter_by(userinfoID=userinfo_id).all()
+    # session.close()
+    return subjects
+
 def get_task_from_id(userinfo_id, task_id):
     session = create_session(userinfo_id)
     task = session.query(Task).filter_by(id=task_id).first()
@@ -279,6 +302,15 @@ def get_task_range(userinfo_id, start_date, due_date):
     # session.close()
     return tasks
 
+def get_task_subject_range(userinfo_id, subject_id, start_date, due_date):
+    session = create_session(userinfo_id)
+    tasks = session.query(Task).\
+    filter(Task.userinfoID == userinfo_id).\
+    filter(Task.subjectsID == subject_id).\
+    filter(Task.DUE <= due_date, Task.DUE >= start_date).\
+    all()
+    # session.close()
+    return tasks
 
 def add_user_info(userinfoID,accesstoken):
 
@@ -379,7 +411,10 @@ def assign_priority(userinfoID):
                 task.PRIORITY = 0.8 * (1/time_remaining) + 0.2 * (subject.subject_Difficulty) 
                 tasks.append(task)
                 continue
-            task_weightage = task.task_grade.task_Weightage/ 100
+            if task.task_grade.task_Weightage:
+                task_weightage = task.task_grade.task_Weightage/ 100
+            else:
+                task_weightage = 0
             target_grade = subject.target_Grade if subject.target_Grade else 93
             grade_left = (target_grade - subject.current_Grade)/100
             
