@@ -48,7 +48,8 @@ const Sidebar = () => {
 
     const updatedSchedules = [...schedules];
     updatedSchedules[index].STATUS = "COMPLETED";
-    setSchedules(updatedSchedules);
+    const newSchedule = updatedSchedules.filter((schedule) => schedule.STATUS !== "COMPLETED");
+    setSchedules(newSchedule);
     try {
       await update_status_task(updatedSchedules[index].id, "COMPLETED");
     } catch (error) {
