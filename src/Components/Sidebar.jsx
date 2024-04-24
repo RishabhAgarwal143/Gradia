@@ -10,9 +10,16 @@ const Sidebar = () => {
     const fetchData = async () => {
       try {
         const TasksData = await list_tasks_item();
+        const filteredData = TasksData.filter((task) => task.STATUS !== "COMPLETED" && task.STATUS !== "CANCELLED");
+        filteredData.sort((a, b) => {
+          return new Date(a.DUE) - new Date(b.DUE);
+        });
+
+        console.log(filteredData);
         // console.log(TasksData.data.listTasks.items);
-        setSchedules(TasksData);
+        setSchedules(filteredData);
       } catch (error) {
+        console.error(error);
         setError(error);
       }
       setLoading(false);

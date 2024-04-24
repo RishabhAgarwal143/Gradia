@@ -397,8 +397,8 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
 
   const handleAddTaskSubmit = async (newTaskData) => {
     try {
-      const newTask = await createNewTask({ "subjectsID": task.id, "SUMMARY": newTaskData.SUMMARY, "DUE": newTaskData.DUE, "STATUS": newTaskData.STATUS, "taskID": task_grade_info.id });
-      const response = await create_taskGradeInfo({ "current_Grade": newTaskData.current_Grade, "overall_Percentage": 0, "task_Weightage": newTaskData.task_Weightage, "taskID": newTask.taskID });
+      const newTask = await createNewTask({ "subjectsID": task.id, "SUMMARY": newTaskData.SUMMARY, "DUE": newTaskData.DUE, "STATUS": newTaskData.STATUS });
+      const response = await update_grade_task({ "current_Grade": newTaskData.current_Grade, "overall_Percentage": 0, "task_Weightage": newTaskData.task_Weightage, "taskID": newTask.taskID });
       if (response.status === "success") {
         setShowAddTaskForm(false);
         setTasks([...tasks, newTask]);
