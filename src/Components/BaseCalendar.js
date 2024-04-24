@@ -23,11 +23,7 @@ const MyCalendar = () => {
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
-  // const [pendingEvent, setPendingEvent] = useState(null);
   const [chatbotpendingEvent, setchatbotpendingEvent] = useState([]);
-  // const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-  // const [gpttask, setGptTask] = useState("");
-  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -150,7 +146,7 @@ const MyCalendar = () => {
     });
 
     setAllEvents([...myEvents, ...addEvents, ...deletedEvents]);
-    setchatbotpendingEvent([...addEvents, ...deletedEvents]);
+    setchatbotpendingEvent([...deletedEvents, ...addEvents]);
 
     //...
   }

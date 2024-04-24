@@ -64,6 +64,12 @@ const Chatbot = ({ onAddgptevent }) => {
               data.events_to_be_managed[2],
               data.events_to_be_managed[0]
             );
+          } else if (data.events_to_be_managed[0] === "UPDATE") {
+            onAddgptevent(
+              data.events_to_be_managed[1],
+              data.events_to_be_managed[2],
+              data.events_to_be_managed[0]
+            );
           }
         }
       })
