@@ -320,27 +320,30 @@ def get_user_info(userinfoID):
     session = create_session(userinfoID)
     user = session.query(User).filter_by(userinfoID=userinfoID).first()
     # user.get_UserWorkTime(session)
-    session.close()
+    # session.close()
     
     return user
 
 
-def assign_priority(user: User):
-    session = create_session(user.userinfoID)
+def assign_priority(userinfoID):
+    # session = create_session(userinfoID)
     tasks = []
-
+    session = create_session(userinfoID)
+    user = session.query(User).filter_by(userinfoID=userinfoID).first()
+    print("Before loop")
     for subject in user.subjects_list:
+        print(subject.subject_Name)
         completed_grade = 0
         for task in subject.task_list:
             if task.STATUS == "COMPLETED" and task.task_grade:
-                completed_grade += task.task_grade.task_Weightage
+                completed_grade += (task.task_grade.task_Weightage or 0)
                 continue
         if completed_grade > 0 :
             subject.subject_Difficulty = 1 - (subject.current_Grade/ completed_grade)
         else:
             subject.subject_Difficulty = 0.5
         for task in subject.task_list:
-           
+            print(task.SUMMARY)
             subject.calculate_final_grade(session)
             time_remaining = (task.DUE - datetime.datetime.now()).days
             if time_remaining < 0:
@@ -366,7 +369,7 @@ def assign_priority(user: User):
     for task in tasks:
         print(task.SUMMARY, task.DUE,  task.PRIORITY)
     session.close()
-    
+    print("After loop")
     return tasks
 
 # get_schedule_range("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))

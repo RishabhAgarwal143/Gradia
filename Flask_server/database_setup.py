@@ -352,9 +352,9 @@ class Subjects(Base):
 class Task_grade_info(Base):
     __tablename__ = "task_grade"
     id: Mapped[str] = mapped_column(primary_key=True)
-    current_Grade: Mapped[Optional[int]]
-    task_Weightage: Mapped[Optional[int]]
-    overall_Percentage: Mapped[Optional[int]]
+    current_Grade: Mapped[int] = mapped_column(default=0)
+    task_Weightage: Mapped[int] = mapped_column(default=0)
+    overall_Percentage: Mapped[int] = mapped_column(default=0)
     extra_info: Mapped[Optional[str]]
     time_taken: Mapped[Optional[datetime.time]]
     task_id: Mapped[Optional[str]] = mapped_column(ForeignKey("task.id"))
