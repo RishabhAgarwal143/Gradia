@@ -5,6 +5,7 @@ import {
   update_status_task,
   update_tagetGrade_subject,
 } from "./support_func";
+import AddTaskForm from "./AddTask";
 import React, { useState, useEffect } from "react";
 // import "./gradeStyles.css";
 
@@ -195,13 +196,352 @@ const GradeBox = ({
   );
 };
 
+// const SecondComponent = ({ subject, task, refreshSubjects }) => {
+//   console.log("🚀 ~ SecondComponent ~ task:", task);
+//   const [selectedStatuses, setSelectedStatuses] = useState({});
+//   const [trigger_refresh, setTrigger] = useState(false);
+//   const [selectedFile, setSelectedFile] = useState(null);
+//   const [subject_info, setSubjectInfo] = useState(task);
+//   const [showAddTaskForm, setShowAddTaskForm] = useState(false);
+//   const [tasks, setTasks] = useState(
+//     task && task.Tasks ? task.Tasks.items : []
+//   );
+
+//   // let tasks = [];
+//   if (task && task.Tasks) {
+//     tasks = task.Tasks.items.sort((a, b) => {
+//       const indexA = statusOrder.indexOf(a.STATUS);
+//       const indexB = statusOrder.indexOf(b.STATUS);
+
+//       if (indexA === -1) {
+//         return 1;
+//       } else if (indexB === -1) {
+//         return -1;
+//       } else if (indexA < indexB) {
+//         return -1;
+//       } else if (indexA > indexB) {
+//         return 1;
+//       } else {
+//         const dueIndexA = new Date(a.DUE).getTime();
+//         const dueIndexB = new Date(b.DUE).getTime();
+
+//         if (dueIndexA === dueIndexB) {
+//           return 0;
+//         } else if (dueIndexA < dueIndexB) {
+//           return -1;
+//         } else {
+//           return 1;
+//         }
+//       }
+//     });
+//   }
+//   if (task_grade_info) {
+//     for (let i = 0; i < tasks.length; i++) {
+//       let id = tasks[i].taskTaskGradeInfoId;
+
+//       // Check if the id exists in list2
+//       let index = task_grade_info.findIndex((item) => item.id === id);
+
+//       if (index !== -1) {
+//         // Add the json information from list2 to list1
+//         tasks[i] = { ...tasks[i], ...task_grade_info[index] };
+//         tasks[i].id = tasks[i].taskGradeInfoTaskId;
+//         // Remove the item from list2
+//         task_grade_info.splice(index, 1);
+//       }
+//     }
+//   }
+
+//   const handleStatusChange = (index, newStatus) => {
+//     setSelectedStatuses((prevStatuses) => ({
+//       ...prevStatuses,
+//       [index]: newStatus,
+//     }));
+//     tasks[index].STATUS = newStatus;
+//     console.log(tasks[index]);
+//     update_status_task(tasks[index].id, newStatus);
+//   };
+
+//   const Refresh = () => {
+//     if (trigger_refresh === false) {
+//       setTrigger(true);
+//     } else {
+//       setTrigger(false);
+//     }
+//   };
+
+//   const handleGradeChange = async (index, newGrade) => {
+//     // tasks[index].current_Grade = newGrade;
+//     tasks[index].current_Grade = newGrade;
+//     let new_percentage = (newGrade * tasks[index].task_Weightage) / 100;
+//     let old_percentage = 0;
+//     if (tasks[index].overall_Percentage) {
+//       old_percentage = tasks[index].overall_Percentage;
+//     }
+//     tasks[index].overall_Percentage = new_percentage;
+//     if (!task.current_Grade) {
+//       task.current_Grade = 0;
+//     }
+//     task.current_Grade += new_percentage - old_percentage;
+
+//     Refresh();
+//     const updatedValue = await update_grade_task(
+//       tasks[index].taskTaskGradeInfoId,
+//       tasks[index].id,
+//       newGrade,
+//       new_percentage,
+//       tasks[index].task_Weightage,
+//       task.current_Grade,
+//       tasks[index].subjectsID
+//     );
+//     if (!tasks[index].taskTaskGradeInfoId) {
+//       tasks[index].taskTaskGradeInfoId =
+//         updatedValue.data.createTaskGradeInfo.id;
+//     }
+//     console.log(tasks[index]);
+//   };
+
+//   const handleTaskWeightageChange = async (index, newGrade) => {
+//     tasks[index].task_Weightage = newGrade;
+//     if (!tasks[index].current_Grade) {
+//       tasks[index].current_Grade = 0;
+//     }
+//     let new_percentage = (newGrade * tasks[index].current_Grade) / 100;
+//     let old_percentage = 0;
+//     if (tasks[index].overall_Percentage) {
+//       old_percentage = tasks[index].overall_Percentage;
+//     }
+//     tasks[index].overall_Percentage = new_percentage;
+//     if (!task.current_Grade) {
+//       task.current_Grade = 0;
+//     }
+//     task.current_Grade += new_percentage - old_percentage;
+//     Refresh();
+//     const updatedValue = await update_grade_task(
+//       tasks[index].taskTaskGradeInfoId,
+//       tasks[index].id,
+//       tasks[index].current_Grade,
+//       new_percentage,
+//       newGrade,
+//       task.current_Grade,
+//       tasks[index].subjectsID
+//     );
+//     if (!tasks[index].taskTaskGradeInfoId) {
+//       tasks[index].taskTaskGradeInfoId =
+//         updatedValue.data.createTaskGradeInfo.id;
+//     }
+//     console.log(tasks[index]);
+//   };
+
+//   const toggleStatusDropdown = (index) => {
+//     setSelectedStatuses((prevStatuses) => ({
+//       ...prevStatuses,
+//       [index]: !prevStatuses[index],
+//     }));
+//   };
+
+//   const handleFileUpload = async () => {
+//     if (!selectedFile) {
+//       alert("No file selected");
+//       return;
+//     }
+
+//     const formData = new FormData();
+//     formData.append("subject_ID", task.id);
+//     formData.append("file", selectedFile);
+//     formData.append("userinfoID", task.userinfoID);
+
+//     try {
+//       const response = await fetch("http://127.0.0.1:5000/syllabus", {
+//         method: "POST",
+//         body: formData,
+//       });
+
+//       if (!response.ok) {
+//         throw new Error("Failed to upload file");
+//       }
+
+//       alert("File uploaded successfully");
+//       setSelectedFile(null);
+//       refreshSubjects();
+//     } catch (error) {
+//       console.error("Error:", error);
+//       alert("Error uploading file");
+//     }
+//   };
+
+//   const handleTargetGradeChange = (newTargetGrade) => {
+//     console.log("🚀 ~ handleTargetGradeChange ~ tasks:", task);
+//     console.log(
+//       "🚀 ~ handleTargetGradeChange ~ newTargetGrade:",
+//       newTargetGrade
+//     );
+//     task.target_Grade = newTargetGrade;
+//     update_tagetGrade_subject(task.id, newTargetGrade);
+//   };
+//   const handleAddTask = () => {
+//     setShowAddTaskForm(true);
+//   };
+
+//   const handleAddTaskSubmit = async (taskData) => {
+//     const newTask = {
+//       SUMMARY: taskData.summary,
+//       DUE: taskData.due,
+//       STATUS: taskData.status,
+//       current_Grade: taskData.grade,
+//       overall_Percentage: taskData.grade,
+//       task_Weightage: taskData.weightage,
+//     };
+//     const updatedTasks = [...tasks, newTask];
+//     setTasks(updatedTasks);
+//     setShowAddTaskForm(false);
+
+//     // Add new task to the database
+//     // Implement this function according to your backend logic
+//     // For example:
+//     // await addTaskToDatabase(newTask);
+//   };
+
+//   return (
+//     <div className="main-content h-screen overflow-y-auto">
+//       <h2 className="text-center text-white text-2xl font-bold">{subject}</h2>
+
+//       <div className="flex justify-center items-center text-white p-4 w-50%">
+//         <h2>
+//           Current Grade:{" "}
+//           <span className="bg-blue-500 text-white px-2 py-1  mr-4 rounded-md">
+//             {(task && task.current_Grade) || 0}
+//           </span>
+//         </h2>
+//         <h2 className="text-white ml-4">
+//           Target Grade:{" "}
+//           {/* <span className="bg-blue-500 text-white px-2 py-1  mr-4 rounded-md">
+//             {(task && task.target_Grade) || 0}{" "}
+//           </span> */}
+//           <GradeBox
+//             key={subject}
+//             grade={(task && task.target_Grade) || 0}
+//             onStatusChange={handleTargetGradeChange}
+//             letter_Grade={
+//               subject_info.LetterGrades && subject_info.LetterGrades.items
+//             }
+//             // className="bg-green-500 text-white px-2 py-1 rounded-md font-bold"
+//           />
+//         </h2>
+//       </div>
+
+//       <button
+//         onClick={() => document.getElementById("fileInput").click()}
+//         className="px-4 py-2 mt-4 mr-4 mb-4 rounded bg-blue-500 font-bold"
+//       >
+//         <span className="text-white font-bold">Upload File </span>
+//       </button>
+//       <input
+//         type="file"
+//         id="fileInput"
+//         className="hidden"
+//         onChange={(event) => setSelectedFile(event.target.files[0])}
+//       />
+//       <button
+//         onClick={handleFileUpload}
+//         style={{
+//           padding: "10px",
+//           margin: "10px",
+//           backgroundColor: "#28a745",
+//           color: "white",
+//           border: "none",
+//           borderRadius: "5px",
+//           cursor: "pointer",
+//         }}
+//       >
+//         Send File to Server
+//       </button>
+//       {selectedFile && (
+//         <p className="text-blue-500 mt-4">Selected file: {selectedFile.name}</p>
+//       )}
+//       <div className="table-container h-[calc(100%-3rem)] overflow-y-auto item-center">
+//         <table className="table">
+//           <thead>
+//             <tr className="sticky top-0 bg-white">
+//               <th>TASKS</th>
+//               <th>DUE</th>
+//               <th>STATUS</th>
+//               <th>GRADE</th>
+//               <th>OVERALL GRADE</th>
+//               <th>TASK WEIGHTAGE</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {tasks.map((task, index) => (
+//               <tr key={index} className="text-white">
+//                 <td className="w-500 p-4">{task.SUMMARY}</td>
+//                 <td className="w-300 p-4">{formatLocalTime(task.DUE)}</td>
+//                 <td className="w-150 p-4 text-center">
+//                   <StatusDropdown
+//                     status={selectedStatuses[index] || task.STATUS}
+//                     onStatusChange={(newStatus) =>
+//                       handleStatusChange(index, newStatus)
+//                     }
+//                     isOpen={selectedStatuses[index]}
+//                     onToggle={() => toggleStatusDropdown(index)}
+//                   />
+//                 </td>
+//                 <td className="w-50 p-4 text-center">
+//                   <GradeBox
+//                     key={subject}
+//                     grade={task.current_Grade || 0}
+//                     onStatusChange={(newStatus) =>
+//                       handleGradeChange(index, newStatus)
+//                     }
+//                   />
+//                 </td>
+//                 <td className="w-50 p-4 text-center">
+//                   {task.overall_Percentage || 0}
+//                 </td>
+//                 <td className="w-50 p-4 text-center">
+//                   <GradeBox
+//                     key={subject}
+//                     grade={task.task_Weightage || 0}
+//                     syllabus_Grade={
+//                       subject_info.SyllabusGradeValues &&
+//                       subject_info.SyllabusGradeValues.items
+//                     }
+//                     onStatusChange={(newStatus) =>
+//                       handleTaskWeightageChange(index, newStatus)
+//                     }
+//                   />{" "}
+//                 </td>
+//               </tr>
+//             ))}
+//             <tr>
+//               <td colSpan="6" className="text-center py-4">
+//                 {!showAddTaskForm ? (
+//                   <button
+//                     onClick={handleAddTask}
+//                     className="bg-green-500 text-white px-4 py-2 rounded"
+//                   >
+//                     Add Task
+//                   </button>
+//                 ) : (
+//                   <AddTaskForm onSubmit={handleAddTaskSubmit} />
+//                 )}
+//               </td>
+//             </tr>
+//           </tbody>
+//         </table>
+//       </div>
+//     </div>
+//   );
+// };
+
 const SecondComponent = ({ subject, task, refreshSubjects }) => {
   const [selectedStatuses, setSelectedStatuses] = useState({});
   const [trigger_refresh, setTrigger] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const subject_info = task;
-
-  let tasks = [];
+  let [tasks, setTasks] = useState(task && task.Tasks ? task.Tasks.items : []);
+  const [showAddTaskForm, setShowAddTaskForm] = useState(false);
+  // let tasks = [];
   if (task && task.Tasks) {
     tasks = task.Tasks.items.sort((a, b) => {
       const indexA = statusOrder.indexOf(a.STATUS);
@@ -385,8 +725,25 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
     task.target_Grade = newTargetGrade;
     update_tagetGrade_subject(task.id, newTargetGrade);
   };
+  const handleAddTask = () => {
+    setShowAddTaskForm(true);
+  };
 
-  console.log("🚀 ~ SecondComponent ~ subject_info:", subject_info);
+  const handleAddTaskSubmit = async (newTask) => {
+    // const response = await addNewTask(newTask);
+    // if (response.status === "success") {
+    //   setShowAddTaskForm(false);
+    //   setTasks([...tasks, response.data]);
+    // } else {
+    //   alert("Failed to add task");
+    // }
+    setShowAddTaskForm(false);
+    setTasks([...tasks, newTask]);
+  };
+
+  const handleCancelAddTask = () => {
+    setShowAddTaskForm(false);
+  };
   return (
     <div className="main-content h-screen overflow-y-auto">
       <h2 className="text-center text-white text-2xl font-bold">{subject}</h2>
@@ -435,7 +792,7 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
           cursor: "pointer",
         }}
       >
-        Send File to Server
+        <span className="text-white font-bold">Send File to Server </span>
       </button>
       {selectedFile && (
         <p className="text-blue-500 mt-4">Selected file: {selectedFile.name}</p>
@@ -494,13 +851,28 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
                 </td>
               </tr>
             ))}
+            {showAddTaskForm && (
+              <AddTaskForm
+                onSubmit={handleAddTaskSubmit}
+                onCancel={handleCancelAddTask}
+              />
+            )}
           </tbody>
         </table>
+        <div className="text-center mt-4">
+          {!showAddTaskForm && (
+            <button
+              onClick={handleAddTask}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              <span className="text-white font-bold">Add Task </span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 };
-
 const GradeView = () => {
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
