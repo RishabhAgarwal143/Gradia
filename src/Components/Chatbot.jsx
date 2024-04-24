@@ -24,7 +24,10 @@ const Chatbot = ({ onAddgptevent }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://127.0.0.1:5000/chat", dataToSend);
+      const response = await axios.post(
+        "http://127.0.0.1:5000/chat",
+        dataToSend
+      );
 
       setLoading(false);
 
@@ -47,13 +50,13 @@ const Chatbot = ({ onAddgptevent }) => {
 
           onAddgptevent(
             data.events_to_be_managed[1],
-            [],
+            data.events_to_be_managed[2],
             data.events_to_be_managed[0]
           );
         } else if (data.events_to_be_managed[0] === "DELETED") {
           onAddgptevent(
-            [],
             data.events_to_be_managed[1],
+            data.events_to_be_managed[2],
             data.events_to_be_managed[0]
           );
         } else if (data.events_to_be_managed[0] === "CONFLICT") {

@@ -395,7 +395,7 @@ def create_task(end_time, task_name, userinfoID, task_description=None, task_loc
     temp_d["DESCRIPTION"] = task_description
     temp_d["userinfoID"] = userinfoID
 
-    return ["ADD_TASK", [temp_d], None]
+    return ["ADD_TASK", [temp_d], []]
 
     
 

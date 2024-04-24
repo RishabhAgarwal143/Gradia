@@ -221,4 +221,4 @@ if __name__ == '__main__':
     # background_process = multiprocessing.Process(target=check_database)
     # background_process.start()
     thread_info = {}
-    app.run(port= 5000, threaded = False,debug=True)
+    app.run(host="0.0.0.0",port= 5000, threaded = False,debug=True)

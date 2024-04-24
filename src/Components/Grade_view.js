@@ -4,7 +4,7 @@ import {
   update_grade_task,
   update_status_task,
   update_tagetGrade_subject,
-  create_taskGradeInfo,
+  // create_taskGradeInfo,
   createNewTask,
 } from "./support_func";
 import AddTaskForm from "./AddTask";
@@ -198,16 +198,14 @@ const GradeBox = ({
   );
 };
 
-
-
 const SecondComponent = ({ subject, task, refreshSubjects }) => {
   const [selectedStatuses, setSelectedStatuses] = useState({});
   const [trigger_refresh, setTrigger] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const subject_info = task;
-  let [tasks, setTasks] = useState(task && task.Tasks ? task.Tasks.items : []);
+  // let [tasks, setTasks] = useState(task && task.Tasks ? task.Tasks.items : []);
   const [showAddTaskForm, setShowAddTaskForm] = useState(false);
-  // let tasks = [];
+  let tasks = [];
   if (task && task.Tasks) {
     tasks = task.Tasks.items.sort((a, b) => {
       const indexA = statusOrder.indexOf(a.STATUS);
@@ -397,14 +395,26 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
 
   const handleAddTaskSubmit = async (newTaskData) => {
     try {
-      const newTask = await createNewTask({ "subjectsID": task.id, "SUMMARY": newTaskData.SUMMARY, "DUE": newTaskData.DUE, "STATUS": newTaskData.STATUS });
-      const response = await update_grade_task({ "current_Grade": newTaskData.current_Grade, "overall_Percentage": 0, "task_Weightage": newTaskData.task_Weightage, "taskID": newTask.taskID });
-      if (response.status === "success") {
-        setShowAddTaskForm(false);
-        setTasks([...tasks, newTask]);
-      } else {
-        alert("Failed to add task");
-      }
+      const newTask = await createNewTask({
+        subjectsID: task.id,
+        SUMMARY: newTaskData.SUMMARY,
+        DUE: new Date(newTaskData.DUE),
+        STATUS: newTaskData.STATUS,
+      });
+      newTaskData.overall_Percentage =
+        (newTaskData.current_Grade * newTaskData.task_Weightage) / 100;
+      const response = await update_grade_task(
+        null,
+        newTask.data.createTask.id,
+        newTaskData.current_Grade,
+        newTaskData.overall_Percentage,
+        newTaskData.task_Weightage,
+        task.current_Grade,
+        task.id
+      );
+      console.log("🚀 ~ handleAddTaskSubmit ~ response:", response);
+      refreshSubjects();
+      task.current_Grade = update_grade();
     } catch (error) {
       alert("Failed to add task");
     }

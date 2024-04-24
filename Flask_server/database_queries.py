@@ -166,6 +166,8 @@ def process_add_task(tasks):
 
 
     for task in tasks:
+        startTime = None
+        endTime= None
         if(task["DTSTART"]):
             startTime = datetime.datetime.fromisoformat(task["DTSTART"].replace('Z', '+00:00'))
         if(task["DUE"]):

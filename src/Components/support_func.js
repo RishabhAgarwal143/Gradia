@@ -551,6 +551,7 @@ export async function update_tagetGrade_subject(subjectid, newStatus) {
 
 export async function createNewTask(taskData) {
   try {
+    console.log(taskData.STATUS);
     const newTask = await client.graphql({
       query: mutations.createTask,
       variables: {
@@ -586,8 +587,7 @@ export async function create_taskGradeInfo(taskData) {
       },
     });
     return newTask;
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error creating new task:", error);
     throw error;
   }
