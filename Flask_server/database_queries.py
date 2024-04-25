@@ -306,7 +306,7 @@ def personalise_user_schedule(userinfo,Force_refresh = False):
         Force_refresh = True
     else:
         Last_modified = datetime.datetime.fromisoformat(temp.replace('Z', '+00:00'))
-    modified_plus_24_hours = Last_modified + datetime.timedelta(hours=12)
+    modified_plus_24_hours = Last_modified + datetime.timedelta(minutes=1)
     if((modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc)) or Force_refresh):
         session = create_session(userinfo["id"])
         user = session.query(User).filter_by(userinfoID=userinfo["id"]).first()
@@ -379,7 +379,9 @@ def assign_priority(userinfoID):
                 task.STATUS = "OVERDUE"
                 continue
             elif time_remaining == 0:
-                time_remaining = 1
+                task.PRIORITY = 1
+                tasks.append(task)
+                continue
 
             if task.STATUS == "COMPLETED":
                 continue
@@ -456,4 +458,8 @@ def assign_priority(userinfoID):
 #     return tasks
 # get_schedule_range("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))
 # assign_priority(get_user_info("82cf448d-fc16-409c-82e9-3304d937f840"))
+if __name__ == "__main__":
+    clear_personalization("82cf448d-fc16-409c-82e9-3304d937f840")
+    # assign_priority("82cf448d-fc16-409c-82e9-3304d937f840")
+    #
 # clear_personalization("82cf448d-fc16-409c-82e9-3304d937f840")

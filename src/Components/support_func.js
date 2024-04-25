@@ -82,14 +82,14 @@ async function create_temp_user(transformedEvents) {
       variables: { id: cognito_Id },
     });
 
-    axios
-      .post("http://127.0.0.1:5000/api/update_calendars", oneTodo)
-      .then((response) => {
-        console.log("Data sent successfully:");
-      })
-      .catch((error) => {
-        console.error("Error sending data:", error);
-      });
+    // axios
+    //   .post("http://127.0.0.1:5000/api/update_calendars", oneTodo)
+    //   .then((response) => {
+    //     console.log("Data sent successfully:");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error sending data:", error);
+    //   });
 
     axios
       .post("http://127.0.0.1:5000/api/personalization", oneTodo)
