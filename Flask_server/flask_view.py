@@ -140,10 +140,13 @@ def chat():
     data = request.json
     userID = data["userId"]
     user_message = data['user_message']
+    print(user_message)
+    
     if(userID not in thread_info):
         thread_info[userID] = openai_manager(userID)
     response,outputs =thread_info[userID].sendcall(user_message)
     response = markdown.markdown(response)
+    print("SENDING THIS TO FRONTEND")
     print(response,outputs)
     return jsonify({'bot_response': response,'events_to_be_managed' : outputs })
 

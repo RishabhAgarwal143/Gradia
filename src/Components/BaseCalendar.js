@@ -3,7 +3,12 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CalendarStyle.css";
-import { cognito_Id, list_schedule_item, access_Token } from "./support_func";
+import {
+  cognito_Id,
+  list_schedule_item,
+  access_Token,
+  backend_Server_ip,
+} from "./support_func";
 import AddEventModal from "./AddEventModal";
 import addIcon from "../icons/add.svg";
 import Sidebar from "./Sidebar";
@@ -14,7 +19,7 @@ import {
   create_user,
   create_schedule,
   deleteSchedule,
-  subscribedScedule,
+  create_task,
 } from "./support_func";
 import Chatbot from "./Chatbot";
 import axios from "axios";
@@ -25,10 +30,12 @@ const create_temp = create_user();
 const MyCalendar = () => {
   // currentAuthenticatedUser();
   // send_data_backend();
+  const [forcedRefresh, setforcedRefresh] = useState(false);
   const [myEvents, setAllEvents] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [chatbotpendingEvent, setchatbotpendingEvent] = useState([]);
+  const [chatbotpendingTask, setchatbotpendingTask] = useState(null);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -62,7 +69,7 @@ const MyCalendar = () => {
     }
     fetchData();
     // eslint-disable-next-line
-  }, [subscribedScedule]);
+  }, [forcedRefresh]);
 
   let counter = 0;
   const update_counter = () => {
@@ -120,7 +127,7 @@ const MyCalendar = () => {
     subject_id: event.subjectsID,
     ScheduleGradeInfo: event.ScheduleGradeInfo || null,
     personalized_task: event.personalized_task || null,
-    color: event.personalized_task ? "black" : null,
+    color: event.personalized_task ? "black" : event.color || null,
   }));
 
   const handleAddEvent = async (newEvent) => {
@@ -142,45 +149,62 @@ const MyCalendar = () => {
     // Highlight the new event by adding a special property
 
     addEvents.forEach((newEvent) => {
-      // setGptTask(tasktype);
+      if (newEvent.hasOwnProperty("id")) {
+        delete newEvent.id;
+      }
       newEvent.color = "green";
     });
     myEvents.forEach((myEvent) => {
       deletedEvents.forEach((deletedEvent) => {
         if (myEvent.id === deletedEvent.id) {
           myEvent.color = "red";
+          deletedEvent.color = "red";
         }
       });
     });
 
-    setAllEvents([...myEvents, ...addEvents, ...deletedEvents]);
+    setAllEvents([...myEvents, ...addEvents]);
     setchatbotpendingEvent([...deletedEvents, ...addEvents]);
-
-    //...
   }
 
-  function handleConfirmGptEvent() {
-    chatbotpendingEvent.forEach((element) => {
-      const index = myEvents.indexOf(element);
-      if (index > -1) {
-        myEvents.splice(index, 1);
-      }
+  function handleGPTtasks(Task) {
+    // Highlight the new event by adding a special property
+    Task.color = "orange";
+    setchatbotpendingEvent([Task]);
+    setchatbotpendingTask(Task);
+  }
+
+  async function handleConfirmGptEvent() {
+    console.log("in handle confirm");
+    for (const element of chatbotpendingEvent) {
+      console.log("🚀 ~ chatbotpendingEvent.forEach ~ element:", element);
       if (element.color === "green") {
+        const index = myEvents.indexOf(element);
+        if (index > -1) {
+          myEvents.splice(index, 1);
+        }
         console.log("Trying to Add via Chatbot");
         delete element.color;
         element.DTSTART = new Date(element.DTSTART);
         element.DTEND = new Date(element.DTEND);
-        handleAddEvent(element);
+        await handleAddEvent(element);
       } else if (element.color === "red") {
         console.log("Trying to Delete via Chatbot");
         delete element.color;
         element.DTSTART = new Date(element.DTSTART);
         element.DTEND = new Date(element.DTEND);
-        handleDelEvent(element);
+        await handleDelEvent(element);
+      } else if (element.color === "orange") {
+        console.log("Trying to Add Task");
+        delete element.color;
+        element.DUE = new Date(element.DUE);
+        console.log("🚀 ~ handleConfirmGptEvent ~ element:", element);
+        await create_task(element);
+        setchatbotpendingTask(null);
       }
-    });
-
+    }
     setchatbotpendingEvent([]);
+    setforcedRefresh();
   }
 
   function handleCancelGptEvent() {
@@ -245,7 +269,7 @@ const MyCalendar = () => {
       return;
     }
     axios
-      .post("http://127.0.0.1:5000/Subscribe", {
+      .post(`http://${backend_Server_ip}:5000/Subscribe`, {
         calendar_url: subscribe_url,
         calendar_name: subscribe_name,
         userId: cognito_Id,
@@ -294,7 +318,9 @@ const MyCalendar = () => {
     }
   };
 
-  create_temp(transformedEvents);
+  create_temp(transformedEvents, () => {
+    setforcedRefresh();
+  });
   return (
     <div className="flex flex-row bg-black">
       <div className="flex-1 relative">
@@ -308,15 +334,7 @@ const MyCalendar = () => {
               onDel={handleDelEvent}
             />
           )}
-          {/* {
-            <ConfirmAddModal
-              event={pendingEvent}
-              isOpen={isConfirmationModalOpen}
-              onConfirm={handleConfirmation}
-              onCancel={() => setIsConfirmationModalOpen(false)}
-              position={modalPosition}
-            />
-          } */}
+
           <Calendar
             localizer={localizer}
             events={transformedEvents}
@@ -329,7 +347,6 @@ const MyCalendar = () => {
             views={["month", "week", "day", "agenda"]}
             className="w-3/4 left-0 top-0 absolute bg-white p-4  shadow-lg"
           />
-          {/* <Sidebar /> */}
         </div>
       </div>
 
@@ -337,7 +354,7 @@ const MyCalendar = () => {
         className="fixed top-0 right-0 h-full w-1/4 flex flex-col items-center justify-start overflow-y-auto"
         style={{
           background: "#171717",
-          // fontFamily: "cursive",
+
           color: "white",
           zIndex: 10,
         }}
@@ -443,10 +460,14 @@ const MyCalendar = () => {
           <div className="text-white text-sm font-bold py-2">CHATBOT</div>
 
           {!chatbotpendingEvent.length && (
-            <Chatbot onAddgptevent={handleGPTevent} />
+            <Chatbot
+              onAddgptevent={handleGPTevent}
+              onAddgptTask={handleGPTtasks}
+            />
           )}
           {chatbotpendingEvent.length !== 0 && (
             <ChatbotConfirmModel
+              taskitem={chatbotpendingTask}
               onConfirm={handleConfirmGptEvent}
               onCancel={handleCancelGptEvent}
             />

@@ -69,7 +69,7 @@ def assign_task(userinfoID, extra_time_slots = [], flag=False):
     task_list = []
     while(tasks):
         print(currday)
-        freeSlots = get_user_free_time(userinfoID, (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 0, minute = 0, second= 0), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
+        freeSlots = get_user_free_time(userinfoID, (datetime.datetime.now() + datetime.timedelta(days = currday)), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
         # if the user has continuous free time slot of 2hrs, assign the task to that slot
         session = create_session(userinfoID)
         user = session.query(User).filter_by(userinfoID=userinfoID).first()
@@ -143,7 +143,8 @@ def calculate_time_ratio(user: User, subject: Subjects):
                 if(task_time == None):
                     # set it to 1 hour
                     task_time = 1
-                avg_time_per_weightage += task_time/task.task_grade.task_Weightage
+                
+                avg_time_per_weightage += task_time/(task.task_grade.task_Weightage or 1)
     avg_time_per_weightage /= len(user.subjects_list)
     if(avg_time_per_weightage == 0):
         avg_time_per_weightage = 1
@@ -154,7 +155,7 @@ def calculate_time_ratio(user: User, subject: Subjects):
     # if the priority is greater than the average priority, assign the task to the user
 
 
-    
-        
-# assign_task("82cf448d-fc16-409c-82e9-3304d937f840", [[datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 12, 0, 0)], [datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 15, 0, 0)]])
-# assign_task("82cf448d-fc16-409c-82e9-3304d937f840", flag=True)
+
+if __name__ == "__main__":
+    assign_task("82cf448d-fc16-409c-82e9-3304d937f840")
+

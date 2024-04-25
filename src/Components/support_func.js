@@ -11,6 +11,10 @@ import axios from "axios";
 export var cognito_Id;
 export var access_Token;
 var CurrentUsersEmail;
+
+// const backend_Server_ip = "3.145.104.203";
+export const backend_Server_ip = "127.0.0.1";
+
 export async function currentAuthenticatedUser() {
   try {
     const { userId } = await getCurrentUser();
@@ -30,7 +34,7 @@ export async function currentAuthenticatedUser() {
       Token: `${accessToken}`,
     }; // Replace with your data
     axios
-      .post("http://127.0.0.1:5000/api/data", dataToSend)
+      .post(`http://${backend_Server_ip}:5000/api/data`, dataToSend)
       .then((response) => {
         console.log("Data sent successfully:", response.data);
       })
@@ -65,11 +69,11 @@ export async function get_item() {
   console.log(allTodos);
 }
 
-async function create_temp_user(transformedEvents) {
+async function create_temp_user(transformedEvents, callback) {
   // await currentAuthenticatedUser();
   await handleFetchUserAttributes();
   axios
-    .post("http://127.0.0.1:5000/api/schedule", transformedEvents)
+    .post(`http://${backend_Server_ip}:5000/api/schedule`, transformedEvents)
     .then((response) => {
       console.log("Data sent successfully:");
     })
@@ -83,7 +87,7 @@ async function create_temp_user(transformedEvents) {
     });
 
     axios
-      .post("http://127.0.0.1:5000/api/update_calendars", oneTodo)
+      .post(`http://${backend_Server_ip}:5000/api/update_calendars`, oneTodo)
       .then((response) => {
         console.log("Data sent successfully:");
       })
@@ -92,9 +96,10 @@ async function create_temp_user(transformedEvents) {
       });
 
     axios
-      .post("http://127.0.0.1:5000/api/personalization", oneTodo)
+      .post(`http://${backend_Server_ip}:5000/api/personalization`, oneTodo)
       .then((response) => {
         console.log("Data sent successfully:");
+        callback();
       })
       .catch((error) => {
         console.error("Error sending data:", error);
@@ -105,7 +110,7 @@ async function create_temp_user(transformedEvents) {
 export async function send_data_backend() {
   let tasks = await list_tasks_item();
   axios
-    .post("http://127.0.0.1:5000/api/task", tasks)
+    .post(`http://${backend_Server_ip}:5000/api/task`, tasks)
     .then((response) => {
       console.log("Data sent successfully:");
     })
@@ -115,7 +120,7 @@ export async function send_data_backend() {
 
   let subjects = await listSubjects();
   axios
-    .post("http://127.0.0.1:5000/api/subjects", subjects)
+    .post(`http://${backend_Server_ip}:5000/api/subjects`, subjects)
     .then((response) => {
       console.log("Data sent successfully:");
     })
@@ -156,13 +161,14 @@ export async function send_data_backend() {
 export function create_user() {
   let hasbeencalled = false;
   let counter = 4;
-  return function (transformedEvents) {
+  return function (transformedEvents, callback) {
     if (!hasbeencalled) {
       if (counter === 0) {
         hasbeencalled = true;
       }
       counter--;
-      create_temp_user(transformedEvents);
+      create_temp_user(transformedEvents, callback);
+
       if (counter > 2) {
         subscribedScedule();
       }
@@ -178,7 +184,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/createsubscribe", data)
+          .post(`http://${backend_Server_ip}:5000/api/createsubscribe`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -196,7 +202,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/updatesubscribe", data)
+          .post(`http://${backend_Server_ip}:5000/api/updatesubscribe`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -214,7 +220,7 @@ export async function subscribedScedule() {
       data.userinfoID = cognito_Id;
       console.log("🚀 ~ client.graphql ~ data:", data);
       axios
-        .post("http://127.0.0.1:5000/api/updatetaskGrade", data)
+        .post(`http://${backend_Server_ip}:5000/api/updatetaskGrade`, data)
         .then((response) => {
           console.log("Data sent successfully:");
         })
@@ -231,7 +237,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/deletesubscribe", data)
+          .post(`http://${backend_Server_ip}:5000/api/deletesubscribe`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -249,7 +255,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/createTask", data)
+          .post(`http://${backend_Server_ip}:5000/api/createTask`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -267,7 +273,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/updateTask", data)
+          .post(`http://${backend_Server_ip}:5000/api/updateTask`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -283,7 +289,7 @@ export async function subscribedScedule() {
   client.graphql({ query: subscriptions.onDeleteTask }).subscribe({
     next: ({ data }) => {
       axios
-        .post("http://127.0.0.1:5000/api/deleteTask", data)
+        .post(`http://${backend_Server_ip}:5000/api/deleteTask`, data)
         .then((response) => {
           console.log("Data sent successfully:");
         })
@@ -298,7 +304,7 @@ export async function subscribedScedule() {
   client.graphql({ query: subscriptions.onUpdateSubjects }).subscribe({
     next: ({ data }) => {
       axios
-        .post("http://127.0.0.1:5000/api/updatesubjects", data)
+        .post(`http://${backend_Server_ip}:5000/api/updatesubjects`, data)
         .then((response) => {
           console.log("Data sent successfully:");
         })
@@ -324,6 +330,22 @@ export async function create_schedule(event) {
     return newSchedule;
   } catch (error) {
     console.error("Error creating schedule:", error);
+    throw error; // Rethrow the error if needed
+  }
+}
+
+export async function create_task(event) {
+  try {
+    console.log("event", event);
+    const newTask = await client.graphql({
+      query: mutations.createTask,
+      variables: {
+        input: event,
+      },
+    });
+    return newTask;
+  } catch (error) {
+    console.error("Error creating Task:", error);
     throw error; // Rethrow the error if needed
   }
 }

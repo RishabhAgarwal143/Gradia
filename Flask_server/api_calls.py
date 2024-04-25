@@ -384,7 +384,7 @@ def delete_event_id(event_id, userinfoID):
 
     session.close()
 
-    return ["DELETE", [], [event_dict], rescheduled_events]
+    return ["DELETED", [], [event_dict], rescheduled_events]
 
 
 def create_task(end_time, task_name, userinfoID, task_description=None, task_location=None):
@@ -392,12 +392,12 @@ def create_task(end_time, task_name, userinfoID, task_description=None, task_loc
 
     temp_d = dict()
     temp_d["SUMMARY"] = task_name
-    temp_d["DTEND"] = end_time
+    temp_d["DUE"] = end_time
     temp_d["LOCATION"] = task_location
     temp_d["DESCRIPTION"] = task_description
     temp_d["userinfoID"] = userinfoID
 
-    return ["ADD_TASK", [temp_d], []]
+    return ["ADD_TASK", temp_d, []]
 
     
 
@@ -438,12 +438,12 @@ def update_task(task_id, end_time, task_name, userinfoID, task_description=None,
 
     temp_d = dict()
     temp_d["SUMMARY"] = task_name
-    temp_d["DTEND"] = end_time
+    temp_d["DUE"] = end_time
     temp_d["LOCATION"] = task_location
     temp_d["DESCRIPTION"] = task_description
     temp_d["userinfoID"] = userinfoID
 
-    return ["UPDATE_TASK", [temp_d], [to_update_dict], None]
+    return ["UPDATE_TASK", temp_d, to_update_dict, None]
 
 
 def analyze_grade():

@@ -439,56 +439,7 @@ def assign_priority(userinfoID):
         print(task.SUMMARY, task.DUE,  task.PRIORITY)
     session.close()
     return tasks
-# def assign_priority(userinfoID):
-#     session = create_session(userinfoID)
-    
-#     # Query all subjects with their task lists and task grades
-#     user = session.query(User).filter_by(userinfoID=userinfoID).options(
-#     joinedload(User.subjects_list).joinedload(Subject.task_list).joinedload(Task.task_grade)
-# ).first()
-    
-#     tasks = []
-    
-#     for subject in user.subjects_lists:
-#         completed_grade = sum(task.task_grade.task_Weightage or 0 for task in subject.task_list if task.STATUS == "COMPLETED")
-        
-#         if completed_grade > 0:
-#             subject.subject_Difficulty = 1 - (subject.current_Grade / completed_grade)
-#         else:
-#             subject.subject_Difficulty = 0.5
-        
-#         subject.calculate_final_grade(session)
-        
-#         for task in subject.task_list:
-#             time_remaining = (task.DUE - datetime.datetime.now()).days
-#             if time_remaining < 0:
-#                 task.STATUS = "OVERDUE"
-#                 continue
-#             elif time_remaining == 0:
-#                 time_remaining = 1
-            
-#             if task.STATUS == "COMPLETED":
-#                 continue
-            
-#             priority = 0.8 * (1 / time_remaining) + 0.2 * (subject.subject_Difficulty)
-            
-#             if task.task_grade:
-#                 task_weightage = task.task_grade.task_Weightage / 100
-#                 target_grade = subject.target_Grade or 93
-#                 grade_left = (target_grade - subject.current_Grade) / 100
-                
-#                 priority += 0.2 * task_weightage + 0.1 * grade_left
-            
-#             task.PRIORITY = priority
-#             tasks.append(task)
-    
-#     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
-    
-#     for task in tasks:
-#         print(task.SUMMARY, task.DUE, task.PRIORITY)
-    
-#     session.close()
-#     return tasks
+
 # get_schedule_range("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))
 # assign_priority(get_user_info("82cf448d-fc16-409c-82e9-3304d937f840"))
 # clear_personalization("82cf448d-fc16-409c-82e9-3304d937f840")

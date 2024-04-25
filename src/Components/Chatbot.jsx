@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { cognito_Id } from "./support_func";
+import { cognito_Id, backend_Server_ip } from "./support_func";
 import axios from "axios";
 
-const Chatbot = ({ onAddgptevent }) => {
+const Chatbot = ({ onAddgptevent, onAddgptTask }) => {
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async () => {
@@ -25,7 +25,8 @@ const Chatbot = ({ onAddgptevent }) => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5000/chat",
+        // "http://127.0.0.1:5000/chat",
+        `http://${backend_Server_ip}:5000/chat`,
         dataToSend
       );
 
@@ -71,6 +72,8 @@ const Chatbot = ({ onAddgptevent }) => {
             data.events_to_be_managed[2],
             data.events_to_be_managed[0]
           );
+        } else if (data.events_to_be_managed[0] === "ADD_TASK") {
+          onAddgptTask(data.events_to_be_managed[1]);
         }
       }
     } catch (error) {
