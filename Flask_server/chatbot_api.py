@@ -31,11 +31,11 @@ functions = {
     # 'modify_event_in_calendar': ac.modify_event_in_calendar,
 }
 
-
 # Function to call the assistant required functions and return their outputs as JSON strings
 def execute_required_functions(required_actions,userID):
     tool_outputs = []
     result = None
+    popup_functions = {ac.add_event_to_calendar, ac.delete_events_in_range, ac.create_task, ac.update_task, ac.delete_event_id, ac.update_event}
     for tool_call in required_actions.submit_tool_outputs.tool_calls:
         func_name = tool_call.function.name
         args = json.loads(tool_call.function.arguments)
@@ -44,7 +44,8 @@ def execute_required_functions(required_actions,userID):
         # Call the corresponding Python function
         if func_name in functions:
             function = functions[func_name]
-            if (function == ac.add_event_to_calendar or function == ac.delete_events_in_range):
+
+            if (function in popup_functions):
                 global pop_up_flag
                 pop_up_flag = True
                 # print("POP UP FLAG IS TRUE")
