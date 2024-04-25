@@ -393,7 +393,7 @@ def assign_priority(userinfoID):
             grade_left = (target_grade - subject.current_Grade)/100
             print("grade left", grade_left)
             if(grade_left < 0):
-                task.PRIORITY = 0.8 * (1/time_remaining) + 0.2 * (subject.subject_Difficulty)
+                task.PRIORITY = 0.6 * (1/time_remaining) + 0.2 * (subject.subject_Difficulty) + 0.2 * (task_weightage)
                 tasks.append(task)
                 continue
             task.PRIORITY = 0.5 * (1/time_remaining) + 0.2 * (task_weightage) + 0.1 * (grade_left) + 0.2 * (subject.subject_Difficulty)
