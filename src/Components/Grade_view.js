@@ -7,6 +7,7 @@ import {
   createNewTask,
 } from "./support_func";
 import AddTaskForm from "./AddTask";
+import AddTaskForm from "./AddTask";
 import React, { useState, useEffect } from "react";
 // import "./gradeStyles.css";
 
