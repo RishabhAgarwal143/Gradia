@@ -11,7 +11,7 @@ from pprint import pp
 from werkzeug.utils import secure_filename
 import os
 import shutil
-
+from audio_listener import transcribe
 from text_parser import PDFParser
 from api_calls import add_syllabus_grades,add_letter_grades
 
@@ -88,7 +88,7 @@ def update_task():
 @app.route('/api/updatetaskGrade', methods=['POST'])
 def update_taskGrade():
     data = request.json
-    print(f"==>> data: {data}")
+    # print(f"==>> data: {data}")
 
     process_update_taskGrade(data)
     return jsonify({'message': 'Data received successfully'})
@@ -140,12 +140,28 @@ def chat():
     data = request.json
     userID = data["userId"]
     user_message = data['user_message']
+    print(user_message)
+    
     if(userID not in thread_info):
         thread_info[userID] = openai_manager(userID)
     response,outputs =thread_info[userID].sendcall(user_message)
     response = markdown.markdown(response)
+    print("SENDING THIS TO FRONTEND")
     print(response,outputs)
     return jsonify({'bot_response': response,'events_to_be_managed' : outputs })
+
+@app.route('/audio', methods=['POST'])
+def audio():
+    if 'audio' not in request.files:
+        return 'No file part'
+    audio_file = request.files['audio']
+    audio_file.save('Flask_server/audio/uploaded_audio.wav')  # Save the audio file
+    message = transcribe('Flask_server/audio/uploaded_audio.wav')
+    print(f"==>> message: {message}")
+
+    os.remove('Flask_server/audio/uploaded_audio.wav')
+
+    return jsonify({'message' : message})
 
 @app.route('/Subscribe',methods=['POST'])
 def subscribe_cal():
@@ -221,4 +237,4 @@ if __name__ == '__main__':
     # background_process = multiprocessing.Process(target=check_database)
     # background_process.start()
     thread_info = {}
-    app.run(port= 5000, threaded = False,debug=True)
+    app.run(host="0.0.0.0",port= 5000, threaded = False,debug=True)

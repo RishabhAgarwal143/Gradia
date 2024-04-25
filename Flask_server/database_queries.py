@@ -167,6 +167,8 @@ def process_add_task(tasks):
 
 
     for task in tasks:
+        startTime = None
+        endTime= None
         if(task["DTSTART"]):
             startTime = datetime.datetime.fromisoformat(task["DTSTART"].replace('Z', '+00:00'))
         if(task["DUE"]):
@@ -262,6 +264,29 @@ def get_schedule_range(userinfo_id, start_date, end_date):
     
     return schedules
 
+def get_schedule_subject_range(userinfo_id, subject_id, start_date, end_date):
+    session = create_session(userinfo_id)
+    schedules = session.query(Schedule).\
+    filter(Schedule.userinfoID == userinfo_id).\
+    filter(Schedule.subjectsID == subject_id).\
+    filter(Schedule.DTEND >= start_date, Schedule.DTSTART <= end_date).\
+    all()
+    # session.close()
+    
+    return schedules
+
+def get_subject_from_id(userinfo_id, subject_id):
+    session = create_session(userinfo_id)
+    subject = session.query(Subjects).filter_by(id=subject_id).first()
+    # session.close()
+    return subject
+
+def get_all_subjects(userinfo_id):
+    session = create_session(userinfo_id)
+    subjects = session.query(Subjects).filter_by(userinfoID=userinfo_id).all()
+    # session.close()
+    return subjects
+
 def get_task_from_id(userinfo_id, task_id):
     session = create_session(userinfo_id)
     task = session.query(Task).filter_by(id=task_id).first()
@@ -280,6 +305,15 @@ def get_task_range(userinfo_id, start_date, due_date):
     # session.close()
     return tasks
 
+def get_task_subject_range(userinfo_id, subject_id, start_date, due_date):
+    session = create_session(userinfo_id)
+    tasks = session.query(Task).\
+    filter(Task.userinfoID == userinfo_id).\
+    filter(Task.subjectsID == subject_id).\
+    filter(Task.DUE <= due_date, Task.DUE >= start_date).\
+    all()
+    # session.close()
+    return tasks
 
 def add_user_info(userinfoID,accesstoken):
 
@@ -299,15 +333,16 @@ def add_user_info(userinfoID,accesstoken):
 
 def personalise_user_schedule(userinfo,Force_refresh = False):
     # print(userinfo)
-    temp = userinfo["Last_updated"]
-    
-    if(not temp):
-        Last_modified =  datetime.datetime.now(datetime.timezone.utc)
-        Force_refresh = True
-    else:
-        Last_modified = datetime.datetime.fromisoformat(temp.replace('Z', '+00:00'))
-    modified_plus_24_hours = Last_modified + datetime.timedelta(minutes=1)
-    if((modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc)) or Force_refresh):
+    if(not Force_refresh):
+        temp = userinfo["Last_updated"]
+        
+        if(not temp):
+            Last_modified =  datetime.datetime.now(datetime.timezone.utc)
+            Force_refresh = True
+        else:
+            Last_modified = datetime.datetime.fromisoformat(temp.replace('Z', '+00:00'))
+        modified_plus_24_hours = Last_modified + datetime.timedelta(minutes=20)
+    if(Force_refresh or (modified_plus_24_hours <= datetime.datetime.now(datetime.timezone.utc))):
         session = create_session(userinfo["id"])
         user = session.query(User).filter_by(userinfoID=userinfo["id"]).first()
         user.Last_modified = datetime.datetime.now(datetime.timezone.utc)
@@ -355,12 +390,15 @@ def assign_priority(userinfoID):
     tasks = []
     session = create_session(userinfoID)
     user = session.query(User).filter_by(userinfoID=userinfoID).first()
-
+    pp(user.subjects_list)
     for subject in user.subjects_list:
         print(subject.subject_Name)
         completed_grade = 0
         completed_tasks = [task for task in subject.task_list if task.STATUS == "COMPLETED" and task.task_grade]
+        print(f"==>> completed_tasks: {completed_tasks}")
+        pp(subject.task_list)
         unchecked_tasks = [task for task in subject.task_list if task.STATUS != "COMPLETED" and task.STATUS != "OVERDUE" and task.STATUS != "CANCELLED"]
+        print(f"==>> unchecked_tasks: {unchecked_tasks}")
         completed_grade = sum(task.task_grade.task_Weightage or 0 for task in completed_tasks)
         print(completed_grade)
         if completed_grade > 0  and (subject.current_Grade/ completed_grade) < 1:
@@ -370,6 +408,7 @@ def assign_priority(userinfoID):
         else:
             subject.subject_Difficulty = 0.5
         for task in unchecked_tasks:
+            print(f"==>> subject.subject_Difficulty")
             # if(task.PRIORITY != 9 and task.PRIORITY != None and task.PRIORITY != 0):
             #     tasks.append(task)
             #     continue
@@ -406,60 +445,12 @@ def assign_priority(userinfoID):
         print(task.SUMMARY, task.DUE,  task.PRIORITY)
     session.close()
     return tasks
-# def assign_priority(userinfoID):
-#     session = create_session(userinfoID)
-    
-#     # Query all subjects with their task lists and task grades
-#     user = session.query(User).filter_by(userinfoID=userinfoID).options(
-#     joinedload(User.subjects_list).joinedload(Subject.task_list).joinedload(Task.task_grade)
-# ).first()
-    
-#     tasks = []
-    
-#     for subject in user.subjects_lists:
-#         completed_grade = sum(task.task_grade.task_Weightage or 0 for task in subject.task_list if task.STATUS == "COMPLETED")
-        
-#         if completed_grade > 0:
-#             subject.subject_Difficulty = 1 - (subject.current_Grade / completed_grade)
-#         else:
-#             subject.subject_Difficulty = 0.5
-        
-#         subject.calculate_final_grade(session)
-        
-#         for task in subject.task_list:
-#             time_remaining = (task.DUE - datetime.datetime.now()).days
-#             if time_remaining < 0:
-#                 task.STATUS = "OVERDUE"
-#                 continue
-#             elif time_remaining == 0:
-#                 time_remaining = 1
-            
-#             if task.STATUS == "COMPLETED":
-#                 continue
-            
-#             priority = 0.8 * (1 / time_remaining) + 0.2 * (subject.subject_Difficulty)
-            
-#             if task.task_grade:
-#                 task_weightage = task.task_grade.task_Weightage / 100
-#                 target_grade = subject.target_Grade or 93
-#                 grade_left = (target_grade - subject.current_Grade) / 100
-                
-#                 priority += 0.2 * task_weightage + 0.1 * grade_left
-            
-#             task.PRIORITY = priority
-#             tasks.append(task)
-    
-#     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
-    
-#     for task in tasks:
-#         print(task.SUMMARY, task.DUE, task.PRIORITY)
-    
-#     session.close()
-#     return tasks
+
 # get_schedule_range("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))
 # assign_priority(get_user_info("82cf448d-fc16-409c-82e9-3304d937f840"))
-if __name__ == "__main__":
-    clear_personalization("82cf448d-fc16-409c-82e9-3304d937f840")
-    # assign_priority("82cf448d-fc16-409c-82e9-3304d937f840")
-    #
 # clear_personalization("82cf448d-fc16-409c-82e9-3304d937f840")
+if __name__ == "__main__":
+    from task_scheduling import assign_task
+    
+    # personalise_user_schedule({"id":"82cf448d-fc16-409c-82e9-3304d937f840"}, Force_refresh=True)
+    clear_personalization("162248b5-f929-4a56-aa92-669d44fb2006")

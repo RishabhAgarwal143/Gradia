@@ -247,14 +247,31 @@ def add_event_to_calendar(start_time, end_time, event_name, userinfoID, event_de
     temp_d["DESCRIPTION"] = event_description
     temp_d["userinfoID"] = userinfoID
 
-    # print(existing_events)
+
     
     if existing_events:
+        rescheduled_events = []
+        personalized_flag = False
+        for event in existing_events:
+            if event["personalized_task"] == "true":
+                personalized_flag = True
+                existing_events.remove(event)
+        
+        if personalized_flag:
+            timeslots = [start_time, end_time]
+            rescheduled_events = assign_task(userinfoID, timeslots, True)
+            print(f"==>> rescheduled_events: {rescheduled_events}")
+            rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
+            
+        else:
+            timeslots = []
+            rescheduled_events = []
+
         # print("CONFLICT", event_add)
-        return ["CONFLICT", [temp_d], existing_events]
+        return ["CONFLICT", [temp_d], existing_events, rescheduled_events]
     else:
         # print("ADD_EVENT", event_add)
-        return ["ADD", [temp_d], None]
+        return ["ADD", [temp_d], []]
     
 
 def delete_events_in_range(start_time, end_time, userinfoID):
@@ -267,7 +284,7 @@ def delete_events_in_range(start_time, end_time, userinfoID):
         print(event)
         if event["personalized_task"] == "true":
             is_personalized = True
-            break
+            existing_events.remove(event)
                 
     if is_personalized:
         timeslots = [start_time, end_time]
@@ -275,14 +292,18 @@ def delete_events_in_range(start_time, end_time, userinfoID):
         timeslots = []
 
 
-    rescheduled_events = assign_task(userinfoID, timeslots, True)
+    if is_personalized:
+        rescheduled_events = assign_task(userinfoID, timeslots, True)
+    else:
+        rescheduled_events = []
 
-    if existing_events:
+    if existing_events or len(rescheduled_events) >=1:
+        rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
         print("DELETED", existing_events)
-        return ["DELETED", rescheduled_events, existing_events]
+        return ["DELETED", [], existing_events, rescheduled_events]
     else:
         print("NO_EVENTS")
-        return ["NO_EVENTS", None, None]
+        return ["NO_EVENTS", [], []]
 
 
 def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, event_description=None, event_name=None, event_location=None):
@@ -292,6 +313,7 @@ def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, e
 
     to_update = database_queries.get_schedule_by_id(event_id, session) 
     to_update_dict = to_update.dict_representation()
+    is_personalized = False
 
     event_name = event_name if event_name else to_update_dict["SUMMARY"]
 
@@ -300,6 +322,16 @@ def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, e
         
     if not new_end_time:
         new_end_time = _convert_utc_str_to_usertime_str(userinfoID, to_update_dict["DTEND"], user_data.user_timezone)
+
+
+    existing_events = _get_schedule_range_usertime(new_start_time, new_end_time, userinfoID)
+    for event in existing_events:
+        if event["id"] == event_id:
+            existing_events.remove(event)
+        
+        if event["personalized_task"] == "true":
+            is_personalized = True
+            existing_events.remove(event)
 
 
     # print("NEW START TIME", new_start_time)
@@ -319,11 +351,18 @@ def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, e
     temp_d["userinfoID"] = userinfoID
 
 
-    # if existing_events:
-    #     return ["CONFLICT", [temp_d], [to_update_dict], existing_events]
+        
+    if existing_events or is_personalized:
+        rescheduled_events = []
+        if is_personalized:
+            timeslots = [new_start_time, new_end_time]
+        
+            rescheduled_events = assign_task(userinfoID, timeslots, True)
+            rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
+        return ["CONFLICT", [temp_d], [to_update_dict].extend(existing_events), rescheduled_events]
     # else:
-    # print("UPDATE", temp_d, to_update_dict)
-    return ["UPDATE", [temp_d], [to_update_dict], None]
+    print("UPDATE", temp_d, to_update_dict)
+    return ["UPDATE", [temp_d], [to_update_dict], []]
 
 def delete_event_id(event_id, userinfoID):
 
@@ -331,26 +370,40 @@ def delete_event_id(event_id, userinfoID):
     event = database_queries.get_schedule_by_id(event_id, session)
 
     event_dict = event.dict_representation()
+
+    if event_dict["personalized_task"] == "true":
+        timeslots = [event_dict["DTSTART"], event_dict["DTEND"]]
+        rescheduled_events = assign_task(userinfoID, timeslots, True)
+        rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
+    else:
+        rescheduled_events = []
+
+
     # convert to user's timezone
     user_data = database_queries.get_user_info(userinfoID)
     user_timezone = user_data.user_timezone
 
     session.close()
 
-    return ["DELETED", [event_dict]]
+    return ["DELETED", [], [event_dict], rescheduled_events]
 
 
-def create_task(end_time, task_name, userinfoID, task_description=None, task_location=None):
+def create_task(end_time, task_name, userinfoID, subject_id=None, task_description=None, task_location=None):
     # when the user asks for a reminder, and a task has only a end time/date, then we create a task
 
     temp_d = dict()
     temp_d["SUMMARY"] = task_name
-    temp_d["DTEND"] = end_time
-    temp_d["LOCATION"] = task_location
-    temp_d["DESCRIPTION"] = task_description
+    temp_d["DTSTART"] = None
+    temp_d["DUE"] = end_time
+    temp_d["DESCRIPTION"] = task_description if task_description else None
+    temp_d["LOCATION"] = task_location if task_location else None
+    temp_d["STATUS"] = "NEEDS_ACTION"
+    temp_d["PRIORITY"] = 9
+    temp_d["subjectsID"] = subject_id if subject_id else None
     temp_d["userinfoID"] = userinfoID
+    
 
-    return ["ADD_TASK", [temp_d], None]
+    return ["ADD_TASK", temp_d, []]
 
     
 
@@ -383,21 +436,31 @@ def get_tasks_range(start_time, end_time, userinfoID):
     return result
     
 
-def update_task(task_id, end_time, task_name, userinfoID, task_description=None, task_location=None):
+def update_task(task_id, status, userinfoID, end_time=None, task_name=None, task_description=None, task_location=None):
     # todo
     session = database_queries.create_session(userinfoID)
     to_update = database_queries.get_task_by_id(task_id, session)
     to_update_dict = to_update.dict_representation()
 
     temp_d = dict()
-    temp_d["SUMMARY"] = task_name
-    temp_d["DTEND"] = end_time
-    temp_d["LOCATION"] = task_location
-    temp_d["DESCRIPTION"] = task_description
+    temp_d["SUMMARY"] = task_name if task_name else to_update_dict["SUMMARY"]
+    temp_d["DUE"] = end_time if end_time else to_update_dict["DUE"]
+    temp_d["LOCATION"] = task_location if task_location else to_update_dict["LOCATION"]
+    temp_d["DESCRIPTION"] = task_description if task_description else to_update_dict["DESCRIPTION"]
+    temp_d["STATUS"] = status
     temp_d["userinfoID"] = userinfoID
 
-    return ["UPDATE_TASK", [temp_d], [to_update_dict], None]
+    print("TO_UPDATE_DICT", to_update_dict)
 
+    return ["UPDATE_TASK", temp_d,None]
+
+def delete_task(task_id, userinfoID):
+    session = database_queries.create_session(userinfoID)
+    task = database_queries.get_task_by_id(task_id, session)
+    task_dict = task.dict_representation()
+    print(f"==>> task_dict: {task_dict}")
+
+    return ["DELETE_TASK",task_dict, None]
 
 def analyze_grade():
     # todo
@@ -408,7 +471,71 @@ def rework_caendar():
     return 0
 
 
+def get_all_subjects(userinfoID):
+    session = database_queries.create_session(userinfoID)
+    subjects = database_queries.get_all_subjects(userinfoID)
+    result = ""
+    for subject in subjects:
+        result += subject.__repr__()
+        result += "\n"
+    session.close()
+    return result
 
+def get_subject_from_id(subject_id, userinfoID):
+    session = database_queries.create_session(userinfoID)
+    subject = database_queries.get_subject_from_id(userinfoID, subject_id)
+
+    session.close()
+    return subject.__repr__()
+
+def get_schedule_subject_range(start_time, end_time, subject_id, userinfoID):
+    session = database_queries.create_session(userinfoID)
+    user_data = database_queries.get_user_info(userinfoID)
+    user_timezone = user_data.user_timezone
+
+    user_timezone_tz = pytz.timezone(user_timezone)
+    tz_offset = user_timezone_tz.utcoffset(datetime.datetime.now()).total_seconds()
+    time_delta = datetime.timedelta(seconds=tz_offset)
+
+    start_date_utc = _convert_usertime_str_to_utc_str(userinfoID, start_time)
+    end_date_utc = _convert_usertime_str_to_utc_str(userinfoID, end_time)
+
+    schedules = database_queries.get_schedule_subject_range(userinfoID, subject_id, start_date_utc, end_date_utc)
+        
+    result = ""
+    for schedule in schedules:
+        start_time_usertime = schedule.DTSTART + time_delta
+        end_time_usertime = schedule.DTEND + time_delta
+
+        schedule.DTSTART = start_time_usertime
+        schedule.DTEND = end_time_usertime
+
+        result += schedule.__repr__()
+        result += "\n"
+ 
+    return result
+
+def get_task_subject_range(start_time, end_time, subject_id, userinfoID):
+    session = database_queries.create_session(userinfoID)
+    user_data = database_queries.get_user_info(userinfoID)
+    user_timezone = user_data.user_timezone
+
+    user_timezone_tz = pytz.timezone(user_timezone)
+    tz_offset = user_timezone_tz.utcoffset(datetime.datetime.now()).total_seconds()
+    time_delta = datetime.timedelta(seconds=tz_offset)
+
+    start_date_utc = _convert_usertime_str_to_utc_str(userinfoID, start_time)
+    end_date_utc = _convert_usertime_str_to_utc_str(userinfoID, end_time)
+
+    tasks = database_queries.get_task_subject_range(userinfoID, subject_id, start_date_utc, end_date_utc)
+    
+    result = ""
+    for task in tasks:
+        task.DUE = task.DUE + time_delta
+        result += task.__repr__()
+        result += "\n"
+
+    return result
 
 
 def add_syllabus_grades(category_Name,category_Grade,subject_ID,userinfoID):

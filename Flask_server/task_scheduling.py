@@ -141,6 +141,8 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slo
 def assign_task(userinfoID, extra_time_slots=[], flag=False):
     tasks = assign_priority(userinfoID)
     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
+    print(f"==>> tasks: {tasks}")
+    
     currday = 0
     task_list = []
 
@@ -230,11 +232,9 @@ def calculate_time_ratio(user: User, subject: Subjects):
 
 
 # Example usage
-
-
     
         
 if __name__ == "__main__":
     # get_user_free_time("82cf448d-fc16-409c-82e9-3304d937f840", (datetime.datetime.now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days = 0)), (datetime.datetime.now() + datetime.timedelta(days = 0)).replace(hour= 23, minute = 59, second= 59))
-    assign_task("82cf448d-fc16-409c-82e9-3304d937f840", flag = True)
+    assign_task("162248b5-f929-4a56-aa92-669d44fb2006")
     # print_busy_and_free_slots("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2024, 4, 24, 9, 0), datetime.datetime(2024, 4, 25, 17, 0))

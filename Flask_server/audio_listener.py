@@ -19,8 +19,9 @@ def transcribe(audio_path):
     
     audio_json = transcription.model_dump()
     plain_text = audio_json.get('text')
-    print(transcription)
+    # print(transcription)
+    audio_file.close()
     return plain_text
 
 if __name__ == "__main__":
-    transcribe("output.wav")
+    transcribe("Flask_server/audio/uploaded_audio.wav")
