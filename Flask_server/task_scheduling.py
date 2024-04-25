@@ -58,6 +58,8 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slo
     if busySlots[-1][1] < currentDayEnd:
         freeSlots.append([busySlots[-1][1], currentDayEnd])
     print("free slots:")
+    # add the timeslot only if the freeslot is after the current time
+    freeSlots = [slot for slot in freeSlots if slot[0] > datetime.datetime.now()]
     for i in range(0, len(freeSlots)):
         print(freeSlots[i][0].day, freeSlots[i][0].hour, freeSlots[i][0].minute, "-",  freeSlots[i][1].day, freeSlots[i][1].hour, freeSlots[i][1].minute)
     return freeSlots
@@ -74,7 +76,9 @@ def assign_task(userinfoID, extra_time_slots = [], flag=False):
         session = create_session(userinfoID)
         user = session.query(User).filter_by(userinfoID=userinfoID).first()
         user_timezone = pytz.timezone(user.user_timezone)
-        utc_timezone = pytz.utc
+        freeSlots = get_user_free_time(userinfoID, (datetime.datetime.now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days = currday)), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
+        task_list = []
+        # if the user has continuous free time slot of 2hrs, assign the task to that slot
         for task in tasks:
             if(freeSlots == []):
                 break
@@ -143,8 +147,7 @@ def calculate_time_ratio(user: User, subject: Subjects):
                 if(task_time == None):
                     # set it to 1 hour
                     task_time = 1
-                
-                avg_time_per_weightage += task_time/(task.task_grade.task_Weightage or 1)
+                avg_time_per_weightage += task_time/(task.task_grade.task_Weightage if task.task_grade.task_Weightage != 0 else 1) 
     avg_time_per_weightage /= len(user.subjects_list)
     if(avg_time_per_weightage == 0):
         avg_time_per_weightage = 1
