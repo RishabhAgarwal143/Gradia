@@ -65,16 +65,18 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slo
 def assign_task(userinfoID, extra_time_slots = [], flag=False):
     tasks  = assign_priority(userinfoID)
     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
+    print(" I have reached here")
     currday = 0
-    session = create_session(userinfoID)
-    user = session.query(User).filter_by(userinfoID=userinfoID).first()
-    user_timezone = pytz.timezone(user.user_timezone)
-    utc_timezone = pytz.utc
+    # task_list_to_return = []
+    # utc_timezone = pytz.utc
     while(tasks):
         print(currday)
+        session = create_session(userinfoID)
+        user = session.query(User).filter_by(userinfoID=userinfoID).first()
+        user_timezone = pytz.timezone(user.user_timezone)
         freeSlots = get_user_free_time(userinfoID, (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 0, minute = 0, second= 0), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
-        # if the user has continuous free time slot of 2hrs, assign the task to that slot
         task_list = []
+        # if the user has continuous free time slot of 2hrs, assign the task to that slot
         for task in tasks:
             if(freeSlots == []):
                 break
@@ -157,4 +159,4 @@ def calculate_time_ratio(user: User, subject: Subjects):
     
         
 
-# assign_task("82cf448d-fc16-409c-82e9-3304d937f840", [[datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 12, 0, 0)], [datetime.date(2021, 9, 9), datetime.datetime(2021, 9, 9, 15, 0, 0)]])
+assign_task("82cf448d-fc16-409c-82e9-3304d937f840", flag = True)
