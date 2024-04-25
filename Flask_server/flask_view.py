@@ -158,6 +158,9 @@ def audio():
     audio_file.save('Flask_server/audio/uploaded_audio.wav')  # Save the audio file
     message = transcribe('Flask_server/audio/uploaded_audio.wav')
     print(f"==>> message: {message}")
+
+    os.remove('Flask_server/audio/uploaded_audio.wav')
+
     return jsonify({'message' : message})
 
 @app.route('/Subscribe',methods=['POST'])
