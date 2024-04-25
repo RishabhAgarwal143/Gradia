@@ -446,4 +446,5 @@ def assign_priority(userinfoID):
 if __name__ == "__main__":
     from task_scheduling import assign_task
     
-    personalise_user_schedule({"id":"82cf448d-fc16-409c-82e9-3304d937f840"}, Force_refresh=True)
+    # personalise_user_schedule({"id":"82cf448d-fc16-409c-82e9-3304d937f840"}, Force_refresh=True)
+    clear_personalization("82cf448d-fc16-409c-82e9-3304d937f840")

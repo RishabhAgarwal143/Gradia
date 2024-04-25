@@ -49,7 +49,7 @@
 import React, { useState } from "react";
 import { backend_Server_ip } from "./support_func";
 
-const Microphone = () => {
+const Microphone = ({ send_message }) => {
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [recordedChunks, setRecordedChunks] = useState([]);
@@ -77,6 +77,7 @@ const Microphone = () => {
     if (mediaRecorder && recording) {
       mediaRecorder.stop();
       setRecording(false);
+      sendAudioToServer();
     }
   };
   const sendAudioToServer = async () => {
@@ -100,7 +101,9 @@ const Microphone = () => {
       }
 
       const responseData = await response.json();
-      console.log(responseData);
+      console.log(responseData.message);
+
+      send_message(responseData.message);
       // send_message(responseData);
     } catch (error) {
       console.error("Error:", error);
@@ -109,13 +112,17 @@ const Microphone = () => {
 
   return (
     <div>
-      <button onClick={startRecording} disabled={recording}>
-        Start Recording
-      </button>
-      <button onClick={stopRecording} disabled={!recording}>
-        Stop Recording
-      </button>
-      <button onClick={sendAudioToServer}>Send Audio</button>
+      {recording ? (
+        <button onClick={stopRecording} disabled={!recording}>
+          {/* <img src="microphone-off-icon.png" alt="Microphone Off" /> */}
+          Stop Recording
+        </button>
+      ) : (
+        <button onClick={startRecording} disabled={recording}>
+          {/* <img src="microphone-on-icon.png" alt="Microphone On" /> */}
+          Start Recording
+        </button>
+      )}
     </div>
   );
 };

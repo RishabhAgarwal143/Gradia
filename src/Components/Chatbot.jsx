@@ -6,24 +6,7 @@ import Microphone from "./Microphone";
 const Chatbot = ({ onAddgptevent, onAddgptTask }) => {
   const [loading, setLoading] = useState(false);
 
-  const sendMessage = async (fromAudioflag) => {
-    const userInput = document.getElementById("user-input").value;
-
-    const userMessageDiv = document.createElement("div");
-    userMessageDiv.className =
-      "chat-message user-message bg-blue-500 text-white rounded-lg p-2 mb-2";
-    userMessageDiv.innerHTML = userInput;
-    document.getElementById("chat-messages").appendChild(userMessageDiv);
-
-    // Clear input field
-    document.getElementById("user-input").value = "";
-    const dataToSend = {
-      userId: cognito_Id,
-      user_message: userInput,
-    };
-
-    setLoading(true);
-
+  const sending_to_Backend = async (dataToSend) => {
     try {
       const response = await axios.post(
         // "http://127.0.0.1:5000/chat",
@@ -83,6 +66,44 @@ const Chatbot = ({ onAddgptevent, onAddgptTask }) => {
     }
   };
 
+  const sendMessage = async () => {
+    const userInput = document.getElementById("user-input").value;
+
+    const userMessageDiv = document.createElement("div");
+    userMessageDiv.className =
+      "chat-message user-message bg-blue-500 text-white rounded-lg p-2 mb-2";
+    userMessageDiv.innerHTML = userInput;
+    document.getElementById("chat-messages").appendChild(userMessageDiv);
+
+    // Clear input field
+    document.getElementById("user-input").value = "";
+    const dataToSend = {
+      userId: cognito_Id,
+      user_message: userInput,
+    };
+
+    setLoading(true);
+    sending_to_Backend(dataToSend);
+  };
+
+  const sendaudio = async (message) => {
+    console.log("🚀 ~ sendaudio ~ message:", message);
+    const userMessageDiv = document.createElement("div");
+    userMessageDiv.className =
+      "chat-message user-message bg-blue-500 text-white rounded-lg p-2 mb-2";
+    userMessageDiv.innerHTML = message;
+    document.getElementById("chat-messages").appendChild(userMessageDiv);
+
+    document.getElementById("user-input").value = "";
+    const dataToSend = {
+      userId: cognito_Id,
+      user_message: message,
+    };
+
+    setLoading(true);
+    sending_to_Backend(dataToSend);
+  };
+
   return (
     <div className="flex flex-col h-full w-full text-white p-2 rounded-lg">
       <div className="flex-1 overflow-y-auto p-2 text-left" id="chat-messages">
@@ -112,7 +133,7 @@ const Chatbot = ({ onAddgptevent, onAddgptTask }) => {
             )}
           </button>
         </div>
-        <Microphone />
+        <Microphone send_message={sendaudio} />
       </div>
     </div>
   );
