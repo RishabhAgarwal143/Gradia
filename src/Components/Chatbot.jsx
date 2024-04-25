@@ -1,10 +1,102 @@
 import React, { useState } from "react";
 import { cognito_Id } from "./support_func";
 import axios from "axios";
-
+import Microphone from "../icons/microphone-svgrepo-com.svg";
 const Chatbot = ({ onAddgptevent }) => {
   const [loading, setLoading] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [audioChunks, setAudioChunks] = useState([]);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const startRecording = () => {
+    const stream = navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.then((stream) => {
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size) {
+          setAudioChunks((chunks) => [...chunks, e.data]);
+        }
+      };
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: "audio/mpeg-3" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        const audioFile = new File([audioBlob], "voice_record.mp3", {
+          type: "audio/mpeg-3",
+        });
 
+        const formData = new FormData();
+        formData.append("voiceRecording", audioFile);
+        formData.append("userId", cognito_Id);
+
+        axios
+          .post("http://127.0.0.1:5000/chat/voice", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response) => {
+            const data = response.data;
+            console.log(data.events_to_be_managed);
+            if (!data.events_to_be_managed) {
+              const botMessageDiv = document.createElement("div");
+              botMessageDiv.className =
+                "bg-gray-200 text-gray-800 rounded-lg py-2 px-4 max-w-xs ml-auto";
+              botMessageDiv.innerHTML = data.bot_response;
+              document.getElementById("chat-messages").appendChild(botMessageDiv);
+            } else {
+              if (data.events_to_be_managed[0] === "ADD") {
+                data.events_to_be_managed[1]["DTSTART"] = new Date(
+                  data.events_to_be_managed[1]["DTSTART"]
+                );
+                data.events_to_be_managed[1]["DTEND"] = new Date(
+                  data.events_to_be_managed[1]["DTEND"]
+                );
+
+                onAddgptevent(
+                  data.events_to_be_managed[1],
+                  [],
+                  data.events_to_be_managed[0]
+                );
+              } else if (data.events_to_be_managed[0] === "DELETED") {
+                onAddgptevent(
+                  [],
+                  data.events_to_be_managed[1],
+                  data.events_to_be_managed[0]
+                );
+              } else if (data.events_to_be_managed[0] === "CONFLICT") {
+                onAddgptevent(
+                  data.events_to_be_managed[1],
+                  data.events_to_be_managed[2],
+                  data.events_to_be_managed[0]
+                );
+              } else if (data.events_to_be_managed[0] === "UPDATE") {
+                onAddgptevent(
+                  data.events_to_be_managed[1],
+                  data.events_to_be_managed[2],
+                  data.events_to_be_managed[0]
+                );
+              }
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+
+        setAudioChunks([]);
+      };
+
+      mediaRecorder.start();
+      setRecording(true);
+      setMediaRecorder(mediaRecorder);
+    });
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      setRecording(false);
+    }
+  };
   const sendMessage = async () => {
     const userInput = document.getElementById("user-input").value;
 
@@ -104,6 +196,19 @@ const Chatbot = ({ onAddgptevent }) => {
               "Send"
             )}
           </button>
+          {recording ? (
+            <button
+              onClick={stopRecording}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg ml-2 hover:bg-red-600 focus:outline-none flex items-center"
+            >
+              <img src={Microphone} alt="microhone" className="w-5 h-5 " />
+            </button>
+          ) : (
+            <button
+              onClick={startRecording}
+              className="px-4 py-2 bg-green-500 text-white rounded-lg ml-2 hover:bg-green-600 focus:outline-none flex items-center"
+            > <img src={Microphone} alt="microhone" className="w-5 h-5 " /></button>
+          )}
         </div>
       </div>
     </div>
