@@ -370,7 +370,7 @@ def delete_event_id(event_id, userinfoID):
 
     event_dict = event.dict_representation()
 
-    if event_dict["personalized_task"]:
+    if event_dict["personalized_task"] == "true":
         timeslots = [event_dict["DTSTART"], event_dict["DTEND"]]
         rescheduled_events = assign_task(userinfoID, timeslots, True)
         rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
