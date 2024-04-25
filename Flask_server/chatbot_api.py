@@ -26,7 +26,8 @@ functions = {
     'get_all_subjects': ac.get_all_subjects,
     'get_subject_from_id': ac.get_subject_from_id,
     'get_task_subject_range': ac.get_task_subject_range,
-    'get_schedule_subject_range': ac.get_schedule_subject_range
+    'get_schedule_subject_range': ac.get_schedule_subject_range,
+    'delete_task': ac.delete_task
     # 'schedule_new_event': ac.schedule_new_event,
     # 'modify_event_in_calendar': ac.modify_event_in_calendar,
 }
@@ -35,7 +36,7 @@ functions = {
 def execute_required_functions(required_actions,userID):
     tool_outputs = []
     result = None
-    popup_functions = {ac.add_event_to_calendar, ac.delete_events_in_range, ac.create_task, ac.update_task, ac.delete_event_id, ac.update_event}
+    popup_functions = {ac.add_event_to_calendar, ac.delete_events_in_range, ac.create_task, ac.update_task, ac.delete_event_id, ac.update_event, ac.delete_task}
     for tool_call in required_actions.submit_tool_outputs.tool_calls:
         func_name = tool_call.function.name
         args = json.loads(tool_call.function.arguments)

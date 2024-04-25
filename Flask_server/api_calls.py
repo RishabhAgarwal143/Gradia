@@ -453,6 +453,12 @@ def update_task(task_id, status, userinfoID, end_time=None, task_name=None, task
 
     return ["UPDATE_TASK", temp_d, to_update_dict, None]
 
+def delete_task(task_id, userinfoID):
+    session = database_queries.create_session(userinfoID)
+    task = database_queries.get_task_by_id(task_id, session)
+    task_dict = task.dict_representation()
+
+    return ["DELETE_TASK", [], [task_dict], None]
 
 def analyze_grade():
     # todo
