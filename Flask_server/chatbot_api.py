@@ -50,8 +50,10 @@ def execute_required_functions(required_actions,userID):
                 pop_up_flag = True
                 # print("POP UP FLAG IS TRUE")
 
-            result = function(**args)
-
+            try:
+                result = function(**args)
+            except:
+                result = "UNEXPECTED ERROR: Please try again later ......"
             # Serialize the function's output to JSON
             result_str = json.dumps(result)
 
