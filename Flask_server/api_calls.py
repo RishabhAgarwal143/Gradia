@@ -323,7 +323,7 @@ def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, e
         new_end_time = _convert_utc_str_to_usertime_str(userinfoID, to_update_dict["DTEND"], user_data.user_timezone)
 
 
-    existing_events = _get_schedule_range_df(new_start_time, new_end_time, userinfoID)
+    existing_events = _get_schedule_range_usertime(new_start_time, new_end_time, userinfoID)
     for event in existing_events:
         if event["id"] == event_id:
             existing_events.remove(event)
