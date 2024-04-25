@@ -53,7 +53,7 @@ def execute_required_functions(required_actions,userID):
 
             try:
                 result = function(**args)
-            except:
+            except :
                 result = "UNEXPECTED ERROR: Please try again later ......"
             # Serialize the function's output to JSON
             result_str = json.dumps(result)

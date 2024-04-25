@@ -36,27 +36,38 @@ const Chatbot = ({ onAddgptevent, onAddgptTask }) => {
           onAddgptevent(
             data.events_to_be_managed[1],
             data.events_to_be_managed[2],
-            data.events_to_be_managed[0]
+            data.events_to_be_managed[0],
+            data.events_to_be_managed[3]
           );
         } else if (data.events_to_be_managed[0] === "DELETED") {
           onAddgptevent(
             data.events_to_be_managed[1],
             data.events_to_be_managed[2],
-            data.events_to_be_managed[0]
+            data.events_to_be_managed[0],
+            data.events_to_be_managed[3]
           );
         } else if (data.events_to_be_managed[0] === "CONFLICT") {
           onAddgptevent(
             data.events_to_be_managed[1],
             data.events_to_be_managed[2],
-            data.events_to_be_managed[0]
+            data.events_to_be_managed[0],
+            data.events_to_be_managed[3]
           );
         } else if (data.events_to_be_managed[0] === "UPDATE") {
           onAddgptevent(
             data.events_to_be_managed[1],
             data.events_to_be_managed[2],
-            data.events_to_be_managed[0]
+            data.events_to_be_managed[0],
+            data.events_to_be_managed[3]
           );
         } else if (data.events_to_be_managed[0] === "ADD_TASK") {
+          data.events_to_be_managed[1].color = "orange";
+          onAddgptTask(data.events_to_be_managed[1]);
+        } else if (data.events_to_be_managed[0] === "UPDATE_TASK") {
+          data.events_to_be_managed[1].color = "yellow";
+          onAddgptTask(data.events_to_be_managed[1]);
+        } else if (data.events_to_be_managed[0] === "DELETE_TASK") {
+          data.events_to_be_managed[1].color = "purple";
           onAddgptTask(data.events_to_be_managed[1]);
         }
       }

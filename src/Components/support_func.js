@@ -350,6 +350,38 @@ export async function create_task(event) {
   }
 }
 
+export async function update_task(event) {
+  try {
+    console.log("event", event);
+    const newTask = await client.graphql({
+      query: mutations.updateTask,
+      variables: {
+        input: event,
+      },
+    });
+    return newTask;
+  } catch (error) {
+    console.error("Error updating Task:", error);
+    throw error; // Rethrow the error if needed
+  }
+}
+
+export async function delete_task(event_id) {
+  try {
+    const deletedTask = await client.graphql({
+      query: mutations.deleteTask,
+      variables: {
+        input: {
+          id: event_id,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting Task:", error);
+    throw error; // Rethrow the error if needed
+  }
+}
+
 export async function list_schedule_item() {
   let items = [];
   let nextToken = null;

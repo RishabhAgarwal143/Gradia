@@ -20,6 +20,8 @@ import {
   create_schedule,
   deleteSchedule,
   create_task,
+  update_task,
+  delete_task,
 } from "./support_func";
 import Chatbot from "./Chatbot";
 import axios from "axios";
@@ -144,8 +146,14 @@ const MyCalendar = () => {
     await deleteSchedule(newEvent.id);
     setAllEvents(myEvents.filter((event) => event.id !== newEvent.id));
   };
+  const [hiddenEvents, setHiddenEvents] = useState([]);
 
-  function handleGPTevent(addEvents, deletedEvents, tasktype) {
+  function handleGPTevent(
+    addEvents,
+    deletedEvents,
+    tasktype,
+    personalized_tasks
+  ) {
     // Highlight the new event by adding a special property
 
     addEvents.forEach((newEvent) => {
@@ -162,14 +170,36 @@ const MyCalendar = () => {
         }
       });
     });
+    // if (personalized_tasks) {
+    //   if (personalized_tasks.length !== 0) {
+    //     setHiddenEvents(
+    //       myEvents.filter((event) => event.personalized_task === true)
+    //     );
+    //     setAllEvents(
+    //       myEvents.filter((event) => event.personalized_task !== true)
+    //     );
+    //   }
+    //   personalized_tasks.forEach((newEvent) => {
+    //     if (newEvent.hasOwnProperty("id")) {
+    //       delete newEvent.id;
+    //     }
+    //     newEvent.color = "green";
+    //   });
 
+    //   setAllEvents([...myEvents, ...addEvents, ...personalized_tasks]);
+    //   setchatbotpendingEvent([
+    //     ...deletedEvents,
+    //     ...addEvents,
+    //     ...personalized_tasks,
+    //   ]);
+    // } else {
     setAllEvents([...myEvents, ...addEvents]);
     setchatbotpendingEvent([...deletedEvents, ...addEvents]);
   }
 
   function handleGPTtasks(Task) {
     // Highlight the new event by adding a special property
-    Task.color = "orange";
+
     setchatbotpendingEvent([Task]);
     setchatbotpendingTask(Task);
   }
@@ -198,13 +228,26 @@ const MyCalendar = () => {
         console.log("Trying to Add Task");
         delete element.color;
         element.DUE = new Date(element.DUE);
-        console.log("🚀 ~ handleConfirmGptEvent ~ element:", element);
         await create_task(element);
+        setchatbotpendingTask(null);
+      } else if (element.color === "yellow") {
+        console.log("Trying to Update Task");
+        delete element.color;
+        element.DUE = new Date(element.DUE);
+        await update_task(element);
+        setchatbotpendingTask(null);
+      } else if (element.color === "purple") {
+        console.log("Trying to Delete Task");
+        delete element.color;
+        await delete_task(element.id);
         setchatbotpendingTask(null);
       }
     }
+
+    setforcedRefresh(!forcedRefresh);
+    // hiddenEvents.forEach((event) => deleteSchedule(event.id));
+    // setHiddenEvents([]);
     setchatbotpendingEvent([]);
-    setforcedRefresh();
   }
 
   function handleCancelGptEvent() {
@@ -214,7 +257,9 @@ const MyCalendar = () => {
         myEvents.splice(index, 1);
       }
     });
-
+    // setAllEvents([...myEvents, ...hiddenEvents]);
+    // setHiddenEvents([]);
+    setchatbotpendingTask(null);
     setchatbotpendingEvent([]);
   }
 

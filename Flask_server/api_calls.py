@@ -260,6 +260,7 @@ def add_event_to_calendar(start_time, end_time, event_name, userinfoID, event_de
         if personalized_flag:
             timeslots = [start_time, end_time]
             rescheduled_events = assign_task(userinfoID, timeslots, True)
+            print(f"==>> rescheduled_events: {rescheduled_events}")
             rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
             
         else:
@@ -451,14 +452,15 @@ def update_task(task_id, status, userinfoID, end_time=None, task_name=None, task
 
     print("TO_UPDATE_DICT", to_update_dict)
 
-    return ["UPDATE_TASK", temp_d, to_update_dict, None]
+    return ["UPDATE_TASK", temp_d,None]
 
 def delete_task(task_id, userinfoID):
     session = database_queries.create_session(userinfoID)
     task = database_queries.get_task_by_id(task_id, session)
     task_dict = task.dict_representation()
+    print(f"==>> task_dict: {task_dict}")
 
-    return ["DELETE_TASK", [], [task_dict], None]
+    return ["DELETE_TASK",task_dict, None]
 
 def analyze_grade():
     # todo
@@ -526,7 +528,7 @@ def get_task_subject_range(start_time, end_time, subject_id, userinfoID):
     end_date_utc = _convert_usertime_str_to_utc_str(userinfoID, end_time)
 
     tasks = database_queries.get_task_subject_range(userinfoID, subject_id, start_date_utc, end_date_utc)
-
+    
     result = ""
     for task in tasks:
         task.DUE = task.DUE + time_delta

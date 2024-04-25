@@ -210,7 +210,8 @@ class Schedule(Base):
         temp_d = {}
         temp_d["id"] = self.id
         temp_d["SUMMARY"] = self.SUMMARY
-        temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
+        if(self.DTSTART):
+            temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["DTEND"] = self.DTEND.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["LOCATION"] = self.LOCATION
         temp_d["DESCRIPTION"] = self.DESCRIPTION
@@ -303,7 +304,8 @@ class Task(Base):
         temp_d = {}
         temp_d["id"] = self.id
         temp_d["SUMMARY"] = self.SUMMARY
-        temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
+        if(self.DTSTART):
+            temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["DUE"] = self.DUE.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["LOCATION"] = self.LOCATION
         temp_d["DESCRIPTION"] = self.DESCRIPTION

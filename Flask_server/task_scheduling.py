@@ -77,7 +77,7 @@ def assign_task(userinfoID, extra_time_slots = [], flag=False):
         user = session.query(User).filter_by(userinfoID=userinfoID).first()
         user_timezone = pytz.timezone(user.user_timezone)
         freeSlots = get_user_free_time(userinfoID, (datetime.datetime.now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days = currday)), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
-        task_list = []
+        # task_list = []
         # if the user has continuous free time slot of 2hrs, assign the task to that slot
         for task in tasks:
             if(freeSlots == []):
