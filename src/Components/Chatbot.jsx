@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { cognito_Id, backend_Server_ip } from "./support_func";
 import axios from "axios";
-import Microphone from "../icons/microphone-svgrepo-com.svg";
-const Chatbot = ({ onAddgptevent }) => {
+import Microphone from "./Microphone";
+
+const Chatbot = ({ onAddgptevent, onAddgptTask }) => {
   const [loading, setLoading] = useState(false);
 
-  const sendMessage = async () => {
+  const sendMessage = async (fromAudioflag) => {
     const userInput = document.getElementById("user-input").value;
 
     const userMessageDiv = document.createElement("div");
@@ -110,23 +111,8 @@ const Chatbot = ({ onAddgptevent }) => {
               "Send"
             )}
           </button>
-          {recording ? (
-            <button
-              onClick={stopRecording}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg ml-2 hover:bg-red-600 focus:outline-none flex items-center"
-            >
-              <img src={Microphone} alt="microhone" className="w-5 h-5 " />
-            </button>
-          ) : (
-            <button
-              onClick={startRecording}
-              className="px-4 py-2 bg-green-500 text-white rounded-lg ml-2 hover:bg-green-600 focus:outline-none flex items-center"
-            >
-              {" "}
-              <img src={Microphone} alt="microhone" className="w-5 h-5 " />
-            </button>
-          )}
         </div>
+        <Microphone />
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ from pprint import pp
 from werkzeug.utils import secure_filename
 import os
 import shutil
-
+from audio_listener import transcribe
 from text_parser import PDFParser
 from api_calls import add_syllabus_grades,add_letter_grades
 
@@ -149,6 +149,16 @@ def chat():
     print("SENDING THIS TO FRONTEND")
     print(response,outputs)
     return jsonify({'bot_response': response,'events_to_be_managed' : outputs })
+
+@app.route('/audio', methods=['POST'])
+def audio():
+    if 'audio' not in request.files:
+        return 'No file part'
+    audio_file = request.files['audio']
+    audio_file.save('Flask_server/audio/uploaded_audio.wav')  # Save the audio file
+    message = transcribe('Flask_server/audio/uploaded_audio.wav')
+    print(f"==>> message: {message}")
+    return jsonify({'message' : message})
 
 @app.route('/Subscribe',methods=['POST'])
 def subscribe_cal():
