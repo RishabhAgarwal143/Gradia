@@ -253,17 +253,18 @@ def add_event_to_calendar(start_time, end_time, event_name, userinfoID, event_de
         rescheduled_events = []
         personalized_flag = False
         for event in existing_events:
-            if event["personalized_task"]:
+            if event["personalized_task"] == "true":
                 personalized_flag = True
                 existing_events.remove(event)
         
         if personalized_flag:
             timeslots = [start_time, end_time]
+            rescheduled_events = assign_task(userinfoID, timeslots, True)
+            rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
+            
         else:
             timeslots = []
-
-        rescheduled_events = assign_task(userinfoID, timeslots, True)
-                
+            rescheduled_events = []
 
         # print("CONFLICT", event_add)
         return ["CONFLICT", [temp_d], existing_events, rescheduled_events]
@@ -327,7 +328,7 @@ def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, e
         if event["id"] == event_id:
             existing_events.remove(event)
         
-        if event["personalized_task"]:
+        if event["personalized_task"] == "true":
             is_personalized = True
             existing_events.remove(event)
 
@@ -359,7 +360,7 @@ def update_event(event_id, userinfoID, new_start_time=None, new_end_time=None, e
             rescheduled_events = [schedule.dict_representation() for schedule in rescheduled_events]
         return ["CONFLICT", [temp_d], [to_update_dict].extend(existing_events), rescheduled_events]
     # else:
-    # print("UPDATE", temp_d, to_update_dict)
+    print("UPDATE", temp_d, to_update_dict)
     return ["UPDATE", [temp_d], [to_update_dict], []]
 
 def delete_event_id(event_id, userinfoID):
