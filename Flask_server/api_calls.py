@@ -387,15 +387,20 @@ def delete_event_id(event_id, userinfoID):
     return ["DELETED", [], [event_dict], rescheduled_events]
 
 
-def create_task(end_time, task_name, userinfoID, task_description=None, task_location=None):
+def create_task(end_time, task_name, userinfoID, subject_id=None, task_description=None, task_location=None):
     # when the user asks for a reminder, and a task has only a end time/date, then we create a task
 
     temp_d = dict()
     temp_d["SUMMARY"] = task_name
+    temp_d["DTSTART"] = None
     temp_d["DUE"] = end_time
-    temp_d["LOCATION"] = task_location
-    temp_d["DESCRIPTION"] = task_description
+    temp_d["DESCRIPTION"] = task_description if task_description else None
+    temp_d["LOCATION"] = task_location if task_location else None
+    temp_d["STATUS"] = "NEEDS_ACTION"
+    temp_d["PRIORITY"] = 9
+    temp_d["subjectsID"] = subject_id if subject_id else None
     temp_d["userinfoID"] = userinfoID
+    
 
     return ["ADD_TASK", temp_d, []]
 
@@ -430,18 +435,21 @@ def get_tasks_range(start_time, end_time, userinfoID):
     return result
     
 
-def update_task(task_id, end_time, task_name, userinfoID, task_description=None, task_location=None):
+def update_task(task_id, status, userinfoID, end_time=None, task_name=None, task_description=None, task_location=None):
     # todo
     session = database_queries.create_session(userinfoID)
     to_update = database_queries.get_task_by_id(task_id, session)
     to_update_dict = to_update.dict_representation()
 
     temp_d = dict()
-    temp_d["SUMMARY"] = task_name
-    temp_d["DUE"] = end_time
-    temp_d["LOCATION"] = task_location
-    temp_d["DESCRIPTION"] = task_description
+    temp_d["SUMMARY"] = task_name if task_name else to_update_dict["SUMMARY"]
+    temp_d["DUE"] = end_time if end_time else to_update_dict["DUE"]
+    temp_d["LOCATION"] = task_location if task_location else to_update_dict["LOCATION"]
+    temp_d["DESCRIPTION"] = task_description if task_description else to_update_dict["DESCRIPTION"]
+    temp_d["STATUS"] = status
     temp_d["userinfoID"] = userinfoID
+
+    print("TO_UPDATE_DICT", to_update_dict)
 
     return ["UPDATE_TASK", temp_d, to_update_dict, None]
 
