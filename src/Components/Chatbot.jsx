@@ -1,31 +1,16 @@
 import React, { useState } from "react";
-import { cognito_Id } from "./support_func";
+import { cognito_Id, backend_Server_ip } from "./support_func";
 import axios from "axios";
+import Microphone from "./Microphone";
 
-const Chatbot = ({ onAddgptevent }) => {
+const Chatbot = ({ onAddgptevent, onAddgptTask }) => {
   const [loading, setLoading] = useState(false);
 
-  const sendMessage = async () => {
-    const userInput = document.getElementById("user-input").value;
-
-    const userMessageDiv = document.createElement("div");
-    userMessageDiv.className =
-      "chat-message user-message bg-blue-500 text-white rounded-lg p-2 mb-2";
-    userMessageDiv.innerHTML = userInput;
-    document.getElementById("chat-messages").appendChild(userMessageDiv);
-
-    // Clear input field
-    document.getElementById("user-input").value = "";
-    const dataToSend = {
-      userId: cognito_Id,
-      user_message: userInput,
-    };
-
-    setLoading(true);
-
+  const sending_to_Backend = async (dataToSend) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5000/chat",
+        // "http://127.0.0.1:5000/chat",
+        `http://${backend_Server_ip}:5000/chat`,
         dataToSend
       );
 
@@ -51,32 +36,83 @@ const Chatbot = ({ onAddgptevent }) => {
           onAddgptevent(
             data.events_to_be_managed[1],
             data.events_to_be_managed[2],
-            data.events_to_be_managed[0]
+            data.events_to_be_managed[0],
+            data.events_to_be_managed[3]
           );
         } else if (data.events_to_be_managed[0] === "DELETED") {
           onAddgptevent(
             data.events_to_be_managed[1],
             data.events_to_be_managed[2],
-            data.events_to_be_managed[0]
+            data.events_to_be_managed[0],
+            data.events_to_be_managed[3]
           );
         } else if (data.events_to_be_managed[0] === "CONFLICT") {
           onAddgptevent(
             data.events_to_be_managed[1],
             data.events_to_be_managed[2],
-            data.events_to_be_managed[0]
+            data.events_to_be_managed[0],
+            data.events_to_be_managed[3]
           );
         } else if (data.events_to_be_managed[0] === "UPDATE") {
           onAddgptevent(
             data.events_to_be_managed[1],
             data.events_to_be_managed[2],
-            data.events_to_be_managed[0]
+            data.events_to_be_managed[0],
+            data.events_to_be_managed[3]
           );
+        } else if (data.events_to_be_managed[0] === "ADD_TASK") {
+          data.events_to_be_managed[1].color = "orange";
+          onAddgptTask(data.events_to_be_managed[1]);
+        } else if (data.events_to_be_managed[0] === "UPDATE_TASK") {
+          data.events_to_be_managed[1].color = "yellow";
+          onAddgptTask(data.events_to_be_managed[1]);
+        } else if (data.events_to_be_managed[0] === "DELETE_TASK") {
+          data.events_to_be_managed[1].color = "purple";
+          onAddgptTask(data.events_to_be_managed[1]);
         }
       }
     } catch (error) {
       setLoading(false);
       console.error("Error:", error);
     }
+  };
+
+  const sendMessage = async () => {
+    const userInput = document.getElementById("user-input").value;
+
+    const userMessageDiv = document.createElement("div");
+    userMessageDiv.className =
+      "chat-message user-message bg-blue-500 text-white rounded-lg p-2 mb-2";
+    userMessageDiv.innerHTML = userInput;
+    document.getElementById("chat-messages").appendChild(userMessageDiv);
+
+    // Clear input field
+    document.getElementById("user-input").value = "";
+    const dataToSend = {
+      userId: cognito_Id,
+      user_message: userInput,
+    };
+
+    setLoading(true);
+    sending_to_Backend(dataToSend);
+  };
+
+  const sendaudio = async (message) => {
+    console.log("🚀 ~ sendaudio ~ message:", message);
+    const userMessageDiv = document.createElement("div");
+    userMessageDiv.className =
+      "chat-message user-message bg-blue-500 text-white rounded-lg p-2 mb-2";
+    userMessageDiv.innerHTML = message;
+    document.getElementById("chat-messages").appendChild(userMessageDiv);
+
+    document.getElementById("user-input").value = "";
+    const dataToSend = {
+      userId: cognito_Id,
+      user_message: message,
+    };
+
+    setLoading(true);
+    sending_to_Backend(dataToSend);
   };
 
   return (
@@ -107,6 +143,7 @@ const Chatbot = ({ onAddgptevent }) => {
               "Send"
             )}
           </button>
+          <Microphone send_message={sendaudio} />
         </div>
       </div>
     </div>
