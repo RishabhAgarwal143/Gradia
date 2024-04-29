@@ -370,7 +370,7 @@ export async function update_task(event) {
 
 export async function delete_task(event_id) {
   try {
-    const deletedTask = await client.graphql({
+    await client.graphql({
       query: mutations.deleteTask,
       variables: {
         input: {
