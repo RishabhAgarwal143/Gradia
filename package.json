@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "bash setupscript.sh && react-scripts build",
     "test": "react-scripts test nyc mocha",
     "eject": "react-scripts eject",
     "flask_server": "python Flask_server/flask_view.py",
