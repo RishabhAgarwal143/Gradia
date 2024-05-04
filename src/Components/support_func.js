@@ -12,8 +12,8 @@ export var cognito_Id;
 export var access_Token;
 var CurrentUsersEmail;
 
-// const backend_Server_ip = "3.145.104.203";
-export const backend_Server_ip = "127.0.0.1";
+export const backend_Server_ip = "3.21.98.42";
+// export const backend_Server_ip = "127.0.0.1";
 
 export async function currentAuthenticatedUser() {
   try {
