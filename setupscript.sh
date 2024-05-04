@@ -1,10 +1,10 @@
 #!/bin/bash
+# set -e
+# IFS='|'
 if [ -e ".env" ]; then
         export $(grep -v '^#' .env | xargs)
 fi
 
-set -e
-IFS='|'
 
 REACTCONFIG="{\
 \"SourceDir\":\"src\",\
