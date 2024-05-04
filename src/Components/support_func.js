@@ -13,7 +13,7 @@ export var access_Token;
 var CurrentUsersEmail;
 
 // export const backend_Server_ip = "3.21.98.42";
-export const backend_Server_ip = "127.0.0.1";
+export const backend_Server_ip = "127.0.0.1:5000";
 
 export async function currentAuthenticatedUser() {
   try {
@@ -34,7 +34,7 @@ export async function currentAuthenticatedUser() {
       Token: `${accessToken}`,
     }; // Replace with your data
     axios
-      .post(`http://${backend_Server_ip}:5000/api/data`, dataToSend)
+      .post(`http://${backend_Server_ip}/api/data`, dataToSend)
       .then((response) => {
         console.log("Data sent successfully:", response.data);
       })
@@ -73,7 +73,7 @@ async function create_temp_user(transformedEvents, callback) {
   // await currentAuthenticatedUser();
   await handleFetchUserAttributes();
   axios
-    .post(`http://${backend_Server_ip}:5000/api/schedule`, transformedEvents)
+    .post(`http://${backend_Server_ip}/api/schedule`, transformedEvents)
     .then((response) => {
       console.log("Data sent successfully:");
     })
@@ -87,7 +87,7 @@ async function create_temp_user(transformedEvents, callback) {
     });
 
     axios
-      .post(`http://${backend_Server_ip}:5000/api/update_calendars`, oneTodo)
+      .post(`http://${backend_Server_ip}/api/update_calendars`, oneTodo)
       .then((response) => {
         console.log("Data sent successfully:");
       })
@@ -96,7 +96,7 @@ async function create_temp_user(transformedEvents, callback) {
       });
 
     axios
-      .post(`http://${backend_Server_ip}:5000/api/personalization`, oneTodo)
+      .post(`http://${backend_Server_ip}/api/personalization`, oneTodo)
       .then((response) => {
         console.log("Data sent successfully:");
         callback();
@@ -110,7 +110,7 @@ async function create_temp_user(transformedEvents, callback) {
 export async function send_data_backend() {
   let tasks = await list_tasks_item();
   axios
-    .post(`http://${backend_Server_ip}:5000/api/task`, tasks)
+    .post(`http://${backend_Server_ip}/api/task`, tasks)
     .then((response) => {
       console.log("Data sent successfully:");
     })
@@ -120,7 +120,7 @@ export async function send_data_backend() {
 
   let subjects = await listSubjects();
   axios
-    .post(`http://${backend_Server_ip}:5000/api/subjects`, subjects)
+    .post(`http://${backend_Server_ip}/api/subjects`, subjects)
     .then((response) => {
       console.log("Data sent successfully:");
     })
@@ -186,7 +186,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post(`http://${backend_Server_ip}:5000/api/createsubscribe`, data)
+          .post(`http://${backend_Server_ip}/api/createsubscribe`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -204,7 +204,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post(`http://${backend_Server_ip}:5000/api/updatesubscribe`, data)
+          .post(`http://${backend_Server_ip}/api/updatesubscribe`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -222,7 +222,7 @@ export async function subscribedScedule() {
       data.userinfoID = cognito_Id;
       console.log("🚀 ~ client.graphql ~ data:", data);
       axios
-        .post(`http://${backend_Server_ip}:5000/api/updatetaskGrade`, data)
+        .post(`http://${backend_Server_ip}/api/updatetaskGrade`, data)
         .then((response) => {
           console.log("Data sent successfully:");
         })
@@ -239,7 +239,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post(`http://${backend_Server_ip}:5000/api/deletesubscribe`, data)
+          .post(`http://${backend_Server_ip}/api/deletesubscribe`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -257,7 +257,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post(`http://${backend_Server_ip}:5000/api/createTask`, data)
+          .post(`http://${backend_Server_ip}/api/createTask`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -275,7 +275,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post(`http://${backend_Server_ip}:5000/api/updateTask`, data)
+          .post(`http://${backend_Server_ip}/api/updateTask`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -291,7 +291,7 @@ export async function subscribedScedule() {
   client.graphql({ query: subscriptions.onDeleteTask }).subscribe({
     next: ({ data }) => {
       axios
-        .post(`http://${backend_Server_ip}:5000/api/deleteTask`, data)
+        .post(`http://${backend_Server_ip}/api/deleteTask`, data)
         .then((response) => {
           console.log("Data sent successfully:");
         })
@@ -306,7 +306,7 @@ export async function subscribedScedule() {
   client.graphql({ query: subscriptions.onUpdateSubjects }).subscribe({
     next: ({ data }) => {
       axios
-        .post(`http://${backend_Server_ip}:5000/api/updatesubjects`, data)
+        .post(`http://${backend_Server_ip}/api/updatesubjects`, data)
         .then((response) => {
           console.log("Data sent successfully:");
         })

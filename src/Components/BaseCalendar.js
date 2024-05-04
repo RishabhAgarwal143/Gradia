@@ -315,7 +315,7 @@ const MyCalendar = () => {
     }
     console.log("In here");
     axios
-      .post(`http://${backend_Server_ip}:5000/Subscribe`, {
+      .post(`http://${backend_Server_ip}/Subscribe`, {
         calendar_url: subscribe_url,
         calendar_name: subscribe_name,
         userId: cognito_Id,

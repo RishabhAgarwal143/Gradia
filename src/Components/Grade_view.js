@@ -368,13 +368,10 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
     formData.append("userinfoID", task.userinfoID);
 
     try {
-      const response = await fetch(
-        `http://${backend_Server_ip}:5000/syllabus`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch(`http://${backend_Server_ip}/syllabus`, {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error("Failed to upload file");
