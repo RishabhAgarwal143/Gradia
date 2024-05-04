@@ -53,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "netlify-cli": "^17.23.1",
     "nyc": "^15.1.0"
   }
 }
