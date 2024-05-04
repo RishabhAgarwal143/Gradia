@@ -10,7 +10,7 @@ const Chatbot = ({ onAddgptevent, onAddgptTask }) => {
     try {
       const response = await axios.post(
         // "http://127.0.0.1:5000/chat",
-        `http://${backend_Server_ip}/chat`,
+        `${backend_Server_ip}/chat`,
         dataToSend
       );
 

@@ -44,7 +44,7 @@ const Microphone = ({ send_message }) => {
       const formData = new FormData();
       formData.append("audio", blob, "recording.wav");
 
-      const response = await fetch(`http://${backend_Server_ip}/audio`, {
+      const response = await fetch(`${backend_Server_ip}/audio`, {
         method: "POST",
         body: formData,
       });

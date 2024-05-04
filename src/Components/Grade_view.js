@@ -368,7 +368,7 @@ const SecondComponent = ({ subject, task, refreshSubjects }) => {
     formData.append("userinfoID", task.userinfoID);
 
     try {
-      const response = await fetch(`http://${backend_Server_ip}/syllabus`, {
+      const response = await fetch(`${backend_Server_ip}/syllabus`, {
         method: "POST",
         body: formData,
       });
