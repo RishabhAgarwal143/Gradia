@@ -18,7 +18,7 @@ class AssistantHandler:
     def __init__(self) -> None:
         self.client = openai.Client()
         openai.api_key = f'{os.environ["OPENAI_API_KEY"]}'
-        self.assistant_id = "asst_dIkH4ABL3uRf0GY3du5lJsRF"
+        self.assistant_id = "asst_BTvOnIhGnZvF2JjiSUxqwSAj"
 
     
     def sendcall(self, prompt):

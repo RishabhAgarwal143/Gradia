@@ -74,6 +74,7 @@ class User(Base):
     userinfoID : Mapped[str]= mapped_column(primary_key=True)
     access_Token : Mapped[str]
     user_timezone : Mapped[Optional[str]]
+    Last_modified : Mapped[Optional[datetime.datetime]]
     UserWorkTime : Mapped[Optional["UserWorkTime"]] = relationship()
     schedule_list : Mapped[List["Schedule"]] = relationship()
     task_list : Mapped[List["Task"]] = relationship()
@@ -128,6 +129,20 @@ class User(Base):
             session.commit()
             
         return self.UserWorkTime
+    
+    def update_last_modified(self,session):
+        
+        headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {self.access_Token}'
+        }
+        url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+        payload = "{\"query\":\"mutation UpdateUserinfo {\\r\\n    updateUserinfo(input: { id: \\\"%s\\\", Last_updated: %s }) {\\r\\n        id\\r\\n    }\\r\\n}\\r\\n\",\"variables\":{}}" %(self.userinfoID,aws_datetime(self.Last_modified))
+        response = requests.request("POST", url, headers=headers, data=payload)
+        # print(response.text)
+        json_response = response.json()
+        print(json_response)
+
             
 
 
@@ -183,7 +198,7 @@ class Schedule(Base):
     DTEND: Mapped[Optional[datetime.datetime]]
     DESCRIPTION: Mapped[Optional[str]]
     LOCATION: Mapped[Optional[str]]
-    personalized_task: Mapped[Optional[bool]]
+    personalized_task: Mapped[bool] = mapped_column(default=False)
     userinfoID: Mapped[str] = mapped_column(ForeignKey("user.userinfoID"))
     subjectsID: Mapped[Optional[str]] = mapped_column(ForeignKey("subjects.id"))
     schedule_grade: Mapped[Optional["Schedule_grade_info"]] = relationship()
@@ -195,12 +210,14 @@ class Schedule(Base):
         temp_d = {}
         temp_d["id"] = self.id
         temp_d["SUMMARY"] = self.SUMMARY
-        temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
+        if(self.DTSTART):
+            temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["DTEND"] = self.DTEND.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["LOCATION"] = self.LOCATION
         temp_d["DESCRIPTION"] = self.DESCRIPTION
         temp_d["userinfoID"] = self.userinfoID
         temp_d["subjectsID"] = self.subjectsID
+        temp_d["personalized_task"] = aws_bool(self.personalized_task)
         if(self.schedule_grade):
             temp_d["scheduleScheduleGradeInfoId"] = self.schedule_grade.id
         
@@ -223,6 +240,7 @@ class Schedule(Base):
         dt_new_timezone = self.DTEND.astimezone(new_timezone)
         return dt_new_timezone
 
+
     def add_to_cloud(self,user: User):
         payload = "{\"query\":\"mutation CreateSchedule {\\r\\n    createSchedule(\\r\\n        input: {\\r\\n            "\
                     "SUMMARY: %s\\r\\n            "\
@@ -242,7 +260,25 @@ class Schedule(Base):
         'Authorization': 'Bearer %s' % user.access_Token
         }
         response = requests.request("POST", url, headers=headers, data=payload)
-        print(response.text)
+        json_response = response.json()
+        self.id = json_response["data"]["createSchedule"]["id"]
+        print(json_response)
+
+    
+    def delete_from_cloud(self, user: User):
+        
+        payload = "{\"query\":\"\\r\\nmutation MyMutation {\\r\\n  \
+                    deleteSchedule(input: {id: \\\"%s\\\"}) {\\r\\n    \
+                    id\\r\\n  }\\r\\n}\",\"variables\":{}}" % self.id
+
+        url = "https://aznxtxav2jgblkepnsmp6pydfi.appsync-api.us-east-2.amazonaws.com/graphql"
+        headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer %s' % user.access_Token
+        }
+        response = requests.request("POST", url, headers=headers, data=payload)
+        return response.text
+
 class Task(Base):
     """An example using regular Columns and no type annotation. 
         Enough for prelab, no foreign key usage. Similar effect but old convention.
@@ -268,7 +304,8 @@ class Task(Base):
         temp_d = {}
         temp_d["id"] = self.id
         temp_d["SUMMARY"] = self.SUMMARY
-        temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
+        if(self.DTSTART):
+            temp_d["DTSTART"] = self.DTSTART.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["DUE"] = self.DUE.strftime('%Y-%m-%d %H:%M:%S')
         temp_d["LOCATION"] = self.LOCATION
         temp_d["DESCRIPTION"] = self.DESCRIPTION
@@ -335,9 +372,9 @@ class Subjects(Base):
 class Task_grade_info(Base):
     __tablename__ = "task_grade"
     id: Mapped[str] = mapped_column(primary_key=True)
-    current_Grade: Mapped[Optional[int]]
-    task_Weightage: Mapped[Optional[int]]
-    overall_Percentage: Mapped[Optional[int]]
+    current_Grade: Mapped[int] = mapped_column(default=0)
+    task_Weightage: Mapped[int] = mapped_column(default=0)
+    overall_Percentage: Mapped[int] = mapped_column(default=0)
     extra_info: Mapped[Optional[str]]
     time_taken: Mapped[Optional[datetime.time]]
     task_id: Mapped[Optional[str]] = mapped_column(ForeignKey("task.id"))
@@ -381,11 +418,10 @@ def create_table(userinfoId):
             session.commit()
         session.close()
         pass
-    else:    
-        engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
-        
-        Base.metadata.create_all(engine)
-        engine.dispose()
+    
+    engine = create_engine(f"sqlite:///Flask_server/database/userdata_{userinfoId}.db")
+    Base.metadata.create_all(engine)
+    # engine.dispose()
 
 if __name__ == "__main__":
     create_table("")

@@ -1,13 +1,13 @@
 from database_queries import *
 import pandas as pd
 import math
-
+import pytz
 
 def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slots = []):
     schedules =  get_schedule_range(user, DTSTART, DTEND)
     schedules.sort(key=lambda x: x.DTSTART)
     for schedule in schedules:
-        if(schedule.personalized_task and schedule.personalized_task == True):
+        if(schedule.personalized_task):
             schedules.remove(schedule)
     busySlots = []
     freeSlots = []  
@@ -40,6 +40,7 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slo
        
         for schedule in schedules:
             if schedule.DTSTART.date() == currday.date():
+                 print(schedule.DTSTART, schedule.DTEND, schedule.SUMMARY)
                  slots_per_day.append([schedule.DTSTART, schedule.DTEND])
         slots_per_day.sort()
         for slots in slots_per_day:
@@ -47,47 +48,153 @@ def get_user_free_time(user, DTSTART : datetime, DTEND: datetime, extra_time_slo
                 busySlots.append([busySlots[-1][-1], max(slots[1], busySlots[-1][-1])])
             else:
                 busySlots.append(slots)
+    print("busy slots:")
+    for i in range(0, len(busySlots)):
+        print(busySlots[i][0].day, busySlots[i][0].hour, busySlots[i][0].minute, "-",  busySlots[i][1].day, busySlots[i][1].hour, busySlots[i][1].minute)
+    
     for i in range(0, len(busySlots)):
         if busySlots[i][0] > currentDayStart:
             freeSlots.append([currentDayStart, busySlots[i][0]])
         currentDayStart = busySlots[i][1]
     if busySlots[-1][1] < currentDayEnd:
         freeSlots.append([busySlots[-1][1], currentDayEnd])
-  
+    print("free slots:")
+    # add the timeslot only if the freeslot is after the current time in UTC
+#     local_start_time = newSchedule.DTSTART
+    # local_end_time_utc = newSchedule.DTEND
 
+    # start_time_utc = user_timezone.localize(local_start_time).astimezone(pytz.utc)
+    # end_time_utc = user_timezone.localize(local_end_time_utc).astimezone(pytz.utc)
+    # current time in utc
+
+    user_timezone = pytz.timezone(get_user_info(user).user_timezone)
+    utc_time =  user_timezone.localize(datetime.datetime.now()).astimezone(pytz.utc)
+    utc_time = utc_time.replace(tzinfo=None)
+
+    # print("CURRENT UTC TIME IS: ", utc_time)
+    # convert fromdatetime.datetime(20 24, 4, 24, 11, 0, 0, 474065) format to normal datetime format
+
+    freeSlots = [slot for slot in freeSlots if slot[0] > utc_time]
+    print(freeSlots)
+                        
+    # freeSlots = [datetime.datetime.strptime(slot.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S') for slot in freeSlots]
+    # freeSlots = [slot for slot in freeSlots if slot > utc_time]
+    
+    # freeSlots = [slot for slot in freeSlots if slot[0] > datetime.datetime.now()]
+    for i in range(0, len(freeSlots)):
+        print(freeSlots[i][0].day, freeSlots[i][0].hour, freeSlots[i][0].minute, "-",  freeSlots[i][1].day, freeSlots[i][1].hour, freeSlots[i][1].minute)
     return freeSlots
 
-def assign_task(user: User, session, extra_time_slots = []):
-    tasks  = assign_priority(user)
+
+
+# def assign_task(userinfoID, extra_time_slots = [], flag=False):
+#     tasks  = assign_priority(userinfoID)
+#     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
+#     print(" I have reached here")
+#     currday = 0
+#     # task_list_to_return = []
+#     # utc_timezone = pytz.utc
+#     while(tasks):
+#         print(currday)
+#         session = create_session(userinfoID)
+#         user = session.query(User).filter_by(userinfoID=userinfoID).first()
+#         user_timezone = pytz.timezone(user.user_timezone)
+#         freeSlots = get_user_free_time(userinfoID, (datetime.datetime.now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days = currday)), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
+#         task_list = []
+#         time_estimated  = calculate_time_ratio(user, tasks[0].get_subject(session))
+#         time_step = []
+#         while(time_estimated > 3):
+#             time_step.append(time_estimated -3)
+#             time_estimated -= 3
+#         time_step.append(time_estimated)
+#         print(time_step)
+#         for time in time_step:
+#             print("length" ,len(freeSlots))
+#             for i in range(0, len(freeSlots)):
+#                 if freeSlots[i][1] - freeSlots[i][0] >= datetime.timedelta(hours = time):
+#                     print("here in assigning task:")
+#                     newSchedule = Schedule(SUMMARY=tasks[0].SUMMARY, DTSTART =  freeSlots[i][0], DTEND = freeSlots[i][0] + datetime.timedelta(hours=time),subjectsID=tasks[0].subjectsID,userinfoID=user.userinfoID,personalized_task=True)
+#                     if not flag:
+#                         newSchedule.add_to_cloud(user)
+#                         session.add(newSchedule)
+#                         session.commit()
+#                     else:
+#                         task_list.append(newSchedule)
+#                         print(newSchedule.DTSTART, newSchedule.DTEND, newSchedule.SUMMARY)
+#                     # print(newSchedule)
+#                     freeSlots[i][0] += datetime.timedelta(hours=time)
+#                     print(freeSlots[i])
+#                     if(freeSlots[i][0] >= freeSlots[i][1] or freeSlots[i][1] - freeSlots[i][0] < datetime.timedelta(hours = 1)):
+#                         print("here deleting: ", freeSlots[i])
+#                         freeSlots.remove(freeSlots[i])
+#                     else:
+#                         print("here not deleting: ", freeSlots[i])
+#                         i -= 1
+                    
+#                     tasks.pop(0)
+                        
+#         currday += 1
+    
+#     if flag:
+#         return task_list
+#     return 0
+def assign_task(userinfoID, extra_time_slots=[], flag=False):
+    tasks = assign_priority(userinfoID)
     tasks.sort(key=lambda x: x.PRIORITY, reverse=True)
-    # avg_priority = sum([task.PRIORITY for task in tasks])/len(tasks)
-    # max_priority = max([task.PRIORITY for task in tasks])
+    print(f"==>> tasks: {tasks}")
+    
     currday = 0
-    while(tasks):
-        freeSlots = get_user_free_time(user.userinfoID, (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 0, minute = 0, second= 0), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
-        # if the user has continuous free time slot of 2hrs, assign the task to that slot
-        for task in tasks:
-            time_estimated  = calculate_time_ratio(user, task.get_subject(session))
-            time_step = []
-           
-            while(time_estimated > 3):
-                time_step.append(time_estimated -3)
-                time_estimated -= 3
-            time_step.append(time_estimated)
+    task_list = []
+
+    while tasks:
+        session = create_session(userinfoID)
+        user = session.query(User).filter_by(userinfoID=userinfoID).first()
+        user_timezone = pytz.timezone(user.user_timezone)
+        # curr_time = datetime.datetime.now(user_timezone)
+        # start_date = curr_time + datetime.timedelta(days=currday)
+        # end_date = start_date.replace(hour=23, minute=59, second=59)
+        freeSlots = get_user_free_time(userinfoID, (datetime.datetime.now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days = currday)), (datetime.datetime.now() + datetime.timedelta(days = currday)).replace(hour= 23, minute = 59, second= 59),  extra_time_slots)
+        time_estimated = calculate_time_ratio(user, tasks[0].get_subject(session))
+        time_step = []
+        while time_estimated > 3:
+            time_step.append(3)
+            time_estimated -= 3
+        time_step.append(time_estimated)
+        while tasks:
+            if not freeSlots:
+                print("broke here")
+                break
             for time in time_step:
-                for slot in freeSlots:
-                    if slot[1] - slot[0] >= time:
-                        newSchedule = Schedule(SUMMARY=task.SUMMARY, DTSTART =  slot[0], DTEND = slot[0] + datetime.timedelta(hours=time + 1),subjectsID=task.subjectsID,userinfoID=user.userinfoID,personalized_task=True)
-                        newSchedule.add_to_cloud(user)
-                        # add_to_database(newSchedule)
-                        # print(newSchedule.DTSTART.day, newSchedule.DTSTART.hour, newSchedule.DTSTART.minute, "-",  newSchedule.DTEND.day, newSchedule.DTEND.hour, newSchedule.DTEND.minute)
-                        print(newSchedule)
-                        slot[0] += datetime.timedelta(hours=time + 1)
-                        if(slot[0] >= slot[1] or slot[1] - slot[0] < time):
-                            freeSlots.remove(slot)     
-                        tasks.remove(task)
+                for i in range(len(freeSlots)):
+                    if freeSlots[i][1] - freeSlots[i][0] >= datetime.timedelta(hours=time) and freeSlots[i][1] > freeSlots[i][0]:
+                        newSchedule = Schedule(
+                            SUMMARY=tasks[0].SUMMARY,
+                            DTSTART=freeSlots[i][0],
+                            DTEND=freeSlots[i][0] + datetime.timedelta(hours=time),
+                            subjectsID=tasks[0].subjectsID,
+                            userinfoID=user.userinfoID,
+                            personalized_task=True
+                        )
+                        if not flag:
+                            newSchedule.add_to_cloud(user)
+                            session.add(newSchedule)
+                            session.commit()
+                        else:
+                            print("added task",newSchedule.DTSTART, newSchedule.DTEND, newSchedule.SUMMARY)
+                            task_list.append(newSchedule)
+                        freeSlots[i][0] += datetime.timedelta(hours=time + 1)
+                        if freeSlots[i][1] - freeSlots[i][0] < datetime.timedelta(hours=1):
+                            freeSlots.pop(i)
+                        else:
+                            # freeSlots[i][0] = freeSlots[i][0] + datetime.timedelta(hours=1)
+                            i-=1
+                        tasks.pop(0)
                         break
-    currday += 1
+        currday += 1
+    
+    if flag:
+        return task_list
+    return 0
 
 
 # get_user_free_time("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2021, 9, 9, 0, 0, 0), datetime.datetime(2021, 9, 10, 0, 0, 0))
@@ -110,7 +217,10 @@ def calculate_time_ratio(user: User, subject: Subjects):
         for task in subject.task_list:
             if task.STATUS == "COMPLETED" and task.task_grade:
                 task_time = task.task_grade.time_taken
-                avg_time_per_weightage += task_time/task.task_grade.task_Weightage
+                if(task_time == None):
+                    # set it to 1 hour
+                    task_time = 1
+                avg_time_per_weightage += task_time/(task.task_grade.task_Weightage if task.task_grade.task_Weightage != 0 else 1) 
     avg_time_per_weightage /= len(user.subjects_list)
     if(avg_time_per_weightage == 0):
         avg_time_per_weightage = 1
@@ -121,6 +231,10 @@ def calculate_time_ratio(user: User, subject: Subjects):
     # if the priority is greater than the average priority, assign the task to the user
 
 
+# Example usage
     
         
-
+if __name__ == "__main__":
+    # get_user_free_time("82cf448d-fc16-409c-82e9-3304d937f840", (datetime.datetime.now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days = 0)), (datetime.datetime.now() + datetime.timedelta(days = 0)).replace(hour= 23, minute = 59, second= 59))
+    assign_task("162248b5-f929-4a56-aa92-669d44fb2006")
+    # print_busy_and_free_slots("82cf448d-fc16-409c-82e9-3304d937f840", datetime.datetime(2024, 4, 24, 9, 0), datetime.datetime(2024, 4, 25, 17, 0))

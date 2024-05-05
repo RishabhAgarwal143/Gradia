@@ -11,6 +11,12 @@ import axios from "axios";
 export var cognito_Id;
 export var access_Token;
 var CurrentUsersEmail;
+
+// export const backend_Server_ip = "3.21.98.42";
+export const backend_Server_ip = "https://gradia.onrender.com";
+// export const backend_Server_ip = "http://142.93.75.16:5000";
+// export const backend_Server_ip = "http://142.93.75.16:5000";
+
 export async function currentAuthenticatedUser() {
   try {
     const { userId } = await getCurrentUser();
@@ -30,7 +36,7 @@ export async function currentAuthenticatedUser() {
       Token: `${accessToken}`,
     }; // Replace with your data
     axios
-      .post("http://127.0.0.1:5000/api/data", dataToSend)
+      .post(`${backend_Server_ip}/api/data`, dataToSend)
       .then((response) => {
         console.log("Data sent successfully:", response.data);
       })
@@ -65,23 +71,48 @@ export async function get_item() {
   console.log(allTodos);
 }
 
-async function create_temp_user(transformedEvents) {
+async function create_temp_user(transformedEvents, callback) {
   // await currentAuthenticatedUser();
   await handleFetchUserAttributes();
   axios
-    .post("http://127.0.0.1:5000/api/schedule", transformedEvents)
+    .post(`${backend_Server_ip}/api/schedule`, transformedEvents)
     .then((response) => {
       console.log("Data sent successfully:");
     })
     .catch((error) => {
       console.error("Error sending data:", error);
     });
+  if (transformedEvents.length !== 0) {
+    const oneTodo = await client.graphql({
+      query: queries.getUserinfo,
+      variables: { id: cognito_Id },
+    });
+
+    axios
+      .post(`${backend_Server_ip}/api/update_calendars`, oneTodo)
+      .then((response) => {
+        console.log("Data sent successfully:");
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
+
+    axios
+      .post(`${backend_Server_ip}/api/personalization`, oneTodo)
+      .then((response) => {
+        console.log("Data sent successfully:");
+        callback();
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
+  }
 }
 
 export async function send_data_backend() {
   let tasks = await list_tasks_item();
   axios
-    .post("http://127.0.0.1:5000/api/task", tasks)
+    .post(`${backend_Server_ip}/api/task`, tasks)
     .then((response) => {
       console.log("Data sent successfully:");
     })
@@ -91,7 +122,7 @@ export async function send_data_backend() {
 
   let subjects = await listSubjects();
   axios
-    .post("http://127.0.0.1:5000/api/subjects", subjects)
+    .post(`${backend_Server_ip}/api/subjects`, subjects)
     .then((response) => {
       console.log("Data sent successfully:");
     })
@@ -104,17 +135,20 @@ export async function send_data_backend() {
       query: queries.getUserinfo,
       variables: { id: cognito_Id },
     });
+    handleFetchUserAttributes();
     if (oneTodo.data.getUserinfo == null) {
       const { DateTime } = require("luxon");
       const dt = DateTime.now();
       console.log(dt.zoneName);
       console.log(`trying to ${cognito_Id}`);
+      console.log("🚀 ~ send_data_backend ~ oneTodo:", cognito_Id);
       const todoDetails = {
         name: "LocalMachine",
         email: CurrentUsersEmail,
         id: cognito_Id,
         Timezone: dt.zoneName,
       };
+      console.log("🚀 ~ send_data_backend ~ todoDetails:", todoDetails);
 
       await client.graphql({
         query: mutations.createUserinfo,
@@ -131,13 +165,14 @@ export async function send_data_backend() {
 export function create_user() {
   let hasbeencalled = false;
   let counter = 4;
-  return function (transformedEvents) {
+  return function (transformedEvents, callback) {
     if (!hasbeencalled) {
       if (counter === 0) {
         hasbeencalled = true;
       }
       counter--;
-      create_temp_user(transformedEvents);
+      create_temp_user(transformedEvents, callback);
+
       if (counter > 2) {
         subscribedScedule();
       }
@@ -153,7 +188,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/createsubscribe", data)
+          .post(`${backend_Server_ip}/api/createsubscribe`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -171,7 +206,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/updatesubscribe", data)
+          .post(`${backend_Server_ip}/api/updatesubscribe`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -189,7 +224,7 @@ export async function subscribedScedule() {
       data.userinfoID = cognito_Id;
       console.log("🚀 ~ client.graphql ~ data:", data);
       axios
-        .post("http://127.0.0.1:5000/api/updatetaskGrade", data)
+        .post(`${backend_Server_ip}/api/updatetaskGrade`, data)
         .then((response) => {
           console.log("Data sent successfully:");
         })
@@ -206,7 +241,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/deletesubscribe", data)
+          .post(`${backend_Server_ip}/api/deletesubscribe`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -224,7 +259,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/createTask", data)
+          .post(`${backend_Server_ip}/api/createTask`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -242,7 +277,7 @@ export async function subscribedScedule() {
     .subscribe({
       next: ({ data }) => {
         axios
-          .post("http://127.0.0.1:5000/api/updateTask", data)
+          .post(`${backend_Server_ip}/api/updateTask`, data)
           .then((response) => {
             console.log("Data sent successfully:");
           })
@@ -258,7 +293,7 @@ export async function subscribedScedule() {
   client.graphql({ query: subscriptions.onDeleteTask }).subscribe({
     next: ({ data }) => {
       axios
-        .post("http://127.0.0.1:5000/api/deleteTask", data)
+        .post(`${backend_Server_ip}/api/deleteTask`, data)
         .then((response) => {
           console.log("Data sent successfully:");
         })
@@ -273,7 +308,7 @@ export async function subscribedScedule() {
   client.graphql({ query: subscriptions.onUpdateSubjects }).subscribe({
     next: ({ data }) => {
       axios
-        .post("http://127.0.0.1:5000/api/updatesubjects", data)
+        .post(`${backend_Server_ip}/api/updatesubjects`, data)
         .then((response) => {
           console.log("Data sent successfully:");
         })
@@ -299,6 +334,54 @@ export async function create_schedule(event) {
     return newSchedule;
   } catch (error) {
     console.error("Error creating schedule:", error);
+    throw error; // Rethrow the error if needed
+  }
+}
+
+export async function create_task(event) {
+  try {
+    console.log("event", event);
+    const newTask = await client.graphql({
+      query: mutations.createTask,
+      variables: {
+        input: event,
+      },
+    });
+    return newTask;
+  } catch (error) {
+    console.error("Error creating Task:", error);
+    throw error; // Rethrow the error if needed
+  }
+}
+
+export async function update_task(event) {
+  try {
+    console.log("event", event);
+    const newTask = await client.graphql({
+      query: mutations.updateTask,
+      variables: {
+        input: event,
+      },
+    });
+    return newTask;
+  } catch (error) {
+    console.error("Error updating Task:", error);
+    throw error; // Rethrow the error if needed
+  }
+}
+
+export async function delete_task(event_id) {
+  try {
+    await client.graphql({
+      query: mutations.deleteTask,
+      variables: {
+        input: {
+          id: event_id,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting Task:", error);
     throw error; // Rethrow the error if needed
   }
 }
@@ -521,5 +604,78 @@ export async function update_tagetGrade_subject(subjectid, newStatus) {
     });
   } catch (error) {
     console.error("Error fetching items:", error);
+  }
+}
+
+export async function createNewTask(taskData) {
+  try {
+    console.log(taskData.STATUS);
+    const newTask = await client.graphql({
+      query: mutations.createTask,
+      variables: {
+        input: {
+          DUE: taskData.DUE,
+          SUMMARY: taskData.SUMMARY,
+          userinfoID: cognito_Id,
+          STATUS: taskData.STATUS,
+          subjectsID: taskData.subjectsID,
+          TaskGradeInfo: taskData.TaskGradeInfo,
+        },
+      },
+    });
+    console.log("New task created:", newTask);
+    return newTask;
+  } catch (error) {
+    console.error("Error creating new task:", error);
+    throw error;
+  }
+}
+
+export async function create_taskGradeInfo(taskData) {
+  try {
+    const newTask = await client.graphql({
+      query: mutations.createTaskGradeInfo,
+      variables: {
+        input: {
+          current_Grade: taskData.current_Grade,
+          overall_Percentage: taskData.overall_Percentage,
+          task_Weightage: taskData.task_Weightage,
+          taskGradeInfoTaskId: taskData.taskId,
+        },
+      },
+    });
+    return newTask;
+  } catch (error) {
+    console.error("Error creating new task:", error);
+    throw error;
+  }
+}
+export async function createUserWorkTim(workTimes) {
+  try {
+    const newUserWorkTim = await client.graphql({
+      query: mutations.createUserWorkTim,
+      variables: {
+        input: {
+          Monday_start: workTimes.Monday_start,
+          Monday_end: workTimes.Monday_end,
+          Tuesday_start: workTimes.Tuesday_start,
+          Tuesday_end: workTimes.Tuesday_end,
+          Wednesday_start: workTimes.Wednesday_start,
+          Wednesday_end: workTimes.Wednesday_end,
+          Thursday_start: workTimes.Thursday_start,
+          Thursday_end: workTimes.Thursday_end,
+          Friday_start: workTimes.Friday_start,
+          Friday_end: workTimes.Friday_end,
+          Saturday_start: workTimes.Saturday_start,
+          Saturday_end: workTimes.Saturday_end,
+          Sunday_start: workTimes.Sunday_start,
+          Sunday_end: workTimes.Sunday_end,
+        },
+      },
+    });
+    return newUserWorkTim;
+  } catch (error) {
+    console.error("Error creating user work times:", error);
+    throw error;
   }
 }

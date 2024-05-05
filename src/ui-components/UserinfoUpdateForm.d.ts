@@ -25,6 +25,7 @@ export declare type UserinfoUpdateFormInputValues = {
     name?: string;
     email?: string;
     Timezone?: string;
+    Last_updated?: string;
     Schedules?: any[];
     Tasks?: any[];
     SubscribedCalendars?: any[];
@@ -35,6 +36,7 @@ export declare type UserinfoUpdateFormValidationValues = {
     name?: ValidationFunction<string>;
     email?: ValidationFunction<string>;
     Timezone?: ValidationFunction<string>;
+    Last_updated?: ValidationFunction<string>;
     Schedules?: ValidationFunction<any>;
     Tasks?: ValidationFunction<any>;
     SubscribedCalendars?: ValidationFunction<any>;
@@ -47,6 +49,7 @@ export declare type UserinfoUpdateFormOverridesProps = {
     name?: PrimitiveOverrideProps<TextFieldProps>;
     email?: PrimitiveOverrideProps<TextFieldProps>;
     Timezone?: PrimitiveOverrideProps<TextFieldProps>;
+    Last_updated?: PrimitiveOverrideProps<TextFieldProps>;
     Schedules?: PrimitiveOverrideProps<AutocompleteProps>;
     Tasks?: PrimitiveOverrideProps<AutocompleteProps>;
     SubscribedCalendars?: PrimitiveOverrideProps<AutocompleteProps>;
