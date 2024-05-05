@@ -14,7 +14,10 @@ var CurrentUsersEmail;
 
 // export const backend_Server_ip = "3.21.98.42";
 // export const backend_Server_ip = "https://gradia.onrender.com";
+<<<<<<< HEAD
 export const backend_Server_ip = " https://cors-everywhere.herokuapp.com/http://142.93.75.16:5000";
+=======
+>>>>>>> 4f8c2e3c54dfa712300d5d4847d737abf55d8832
 
 export async function currentAuthenticatedUser() {
   try {
